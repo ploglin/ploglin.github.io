@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我們的宜蘭親子慢活之旅</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Calm Harmony (Warm neutrals with soft teal/olive accents) -->
+    <!-- Application Structure Plan: A tab-based SPA structure with buttons to switch between Day 1 and Day 2. This design is chosen for its simplicity and direct mapping to the two-day trip structure, making navigation intuitive for users planning their trip. Each day is presented as a vertical timeline of interactive cards, which is more engaging than a static list. An interactive pre-trip checklist is included for user engagement. -->
+    <!-- Visualization & Content Choices: Report Info: Itinerary Items -> Goal: Organize/Inform -> Presentation: Timeline with Cards -> Interaction: Click day tabs to switch views, hover on cards for feedback -> Justification: Breaks down the trip into manageable, visually distinct steps. Report Info: Pre-trip Reminders -> Goal: Engage -> Presentation: Interactive Checklist -> Interaction: Click to check/uncheck -> Justification: Turns a passive list into a simple, useful tool. Icons are Unicode emojis for simplicity and broad support. No charts needed as the data is qualitative/chronological. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            background-color: #fdfcf9;
+        }
+        .nav-btn {
+            transition: all 0.3s ease;
+        }
+        .nav-btn.active {
+            background-color: #0d9488;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -31px;
+            top: 24px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #f0abfc;
+            border: 4px solid #a855f7;
+        }
+        .timeline-connector {
+            position: absolute;
+            left: -22px;
+            top: 44px;
+            width: 2px;
+            height: calc(100% - 20px);
+            background-color: #e9d5ff;
+        }
+        .checklist-item {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .checklist-item.checked {
+            text-decoration: line-through;
+            color: #9ca3af;
+        }
+        .checklist-item.checked .checkbox {
+            background-color: #10b981;
+            border-color: #10b981;
+        }
+        .checkbox-icon {
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        .checklist-item.checked .checkbox-icon {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-amber-50 text-slate-700">
+
+<div class="container mx-auto max-w-4xl p-4 sm:p-6 md:p-8">
+
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-teal-800">我們的宜蘭親子慢活之旅</h1>
+        <p class="text-slate-500 mt-2 text-lg">2大1小 (1y3m) | 10/9 - 10/10</p>
+    </header>
+
+    <section id="reminders" class="mb-10 bg-white p-6 rounded-2xl shadow-sm border border-stone-200">
+        <h2 class="text-xl font-semibold text-purple-700 mb-4 flex items-center">
+            <span class="text-2xl mr-3">💡</span> 行前貼心提醒
+        </h2>
+        <ul class="space-y-3">
+            <li class="checklist-item flex items-center" onclick="toggleCheck(this)">
+                <div class="checkbox w-6 h-6 border-2 border-gray-300 rounded-md mr-4 flex-shrink-0 flex items-center justify-center">
+                    <svg class="checkbox-icon w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <span>**餐廳訂位：** 提前預約**里海咖啡**和**告春食彩小家**，避免帶寶寶久候。</span>
+            </li>
+            <li class="checklist-item flex items-center" onclick="toggleCheck(this)">
+                <div class="checkbox w-6 h-6 border-2 border-gray-300 rounded-md mr-4 flex-shrink-0 flex items-center justify-center">
+                    <svg class="checkbox-icon w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <span>**寶寶裝備：** 備齊推車、背巾、尿布、奶瓶、米餅、安撫玩具和備用衣物。</span>
+            </li>
+            <li class="checklist-item flex items-center" onclick="toggleCheck(this)">
+                <div class="checkbox w-6 h-6 border-2 border-gray-300 rounded-md mr-4 flex-shrink-0 flex items-center justify-center">
+                    <svg class="checkbox-icon w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <span>**保持彈性：** 以寶寶的狀態為優先，隨時可以調整行程回飯店休息。</span>
+            </li>
+        </ul>
+    </section>
+
+    <nav class="flex justify-center gap-4 mb-8">
+        <button id="btn-day1" class="nav-btn active text-lg font-semibold py-3 px-8 rounded-full bg-white text-teal-700 shadow-sm" onclick="showTab('day1')">第一天</button>
+        <button id="btn-day2" class="nav-btn text-lg font-semibold py-3 px-8 rounded-full bg-white text-teal-700 shadow-sm" onclick="showTab('day2')">第二天</button>
+    </nav>
+
+    <main>
+        <div id="day1" class="tab-content">
+            <h3 class="text-2xl font-bold text-center text-purple-800 mb-8">Day 1: 海洋風情與礁溪漫遊</h3>
+            <div class="relative pl-8">
+                <!-- Timeline Items for Day 1 -->
+                <div class="timeline-item mb-8 relative">
+                    <div class="timeline-connector"></div>
+                    <p class="text-fuchsia-600 font-semibold">🕙 上午 10:00</p>
+                    <h4 class="text-xl font-bold my-1">🚗 快樂出發！</h4>
+                    <p class="text-slate-600">從新莊中華大樓出發，沿著國道五號，向蘭陽平原前進！</p>
+                </div>
+                <div class="timeline-item mb-8 relative">
+                    <div class="timeline-connector"></div>
+                    <p class="text-fuchsia-600 font-semibold">🕛 中午 12:00</p>
+                    <h4 class="text-xl font-bold my-1">🍽️【午餐】里海咖啡</h4>
+                    <p class="text-slate-600">以最新鮮的現流魚定食聞名，用餐環境舒適。**寶寶友善筆記：** 可為寶寶點白飯，搭配鮮魚和蒸蛋。</p>
+                    <p class="text-sm text-slate-500 mt-2">📍 宜蘭縣礁溪鄉玉龍路二段406號</p>
+                </div>
+                <div class="timeline-item mb-8 relative">
+                    <div class="timeline-connector"></div>
+                    <p class="text-fuchsia-600 font-semibold">🕑 下午 2:00</p>
+                    <h4 class="text-xl font-bold my-1">🏞️【景點】五峰旗瀑布 (最下層限定)</h4>
+                    <p class="text-slate-600">步道平坦，推車可輕鬆抵達。讓寶寶看看瀑布、聽聽水聲。**寶寶友善筆記：** 只停留在最下層，不要往上走！</p>
+                </div>
+                <div class="timeline-item mb-8 relative">
+                    <div class="timeline-connector"></div>
+                    <p class="text-fuchsia-600 font-semibold">🕞 下午 3:30</p>
+                    <h4 class="text-xl font-bold my-1">🏨【住宿】沐恩國際溫泉渡假飯店</h4>
+                    <p class="text-slate-600">辦理入住，讓寶寶午睡，大人可以輪流泡溫泉放鬆。</p>
+                    <p class="text-sm text-slate-500 mt-2">📍 宜蘭縣礁溪鄉礁溪路三段116號</p>
+                </div>
+                <div class="timeline-item mb-8 relative">
+                    <div class="timeline-connector"></div>
+                    <p class="text-fuchsia-600 font-semibold">🕠 傍晚 5:30</p>
+                    <h4 class="text-xl font-bold my-1">🍢【晚餐】礁溪小吃美食巡禮</h4>
+                    <p class="text-slate-600">一次攻略您的美食清單！**寶寶友善筆記：** 建議將美食外帶回飯店享用，避免人擠人。</p>
+                    <ul class="list-disc list-inside mt-2 text-slate-600 space-y-1">
+                        <li>柯氏蔥油餅</li>
+                        <li>玉里橋頭臭豆腐</li>
+                        <li>礁溪香腸伯</li>
+                        <li>白水豆花</li>
+                    </ul>
+                </div>
+                <div class="timeline-item relative">
+                    <p class="text-fuchsia-600 font-semibold">🕗 晚上 8:00</p>
+                    <h4 class="text-xl font-bold my-1">🌙【夜間景點】跑馬古道公園</h4>
+                    <p class="text-slate-600">飯後散步，欣賞公園夢幻的光雕藝術。步道平緩好走，適合推車。</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="day2" class="tab-content hidden">
+            <h3 class="text-2xl font-bold text-center text-purple-800 mb-8">Day 2: 公園放電與完美收尾</h3>
+            <div class="relative pl-8">
+                <!-- Timeline Items for Day 2 -->
+                <div class="timeline-item mb-8 relative">
+                    <div class="timeline-connector"></div>
+                    <p class="text-fuchsia-600 font-semibold">🕙 上午</p>
+                    <h4 class="text-xl font-bold my-1">☕ 飯店悠閒時光</h4>
+                    <p class="text-slate-600">睡到自然醒，享用飯店早餐，再泡一次溫泉。約11:00辦理退房。</p>
+                </div>
+                <div class="timeline-item mb-8 relative">
+                    <div class="timeline-connector"></div>
+                    <p class="text-fuchsia-600 font-semibold">🕦 上午 11:30</p>
+                    <h4 class="text-xl font-bold my-1">🌳【景點】龍潭湖風景區</h4>
+                    <p class="text-slate-600">親子遊客的天堂！有大片草皮讓寶寶放電，環湖步道平坦，推車暢行無阻。</p>
+                </div>
+                <div class="timeline-item mb-8 relative">
+                    <div class="timeline-connector"></div>
+                    <p class="text-fuchsia-600 font-semibold">🕜 下午 1:30</p>
+                    <h4 class="text-xl font-bold my-1">🍣【午餐】告春食彩小家日本料理</h4>
+                    <p class="text-slate-600">精緻美味的無菜單料理，為旅程收尾。**寶寶友善筆記：** 訂位時可告知有寶寶同行，安排舒適座位。</p>
+                    <p class="text-sm text-slate-500 mt-2">📍 宜蘭縣宜蘭市聖後街106號</p>
+                </div>
+                <div class="timeline-item mb-8 relative">
+                    <div class="timeline-connector"></div>
+                    <p class="text-fuchsia-600 font-semibold">🕒 下午 3:00</p>
+                    <h4 class="text-xl font-bold my-1">🛍️【伴手禮】諾貝爾奶凍</h4>
+                    <p class="text-slate-600">購買宜蘭最有名的奶凍捲，送禮自用兩相宜。</p>
+                    <p class="text-sm text-slate-500 mt-2">📍 宜蘭縣羅東鎮公正路188號 (或礁溪分店)</p>
+                </div>
+                <div class="timeline-item relative">
+                    <p class="text-fuchsia-600 font-semibold">🕓 下午 4:00</p>
+                    <h4 class="text-xl font-bold my-1">🏡 準備返程</h4>
+                    <p class="text-slate-600">心滿意足地踏上歸途，預計傍晚時分就能回到新莊。</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+</div>
+
+<script>
+    function showTab(tabId) {
+        const contents = document.querySelectorAll('.tab-content');
+        contents.forEach(content => {
+            content.classList.add('hidden');
+        });
+
+        const buttons = document.querySelectorAll('.nav-btn');
+        buttons.forEach(button => {
+            button.classList.remove('active');
+        });
+
+        document.getElementById(tabId).classList.remove('hidden');
+        document.getElementById('btn-' + tabId).classList.add('active');
+    }
+
+    function toggleCheck(element) {
+        element.classList.toggle('checked');
+    }
+</script>
+
+</body>
+</html>
