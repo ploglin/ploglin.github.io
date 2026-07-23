@@ -3,17 +3,21 @@
    讀 window.GAME_DB 的 combo 分類，建出「調色盤 + 格線 + 即時判定 +
    差一步提示 + 放置建議」的模擬器（比照 school2 細緻度）。
 
-   用法（各遊戲 sim 頁）：
+   規則兩種：
+     rule:{type:'radius', dist:N}  成員兩兩 Chebyshev 距離 ≤ N（大江戶 3、相鄰 1）
+     rule:{type:'window', size:M}  所有成員落在同一個 M×M 視窗內（口袋學院 4×4）
+
+   選項：nature（萬用自然物 token）、orSep（「擇一」分隔，如「樹林／櫻花樹」）。
+
+   用法：
      <div id="simApp"></div>
-     <script src="../db/data.js"></script>          // window.GAME_DB
+     <script src="../db/data.js"></script>
      <script src="../../../assets/sim.js"></script>
      <script>SimEngine.mount({
-        category:'combos', nameCol:0, reqCol:4, reqSep:'・',
-        bonuses:[{i:2,label:'石高',sum:true,suffix:'%'},{i:3,label:'價格',sum:true,suffix:'%'}],
-        dist:3, ruleText:'成員彼此 3 格內', nature:'自然物'
+        category:'spots', nameCol:0, reqCol:1, reqSep:'・', orSep:'／',
+        bonuses:[{i:2,label:'加成'}], rule:{type:'window',size:4},
+        ruleText:'三種設施落在同一個 4×4 範圍內'
      });</script>
-
-   規則：dist = 成員兩兩的 Chebyshev 距離上限（大江戶 3、相鄰型 1）。
    ============================================================ */
 (function () {
     'use strict';
@@ -28,39 +32,49 @@
         var GD = window.GAME_DB;
         var app = document.getElementById(cfg.mountId || 'simApp');
         if (!GD || !app) return;
-        var ROWS = cfg.rows || 12, COLS = cfg.cols || 12, DIST = cfg.dist || 3;
-        var NAT = cfg.nature || null;
+        var ROWS = cfg.rows || 12, COLS = cfg.cols || 12;
+        var RULE = cfg.rule || { type: 'radius', dist: 3 };
+        var DIST = RULE.dist || 3, WSIZE = RULE.size || 4, WINDOW = RULE.type === 'window';
+        var NAT = cfg.nature || null, ORSEP = cfg.orSep || null;
 
-        // 建築類型表（供顯示分類；找不到就空）
+        // 建築類型表（供顯示分類）
         var typeOf = {};
         GD.categories.forEach(function (c) {
-            if (!/build|store|struct|設施|建築|店舖|機台/i.test(c.key + c.label)) return;
+            if (!/build|store|struct|facil|設施|建築|店舖|機台/i.test(c.key + c.label)) return;
             c.rows.forEach(function (r) { var n = (r[0] || '').replace(/（[^）]*）/g, '').trim(); if (n && !typeOf[n]) typeOf[n] = r[1] || ''; });
         });
         var NATURE_RE = /松|櫻|梅|楓|柳|銀杏|竹|杜鵑|紫陽花|向日葵|樹叢|大岩石/;
         function isNature(name) { if (!NAT) return false; if (name === NAT) return true; return /自然|環境|nature/i.test(typeOf[name] || '') || NATURE_RE.test(name); }
 
-        // 解析 combos
+        // slot = { names:[...], nat:bool }；label 用於顯示；pick 用於點選補位
+        function parseToken(tok) {
+            var m = tok.match(/^(.+?)\s*[×xX]\s*(\d+)$/), body = m ? m[1].trim() : tok, cnt = m ? +m[2] : 1;
+            var parts = ORSEP ? body.split(ORSEP) : [body];
+            var names = [], nat = false;
+            parts.forEach(function (p) { p = p.trim(); if (!p) return; if (NAT && new RegExp('^' + NAT).test(p)) nat = true; else names.push(p); });
+            return { slot: { names: names, nat: nat }, count: cnt };
+        }
+        function slotLabel(s) { var a = s.names.slice(); if (s.nat) a.push(NAT); return a.join('／'); }
+        function slotPick(s) { return s.names[0] || NAT; }
+
         var ccat = GD.categories.filter(function (c) { return c.key === cfg.category; })[0];
         if (!ccat) { app.innerHTML = '<p class="empty-hint">找不到 combo 資料。</p>'; return; }
         var combos = ccat.rows.map(function (r) {
             var slots = [];
             String(r[cfg.reqCol] || '').split(cfg.reqSep).forEach(function (tok) {
                 tok = tok.trim(); if (!tok) return;
-                var m = tok.match(/^(.+?)\s*[×xX]\s*(\d+)$/);
-                var bn = m ? m[1].trim() : tok, cnt = m ? +m[2] : 1;
-                if (NAT && new RegExp('^' + NAT).test(bn)) bn = NAT;
-                for (var i = 0; i < cnt; i++) slots.push(bn);
+                var pt = parseToken(tok);
+                for (var i = 0; i < pt.count; i++) slots.push(pt.slot);
             });
             var bonuses = (cfg.bonuses || []).map(function (b) { return { label: b.label, val: r[b.i], sum: b.sum, suffix: b.suffix || '' }; });
             return { name: r[cfg.nameCol], slots: slots, bonuses: bonuses };
         }).filter(function (cb) { return cb.slots.length >= 2; });
 
-        // 排序主鍵（第一個 sum 加成）取來排序
         function score(cb) { var b = cb.bonuses.filter(function (x) { return x.sum; })[0]; return b ? num(b.val) : 0; }
 
-        // 調色盤：combos 用到的所有建築（+ 自然物）
-        var pset = {}; combos.forEach(function (cb) { cb.slots.forEach(function (s) { pset[s] = 1; }); });
+        // 調色盤：所有 slot 用到的具名建築（+ 自然物）
+        var pset = {};
+        combos.forEach(function (cb) { cb.slots.forEach(function (s) { s.names.forEach(function (n) { pset[n] = 1; }); if (s.nat) pset[NAT] = 1; }); });
         var palette = Object.keys(pset).sort(function (a, b) {
             var ta = typeOf[a] || 'zz', tb = typeOf[b] || 'zz';
             if (ta !== tb) return ta.localeCompare(tb, 'zh-Hant'); return a.localeCompare(b, 'zh-Hant');
@@ -68,30 +82,25 @@
         function shortLabel(n) { return n === NAT ? '🌳' : n.replace(/\s/g, '').slice(0, 2); }
         function colorOf(n) { return 'hsl(' + hue(n) + ',42%,42%)'; }
 
-        // ---- 狀態 ----
         var grid = [], cells = [], current = null, erase = false;
 
         // ---- DOM ----
         app.innerHTML = '';
         var wrap = el('div', 'sim-wrap');
-        // 調色盤
         var pPanel = el('div', 'sim-panel');
-        pPanel.appendChild(el('h3', null, '🏗️ 建築'));
+        pPanel.appendChild(el('h3', null, '🏗️ 建築 / 設施'));
         var tools = el('div', 'pal-tools');
         var eraseBtn = el('button', null, '🧽 清除'); eraseBtn.title = '橡皮擦：點格子清除';
         var clearBtn = el('button', null, '🗑️ 全清');
         tools.appendChild(eraseBtn); tools.appendChild(clearBtn); pPanel.appendChild(tools);
-        var palSearch = el('input', 'pal-search'); palSearch.type = 'search'; palSearch.placeholder = '🔎 搜尋建築';
+        var palSearch = el('input', 'pal-search'); palSearch.type = 'search'; palSearch.placeholder = '🔎 搜尋';
         pPanel.appendChild(palSearch);
         var palList = el('div', 'pal-list'); pPanel.appendChild(palList);
-        // 格線
         var gPanel = el('div', 'sim-panel');
         var gScroll = el('div', 'grid-scroll'); var gridEl = el('div', 'sim-grid');
         gridEl.style.gridTemplateColumns = 'repeat(' + COLS + ', 34px)';
         gScroll.appendChild(gridEl); gPanel.appendChild(gScroll);
-        gPanel.appendChild(el('p', 'empty-hint', '選左側建築 → 點格子擺放。再次點同格或用「清除」移除。' +
-            (cfg.ruleText ? '<br>成立條件：' + cfg.ruleText + '。' : '')));
-        // 結果
+        gPanel.appendChild(el('p', 'empty-hint', '選左側 → 點格子擺放。再次點同格或用「清除」移除。' + (cfg.ruleText ? '<br>成立條件：' + cfg.ruleText + '。' : '')));
         var rPanel = el('div', 'sim-panel');
         rPanel.appendChild(el('h3', null, '🎌 成立的 combo'));
         var statBox = el('div'); rPanel.appendChild(statBox);
@@ -101,11 +110,9 @@
         var nmHint = el('p', 'empty-hint', '點項目會自動選取「還差的建築」，格線標出可放位置（藍框）。'); nmHint.style.margin = '2px 0 0';
         rPanel.appendChild(nmHint);
         var nmListEl = el('ul', 'nm-list'); rPanel.appendChild(nmListEl);
-
         wrap.appendChild(pPanel); wrap.appendChild(gPanel); wrap.appendChild(rPanel);
         app.appendChild(wrap);
 
-        // ---- 建格線 ----
         for (var r = 0; r < ROWS; r++) {
             grid[r] = []; cells[r] = [];
             for (var c = 0; c < COLS; c++) {
@@ -119,7 +126,6 @@
             }
         }
 
-        // ---- 調色盤 ----
         function renderPalette(f) {
             palList.innerHTML = '';
             palette.forEach(function (name) {
@@ -127,10 +133,7 @@
                 var d = el('div', 'pal-item' + (name === current ? ' active' : ''));
                 var ty = name === NAT ? '自然物（任一環境物件）' : (typeOf[name] || '');
                 d.innerHTML = '<span>' + name + '</span>' + (ty ? '<span class="ty">' + ty + '</span>' : '');
-                d.addEventListener('click', function () {
-                    current = name; erase = false; eraseBtn.classList.remove('on');
-                    renderPalette(palSearch.value.trim()); updateSuggestions();
-                });
+                d.addEventListener('click', function () { current = name; erase = false; eraseBtn.classList.remove('on'); renderPalette(palSearch.value.trim()); updateSuggestions(); });
                 palList.appendChild(d);
             });
         }
@@ -149,17 +152,16 @@
         }
 
         // ---- 判定 ----
-        function candidates(name) {
+        function candidates(slot) {
             var out = [];
             for (var r = 0; r < ROWS; r++) for (var c = 0; c < COLS; c++) {
                 var v = grid[r][c]; if (!v) continue;
-                if (name === NAT) { if (isNature(v)) out.push([r, c]); }
-                else if (v === name) out.push([r, c]);
+                if (slot.names.indexOf(v) >= 0 || (slot.nat && isNature(v))) out.push([r, c]);
             }
             return out;
         }
-        function fillSlots(slotList) {
-            var n = slotList.length, cand = slotList.map(candidates);
+        function findRadius(slots) {
+            var n = slots.length, cand = slots.map(candidates);
             for (var i = 0; i < n; i++) if (!cand[i].length) return null;
             var pick = [];
             function bt(i, used) {
@@ -174,27 +176,67 @@
             }
             return bt(0, {}) ? pick.slice() : null;
         }
-        function comboActive(cb) { return fillSlots(cb.slots); }
+        function findWindow(slots) {
+            var n = slots.length, cand = slots.map(candidates);
+            for (var i = 0; i < n; i++) if (!cand[i].length) return null;
+            for (var r0 = 0; r0 <= ROWS - WSIZE; r0++) for (var c0 = 0; c0 <= COLS - WSIZE; c0++) {
+                var used = {}, pick = [], ok = true;
+                for (var s = 0; s < n && ok; s++) {
+                    var f = null;
+                    for (var k = 0; k < cand[s].length; k++) {
+                        var rc = cand[s][k], kk = rc[0] + ',' + rc[1]; if (used[kk]) continue;
+                        if (rc[0] >= r0 && rc[0] < r0 + WSIZE && rc[1] >= c0 && rc[1] < c0 + WSIZE) { f = rc; break; }
+                    }
+                    if (f) { pick.push(f); used[f[0] + ',' + f[1]] = 1; } else ok = false;
+                }
+                if (ok) return pick;
+            }
+            return null;
+        }
+        function find(slots) { return WINDOW ? findWindow(slots) : findRadius(slots); }
+        function comboActive(cb) { return find(cb.slots); }
         function comboNearMiss(cb) {
             if (comboActive(cb)) return null;
             for (var i = 0; i < cb.slots.length; i++) {
                 var sub = cb.slots.slice(0, i).concat(cb.slots.slice(i + 1)); if (!sub.length) continue;
-                var cells2 = fillSlots(sub); if (cells2) return { missing: cb.slots[i], cluster: cells2 };
+                var cs = find(sub); if (cs) return { missing: cb.slots[i], cluster: cs };
             }
             return null;
         }
-        function canFill(missing) { if (!current || erase) return false; if (missing === current) return true; if (NAT && missing === NAT && isNature(current)) return true; return false; }
+        function canFill(slot) {
+            if (!current || erase) return false;
+            if (slot.names.indexOf(current) >= 0) return true;
+            if (slot.nat && (current === NAT || isNature(current))) return true;
+            return false;
+        }
+        function suggestRegion(cluster) {
+            var out = [], seen = {};
+            if (WINDOW) {
+                var rs = cluster.map(function (c) { return c[0]; }), cs = cluster.map(function (c) { return c[1]; });
+                var minR = Math.min.apply(null, rs), maxR = Math.max.apply(null, rs), minC = Math.min.apply(null, cs), maxC = Math.max.apply(null, cs);
+                for (var r0 = Math.max(0, maxR - WSIZE + 1); r0 <= Math.min(minR, ROWS - WSIZE); r0++)
+                    for (var c0 = Math.max(0, maxC - WSIZE + 1); c0 <= Math.min(minC, COLS - WSIZE); c0++)
+                        for (var rr = r0; rr < r0 + WSIZE; rr++) for (var cc = c0; cc < c0 + WSIZE; cc++) {
+                            if (grid[rr][cc]) continue; var kk = rr + ',' + cc; if (seen[kk]) continue; seen[kk] = 1; out.push([rr, cc]);
+                        }
+            } else {
+                for (var r2 = 0; r2 < ROWS; r2++) for (var c2 = 0; c2 < COLS; c2++) {
+                    if (grid[r2][c2]) continue; var ok = true;
+                    for (var m = 0; m < cluster.length; m++) if (cheb([r2, c2], cluster[m]) > DIST) { ok = false; break; }
+                    if (ok) out.push([r2, c2]);
+                }
+            }
+            return out;
+        }
 
-        // ---- 計算與渲染 ----
         function recompute() {
             for (var r = 0; r < ROWS; r++) for (var c = 0; c < COLS; c++) cells[r][c].classList.remove('in-combo');
             var active = [];
             combos.forEach(function (cb) { var cs = comboActive(cb); if (cs) active.push({ cb: cb, cells: cs }); });
             active.sort(function (a, b) { return score(b.cb) - score(a.cb); });
 
-            // 統計
             statBox.innerHTML = '';
-            var row0 = el('div', 'stat-row', '<span>成立 combo</span><b>' + active.length + '</b>'); statBox.appendChild(row0);
+            statBox.appendChild(el('div', 'stat-row', '<span>成立 combo</span><b>' + active.length + '</b>'));
             (cfg.bonuses || []).filter(function (b) { return b.sum; }).forEach(function (b) {
                 var tot = active.reduce(function (s, o) { var bb = o.cb.bonuses.filter(function (x) { return x.label === b.label; })[0]; return s + (bb ? num(bb.val) : 0); }, 0);
                 statBox.appendChild(el('div', 'stat-row', '<span>' + b.label + '加成合計</span><b>+' + tot + (b.suffix || '') + '</b>'));
@@ -202,7 +244,7 @@
 
             comboListEl.innerHTML = ''; comboEmpty.style.display = active.length ? 'none' : 'block';
             active.forEach(function (o) {
-                var bo = o.cb.bonuses.map(function (x) { return x.label + x.val; }).join(' / ');
+                var bo = o.cb.bonuses.map(function (x) { return x.label ? x.label + x.val : x.val; }).join('　');
                 var li = el('li', null, '<span class="cb">' + o.cb.name + '</span> <span class="bo">' + bo + '</span>');
                 li.addEventListener('mouseenter', function () { highlight(o.cells); });
                 li.addEventListener('mouseleave', clearHi);
@@ -218,15 +260,14 @@
             items.sort(function (a, b) { return score(b.cb) - score(a.cb); });
             items = items.slice(0, 14);
             nmListEl.innerHTML = ''; nmHint.style.display = items.length ? 'block' : 'none';
-            if (!items.length) { nmListEl.innerHTML = '<li class="empty-hint" style="cursor:default">目前沒有「差一步」的 combo，多擺幾個建築試試。</li>'; return; }
+            if (!items.length) { nmListEl.innerHTML = '<li class="empty-hint" style="cursor:default">目前沒有「差一步」的 combo，多擺幾個試試。</li>'; return; }
             items.forEach(function (o) {
                 var b0 = o.cb.bonuses.filter(function (x) { return x.sum; })[0];
-                var li = el('li', null, '<span><b>' + o.cb.name + '</b>　還差 <span class="nm-miss">' + o.missing + '</span></span>' +
-                    (b0 ? '<span class="bo">' + b0.label + b0.val + '</span>' : ''));
+                var li = el('li', null, '<span><b>' + o.cb.name + '</b>　還差 <span class="nm-miss">' + slotLabel(o.missing) + '</span></span>' + (b0 ? '<span class="bo">' + b0.label + b0.val + '</span>' : ''));
                 li.addEventListener('mouseenter', function () { highlight(o.cluster); });
                 li.addEventListener('mouseleave', clearHi);
                 li.addEventListener('click', function () {
-                    current = o.missing; erase = false; eraseBtn.classList.remove('on');
+                    current = slotPick(o.missing); erase = false; eraseBtn.classList.remove('on');
                     renderPalette(palSearch.value.trim()); updateSuggestions();
                     if (window.Shell) Shell.track('sim_pick_missing', { combo: o.cb.name });
                 });
@@ -238,16 +279,10 @@
         function updateSuggestions() {
             for (var r = 0; r < ROWS; r++) for (var c = 0; c < COLS; c++) cells[r][c].classList.remove('suggest');
             if (!current || erase) return;
-            var regions = [];
-            combos.forEach(function (cb) { var nm = comboNearMiss(cb); if (nm && canFill(nm.missing)) regions.push(nm.cluster); });
-            if (!regions.length) return;
-            for (var r2 = 0; r2 < ROWS; r2++) for (var c2 = 0; c2 < COLS; c2++) {
-                if (grid[r2][c2]) continue;
-                for (var k = 0; k < regions.length; k++) {
-                    var ok = true; for (var m = 0; m < regions[k].length; m++) if (cheb([r2, c2], regions[k][m]) > DIST) { ok = false; break; }
-                    if (ok) { cells[r2][c2].classList.add('suggest'); break; }
-                }
-            }
+            combos.forEach(function (cb) {
+                var nm = comboNearMiss(cb);
+                if (nm && canFill(nm.missing)) suggestRegion(nm.cluster).forEach(function (rc) { cells[rc[0]][rc[1]].classList.add('suggest'); });
+            });
         }
 
         eraseBtn.addEventListener('click', function () { erase = !erase; current = null; eraseBtn.classList.toggle('on', erase); renderPalette(palSearch.value.trim()); updateSuggestions(); });

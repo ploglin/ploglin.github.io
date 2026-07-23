@@ -61,6 +61,6 @@ window.GAMES = [
     { id: 'kingdom', slug: 'kairosoft/kingdom/', title: '開拓勇者村', jp: '開拓ぼくらの勇者村', en: 'Kingdom Adventurers', emoji: '🏰', accent: '#fdeee0', status: 'live', type: 'guide', tags: [['guide', '攻略']], desc: '勇者村攻略：城鎮選址、資源循環與勇者育種。' },
     { id: 'harvest', slug: 'kairosoft/harvest/', title: '大農場物語', jp: 'ポケット大農園', en: 'Pocket Harvest', emoji: '🚜', accent: '#e6f4ec', status: 'live', type: 'guide', tags: [['guide', '攻略'], ['combo', '設施 combo']], desc: '農場攻略：農田肥沃度、設施 combo 與比賽奪冠陣型。' },
 
-    { id: 'school1', slug: 'kairosoft/school1/', title: '口袋學院物語', jp: '名門ポケット学院', en: 'Pocket Academy ZERO', emoji: '🏫', accent: '#e6f4ec', status: 'live', type: 'guide', tags: [['guide', '攻略'], ['combo', '景點 combo']], desc: '初代校園經營攻略：12 組人氣景點 combo、育才與資金衝刺（2 代前作）。' },
+    { id: 'school1', slug: 'kairosoft/school1/', title: '口袋學院物語', jp: '名門ポケット学院', en: 'Pocket Academy ZERO', emoji: '🏫', accent: '#e6f4ec', status: 'live', type: 'guide', sim: true, tags: [['sim', '模擬器'], ['combo', '景點 combo']], desc: '初代校園經營攻略：12 組人氣景點 combo、育才與資金衝刺（2 代前作）。' },
     { id: 'arcade', slug: 'kairosoft/arcade/', title: '遊戲中心物語加強版', jp: 'ゲームセンター倶楽部DX', en: 'Pocket Arcade Story DX', emoji: '🕹️', accent: '#e9f0ff', status: 'live', type: 'guide', tags: [['guide', '攻略'], ['combo', '主題區 combo']], desc: '電子遊樂場經營攻略：主題區 combo、機台配置與升級時機。' }
 ];

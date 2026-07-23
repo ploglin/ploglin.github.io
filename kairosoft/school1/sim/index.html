@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>口袋學院物語 佈局模擬器｜人氣景點 4×4 即時判定</title>
+    <meta name="description" content="口袋學院物語（名門ポケット学院／Pocket Academy ZERO）免費線上佈局模擬器：擺放設施即時判定成立哪些人氣景點（三種設施落在 4×4 範圍內），並提示還差哪個設施，規劃初代校園最佳擺法。">
+    <meta name="keywords" content="口袋學院物語,佈局模擬器,人氣景點,4x4,名門ポケット学院,Pocket Academy ZERO,開羅遊戲">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://ploglin.github.io/kairosoft/school1/sim/">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏫</text></svg>">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="口袋學院物語 佈局模擬器｜人氣景點 4×4 即時判定">
+    <meta property="og:description" content="擺放設施即時判定人氣景點、提示差一步的設施，規劃初代校園最佳擺法。">
+    <meta property="og:locale" content="zh_TW">
+    <meta property="og:url" content="https://ploglin.github.io/kairosoft/school1/sim/">
+    <meta name="twitter:card" content="summary">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../../assets/shell.css">
+</head>
+<body>
+    <main class="container">
+        <h1 style="font-size:clamp(22px,3.5vw,30px);font-weight:900;margin:14px 0 2px">口袋學院物語 佈局模擬器</h1>
+        <p style="color:var(--ink-soft);margin:6px 0 14px">擺放設施即時判定成立哪些<strong>人氣景點</strong>（三種指定設施落在同一個 <strong>4×4 範圍</strong>內），右側提示<strong>差一步就成立</strong>的景點。資料取自本站
+            <a href="../db/spots/">人氣景點資料庫</a>；玩法見 <a href="../">口袋學院物語攻略</a>。<br>
+            <small style="color:var(--muted)">※ 初代 12 組景點；坡道在遊戲中由高低差自動生成，此模擬器可直接擺放作為規劃輔助。</small></p>
+        <div id="simApp"></div>
+    </main>
+
+    <script src="../db/data.js"></script>
+    <script src="../../../assets/sim.js"></script>
+    <script>
+        SimEngine.mount({
+            category: 'spots', nameCol: 0, reqCol: 1, reqSep: '・',
+            bonuses: [{ i: 2, label: '' }],
+            rule: { type: 'window', size: 4 },
+            ruleText: '三種設施落在同一個 4×4 範圍內'
+        });
+    </script>
+    <script src="../../../assets/shell.js"></script>
+    <script>Shell.mount({ page: 'sim', game: { id: 'school1', type: 'simulator' }, breadcrumb: [{ t: '口袋學院物語', href: '../' }, { t: '佈局模擬器' }] });</script>
+</body>
+</html>
