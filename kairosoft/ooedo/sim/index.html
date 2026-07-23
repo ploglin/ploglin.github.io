@@ -43,6 +43,13 @@
         .cell:hover { outline: 2px solid var(--brand); outline-offset: -2px; z-index: 1; }
         .cell.filled { color: #fff; }
         .cell.in-combo { box-shadow: inset 0 0 0 2px var(--accent); }
+        .cell.suggest { outline: 2px dashed var(--brand); outline-offset: -2px; }
+        .cell.suggest:not(.filled) { background: var(--brand-soft); }
+        .nm-list { list-style: none; margin: 6px 0 0; padding: 0; max-height: 300px; overflow-y: auto; }
+        .nm-list li { padding: 6px 8px; border-radius: 7px; font-size: 12.5px; cursor: pointer; display: flex; justify-content: space-between; gap: 6px; align-items: center; }
+        .nm-list li:hover { background: var(--brand-soft); }
+        .nm-miss { color: var(--brand-strong); font-weight: 900; }
+        .nm-list .bo { color: var(--muted); font-size: 11.5px; white-space: nowrap; }
 
         .stat-row { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; border-bottom: 1px dashed var(--line); }
         .stat-row b { color: var(--brand-strong); }
@@ -86,6 +93,10 @@
                 <div class="stat-row"><span>價格加成合計</span><b id="stPrice">+0%</b></div>
                 <ul class="combo-list" id="comboList"></ul>
                 <p class="empty-hint" id="comboEmpty">尚未成立任何小巷。試著把一組小巷的建築擺在彼此 3 格內。</p>
+
+                <h3 style="margin-top:16px">🔧 差一步就成立</h3>
+                <p class="empty-hint" id="nmHint" style="margin:2px 0 0">點項目會自動幫你選取「還差的建築」，格線也會標出可放的位置（藍框）。</p>
+                <ul class="nm-list" id="nmList"></ul>
             </div>
         </div>
     </main>
@@ -175,6 +186,7 @@
                     current = name; erase = false;
                     document.getElementById('eraseBtn').classList.remove('on');
                     renderPalette(document.getElementById('palSearch').value.trim());
+                    updateSuggestions();
                 });
                 palList.appendChild(d);
             });
@@ -230,17 +242,16 @@
         }
         function cheb(a, b) { return Math.max(Math.abs(a[0] - b[0]), Math.abs(a[1] - b[1])); }
 
-        // 回傳：若成立，回傳參與格陣列；否則 null。要求各 slot 挑不同格、兩兩距離 ≤3。
-        function comboActive(cb) {
-            var slots = cb.slots, n = slots.length;
-            var cand = slots.map(function (s) { return candidates(s); });
+        // 嘗試把一組 slot 各挑不同格、兩兩距離 ≤3；成功回傳參與格，失敗 null。
+        function fillSlots(slotList) {
+            var n = slotList.length;
+            var cand = slotList.map(function (s) { return candidates(s); });
             for (var i = 0; i < n; i++) if (!cand[i].length) return null;
             var pick = [];
-            function key(rc) { return rc[0] + ',' + rc[1]; }
             function bt(i, used) {
                 if (i === n) return true;
                 for (var k = 0; k < cand[i].length; k++) {
-                    var rc = cand[i][k], kk = key(rc);
+                    var rc = cand[i][k], kk = rc[0] + ',' + rc[1];
                     if (used[kk]) continue;
                     var ok = true;
                     for (var j = 0; j < i; j++) if (cheb(rc, pick[j]) > 3) { ok = false; break; }
@@ -252,6 +263,25 @@
                 return false;
             }
             return bt(0, {}) ? pick.slice() : null;
+        }
+        function comboActive(cb) { return fillSlots(cb.slots); }
+        // 差一步：其餘 slot 已可成立、只缺一個 → 回傳 {missing, cluster(其餘的格)}
+        function comboNearMiss(cb) {
+            if (comboActive(cb)) return null;
+            for (var i = 0; i < cb.slots.length; i++) {
+                var sub = cb.slots.slice(0, i).concat(cb.slots.slice(i + 1));
+                if (!sub.length) continue;
+                var cells = fillSlots(sub);
+                if (cells) return { missing: cb.slots[i], cluster: cells };
+            }
+            return null;
+        }
+        // 目前選取的建築能否補上這個缺口
+        function canFill(missing) {
+            if (!current || erase) return false;
+            if (missing === current) return true;
+            if (missing === '自然物' && isNature(current)) return true;
+            return false;
         }
 
         function num(s) { return parseInt(String(s).replace(/[^0-9\-]/g, ''), 10) || 0; }
@@ -283,16 +313,71 @@
                 li.addEventListener('mouseleave', function () { clearHi(); });
                 comboListEl.appendChild(li);
             });
+            renderNearMiss();
+            updateSuggestions();
             if (window.Shell) Shell.track('sim_update', { active: active.length, yield: ty });
+        }
+
+        var nmListEl = document.getElementById('nmList');
+        var nmHint = document.getElementById('nmHint');
+        function renderNearMiss() {
+            var items = [];
+            combos.forEach(function (cb) {
+                var nm = comboNearMiss(cb);
+                if (nm) items.push({ cb: cb, missing: nm.missing, cluster: nm.cluster });
+            });
+            items.sort(function (a, b) { return num(b.cb.yield) - num(a.cb.yield); });
+            items = items.slice(0, 14);
+            nmListEl.innerHTML = '';
+            nmHint.style.display = items.length ? 'block' : 'none';
+            if (!items.length) {
+                nmListEl.innerHTML = '<li class="empty-hint" style="cursor:default">目前沒有「差一步」的小巷，多擺幾個建築試試。</li>';
+                return;
+            }
+            items.forEach(function (o) {
+                var li = document.createElement('li');
+                li.innerHTML = '<span><b>' + o.cb.name + '</b>　還差 <span class="nm-miss">' + o.missing + '</span></span>' +
+                    '<span class="bo">石高' + o.cb.yield + '</span>';
+                li.addEventListener('mouseenter', function () { highlight(o.cluster); });
+                li.addEventListener('mouseleave', function () { clearHi(); });
+                li.addEventListener('click', function () {
+                    current = o.missing; erase = false;
+                    document.getElementById('eraseBtn').classList.remove('on');
+                    renderPalette(document.getElementById('palSearch').value.trim());
+                    updateSuggestions();
+                    if (window.Shell) Shell.track('sim_pick_missing', { combo: o.cb.name, missing: o.missing });
+                });
+                nmListEl.appendChild(li);
+            });
         }
         function highlight(set) { set.forEach(function (rc) { cells[rc[0]][rc[1]].classList.add('in-combo'); }); }
         function clearHi() { for (var r = 0; r < ROWS; r++) for (var c = 0; c < COLS; c++) cells[r][c].classList.remove('in-combo'); }
+        // 放置建議：目前選取的建築放在哪些空格能「補完某個差一步的小巷」→ 藍框
+        function updateSuggestions() {
+            for (var r = 0; r < ROWS; r++) for (var c = 0; c < COLS; c++) cells[r][c].classList.remove('suggest');
+            if (!current || erase) return;
+            var regions = [];
+            combos.forEach(function (cb) {
+                var nm = comboNearMiss(cb);
+                if (nm && canFill(nm.missing)) regions.push(nm.cluster);
+            });
+            if (!regions.length) return;
+            for (var r2 = 0; r2 < ROWS; r2++) for (var c2 = 0; c2 < COLS; c2++) {
+                if (grid[r2][c2]) continue;
+                for (var k = 0; k < regions.length; k++) {
+                    var ok = true;
+                    for (var m = 0; m < regions[k].length; m++) if (cheb([r2, c2], regions[k][m]) > 3) { ok = false; break; }
+                    if (ok) { cells[r2][c2].classList.add('suggest'); break; }
+                }
+            }
+        }
 
         // ---- 工具鈕 ----
         document.getElementById('eraseBtn').addEventListener('click', function () {
             erase = !erase; current = null;
             this.classList.toggle('on', erase);
             renderPalette(document.getElementById('palSearch').value.trim());
+            updateSuggestions();
         });
         document.getElementById('clearBtn').addEventListener('click', function () {
             if (!confirm('清空整張圖？')) return;
