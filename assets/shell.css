@@ -27,8 +27,9 @@
     --step: 8px;
 }
 
+/* 深色變數（供系統自動 與 手動 data-theme="dark" 共用） */
 @media (prefers-color-scheme: dark) {
-    :root {
+    :root:not([data-theme="light"]) {
         --brand: #4cc38a;
         --brand-strong: #6bd39f;
         --brand-soft: #16281f;
@@ -43,6 +44,21 @@
         --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .35);
         --shadow-hover: 0 4px 8px rgba(0, 0, 0, .4), 0 16px 40px rgba(0, 0, 0, .5);
     }
+}
+:root[data-theme="dark"] {
+    --brand: #4cc38a;
+    --brand-strong: #6bd39f;
+    --brand-soft: #16281f;
+    --accent: #ffc558;
+    --ink: #e8f0eb;
+    --ink-soft: #b3c3ba;
+    --muted: #82968c;
+    --line: #23342b;
+    --bg: #0e1613;
+    --card: #16211c;
+    --card-2: #131d18;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .35);
+    --shadow-hover: 0 4px 8px rgba(0, 0, 0, .4), 0 16px 40px rgba(0, 0, 0, .5);
 }
 
 /* ---------- 基礎 ---------- */
@@ -119,6 +135,8 @@ img { max-width: 100%; height: auto; }
 }
 .site-nav a:hover { background: var(--brand-soft); color: var(--brand-strong); text-decoration: none; }
 .site-nav a.active { color: var(--brand-strong); background: var(--brand-soft); }
+.theme-btn { margin-left: 4px; width: 34px; height: 34px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--ink); font-size: 15px; cursor: pointer; display: grid; place-items: center; line-height: 1; flex-shrink: 0; }
+.theme-btn:hover { background: var(--brand-soft); }
 
 /* ---------- 麵包屑 ---------- */
 .breadcrumb {

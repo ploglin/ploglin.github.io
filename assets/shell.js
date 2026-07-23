@@ -30,6 +30,30 @@
 
     function href(path) { return Shell.root + path; }
 
+    /* ---------- 深/淺色（手動覆蓋系統，記在 localStorage） ---------- */
+    function currentTheme() {
+        var t = document.documentElement.getAttribute('data-theme');
+        if (t === 'dark' || t === 'light') return t;
+        return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+    }
+    function applyTheme() {
+        var t = null;
+        try { t = localStorage.getItem('kairo_theme'); } catch (e) { }
+        if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
+    }
+    function updateThemeBtn() {
+        var b = document.getElementById('themeBtn');
+        if (b) { var dark = currentTheme() === 'dark'; b.textContent = dark ? '☀️' : '🌙'; b.title = dark ? '切換為淺色' : '切換為深色'; }
+    }
+    Shell.toggleTheme = function () {
+        var next = currentTheme() === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        try { localStorage.setItem('kairo_theme', next); } catch (e) { }
+        updateThemeBtn();
+        if (window.Shell && Shell.track) Shell.track('theme_toggle', { theme: next });
+    };
+    applyTheme();
+
     /* ---------- GA4 ---------- */
     function ensureGtag() {
         if (window.__gtagLoaded) return;
@@ -91,6 +115,7 @@
             '<a class="site-logo" href="' + href('index.html') + '">' +
             '<span class="mark">🕹️</span><span>' + SITE + '</span></a>' +
             '<nav class="site-nav">' + links + '</nav>' +
+            '<button class="theme-btn" id="themeBtn" type="button" aria-label="切換深淺色">🌙</button>' +
             '</div>';
         return el;
     }
@@ -150,6 +175,9 @@
         // header 置於 body 最前
         var header = buildHeader(opts.page || (Shell.game ? 'guide' : 'home'));
         document.body.insertBefore(header, document.body.firstChild);
+        var tb = document.getElementById('themeBtn');
+        if (tb) tb.addEventListener('click', Shell.toggleTheme);
+        updateThemeBtn();
 
         // 麵包屑（緊接 header 後）
         var bc = buildBreadcrumb(opts.breadcrumb);
