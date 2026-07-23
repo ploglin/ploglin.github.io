@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>開羅攻略站｜Kairosoft 開羅遊戲繁體中文攻略與模擬器</title>
+    <meta name="description" content="開羅遊戲（カイロソフト／Kairosoft）繁體中文攻略站：口袋學院物語2 佈局模擬器、大江戶物語、遊戲發展國++ 等作品的攻略、combo 組合表與互動模擬器，整理自官方與社群資料。">
+    <meta name="keywords" content="開羅遊戲,Kairosoft,カイロソフト,攻略,模擬器,口袋學院物語2,大江戶物語,遊戲發展國,combo,繁體中文">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://ploglin.github.io/">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕹️</text></svg>">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="開羅攻略站｜Kairosoft 開羅遊戲繁體中文攻略與模擬器">
+    <meta property="og:description" content="開羅遊戲繁體中文攻略、combo 組合表與互動模擬器，一站整理。">
+    <meta property="og:locale" content="zh_TW">
+    <meta property="og:url" content="https://ploglin.github.io/">
+    <meta property="og:site_name" content="開羅攻略站">
+    <meta name="twitter:card" content="summary">
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "開羅攻略站",
+        "alternateName": "Kairo Guide",
+        "url": "https://ploglin.github.io/",
+        "description": "開羅遊戲（Kairosoft）繁體中文攻略與互動模擬器彙整站。",
+        "inLanguage": "zh-Hant"
+    }
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/shell.css">
+</head>
+<body>
+    <noscript>開羅攻略站：Kairosoft 開羅遊戲的繁體中文攻略與模擬器。啟用 JavaScript 以瀏覽完整遊戲清單。</noscript>
+
+    <section class="hero">
+        <div class="container">
+            <span class="pill">繁體中文 · 非官方粉絲攻略</span>
+            <h1>開羅遊戲攻略站</h1>
+            <p>把 Kairosoft（カイロソフト）各作的攻略、combo 組合表與互動模擬器，一站整理成好查好用的繁體中文資源。</p>
+        </div>
+    </section>
+
+    <main class="container">
+        <!-- 精選 -->
+        <section class="section" id="featured">
+            <div class="section-head">
+                <h2>🌟 精選攻略</h2>
+            </div>
+            <div class="card-grid" id="featuredGrid"></div>
+        </section>
+
+        <div class="ad-slot" aria-hidden="true">廣告位（AdSense 核准後啟用）</div>
+
+        <!-- 模擬器 -->
+        <section class="section" id="simulators">
+            <div class="section-head">
+                <h2>🧩 互動模擬器</h2>
+            </div>
+            <div class="card-grid" id="simGrid"></div>
+        </section>
+
+        <!-- 攻略/資料庫 -->
+        <section class="section" id="guides">
+            <div class="section-head">
+                <h2>📖 攻略與資料表</h2>
+            </div>
+            <div class="card-grid" id="guideGrid"></div>
+        </section>
+
+        <!-- 全部（含即將推出） -->
+        <section class="section" id="all">
+            <div class="section-head">
+                <h2>🗂️ 全部遊戲</h2>
+                <span class="more" style="color:var(--muted)">持續增加中</span>
+            </div>
+            <div class="card-grid" id="allGrid"></div>
+        </section>
+    </main>
+
+    <script src="assets/games-index.js"></script>
+    <script>
+        (function () {
+            var GAMES = window.GAMES || [];
+
+            function card(g) {
+                var live = g.status === 'live';
+                var tags = (g.tags || []).map(function (t) {
+                    return '<span class="tag ' + t[0] + '">' + t[1] + '</span>';
+                }).join('');
+                if (!live) tags += '<span class="tag soon">即將推出</span>';
+
+                var inner =
+                    '<div class="cover" style="--accent-bg:' + (g.accent || '') + '">' + (g.emoji || '🎮') + '</div>' +
+                    '<div class="body">' +
+                    '<div class="title">' + g.title + '</div>' +
+                    '<div class="jp">' + (g.jp || '') + (g.en ? '　·　' + g.en : '') + '</div>' +
+                    '<div class="desc">' + (g.desc || '') + '</div>' +
+                    '<div class="tags">' + tags + '</div>' +
+                    '</div>';
+
+                if (live) {
+                    var a = document.createElement('a');
+                    a.className = 'game-card';
+                    a.href = g.slug;
+                    a.innerHTML = inner;
+                    a.addEventListener('click', function () {
+                        if (window.Shell) Shell.track('open_game', { target_game: g.id, game_type_target: g.type });
+                    });
+                    return a;
+                }
+                var d = document.createElement('div');
+                d.className = 'game-card soon';
+                d.innerHTML = inner;
+                return d;
+            }
+
+            function fill(id, list) {
+                var el = document.getElementById(id);
+                if (!el) return;
+                if (!list.length) { el.parentNode.style.display = 'none'; return; }
+                list.forEach(function (g) { el.appendChild(card(g)); });
+            }
+
+            fill('featuredGrid', GAMES.filter(function (g) { return g.featured; }));
+            fill('simGrid', GAMES.filter(function (g) { return g.type === 'simulator'; }));
+            fill('guideGrid', GAMES.filter(function (g) { return g.type === 'guide' || g.type === 'database'; }));
+            fill('allGrid', GAMES);
+        })();
+    </script>
+    <script src="assets/shell.js"></script>
+    <script>Shell.mount({ page: 'home' });</script>
+</body>
+</html>

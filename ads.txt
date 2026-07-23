@@ -1,0 +1,5 @@
+# ads.txt — 廣告銷售授權宣告 (IAB)
+# 待 Google AdSense 核准後，將下列範例改成你的實際 publisher ID：
+# google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0
+#
+# 目前尚未啟用廣告，此檔為佔位。
