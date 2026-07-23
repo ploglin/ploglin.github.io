@@ -36,8 +36,8 @@ window.GAMES = [
 
     /* ---- 攻略／資料表（陸續擴充） ---- */
     { id: 'hotspring', slug: 'kairosoft/hotspring/', title: '溫泉物語', jp: 'ゆけむり温泉郷', en: 'Hot Springs Story', emoji: '♨️', accent: '#e9f4f6', status: 'live', type: 'guide', tags: [['guide', '攻略'], ['combo', '相性 combo']], desc: '溫泉旅館攻略：設施相性 combo、景色與泡湯衝人氣。' },
-    { id: 'mega-mall2', slug: 'kairosoft/mega-mall2/', title: '都市大亨物語2', jp: 'メガモール物語2', en: 'Mega Mall Story 2', emoji: '🛍️', accent: '#f3e9ff', status: 'live', type: 'database', tags: [['guide', '攻略'], ['combo', '樓層 combo']], desc: '百貨商場攻略：樓層＋貼合三件套 combo 43 組全表。' },
-    { id: 'dream-town', slug: 'kairosoft/dream-town/', title: '夢想小鎮', jp: '夢おこ町ドリームタウン', en: 'Dream Town Story', emoji: '🏘️', accent: '#e9f0ff', status: 'live', type: 'database', tags: [['guide', '攻略'], ['combo', 'combo 城建']], desc: '城鎮建設攻略：相鄰 combo 精選表（全 184 組）與地價衝分。' },
+    { id: 'mega-mall2', slug: 'kairosoft/mega-mall2/', title: '都市大亨物語2', jp: 'メガモール物語2', en: 'Mega Mall Story 2', emoji: '🛍️', accent: '#f3e9ff', status: 'live', type: 'database', sim: true, tags: [['sim', '模擬器'], ['combo', '樓層 combo']], desc: '百貨商場攻略：樓層＋貼合三件套 combo 43 組全表。' },
+    { id: 'dream-town', slug: 'kairosoft/dream-town/', title: '夢想小鎮', jp: '夢おこ町ドリームタウン', en: 'Dream Town Story', emoji: '🏘️', accent: '#e9f0ff', status: 'live', type: 'database', sim: true, tags: [['sim', '模擬器'], ['combo', 'combo 城建']], desc: '城鎮建設攻略：相鄰 combo 精選表（全 184 組）與地價衝分。' },
     { id: 'dream-park', slug: 'kairosoft/dream-park/', title: '遊樂園夢物語', jp: 'ゆうえんち', en: 'Dream Park Story', emoji: '🎡', accent: '#ffeef2', status: 'live', type: 'guide', tags: [['guide', '攻略']], desc: '遊樂園攻略：裝飾加成、主題區域與衝人氣佈局。' },
     { id: 'dungeon-village', slug: 'kairosoft/dungeon-village/', title: '冒險村物語', jp: '冒険ダンジョン村', en: 'Dungeon Village', emoji: '⚔️', accent: '#f1ece2', status: 'live', type: 'guide', tags: [['guide', '攻略']], desc: '冒險村攻略：冒險者轉職養成與維護費控管。' },
     { id: 'ramen', slug: 'kairosoft/ramen/', title: '開羅拉麵店物語', jp: '大繁盛！ラーメン', en: 'The Ramen Sensei', emoji: '🍜', accent: '#fdeee0', status: 'live', type: 'database', tags: [['guide', '攻略'], ['combo', '配方表']], desc: '拉麵攻略：麵湯相性、湯頭 combo 與配料練級。' },
