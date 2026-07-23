@@ -332,21 +332,18 @@ table.data tbody tr:last-child td { border-bottom: none; }
     border: 1px solid var(--line); border-radius: 10px; background: var(--card); color: var(--ink-soft); cursor: pointer;
 }
 .db-cmp-btn.on { background: var(--brand); color: #fff; border-color: var(--brand); }
-.db-selcol { width: 32px; text-align: center; color: var(--brand-strong); font-weight: 900; }
-.db-selrow { cursor: pointer; }
-.db-selrow:hover td { background: var(--brand-soft); }
-.db-selrow.sel td { background: var(--brand-soft); }
-.db-cmp-panel {
-    position: sticky; top: 56px; z-index: 20;
-    border: 1px solid color-mix(in srgb, var(--brand) 40%, var(--line)); border-radius: var(--radius);
-    background: var(--card); padding: 12px; margin: 10px 0 14px;
-    max-height: 48vh; overflow: auto; box-shadow: var(--shadow-hover);
+/* 比較模式：晶片雲挑選 + 並排比較表 */
+.db-chipcloud { display: flex; flex-wrap: wrap; gap: 7px; margin: 8px 0 14px; }
+.db-pick {
+    font: inherit; font-size: 13px; font-weight: 700; padding: 6px 12px; border-radius: 999px;
+    border: 1px solid var(--line); background: var(--card); color: var(--ink-soft); cursor: pointer;
 }
-.db-cmp-head { font-weight: 900; font-size: 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.db-cmp-chip { display: inline-flex; align-items: center; gap: 3px; font-size: 12px; font-weight: 800; padding: 2px 9px; border-radius: 999px; background: var(--brand-soft); color: var(--brand-strong); cursor: pointer; }
-.db-cmp-chip b { color: var(--muted); font-weight: 900; }
-.db-cmp-chip:hover { background: var(--card-2); }
-.db-cmp-clear { font: inherit; font-size: 12px; font-weight: 700; padding: 3px 10px; border: 1px solid var(--line); border-radius: 7px; background: var(--card-2); color: var(--ink-soft); cursor: pointer; margin-left: auto; }
+.db-pick:hover { background: var(--brand-soft); color: var(--brand-strong); }
+.db-pick.on { background: var(--brand); color: #fff; border-color: var(--brand); }
+.db-cmp-bar { display: flex; align-items: center; gap: 12px; margin: 6px 0 8px; font-size: 14px; }
+.db-cmp-clear { font: inherit; font-size: 12px; font-weight: 700; padding: 3px 12px; border: 1px solid var(--line); border-radius: 7px; background: var(--card-2); color: var(--ink-soft); cursor: pointer; }
+.db-cmp-table th:first-child { position: sticky; left: 0; background: var(--card-2); text-align: left; z-index: 1; }
+.db-cmp-table thead th { background: var(--brand-soft); }
 .db-cmp-max { color: var(--brand-strong); font-weight: 900; background: color-mix(in srgb, var(--accent) 22%, transparent); }
 .db-search:focus { outline: 2px solid var(--brand); border-color: var(--brand); }
 .db-cnt { font-size: 13px; color: var(--muted); margin: 4px 0 2px; }
