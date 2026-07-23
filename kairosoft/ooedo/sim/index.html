@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>大江戶物語 佈局模擬器｜小巷 combo 即時判定</title>
-    <meta name="description" content="大江戶物語（大江戸タウンズ／Oh! Edo Towns）免費線上佈局模擬器：擺放建築即時判定成立哪些小巷 combo，累計石高與商品價格加成，並提示還差哪個建築，規劃你的城下町最佳擺法。">
-    <meta name="keywords" content="大江戶物語,佈局模擬器,小巷,combo,擺法,大江戸タウンズ,Oh! Edo Towns,開羅遊戲">
+    <title>大江戶物語 佈局模擬器｜多格建築 · 小巷 combo 即時判定</title>
+    <meta name="description" content="大江戶物語（大江戸タウンズ／Oh! Edo Towns）免費線上佈局模擬器：多格建築擺放、等角視角、即時判定成立哪些小巷 combo、累計石高與商品價格加成，並提示還差哪個建築，規劃你的城下町最佳擺法。">
+    <meta name="keywords" content="大江戶物語,佈局模擬器,小巷,combo,多格建築,等角,大江戸タウンズ,Oh! Edo Towns,開羅遊戲">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://ploglin.github.io/kairosoft/ooedo/sim/">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏯</text></svg>">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="大江戶物語 佈局模擬器｜小巷 combo 即時判定">
-    <meta property="og:description" content="擺放建築即時判定小巷 combo、累計石高與價格加成、提示差一步的建築。">
+    <meta property="og:title" content="大江戶物語 佈局模擬器｜多格建築 · 小巷 combo 即時判定">
+    <meta property="og:description" content="多格建築、等角視角、即時判定小巷 combo、累計加成、提示差一步的建築。">
     <meta property="og:locale" content="zh_TW">
     <meta property="og:url" content="https://ploglin.github.io/kairosoft/ooedo/sim/">
     <meta name="twitter:card" content="summary">
@@ -21,18 +21,20 @@
 <body>
     <main class="container">
         <h1 style="font-size:clamp(22px,3.5vw,30px);font-weight:900;margin:14px 0 2px">大江戶物語 佈局模擬器</h1>
-        <p style="color:var(--ink-soft);margin:6px 0 14px">在格子上擺建築，即時判定成立哪些<strong>小巷 combo</strong>（成員彼此 3 格內），累計石高與商品價格加成，右側還會提示<strong>差一步就成立</strong>的小巷。資料取自本站
-            <a href="../db/combos/">小巷 combo 資料庫</a>；玩法見 <a href="../">大江戶物語攻略</a>。</p>
+        <p style="color:var(--ink-soft);margin:6px 0 14px">擺放建築（大型建築佔多格），即時判定成立哪些<strong>小巷 combo</strong>（成員彼此 3 格內），累計石高與商品價格加成；右側提示<strong>差一步就成立</strong>的小巷，可切換 <strong>◆ 等角視角</strong>。資料取自本站
+            <a href="../db/combos/">小巷 combo 資料庫</a>；玩法見 <a href="../">大江戶物語攻略</a>。<br>
+            <small style="color:var(--muted)">※ 建築佔地尺寸多為依 wiki 慣例推測（多數 1×1、地標 2×2、主城 3×3），供規劃參考。</small></p>
         <div id="simApp"></div>
     </main>
 
     <script src="../db/data.js"></script>
-    <script src="../../../assets/sim.js"></script>
+    <script src="./buildings.js"></script>
+    <script src="../../../assets/sim2.js"></script>
     <script>
-        SimEngine.mount({
-            category: 'combos', nameCol: 0, reqCol: 4, reqSep: '・',
+        SimEngine2.mount({
+            category: 'combos', nameCol: 0, reqCol: 4, reqSep: '・', nature: '自然物',
             bonuses: [{ i: 2, label: '石高', sum: true, suffix: '%' }, { i: 3, label: '價格', sum: true, suffix: '%' }],
-            dist: 3, ruleText: '同組建築彼此 3 格內', nature: '自然物'
+            dist: 3, ruleText: '同組建築彼此 3 格內', rows: 18, cols: 18
         });
     </script>
     <script src="../../../assets/shell.js"></script>

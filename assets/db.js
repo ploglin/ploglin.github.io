@@ -80,6 +80,12 @@
         var sort = { i: -1, dir: 1 };
         var compareMode = false, selected = [];
 
+        function toggle(i) {
+            var p = selected.indexOf(i);
+            if (p < 0) selected.push(i); else selected.splice(p, 1);
+            render(); renderCompare();
+        }
+
         function render() {
             var kw = (inp.value || '').trim().toLowerCase();
             var idx = [];
@@ -95,24 +101,16 @@
             }
             tbody.innerHTML = '';
             idx.forEach(function (i) {
-                var tr = el('tr');
+                var isSel = selected.indexOf(i) >= 0;
+                var tr = el('tr', compareMode ? ('db-selrow' + (isSel ? ' sel' : '')) : null);
                 if (compareMode) {
-                    var td = el('td', 'db-selcol');
-                    var cb = document.createElement('input');
-                    cb.type = 'checkbox';
-                    cb.checked = selected.indexOf(i) >= 0;
-                    cb.addEventListener('change', function () {
-                        var p = selected.indexOf(i);
-                        if (cb.checked) { if (p < 0) selected.push(i); } else if (p >= 0) selected.splice(p, 1);
-                        renderCompare();
-                    });
-                    td.appendChild(cb);
-                    tr.appendChild(td);
+                    tr.appendChild(el('td', 'db-selcol', isSel ? '✓' : ''));
+                    tr.addEventListener('click', function () { toggle(i); });
                 }
                 cat.rows[i].forEach(function (c) { tr.appendChild(el('td', null, c == null ? '' : c)); });
                 tbody.appendChild(tr);
             });
-            cnt.textContent = '共 ' + idx.length + ' / ' + cat.rows.length + ' 筆' + (compareMode ? '　（勾選要比較的項目）' : '');
+            cnt.textContent = '共 ' + idx.length + ' / ' + cat.rows.length + ' 筆' + (compareMode ? '　（點列即可加入比較）' : '');
             if (!idx.length) {
                 tbody.innerHTML = '<tr><td colspan="' + (cat.columns.length + (compareMode ? 1 : 0)) + '" style="text-align:center;color:var(--muted);padding:22px">找不到符合的資料</td></tr>';
             }
@@ -124,7 +122,9 @@
         function renderCompare() {
             if (!compareMode || !selected.length) { cmpPanel.style.display = 'none'; cmpPanel.innerHTML = ''; return; }
             cmpPanel.style.display = 'block';
-            var h = '<div class="db-cmp-head">⚖️ 比較（' + selected.length + ' 項）<button type="button" class="db-cmp-clear">清除</button></div>';
+            var h = '<div class="db-cmp-head">⚖️ 比較（' + selected.length + '）';
+            selected.forEach(function (i) { h += '<span class="db-cmp-chip" data-i="' + i + '">' + (cat.rows[i][0] == null ? '' : cat.rows[i][0]) + ' <b>×</b></span>'; });
+            h += '<button type="button" class="db-cmp-clear">清除全部</button></div>';
             h += '<div class="table-wrap"><table class="data"><thead><tr><th>項目</th>';
             selected.forEach(function (i) { h += '<th>' + (cat.rows[i][0] == null ? '' : cat.rows[i][0]) + '</th>'; });
             h += '</tr></thead><tbody>';
@@ -143,6 +143,13 @@
             h += '</tbody></table></div>';
             cmpPanel.innerHTML = h;
             cmpPanel.querySelector('.db-cmp-clear').addEventListener('click', function () { selected = []; render(); renderCompare(); });
+            cmpPanel.querySelectorAll('.db-cmp-chip').forEach(function (ch) {
+                ch.addEventListener('click', function () {
+                    var i = +ch.getAttribute('data-i'), p = selected.indexOf(i);
+                    if (p >= 0) selected.splice(p, 1);
+                    render(); renderCompare();
+                });
+            });
         }
 
         cmpBtn.addEventListener('click', function () {
