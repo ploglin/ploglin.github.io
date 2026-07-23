@@ -227,15 +227,10 @@ img { max-width: 100%; height: auto; }
     color: var(--brand-strong);
     white-space: nowrap;
 }
-.tag.sim { background: #e9f0ff; color: #2954b8; }
-.tag.guide { background: #fff2e0; color: #b5701a; }
-.tag.combo { background: #f0e9ff; color: #6a41c0; }
+.tag.sim { background: color-mix(in srgb, #3b6fd0 16%, var(--card)); color: #4d7fd8; }
+.tag.guide { background: color-mix(in srgb, #d98a1a 16%, var(--card)); color: #c98420; }
+.tag.combo { background: color-mix(in srgb, #7a52d0 16%, var(--card)); color: #9070e0; }
 .tag.soon { background: var(--line); color: var(--muted); }
-@media (prefers-color-scheme: dark) {
-    .tag.sim { background: #1b2740; color: #8fb0ff; }
-    .tag.guide { background: #33260f; color: #ffc558; }
-    .tag.combo { background: #241b3a; color: #b79bf0; }
-}
 
 /* ---------- 攻略文章版型 ---------- */
 .article { padding: 8px 0 48px; }
@@ -263,12 +258,8 @@ img { max-width: 100%; height: auto; }
 .callout { border-radius: var(--radius-sm); padding: 13px 16px; margin: 18px 0; font-size: 14.5px; border: 1px solid var(--line); background: var(--card-2); }
 .callout .k { font-weight: 900; margin-right: 6px; }
 .callout.tip { border-color: color-mix(in srgb, var(--brand) 35%, var(--line)); background: var(--brand-soft); }
-.callout.warn { border-color: #f0c98a; background: #fff6e8; }
-.callout.key { border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); background: #fff9ee; }
-@media (prefers-color-scheme: dark) {
-    .callout.warn { border-color: #5c451c; background: #241a0c; }
-    .callout.key { border-color: #5a4a20; background: #1f1a0e; }
-}
+.callout.warn { border-color: color-mix(in srgb, #e0a020 45%, var(--line)); background: color-mix(in srgb, #f5a623 14%, var(--card)); }
+.callout.key { border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); background: color-mix(in srgb, var(--accent) 15%, var(--card)); }
 
 /* 資料表 */
 .table-wrap { overflow-x: auto; margin: 18px 0; border: 1px solid var(--line); border-radius: var(--radius-sm); }
