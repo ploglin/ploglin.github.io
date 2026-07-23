@@ -2,7 +2,7 @@
 // 用法：node scripts/check.js（全部 PASS 才算改完）
 const fs = require('fs');
 const path = require('path');
-const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+const html = fs.readFileSync(path.join(__dirname, '..', 'sim', 'index.html'), 'utf8');
 
 let fails = 0;
 const ok = (name, pass, detail) => {

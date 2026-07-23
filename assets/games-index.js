@@ -10,16 +10,16 @@ window.GAMES = [
         id: 'school2', slug: 'kairosoft/school2/',
         title: '口袋學院物語2', jp: '名門ポケット学院2', en: 'Pocket Academy 2',
         emoji: '🏫', accent: '#e6f4ec',
-        status: 'live', type: 'simulator',
+        status: 'live', type: 'simulator', sim: true,
         tags: [['sim', '模擬器'], ['combo', '景點 combo'], ['guide', '攻略']],
-        desc: '校園佈局模擬器：29 種人氣景點自動判定、放置建議、發展指南與攻略手冊。',
+        desc: '校園佈局攻略＋模擬器：29 種人氣景點自動判定、放置建議、發展指南與資料庫。',
         featured: true
     },
     {
         id: 'ooedo', slug: 'kairosoft/ooedo/',
         title: '大江戶物語', jp: '大江戸タウンズ', en: 'Oh! Edo Towns',
         emoji: '🏯', accent: '#fdeee0',
-        status: 'live', type: 'guide',
+        status: 'live', type: 'guide', sim: true,
         tags: [['sim', '模擬器'], ['guide', '攻略'], ['combo', '相鄰 combo']],
         desc: '江戶城下町建設攻略：46 種小巷 combo、佈局模擬器、資料庫與衝石高技巧。',
         featured: true

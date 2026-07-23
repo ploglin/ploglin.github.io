@@ -34,6 +34,8 @@
     function ensureGtag() {
         if (window.__gtagLoaded) return;
         window.__gtagLoaded = true;
+        // 若頁面已靜態載入 gtag（例如首頁 <head>），不重複初始化，避免重複計數
+        if (document.querySelector('script[src*="googletagmanager.com/gtag/js"]')) return;
         window.dataLayer = window.dataLayer || [];
         window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
         var s = document.createElement('script');

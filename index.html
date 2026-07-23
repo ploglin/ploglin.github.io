@@ -30,6 +30,15 @@
     }
     </script>
 
+    <!-- Google tag (gtag.js) — 靜態放置供 Search Console/爬蟲偵測 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-EL4J27F89B"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-EL4J27F89B');
+    </script>
+    <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5891811504833462" crossorigin="anonymous"></script>
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
@@ -88,11 +97,13 @@
         (function () {
             var GAMES = window.GAMES || [];
 
-            function card(g) {
+            // hrefOverride：模擬器區用來直連 /sim/；badge：額外標籤（如「模擬器」）
+            function card(g, hrefOverride, badge) {
                 var live = g.status === 'live';
                 var tags = (g.tags || []).map(function (t) {
                     return '<span class="tag ' + t[0] + '">' + t[1] + '</span>';
                 }).join('');
+                if (badge) tags = '<span class="tag sim">' + badge + '</span>' + tags;
                 if (!live) tags += '<span class="tag soon">即將推出</span>';
 
                 var inner =
@@ -107,10 +118,10 @@
                 if (live) {
                     var a = document.createElement('a');
                     a.className = 'game-card';
-                    a.href = g.slug;
+                    a.href = hrefOverride || g.slug;
                     a.innerHTML = inner;
                     a.addEventListener('click', function () {
-                        if (window.Shell) Shell.track('open_game', { target_game: g.id, game_type_target: g.type });
+                        if (window.Shell) Shell.track('open_game', { target_game: g.id, game_type_target: hrefOverride ? 'simulator' : g.type });
                     });
                     return a;
                 }
@@ -120,15 +131,17 @@
                 return d;
             }
 
-            function fill(id, list) {
+            function fill(id, list, hrefFn, badge) {
                 var el = document.getElementById(id);
                 if (!el) return;
                 if (!list.length) { el.parentNode.style.display = 'none'; return; }
-                list.forEach(function (g) { el.appendChild(card(g)); });
+                list.forEach(function (g) { el.appendChild(card(g, hrefFn ? hrefFn(g) : null, badge)); });
             }
 
             fill('featuredGrid', GAMES.filter(function (g) { return g.featured; }));
-            fill('simGrid', GAMES.filter(function (g) { return g.type === 'simulator'; }));
+            // 模擬器區：凡有模擬器(sim 或 type=simulator)者，卡片直接連到 /sim/
+            fill('simGrid', GAMES.filter(function (g) { return g.sim || g.type === 'simulator'; }),
+                function (g) { return g.slug + 'sim/'; }, '🧩 佈局模擬器');
             fill('guideGrid', GAMES.filter(function (g) { return g.type === 'guide' || g.type === 'database'; }));
             fill('allGrid', GAMES);
         })();

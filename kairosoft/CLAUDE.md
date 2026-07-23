@@ -62,6 +62,6 @@ window.GAME_DB = {
 rows 為純文字(多值用「／」或「・」分隔，勿放 HTML)。分類頁 assets 路徑為四層 `../../../../`，資料庫索引頁為三層 `../../../`，data.js 於索引為 `./data.js`、於分類頁為 `../data.js`。
 
 ## 相關檔案
-- 範本遊戲：`kairosoft/school2/`(攻略頁 `guide.html`、模擬器 `index.html`、資料庫 `db/`)。
+- 範本遊戲：`kairosoft/school2/`(攻略專頁＝`index.html`、模擬器＝`sim/index.html`、資料庫＝`db/`)。`scripts/check.js` 驗證的是 `sim/index.html`。
 - 版型範本(供 agent 比照)：`kairosoft/hotspring/index.html`。
 - school2 模擬器本身的內部規範見 `kairosoft/school2/CLAUDE.md`。
