@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大江戶物語 佈局模擬器｜小巷 combo 即時判定</title>
+    <meta name="description" content="大江戶物語（大江戸タウンズ／Oh! Edo Towns）免費線上佈局模擬器：擺放建築，即時判定成立哪些小巷 combo，累計石高與商品價格加成，規劃你的城下町最佳擺法。">
+    <meta name="keywords" content="大江戶物語,佈局模擬器,小巷,combo,擺法,大江戸タウンズ,Oh! Edo Towns,開羅遊戲">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://ploglin.github.io/kairosoft/ooedo/sim/">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏯</text></svg>">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="大江戶物語 佈局模擬器｜小巷 combo 即時判定">
+    <meta property="og:description" content="擺放建築即時判定小巷 combo，累計石高與商品價格加成，規劃最佳城下町擺法。">
+    <meta property="og:locale" content="zh_TW">
+    <meta property="og:url" content="https://ploglin.github.io/kairosoft/ooedo/sim/">
+    <meta name="twitter:card" content="summary">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../../assets/shell.css">
+    <style>
+        .sim-lead { color: var(--ink-soft); margin: 6px 0 14px; }
+        .sim-wrap { display: grid; grid-template-columns: 210px 1fr 260px; gap: 16px; align-items: start; }
+        @media (max-width: 900px) { .sim-wrap { grid-template-columns: 1fr; } }
+
+        .sim-panel { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; box-shadow: var(--shadow); }
+        .sim-panel h3 { margin: 0 0 8px; font-size: 14px; font-weight: 900; }
+
+        .pal-search { width: 100%; font: inherit; padding: 7px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--card-2); color: var(--ink); margin-bottom: 8px; }
+        .pal-list { max-height: 420px; overflow-y: auto; display: flex; flex-direction: column; gap: 3px; }
+        @media (max-width: 900px) { .pal-list { max-height: 200px; } }
+        .pal-item { display: flex; justify-content: space-between; align-items: center; gap: 6px; padding: 6px 9px; border-radius: 7px; border: 1px solid transparent; cursor: pointer; font-size: 13px; }
+        .pal-item:hover { background: var(--brand-soft); }
+        .pal-item.active { background: var(--brand); color: #fff; }
+        .pal-item .ty { font-size: 10px; color: var(--muted); }
+        .pal-item.active .ty { color: rgba(255,255,255,.8); }
+        .pal-tools { display: flex; gap: 6px; margin-bottom: 8px; }
+        .pal-tools button { flex: 1; font: inherit; font-size: 12px; font-weight: 800; padding: 7px; border-radius: 8px; border: 1px solid var(--line); background: var(--card-2); color: var(--ink-soft); cursor: pointer; }
+        .pal-tools button.on { background: var(--brand); color: #fff; border-color: var(--brand); }
+
+        .grid-scroll { overflow: auto; }
+        #grid { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 8px; width: max-content; margin: 0 auto; }
+        .cell { width: 34px; height: 34px; background: var(--card); display: grid; place-items: center; font-size: 12px; font-weight: 800; cursor: pointer; user-select: none; line-height: 1; text-align: center; }
+        .cell:hover { outline: 2px solid var(--brand); outline-offset: -2px; z-index: 1; }
+        .cell.filled { color: #fff; }
+        .cell.in-combo { box-shadow: inset 0 0 0 2px var(--accent); }
+
+        .stat-row { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; border-bottom: 1px dashed var(--line); }
+        .stat-row b { color: var(--brand-strong); }
+        .combo-list { list-style: none; margin: 8px 0 0; padding: 0; max-height: 360px; overflow-y: auto; }
+        .combo-list li { padding: 6px 8px; border-radius: 7px; font-size: 12.5px; cursor: pointer; }
+        .combo-list li:hover { background: var(--brand-soft); }
+        .combo-list .cb { font-weight: 800; }
+        .combo-list .bo { color: var(--muted); font-size: 11.5px; }
+        .empty-hint { color: var(--muted); font-size: 13px; padding: 10px 0; }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <h1 style="font-size:clamp(22px,3.5vw,30px);font-weight:900;margin:14px 0 2px">大江戶物語 佈局模擬器</h1>
+        <p class="sim-lead">在格子上擺建築，即時判定成立哪些<strong>小巷 combo</strong>（成員彼此 3 格內），並累計石高與商品價格加成。資料取自本站
+            <a href="../db/combos/">小巷 combo 資料庫</a>；玩法說明見 <a href="../">大江戶物語攻略</a>。</p>
+
+        <div class="sim-wrap">
+            <!-- 建築調色盤 -->
+            <div class="sim-panel">
+                <h3>🏗️ 建築</h3>
+                <div class="pal-tools">
+                    <button id="eraseBtn" title="橡皮擦：點格子清除">🧽 清除</button>
+                    <button id="clearBtn" title="清空整張圖">🗑️ 全清</button>
+                </div>
+                <input id="palSearch" class="pal-search" type="search" placeholder="🔎 搜尋建築">
+                <div class="pal-list" id="palList"></div>
+            </div>
+
+            <!-- 格線 -->
+            <div class="sim-panel">
+                <div class="grid-scroll"><div id="grid"></div></div>
+                <p class="empty-hint" style="text-align:center">選左側建築 → 點格子擺放。再次點同格或用「清除」移除。</p>
+            </div>
+
+            <!-- 成立的小巷 -->
+            <div class="sim-panel">
+                <h3>🎌 成立的小巷</h3>
+                <div class="stat-row"><span>成立小巷</span><b id="stCount">0</b></div>
+                <div class="stat-row"><span>石高加成合計</span><b id="stYield">+0%</b></div>
+                <div class="stat-row"><span>價格加成合計</span><b id="stPrice">+0%</b></div>
+                <ul class="combo-list" id="comboList"></ul>
+                <p class="empty-hint" id="comboEmpty">尚未成立任何小巷。試著把一組小巷的建築擺在彼此 3 格內。</p>
+            </div>
+        </div>
+    </main>
+
+    <script src="../db/data.js"></script>
+    <script>
+    (function () {
+        var GD = window.GAME_DB;
+        var ROWS = 12, COLS = 12;
+        var grid = [];              // grid[r][c] = building name or null
+        var current = null;         // 目前選取的建築名
+        var erase = false;
+
+        // ---- 從 db 資料建立 building 類型表與 nature 判定 ----
+        var typeOf = {};
+        (function () {
+            var bcat = GD.categories.filter(function (c) { return c.key === 'buildings'; })[0];
+            if (bcat) bcat.rows.forEach(function (r) {
+                var name = (r[0] || '').replace(/（[^）]*）/g, '').trim();
+                typeOf[name] = r[1] || '其他';
+            });
+        })();
+        var NATURE_RE = /松|櫻|梅|楓|柳|銀杏|竹|杜鵑|紫陽花|向日葵|樹叢|大岩石/;
+        function isNature(name) {
+            if (name === '自然物') return true;
+            return /自然|環境/.test(typeOf[name] || '') || NATURE_RE.test(name);
+        }
+
+        // ---- 解析 combos：所需建築 → slots [{name,},...]（×2 展開成兩個）----
+        var combos = [];
+        (function () {
+            var ccat = GD.categories.filter(function (c) { return c.key === 'combos'; })[0];
+            ccat.rows.forEach(function (r) {
+                var name = r[0], y = r[2], p = r[3], req = r[4] || '';
+                var slots = [];
+                req.split('・').forEach(function (tok) {
+                    tok = tok.trim();
+                    if (!tok) return;
+                    var m = tok.match(/^(.+?)\s*×\s*(\d+)$/);
+                    var bn = m ? m[1].trim() : tok;
+                    var cnt = m ? +m[2] : 1;
+                    if (/^自然物/.test(bn)) bn = '自然物';
+                    for (var i = 0; i < cnt; i++) slots.push(bn);
+                });
+                combos.push({ name: name, yield: y, price: p, slots: slots });
+            });
+        })();
+
+        // ---- 調色盤建築清單：combos 用到的所有具名建築 + 自然物 ----
+        var palette = (function () {
+            var set = {};
+            combos.forEach(function (cb) { cb.slots.forEach(function (s) { set[s] = 1; }); });
+            var arr = Object.keys(set);
+            // 排序：類型 → 名稱
+            arr.sort(function (a, b) {
+                var ta = a === '自然物' ? '自然物' : (typeOf[a] || '其他');
+                var tb = b === '自然物' ? '自然物' : (typeOf[b] || '其他');
+                if (ta !== tb) return ta.localeCompare(tb, 'zh-Hant');
+                return a.localeCompare(b, 'zh-Hant');
+            });
+            return arr;
+        })();
+
+        // 建築在格子上的短標籤（取前 2 字）
+        function shortLabel(name) { return name === '自然物' ? '🌳' : name.slice(0, 2); }
+        // 依類型給底色
+        var TYPE_COLOR = {
+            '飲食': '#d97706', '商店': '#2954b8', '設施': '#16794a', '地標': '#b5701a',
+            '自然物': '#4d7c0f', '住宅': '#8b5cf6', '軍事': '#b91c1c', '娛樂': '#c026d3'
+        };
+        function colorOf(name) {
+            if (name === '自然物') return TYPE_COLOR['自然物'];
+            return TYPE_COLOR[typeOf[name]] || '#6b7280';
+        }
+
+        // ---- 建立調色盤 UI ----
+        var palList = document.getElementById('palList');
+        function renderPalette(filter) {
+            palList.innerHTML = '';
+            palette.forEach(function (name) {
+                if (filter && name.indexOf(filter) < 0) return;
+                var d = document.createElement('div');
+                d.className = 'pal-item' + (name === current ? ' active' : '');
+                var ty = name === '自然物' ? '自然物（任一環境物件）' : (typeOf[name] || '其他');
+                d.innerHTML = '<span>' + name + '</span><span class="ty">' + ty + '</span>';
+                d.addEventListener('click', function () {
+                    current = name; erase = false;
+                    document.getElementById('eraseBtn').classList.remove('on');
+                    renderPalette(document.getElementById('palSearch').value.trim());
+                });
+                palList.appendChild(d);
+            });
+        }
+        document.getElementById('palSearch').addEventListener('input', function (e) {
+            renderPalette(e.target.value.trim());
+        });
+
+        // ---- 建立格線 ----
+        var gridEl = document.getElementById('grid');
+        gridEl.style.gridTemplateColumns = 'repeat(' + COLS + ', 34px)';
+        var cells = [];
+        for (var r = 0; r < ROWS; r++) {
+            grid[r] = [];
+            cells[r] = [];
+            for (var c = 0; c < COLS; c++) {
+                grid[r][c] = null;
+                var cell = document.createElement('div');
+                cell.className = 'cell';
+                (function (rr, cc, cellEl) {
+                    cellEl.addEventListener('click', function () { place(rr, cc); });
+                    cellEl.addEventListener('mouseenter', function (e) { if (e.buttons === 1) place(rr, cc); });
+                })(r, c, cell);
+                gridEl.appendChild(cell);
+                cells[r][c] = cell;
+            }
+        }
+
+        function place(r, c) {
+            if (erase) grid[r][c] = null;
+            else if (current) grid[r][c] = (grid[r][c] === current ? null : current);
+            else return;
+            paintCell(r, c);
+            recompute();
+        }
+        function paintCell(r, c) {
+            var cell = cells[r][c], v = grid[r][c];
+            if (v) { cell.textContent = shortLabel(v); cell.classList.add('filled'); cell.style.background = colorOf(v); cell.title = v; }
+            else { cell.textContent = ''; cell.classList.remove('filled', 'in-combo'); cell.style.background = ''; cell.title = ''; }
+        }
+
+        // ---- combo 判定 ----
+        // 某 slot 名稱在盤面上的候選格
+        function candidates(name) {
+            var out = [];
+            for (var r = 0; r < ROWS; r++) for (var c = 0; c < COLS; c++) {
+                var v = grid[r][c];
+                if (!v) continue;
+                if (name === '自然物') { if (isNature(v)) out.push([r, c]); }
+                else if (v === name) out.push([r, c]);
+            }
+            return out;
+        }
+        function cheb(a, b) { return Math.max(Math.abs(a[0] - b[0]), Math.abs(a[1] - b[1])); }
+
+        // 回傳：若成立，回傳參與格陣列；否則 null。要求各 slot 挑不同格、兩兩距離 ≤3。
+        function comboActive(cb) {
+            var slots = cb.slots, n = slots.length;
+            var cand = slots.map(function (s) { return candidates(s); });
+            for (var i = 0; i < n; i++) if (!cand[i].length) return null;
+            var pick = [];
+            function key(rc) { return rc[0] + ',' + rc[1]; }
+            function bt(i, used) {
+                if (i === n) return true;
+                for (var k = 0; k < cand[i].length; k++) {
+                    var rc = cand[i][k], kk = key(rc);
+                    if (used[kk]) continue;
+                    var ok = true;
+                    for (var j = 0; j < i; j++) if (cheb(rc, pick[j]) > 3) { ok = false; break; }
+                    if (!ok) continue;
+                    pick[i] = rc; used[kk] = 1;
+                    if (bt(i + 1, used)) return true;
+                    used[kk] = 0;
+                }
+                return false;
+            }
+            return bt(0, {}) ? pick.slice() : null;
+        }
+
+        function num(s) { return parseInt(String(s).replace(/[^0-9\-]/g, ''), 10) || 0; }
+
+        var comboListEl = document.getElementById('comboList');
+        var comboEmpty = document.getElementById('comboEmpty');
+        function recompute() {
+            // 清除 in-combo
+            for (var r = 0; r < ROWS; r++) for (var c = 0; c < COLS; c++) cells[r][c].classList.remove('in-combo');
+            var active = [], ty = 0, pr = 0, cellSets = [];
+            combos.forEach(function (cb) {
+                var cellsIn = comboActive(cb);
+                if (cellsIn) { active.push(cb); ty += num(cb.yield); pr += num(cb.price); cellSets.push(cellsIn); }
+            });
+            // 依石高排序
+            var order = active.map(function (cb, i) { return { cb: cb, cells: cellSets[i] }; })
+                .sort(function (a, b) { return num(b.cb.yield) - num(a.cb.yield); });
+
+            document.getElementById('stCount').textContent = active.length;
+            document.getElementById('stYield').textContent = '+' + ty + '%';
+            document.getElementById('stPrice').textContent = '+' + pr + '%';
+
+            comboListEl.innerHTML = '';
+            comboEmpty.style.display = active.length ? 'none' : 'block';
+            order.forEach(function (o) {
+                var li = document.createElement('li');
+                li.innerHTML = '<span class="cb">' + o.cb.name + '</span> <span class="bo">石高' + o.cb.yield + ' / 價' + o.cb.price + '</span>';
+                li.addEventListener('mouseenter', function () { highlight(o.cells); });
+                li.addEventListener('mouseleave', function () { clearHi(); });
+                comboListEl.appendChild(li);
+            });
+            if (window.Shell) Shell.track('sim_update', { active: active.length, yield: ty });
+        }
+        function highlight(set) { set.forEach(function (rc) { cells[rc[0]][rc[1]].classList.add('in-combo'); }); }
+        function clearHi() { for (var r = 0; r < ROWS; r++) for (var c = 0; c < COLS; c++) cells[r][c].classList.remove('in-combo'); }
+
+        // ---- 工具鈕 ----
+        document.getElementById('eraseBtn').addEventListener('click', function () {
+            erase = !erase; current = null;
+            this.classList.toggle('on', erase);
+            renderPalette(document.getElementById('palSearch').value.trim());
+        });
+        document.getElementById('clearBtn').addEventListener('click', function () {
+            if (!confirm('清空整張圖？')) return;
+            for (var r = 0; r < ROWS; r++) for (var c = 0; c < COLS; c++) { grid[r][c] = null; paintCell(r, c); }
+            recompute();
+        });
+
+        renderPalette('');
+        recompute();
+    })();
+    </script>
+    <script src="../../../assets/shell.js"></script>
+    <script>Shell.mount({ page: 'sim', game: { id: 'ooedo', type: 'simulator' }, breadcrumb: [{ t: '大江戶物語', href: '../' }, { t: '佈局模擬器' }] });</script>
+</body>
+</html>

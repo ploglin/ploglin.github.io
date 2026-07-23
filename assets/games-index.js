@@ -20,8 +20,8 @@ window.GAMES = [
         title: '大江戶物語', jp: '大江戸タウンズ', en: 'Oh! Edo Towns',
         emoji: '🏯', accent: '#fdeee0',
         status: 'live', type: 'guide',
-        tags: [['guide', '攻略'], ['combo', '相鄰 combo']],
-        desc: '江戶城下町建設攻略：相鄰 combo 一覽、設施與名產、money 與人口衝刺技巧。',
+        tags: [['sim', '模擬器'], ['guide', '攻略'], ['combo', '相鄰 combo']],
+        desc: '江戶城下町建設攻略：46 種小巷 combo、佈局模擬器、資料庫與衝石高技巧。',
         featured: true
     },
     {
