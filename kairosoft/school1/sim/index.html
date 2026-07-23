@@ -3,41 +3,1835 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>口袋學院物語 佈局模擬器｜人氣景點 4×4 即時判定</title>
-    <meta name="description" content="口袋學院物語（名門ポケット学院／Pocket Academy ZERO）免費線上佈局模擬器：擺放設施即時判定成立哪些人氣景點（三種設施落在 4×4 範圍內），並提示還差哪個設施，規劃初代校園最佳擺法。">
-    <meta name="keywords" content="口袋學院物語,佈局模擬器,人氣景點,4x4,名門ポケット学院,Pocket Academy ZERO,開羅遊戲">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://ploglin.github.io/kairosoft/school1/sim/">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏫</text></svg>">
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="口袋學院物語 佈局模擬器｜人氣景點 4×4 即時判定">
-    <meta property="og:description" content="擺放設施即時判定人氣景點、提示差一步的設施，規劃初代校園最佳擺法。">
-    <meta property="og:locale" content="zh_TW">
-    <meta property="og:url" content="https://ploglin.github.io/kairosoft/school1/sim/">
-    <meta name="twitter:card" content="summary">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../../assets/shell.css?v=2">
-</head>
-<body>
-    <main class="container">
-        <h1 style="font-size:clamp(22px,3.5vw,30px);font-weight:900;margin:14px 0 2px">口袋學院物語 佈局模擬器</h1>
-        <p style="color:var(--ink-soft);margin:6px 0 14px">擺放設施即時判定成立哪些<strong>人氣景點</strong>（三種指定設施落在同一個 <strong>4×4 範圍</strong>內），右側提示<strong>差一步就成立</strong>的景點。資料取自本站
-            <a href="../db/spots/">人氣景點資料庫</a>；玩法見 <a href="../">口袋學院物語攻略</a>。<br>
-            <small style="color:var(--muted)">※ 初代 12 組景點；坡道在遊戲中由高低差自動生成，此模擬器可直接擺放作為規劃輔助。</small></p>
-        <div id="simApp"></div>
-    </main>
-
-    <script src="../db/data.js"></script>
-    <script src="../../../assets/sim.js?v=2"></script>
-    <script>
-        SimEngine.mount({
-            category: 'spots', nameCol: 0, reqCol: 1, reqSep: '・',
-            bonuses: [{ i: 2, label: '' }],
-            rule: { type: 'window', size: 4 },
-            ruleText: '三種設施落在同一個 4×4 範圍內'
-        });
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-EL4J27F89B"></script>
+    <script data-ga4>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-EL4J27F89B');
     </script>
-    <script src="../../../assets/shell.js?v=2"></script>
-    <script>Shell.mount({ page: 'sim', game: { id: 'school1', type: 'simulator' }, breadcrumb: [{ t: '口袋學院物語', href: '../' }, { t: '佈局模擬器' }] });</script>
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5891811504833462" crossorigin="anonymous"></script>
+    <title>口袋學院物語 佈局模擬器｜人氣景點設施規劃工具（ポケット学院）</title>
+    <meta name="description" content="口袋學院物語（初代／ポケット学院／Pocket Academy）免費線上佈局模擬器：校園設施擺放規劃、12 組人氣景點自動判定與放置建議，指定 3 設施落在 4×4 範圍（彼此 3 格內）即成立、可疊加，繁體中文介面。">
+    <meta name="keywords" content="口袋學院物語,ポケット学院,Pocket Academy,佈局模擬器,人氣景點,設施,校園規劃,攻略,開羅遊戲,カイロソフト,Kairosoft">
+    <meta name="robots" content="index, follow">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏫</text></svg>">
+    <link rel="canonical" href="https://ploglin.github.io/kairosoft/school1/sim/">
+    <meta property="og:url" content="https://ploglin.github.io/kairosoft/school1/sim/">
+    <meta property="og:image" content="https://ploglin.github.io/kairosoft/school1/sim/og-image.png">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="口袋學院物語 佈局模擬器｜人氣景點設施規劃工具">
+    <meta property="og:description" content="免費線上規劃你的校園：12 組人氣景點自動判定、設施放置建議，3 設施落在 4×4 範圍內即成立。">
+    <meta property="og:locale" content="zh_TW">
+    <meta property="og:locale:alternate" content="ja_JP">
+    <meta property="og:site_name" content="口袋學院物語 佈局模擬器">
+    <meta name="twitter:card" content="summary">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "口袋學院物語 佈局模擬器",
+        "alternateName": ["ポケット学院 レイアウトシミュレーター", "Pocket Academy Layout Simulator"],
+        "description": "口袋學院物語（初代／ポケット学院）的校園佈局模擬器：12 組人氣景點自動判定與設施放置建議，指定 3 設施落在 4×4 範圍內（彼此 3 格內）即成立。",
+        "applicationCategory": "GameApplication",
+        "operatingSystem": "Web",
+        "inLanguage": "zh-Hant",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "TWD" }
+    }
+    </script>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { --tile: 35px; --axis: 22px; }
+
+        body {
+            font-family: 'Noto Sans TC', 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #333;
+            overflow: hidden; 
+        }
+
+        .map-container {
+            position: relative;
+            overflow: auto;
+            border-radius: 8px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            width: fit-content;
+            max-width: 100%;
+            max-height: calc(100vh - 80px);
+            margin: 0 auto;
+        }
+
+        .game-grid {
+            touch-action: none; /* 觸控畫圖時不捲動頁面 */
+            display: grid;
+            /* 24 columns + 2 axis columns (Left/Right) */
+            grid-template-columns: var(--axis) repeat(24, var(--tile)) var(--axis);
+            /* 26 rows + 2 axis rows (Top/Bottom) */
+            grid-template-rows: var(--axis) repeat(26, var(--tile)) var(--axis);
+            gap: 1px;
+            background-color: #d1d5db;
+            border: 2px solid #9ca3af;
+            width: fit-content;
+        }
+
+        .axis-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: calc(var(--axis) * 0.45);
+            color: #4b5563;
+            font-family: 'Inter', monospace;
+            background-color: #f3f4f6;
+            font-weight: 800;
+            user-select: none;
+        }
+
+        .tile {
+            width: var(--tile);
+            height: var(--tile);
+            background-color: #bbf7d0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: calc(var(--tile) * 0.42);
+            font-weight: bold;
+            color: rgba(0,0,0,0.8);
+            user-select: none;
+            transition: transform 0.1s;
+            position: relative;
+            cursor: crosshair;
+        }
+
+        .tile:hover {
+            opacity: 0.9;
+            transform: scale(1.15);
+            z-index: 30;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+            border-radius: 4px;
+        }
+
+        .elevation-2 {
+            border-top: 3px solid #b45309;
+            border-left: 3px solid #d97706;
+            filter: brightness(0.95);
+            box-shadow: inset -2px -2px 4px rgba(0,0,0,0.1);
+        }
+
+        .elevation-3 {
+            border-top: 3px solid #7c2d12;
+            border-left: 3px solid #9a3412;
+            filter: brightness(0.88);
+            box-shadow: inset -3px -3px 5px rgba(0,0,0,0.2);
+        }
+
+        /* 自動斜坡：高低差交界（高的那格）以斜紋標示 */
+        .tile.slope-tile {
+            background-image: repeating-linear-gradient(45deg, rgba(146, 64, 14, 0.35) 0 3px, transparent 3px 8px);
+        }
+
+        .palette-item {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .palette-item.active {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-color: #3b82f6 !important;
+            border-width: 2px;
+            background-color: #eff6ff;
+        }
+
+        /* 多格建築放置預覽：橘色實線框 */
+        .tile.fp-preview {
+            outline: 2px solid #f59e0b;
+            outline-offset: -2px;
+            z-index: 15;
+        }
+        .tile.fp-preview::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(245, 158, 11, 0.25);
+            pointer-events: none;
+            z-index: 4;
+        }
+
+        /* 菱形（等角）視角：整個網格旋轉 45°，文字反向轉回維持直立 */
+        body.diamond .map-container {
+            overflow: visible;
+            max-height: none;
+            background: transparent;
+            box-shadow: none;
+        }
+        body.diamond .game-grid {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            /* 逆時針轉 45°（讓 [X2,Y2] 角朝上）再垂直壓一半 → 與遊戲相同的 2:1 等角地磚 */
+            transform: translate(-50%, -50%) scaleY(0.5) rotate(-45deg);
+        }
+        body.diamond .axis-label,
+        body.diamond .tile .content-span {
+            /* 反向變形，讓文字保持直立且不變形 */
+            transform: rotate(45deg) scaleY(2);
+        }
+        body.diamond .spot-tooltip {
+            transform: translateX(-50%) rotate(45deg) scaleY(2);
+        }
+
+        /* 矩形工具預覽：靛藍框 */
+        .tile.rect-preview {
+            outline: 2px solid #6366f1;
+            outline-offset: -2px;
+        }
+        .tile.rect-preview::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(99, 102, 241, 0.25);
+            pointer-events: none;
+            z-index: 4;
+        }
+
+        /* 無法進入的設施：紅框警告（四周被建築完全包圍） */
+        .tile.blocked {
+            outline: 2px solid #dc2626;
+            outline-offset: -2px;
+        }
+
+        /* 次佳建議：天藍點狀框（放置後只差一項其他條件） */
+        .tile.suggest2::after {
+            content: '';
+            position: absolute;
+            inset: 1px;
+            border: 2px dotted #0ea5e9;
+            border-radius: 4px;
+            background: rgba(14, 165, 233, 0.12);
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        /* 建議放置位置：藍色虛線框 */
+        .tile.suggest::after {
+            content: '';
+            position: absolute;
+            inset: 1px;
+            border: 2px dashed #2563eb;
+            border-radius: 4px;
+            background: rgba(59, 130, 246, 0.18);
+            pointer-events: none;
+            z-index: 5;
+            animation: suggestPulse 1.2s ease-in-out infinite;
+        }
+        @keyframes suggestPulse {
+            0%, 100% { opacity: 0.45; }
+            50% { opacity: 1; }
+        }
+
+        .spot-tooltip {
+            position: absolute;
+            bottom: 110%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(255, 255, 255, 0.98);
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 8px 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+            z-index: 50;
+            width: max-content;
+            max-width: 220px;
+            pointer-events: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.15s;
+        }
+        .tile:hover .spot-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+        .spot-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%; left: 50%; margin-left: -6px;
+            border-width: 6px; border-style: solid;
+            border-color: rgba(255, 255, 255, 0.98) transparent transparent transparent;
+        }
+
+        /* 窄螢幕（手機/直式平板）：地圖在上、建築面板在下 */
+        @media (max-width: 768px) {
+            #appBody { flex-direction: column; }
+            #appBody aside {
+                width: 100%;
+                max-height: 42vh;
+                border-left: none;
+                border-top: 1px solid #e5e7eb;
+            }
+            #toolHint { display: none; }
+            #coordHint { bottom: calc(42vh + 0.5rem); }
+        }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="h-screen w-screen flex flex-col">
+    <noscript>口袋學院物語（ポケット学院）佈局模擬器需要啟用 JavaScript 才能使用。這是一個免費的校園地圖規劃工具，支援 12 組人氣景點自動判定與設施放置建議。</noscript>
+
+    <header class="bg-white border-b border-gray-200 px-4 py-2.5 flex flex-wrap items-center justify-between shadow-sm z-30 shrink-0 gap-4">
+        <div class="flex items-center gap-3">
+            <a href="../../../index.html" title="回到開羅攻略站" class="text-xs font-bold text-green-700 bg-green-50 border border-green-200 px-2 py-1.5 rounded hover:bg-green-100 transition whitespace-nowrap">← 攻略站</a>
+            <a href="../" title="口袋學院物語 攻略" class="text-xs font-bold text-green-700 bg-green-50 border border-green-200 px-2 py-1.5 rounded hover:bg-green-100 transition whitespace-nowrap">📖 攻略</a>
+            <h1 class="text-lg font-black text-green-700 tracking-tight">🏫 口袋學院物語 佈局模擬器</h1>
+            <div class="flex gap-2">
+                <button id="undoBtn" title="復原 (Ctrl+Z)" class="text-xs font-bold bg-gray-100 text-gray-600 px-2.5 py-1.5 rounded hover:bg-gray-200 transition border border-gray-300 opacity-40">↩</button>
+                <button id="redoBtn" title="重做 (Ctrl+Y)" class="text-xs font-bold bg-gray-100 text-gray-600 px-2.5 py-1.5 rounded hover:bg-gray-200 transition border border-gray-300 opacity-40">↪</button>
+                <button id="rectBtn" title="矩形填滿模式（也可按住 Shift 拖曳）" class="text-xs font-bold bg-gray-100 text-gray-600 px-2.5 py-1.5 rounded hover:bg-gray-200 transition border border-gray-300">▭ 矩形</button>
+                <button id="clearBtn" class="text-xs font-bold bg-red-50 text-red-600 px-2.5 py-1.5 rounded hover:bg-red-100 transition border border-red-200">清空</button>
+                <button id="diamondBtn" title="切換菱形（等角）視角" class="text-xs font-bold bg-gray-100 text-gray-600 px-2.5 py-1.5 rounded hover:bg-gray-200 transition border border-gray-300">◆ 視角</button>
+                <button id="suggestBtn" title="開關地圖上的建議標示（藍框／天藍框）" class="text-xs font-bold bg-gray-100 text-gray-600 px-2.5 py-1.5 rounded hover:bg-gray-200 transition border border-gray-300">💡 建議</button>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <div class="flex items-center gap-1.5 bg-gray-50 p-1 rounded border border-gray-200">
+                <input type="text" id="saveName" class="w-28 text-xs border-gray-300 border p-1 rounded bg-white outline-none focus:border-green-400" placeholder="地圖名稱...">
+                <button id="saveLocalBtn" class="bg-green-500 hover:bg-green-600 text-white text-xs font-bold py-1 px-2.5 rounded transition">儲存</button>
+            </div>
+            <div class="flex items-center gap-1.5 bg-gray-50 p-1 rounded border border-gray-200">
+                <select id="loadLocalSelect" class="w-32 text-xs border-gray-300 border p-1 rounded bg-white outline-none focus:border-blue-400">
+                    <option value="">-- 讀取存檔 --</option>
+                </select>
+                <button id="loadLocalBtn" class="bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold py-1 px-2.5 rounded transition">讀取</button>
+                <button id="deleteLocalBtn" class="bg-red-500 hover:bg-red-600 text-white text-xs font-bold py-1 px-2.5 rounded transition">刪除</button>
+                <button id="renameLocalBtn" class="bg-gray-400 hover:bg-gray-500 text-white text-xs font-bold py-1 px-2.5 rounded transition">改名</button>
+            </div>
+            
+            <div class="flex items-center gap-1.5 ml-2 border-l pl-3 border-gray-200">
+                <button id="saveCodeBtn" class="bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 text-xs font-bold py-1 px-2.5 rounded transition" title="複製存檔碼">匯出</button>
+                <button id="loadCodeBtn" class="bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 text-xs font-bold py-1 px-2.5 rounded transition" title="從剪貼簿載入">匯入</button>
+                <button id="exportImgBtn" class="bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 text-xs font-bold py-1 px-2.5 rounded transition" title="下載地圖 PNG 圖片">圖片</button>
+                <button id="shareBtn" class="bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 text-xs font-bold py-1 px-2.5 rounded transition" title="複製含地圖的分享連結">分享</button>
+            </div>
+        </div>
+    </header>
+
+    <div id="appBody" class="flex flex-1 overflow-hidden">
+        
+        <main class="flex-1 flex flex-col overflow-auto bg-gray-100 p-4 relative">
+            <div class="map-container" id="mapContainer">
+                <div class="game-grid" id="gameGrid"></div>
+            </div>
+        </main>
+
+        <aside class="w-72 shrink-0 bg-white border-l border-gray-200 flex flex-col shadow-[-5px_0_15px_rgba(0,0,0,0.02)] z-20">
+            <div class="p-3 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+                <h2 class="text-sm font-black text-gray-700">🏫 設施面板</h2>
+                <span class="text-[10px] font-bold text-gray-400">3 設施落在 4×4 內即觸發</span>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-3 flex flex-col gap-4">
+                <div class="sticky -top-3 -mt-1 -mx-1 px-1 pt-2 pb-1.5 bg-white z-10">
+                    <div class="relative">
+                        <input id="paletteSearch" type="text" placeholder="🔍 搜尋建築名稱..." class="w-full text-xs border border-gray-300 rounded-lg pl-2.5 pr-7 py-1.5 outline-none focus:border-blue-400 bg-gray-50 focus:bg-white transition">
+                        <button id="searchClearBtn" class="absolute right-1.5 top-1/2 -translate-y-1/2 w-4 h-4 flex items-center justify-center text-gray-400 hover:text-gray-700 text-xs font-bold" title="清除搜尋">✕</button>
+                    </div>
+                    <div id="recentRow" class="flex gap-1 flex-wrap mt-1.5"></div>
+                </div>
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-2.5">
+                    <button id="spotStatsToggle" class="w-full flex items-center justify-between text-xs font-black text-gray-700">
+                        <span>📊 景點總覽</span>
+                        <span class="flex items-center gap-1.5">
+                            <span id="spotStatsSummary" class="text-[10px] font-bold text-gray-500"></span>
+                            <span id="spotStatsArrow" class="text-gray-400">▸</span>
+                        </span>
+                    </button>
+                    <div id="spotStatsBody" class="hidden">
+                        <div id="spotStats" class="text-[11px] leading-relaxed text-gray-600 mt-1.5 max-h-56 overflow-y-auto pr-1">尚無成立的景點</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-1.5 mt-1.5">
+                        <button id="reportBtn" class="text-[11px] font-bold bg-white border border-yellow-300 text-yellow-700 rounded py-1 hover:bg-yellow-100 transition">📋 體檢</button>
+                        <button id="compareBtn" class="text-[11px] font-bold bg-white border border-yellow-300 text-yellow-700 rounded py-1 hover:bg-yellow-100 transition">🆚 比較</button>
+                    </div>
+                </div>
+                <div>
+                    <div class="grid grid-cols-4 gap-1.5" id="palette-tools"></div>
+                </div>
+                <div>
+                    <h3 class="text-xs font-bold text-gray-500 mb-1.5">🏃 運動</h3>
+                    <div class="grid grid-cols-4 gap-1.5" id="palette-sports"></div>
+                </div>
+                <div>
+                    <h3 class="text-xs font-bold text-gray-500 mb-1.5">📚 教室</h3>
+                    <div class="grid grid-cols-4 gap-1.5" id="palette-classroom"></div>
+                </div>
+                <div>
+                    <h3 class="text-xs font-bold text-gray-500 mb-1.5">🍱 生活</h3>
+                    <div class="grid grid-cols-4 gap-1.5" id="palette-life"></div>
+                </div>
+                <div>
+                    <h3 class="text-xs font-bold text-gray-500 mb-1.5">🌳 環境</h3>
+                    <div class="grid grid-cols-4 gap-1.5" id="palette-env"></div>
+                </div>
+                <p class="text-[10px] leading-relaxed text-gray-400 mt-1 pt-2 border-t border-gray-100">人氣景點加成整理自 Kairosoft Wiki；設施尺寸多為推測，僅供佈局參考。</p>
+            </div>
+        </aside>
+
+    </div>
+
+    <!-- 座標與格子資訊提示列 -->
+    <div id="coordHint" class="fixed bottom-3 left-4 bg-gray-800/80 text-white text-xs font-bold px-3 py-1.5 rounded-full z-40 pointer-events-none shadow-lg">移到格子上顯示座標</div>
+
+    <!-- 選取建築的景點組合資訊卡 -->
+    <div id="toolHint" class="hidden fixed bottom-3 right-[19rem] max-w-[280px] bg-white/95 border border-gray-200 rounded-lg shadow-lg px-3 py-2 text-[11px] leading-relaxed z-40 pointer-events-none"></div>
+
+    <!-- Hidden IO textareas for import/export -->
+    <textarea id="ioData" class="hidden"></textarea>
+
+    <!-- 佈局體檢報告 -->
+    <div id="reportModal" class="hidden fixed inset-0 bg-black/40 z-[60] flex items-center justify-center p-6">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto p-5 relative">
+            <button id="reportCloseBtn" class="absolute top-3 right-3 text-gray-400 hover:text-gray-700 font-bold">✕</button>
+            <h2 id="reportTitle" class="text-base font-black text-gray-800 mb-3">📋 佈局體檢報告</h2>
+            <div id="reportBody" class="text-xs leading-relaxed text-gray-600"></div>
+        </div>
+    </div>
+
+    <!-- System Message Toast -->
+    <div id="sysMsgToast" class="fixed top-4 left-1/2 transform -translate-x-1/2 -translate-y-20 opacity-0 px-5 py-2 rounded-full shadow-lg text-xs font-bold z-50 transition-all duration-300 pointer-events-none flex items-center gap-2">
+        <span id="sysMsgIcon"></span>
+        <span id="sysMsgText"></span>
+    </div>
+
+    <script>
+        // 口袋學院物語（初代）設施資料。w/h＝占地格數（未填代表 1×1）；預設皆 1×1。
+        // type 對應調色盤分類：sports 運動／classroom 教室／life 生活／env 環境（tool 為清除工具）。
+        // short＝地圖格子標籤（此處用 emoji）；color＝分類代表色。
+        const items = {
+            'empty': { id: 'empty', name: '清除', short: ' ', color: '#e5e7eb', type: 'tool' },
+
+            // 運動 (sports)
+            'track': { id: 'track', name: '田徑場', short: '🏃', color: '#ff7043', type: 'sports' },
+            'basketball': { id: 'basketball', name: '籃球場', short: '🏀', color: '#ff7043', type: 'sports' },
+            'tennis': { id: 'tennis', name: '網球場', short: '🎾', color: '#ff7043', type: 'sports' },
+            'soccer': { id: 'soccer', name: '足球場', short: '⚽', color: '#ff7043', type: 'sports' },
+            'pool': { id: 'pool', name: '游泳池', short: '🏊', color: '#ff7043', type: 'sports' },
+            'gym': { id: 'gym', name: '體育館', short: '🏟️', color: '#ff7043', type: 'sports' },
+            'baseball': { id: 'baseball', name: '棒球場', short: '⚾', color: '#ff7043', type: 'sports' },
+
+            // 教室 (classroom)
+            'library': { id: 'library', name: '圖書室', short: '📚', color: '#42a5f5', type: 'classroom' },
+            'music_room': { id: 'music_room', name: '音樂教室', short: '🎵', color: '#42a5f5', type: 'classroom' },
+            'science_lab': { id: 'science_lab', name: '理科實驗室', short: '🧪', color: '#42a5f5', type: 'classroom' },
+            'principal_office': { id: 'principal_office', name: '校長室', short: '🏫', color: '#42a5f5', type: 'classroom' },
+            'av_room': { id: 'av_room', name: '視聽教室', short: '📽️', color: '#42a5f5', type: 'classroom' },
+            'art_room': { id: 'art_room', name: '美術教室', short: '🎨', color: '#42a5f5', type: 'classroom' },
+            'home_ec': { id: 'home_ec', name: '家政教室', short: '🍳', color: '#42a5f5', type: 'classroom' },
+
+            // 生活 (life)
+            'kiosk': { id: 'kiosk', name: '販賣部', short: '🏪', color: '#ab47bc', type: 'life' },
+            'infirmary': { id: 'infirmary', name: '保健室', short: '🏥', color: '#ab47bc', type: 'life' },
+            'pantry': { id: 'pantry', name: '茶水間', short: '🍵', color: '#ab47bc', type: 'life' },
+            'storage_room': { id: 'storage_room', name: '雜物室', short: '📦', color: '#ab47bc', type: 'life' },
+            'toilet': { id: 'toilet', name: '廁所', short: '🚻', color: '#ab47bc', type: 'life' },
+            'small_shop': { id: 'small_shop', name: '小賣部', short: '🛍️', color: '#ab47bc', type: 'life' },
+            'mini_store': { id: 'mini_store', name: '迷你商店', short: '🏬', color: '#ab47bc', type: 'life' },
+            'cafeteria': { id: 'cafeteria', name: '學生餐廳', short: '🍱', color: '#ab47bc', type: 'life' },
+
+            // 環境 (env)
+            'grove': { id: 'grove', name: '樹林', short: '🌳', color: '#66bb6a', type: 'env' },
+            'fountain': { id: 'fountain', name: '噴水池', short: '⛲', color: '#66bb6a', type: 'env' },
+            'incinerator': { id: 'incinerator', name: '焚化爐', short: '🔥', color: '#66bb6a', type: 'env' },
+            'pig_shed': { id: 'pig_shed', name: '豬舍', short: '🐷', color: '#66bb6a', type: 'env' },
+            'cow_shed': { id: 'cow_shed', name: '牛舍', short: '🐮', color: '#66bb6a', type: 'env' },
+            'lawn': { id: 'lawn', name: '草地', short: '🌱', color: '#66bb6a', type: 'env' },
+            'farm': { id: 'farm', name: '農地', short: '🌾', color: '#66bb6a', type: 'env' },
+            'ramp': { id: 'ramp', name: '坡道', short: '🛝', color: '#66bb6a', type: 'env' }
+        };
+
+        // 面板用圖示（與地圖 short 相同，皆為 emoji）
+        const ITEM_ICONS = {};
+        Object.keys(items).forEach(id => { if (id !== 'empty') ITEM_ICONS[id] = items[id].short; });
+        ITEM_ICONS.empty = '🧹';
+
+        // 中日/英名稱對照（口袋學院暫無逐棟對照，保留空物件供面板提示相容）
+        const JP_NAMES = {};
+
+        // 初代無自然物「擇一」機制，保留空陣列供舊介面相容。
+        const NATURE = [];
+
+        // 顯示 req 群組名稱：列出設施名（若為 OR 群組以「/」分隔）。
+        function grpName(g) {
+            const arr = Array.isArray(g) ? g : [g];
+            if (arr === NATURE) return '自然物';
+            return arr.map(id => items[id] ? items[id].name : id).join('/');
+        }
+
+        // 口袋學院物語（初代）12 組人氣景點（資料整理自 Kairosoft Wiki）。
+        // req 每一項為設施 id；同 id 出現兩次＝需兩座。
+        // bonus 為屬性加成（供統計顯示）。判定：3 設施成員兩兩切比雪夫距離 ≤ 3 格（落在 4×4 範圍內）即成立。
+        const SPOTS = [
+            { id: 'sports', name: '運動', en: 'Sports', req: ['track', 'basketball', 'kiosk'], bonus: '文+3、體+2、技+', dotColor: 'bg-red-500' },
+            { id: 'date', name: '約會', en: 'Date', req: ['tennis', 'grove', 'library'], bonus: '文+2、理+3、友+、魅+', dotColor: 'bg-orange-500' },
+            { id: 'friend', name: '好友', en: 'Friend', req: ['fountain', 'infirmary', 'pantry'], bonus: '文+3、友+、魅+', dotColor: 'bg-amber-500' },
+            { id: 'ghost', name: '靈異', en: 'Ghost', req: ['music_room', 'science_lab', 'incinerator'], bonus: '理+3、體++、魅++', dotColor: 'bg-lime-500' },
+            { id: 'study', name: '學習', en: 'Study', req: ['principal_office', 'library', 'av_room'], bonus: '文+3、理+3、魅++', dotColor: 'bg-green-500' },
+            { id: 'art', name: '藝術', en: 'Art', req: ['art_room', 'music_room', 'storage_room'], bonus: '理+3、友++', dotColor: 'bg-emerald-500' },
+            { id: 'warm', name: '溫馨', en: 'Warm', req: ['infirmary', 'home_ec', 'toilet'], bonus: '文+2、體+2、友++', dotColor: 'bg-teal-500' },
+            { id: 'shopping', name: '購物', en: 'Shopping', req: ['small_shop', 'mini_store', 'cafeteria'], bonus: '體+3、友++、技+', dotColor: 'bg-cyan-500' },
+            { id: 'youth', name: '青春', en: 'Youth', req: ['soccer', 'pool', 'gym'], bonus: '文+2、理+3、體++、友++', dotColor: 'bg-sky-500' },
+            { id: 'meat', name: '肉食', en: 'Meat', req: ['pig_shed', 'cafeteria', 'cow_shed'], bonus: '體+5、魅++', dotColor: 'bg-blue-500' },
+            { id: 'garden', name: '庭園', en: 'Garden', req: ['lawn', 'farm', 'fountain'], bonus: '理+2、友+、魅+', dotColor: 'bg-indigo-500' },
+            { id: 'dusk', name: '黃昏', en: 'Dusk', req: ['grove', 'ramp', 'baseball'], bonus: '文+3、體+3、友++、魅++', dotColor: 'bg-violet-500' }
+        ];
+
+        let currentTool = 'library';
+        let currentElevation = 1; // 口袋學院無高低差，恆為 1
+        let isDrawing = false;
+        // 觸控狀態：單點=畫一格、拖曳=連續畫、長按不動=吸管
+        let touchState = null;
+        let longPressTimer = null;
+
+        // 相鄰判定：combo 成員兩兩切比雪夫距離 ≤ ADJ 即成立；等價於全部成員落在 WIN×WIN 視窗內。
+        const ADJ = 3;
+        const WIN = ADJ + 1;
+
+        // Grid Dimensions
+        const gridRows = 26; // 行 1..26
+        const gridCols = 24; // 列 1..24
+
+        let gridData = Array(gridRows).fill(null).map(() => Array(gridCols).fill(null).map(() => ({ type: 'empty', elevation: 1 })));
+        let toastTimeout;
+
+        // ─── 復原／重做 ───
+        const HISTORY_MAX = 60;
+        let undoStack = [], redoStack = [];
+        let blockIdCounter = 0; // 多格建築的棟別編號
+
+        function pushHistory() {
+            undoStack.push(JSON.stringify(gridData));
+            if (undoStack.length > HISTORY_MAX) undoStack.shift();
+            redoStack.length = 0;
+            updateHistoryButtons();
+        }
+
+        function restoreSnapshot(json) {
+            gridData = JSON.parse(json);
+            for (let r = 0; r < gridRows; r++) {
+                for (let c = 0; c < gridCols; c++) updateTileVisuals(r, c);
+            }
+            checkSpots();
+        }
+
+        function undo() {
+            if (!undoStack.length) { showSysMsg('沒有可復原的步驟', true); return; }
+            redoStack.push(JSON.stringify(gridData));
+            restoreSnapshot(undoStack.pop());
+            updateHistoryButtons();
+        }
+
+        function redo() {
+            if (!redoStack.length) { showSysMsg('沒有可重做的步驟', true); return; }
+            undoStack.push(JSON.stringify(gridData));
+            restoreSnapshot(redoStack.pop());
+            updateHistoryButtons();
+        }
+
+        function updateHistoryButtons() {
+            const u = document.getElementById('undoBtn'), rd = document.getElementById('redoBtn');
+            if (!u || !rd) return;
+            u.classList.toggle('opacity-40', !undoStack.length);
+            rd.classList.toggle('opacity-40', !redoStack.length);
+        }
+
+        // ─── 偏好記憶與自動儲存 ───
+        const PREFS_KEY = 'school1_prefs_v1', AUTOSAVE_KEY = 'school1_autosave_v1', MAPS_KEY = 'school1_maps_v1';
+        let prefs = {};
+        try { prefs = JSON.parse(localStorage.getItem(PREFS_KEY)) || {}; } catch (e) { prefs = {}; }
+        function savePrefs(patch) {
+            Object.assign(prefs, patch);
+            try { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); } catch (e) {}
+        }
+
+        // 體檢報告用的最近一次計算結果
+        let lastSpotStats = { activeIds: new Set(), nearMap: new Map() };
+        let lastBlockedCount = 0;
+
+        // ─── 矩形填滿工具 ───
+        let rectMode = false, rectStart = null, rectEnd = null;
+
+        function previewRect() {
+            document.querySelectorAll('.tile.rect-preview').forEach(t => t.classList.remove('rect-preview'));
+            if (!rectStart || !rectEnd) return;
+            const r1 = Math.min(rectStart.r, rectEnd.r), r2 = Math.max(rectStart.r, rectEnd.r);
+            const c1 = Math.min(rectStart.c, rectEnd.c), c2 = Math.max(rectStart.c, rectEnd.c);
+            for (let r = r1; r <= r2; r++) {
+                for (let c = c1; c <= c2; c++) {
+                    const el = document.querySelector(`.tile[data-r="${r}"][data-c="${c}"]`);
+                    if (el) el.classList.add('rect-preview');
+                }
+            }
+        }
+
+        function commitRect() {
+            const r1 = Math.min(rectStart.r, rectEnd.r), r2 = Math.max(rectStart.r, rectEnd.r);
+            const c1 = Math.min(rectStart.c, rectEnd.c), c2 = Math.max(rectStart.c, rectEnd.c);
+            for (let r = r1; r <= r2; r++) {
+                for (let c = c1; c <= c2; c++) {
+                    gridData[r][c] = { type: currentTool, elevation: currentElevation };
+                }
+            }
+            // 連同外圍一圈重繪（鄰接建築的合併縫隙會受影響）
+            for (let r = Math.max(0, r1 - 1); r <= Math.min(gridRows - 1, r2 + 1); r++) {
+                for (let c = Math.max(0, c1 - 1); c <= Math.min(gridCols - 1, c2 + 1); c++) {
+                    updateTileVisuals(r, c);
+                }
+            }
+            rectStart = rectEnd = null;
+            document.querySelectorAll('.tile.rect-preview').forEach(t => t.classList.remove('rect-preview'));
+            checkSpots();
+        }
+
+        // ─── 分享連結：把地圖 RLE 壓縮成 base64url 放進網址 hash ───
+        // 注意：TYPE_KEYS 依 items 定義順序，新增設施務必 append 在該分類尾端，避免舊連結失效
+        const TYPE_KEYS = Object.keys(items);
+
+        function encodeMap() {
+            const parts = [];
+            let prev = null, count = 0;
+            for (let r = 0; r < gridRows; r++) {
+                for (let c = 0; c < gridCols; c++) {
+                    const cell = gridData[r][c];
+                    const key = TYPE_KEYS.indexOf(cell.type) + '.' + (cell.elevation || 1);
+                    if (key === prev) { count++; }
+                    else {
+                        if (prev !== null) parts.push(prev + '.' + count);
+                        prev = key; count = 1;
+                    }
+                }
+            }
+            if (prev !== null) parts.push(prev + '.' + count);
+            return btoa(parts.join(',')).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        }
+
+        function decodeMap(code) {
+            try {
+                const str = atob(code.replace(/-/g, '+').replace(/_/g, '/'));
+                const cells = [];
+                for (const p of str.split(',')) {
+                    const [t, e, n] = p.split('.').map(Number);
+                    for (let k = 0; k < n; k++) cells.push({ type: TYPE_KEYS[t] || 'empty', elevation: e || 1 });
+                }
+                if (cells.length !== gridRows * gridCols) return null;
+                const grid = [];
+                for (let r = 0; r < gridRows; r++) grid.push(cells.slice(r * gridCols, (r + 1) * gridCols));
+                return grid;
+            } catch (err) { return null; }
+        }
+
+        function styleSuggestBtn() {
+            const b = document.getElementById('suggestBtn');
+            if (!b) return;
+            const on = !prefs.suggestOff;
+            b.classList.toggle('bg-indigo-600', on);
+            b.classList.toggle('text-white', on);
+        }
+
+        let autosaveTimer;
+        function scheduleAutosave() {
+            clearTimeout(autosaveTimer);
+            autosaveTimer = setTimeout(() => {
+                try { localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(gridData)); } catch (e) {}
+            }, 400);
+        }
+
+        // 依視窗大小縮放格子，讓整張地圖盡量一屏放下、不出現捲軸
+        function fitGrid() {
+            const main = document.querySelector('main');
+            if (!main) return;
+            const axis = 22, gap = 1;
+            const availW = main.clientWidth - 34;
+            const availH = main.clientHeight - 34;
+            const diamond = document.body.classList.contains('diamond');
+            let tile;
+            if (diamond) {
+                // 2:1 等角：外框寬 = (原寬+原高)×sin45°，高再壓一半
+                const fixed = 4 * axis + gap * (25 + 27) + 8;
+                const totalW = availW / 0.7071;
+                const totalH = availH / 0.3536;
+                tile = Math.floor((Math.min(totalW, totalH) - fixed) / (gridCols + gridRows));
+            } else {
+                const tileW = (availW - axis * 2 - gap * 25 - 4) / gridCols;
+                const tileH = (availH - axis * 2 - gap * 27 - 4) / gridRows;
+                tile = Math.floor(Math.min(tileW, tileH));
+            }
+            tile = Math.max(10, Math.min(40, tile));
+            document.documentElement.style.setProperty('--tile', tile + 'px');
+            document.documentElement.style.setProperty('--axis', axis + 'px');
+
+            // 菱形模式：容器要撐出旋轉後的正方形外框，讓網格置中
+            const container = document.getElementById('mapContainer');
+            if (container) {
+                if (diamond) {
+                    const w = axis * 2 + gridCols * tile + gap * 25 + 4;
+                    const h = axis * 2 + gridRows * tile + gap * 27 + 4;
+                    const side = Math.ceil((w + h) * 0.7071);
+                    container.style.width = side + 'px';
+                    container.style.height = Math.ceil(side / 2) + 'px';
+                } else {
+                    container.style.width = '';
+                    container.style.height = '';
+                }
+            }
+        }
+        window.addEventListener('resize', fitGrid);
+
+        function updateCoordHint(r, c) {
+            const cell = gridData[r][c];
+            const item = items[cell.type] || items['empty'];
+            const label = item.id === 'empty' ? '空地' : item.name;
+            document.getElementById('coordHint').innerText = `行:${r + 1}　列:${c + 1}　${label}`;
+        }
+
+        // 多格建築的放置預覽：標示滑鼠所在位置放下去會占據的範圍
+        function previewFootprint(r, c) {
+            document.querySelectorAll('.tile.fp-preview').forEach(t => t.classList.remove('fp-preview'));
+            const fp = getFootprint(currentTool);
+            if (fp.w === 1 && fp.h === 1) return;
+            for (let dr = 0; dr < fp.h; dr++) {
+                for (let dc = 0; dc < fp.w; dc++) {
+                    const el = document.querySelector(`.tile[data-r="${r + dr}"][data-c="${c + dc}"]`);
+                    if (el) el.classList.add('fp-preview');
+                }
+            }
+        }
+
+        // 依目前選取的建築，找出「放下去就能完成景點 combo」的空格並標示藍色虛線框。
+        // 判定（口袋學院相鄰規則）：成員兩兩切比雪夫距離 ≤ ADJ ⟺ 全部成員落在某個 WIN×WIN 視窗內。
+        // 某視窗已集齊該 combo 除選取建築外的所有條件時，只要建築佔地與該視窗有交集且佔地全為空格，
+        // 就是有效的建議位置（標示於左上角錨點格）。
+        function updateSuggestions() {
+            document.querySelectorAll('.tile.suggest, .tile.suggest2').forEach(t => t.classList.remove('suggest', 'suggest2'));
+            const toolId = currentTool;
+            if (prefs.suggestOff) return null;
+            if (!toolId || toolId === 'empty') return null;
+            const inGroup = g => (Array.isArray(g) ? g.includes(toolId) : g === toolId);
+            // 已成立的景點不再提示（隨成立數增加，畫面才不會越來越吵）
+            const relevantSpots = SPOTS.filter(s => s.req.some(inGroup) && !lastSpotStats.activeIds.has(s.id));
+            if (!relevantSpots.length) return null;
+            const fp = getFootprint(toolId);
+
+            const suggest = Array(gridRows).fill(null).map(() => Array(gridCols).fill(false));
+            const suggest2 = Array(gridRows).fill(null).map(() => Array(gridCols).fill(false));
+            const hitSpots = new Set();
+            const near = new Map(); // 放置後只差一項條件的景點 → 還缺的設施名
+
+            for (let wr = 0; wr <= gridRows - WIN; wr++) {
+                for (let wc = 0; wc <= gridCols - WIN; wc++) {
+                    const typesIn = new Set();
+                    for (let dr = 0; dr < WIN; dr++) {
+                        for (let dc = 0; dc < WIN; dc++) {
+                            const t = gridData[wr + dr][wc + dc].type;
+                            if (t !== 'empty') typesIn.add(t);
+                        }
+                    }
+                    relevantSpots.forEach(spot => {
+                        const myGroup = spot.req.find(inGroup);
+                        const others = spot.req.filter(g => g !== myGroup);
+                        if (!others.length) return;
+                        if ((Array.isArray(myGroup) ? myGroup : [myGroup]).some(t => typesIn.has(t))) return; // 該條件已存在
+                        const unmet = others.filter(g => !(Array.isArray(g) ? g : [g]).some(t => typesIn.has(t)));
+                        let target;
+                        if (unmet.length === 0) {
+                            hitSpots.add(spot.name);
+                            target = suggest;
+                        } else if (unmet.length === 1 && others.length > 1) {
+                            // 次佳：這一帶已有一項其他條件，放置後只差一項
+                            near.set(spot.name, grpName(unmet[0]));
+                            target = suggest2;
+                        } else return;
+                        // 錨點只要讓建築佔地與此 WIN×WIN 視窗有交集即可
+                        for (let ar = wr - fp.h + 1; ar < wr + WIN; ar++) {
+                            for (let ac = wc - fp.w + 1; ac < wc + WIN; ac++) {
+                                if (ar >= 0 && ac >= 0 && canPlaceAllEmpty(ar, ac, fp.w, fp.h)) {
+                                    target[ar][ac] = true;
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+
+            let count = 0, count2 = 0;
+            for (let r = 0; r < gridRows; r++) {
+                for (let c = 0; c < gridCols; c++) {
+                    if (suggest[r][c]) {
+                        const el = document.querySelector(`.tile[data-r="${r}"][data-c="${c}"]`);
+                        if (el) { el.classList.add('suggest'); count++; }
+                    }
+                }
+            }
+            if (count === 0) { // 沒有可立即完成的位置時，才顯示次佳區域
+                for (let r = 0; r < gridRows; r++) {
+                    for (let c = 0; c < gridCols; c++) {
+                        if (suggest2[r][c]) {
+                            const el = document.querySelector(`.tile[data-r="${r}"][data-c="${c}"]`);
+                            if (el) { el.classList.add('suggest2'); count2++; }
+                        }
+                    }
+                }
+            }
+            return { count, count2, hitSpots, near };
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderPalette();
+            renderRecent();
+            renderGrid();
+            setupEventListeners();
+            loadSavedMapsList();
+
+            // 還原上次的操作偏好
+            if (prefs.diamond) {
+                document.body.classList.add('diamond');
+                const btn = document.getElementById('diamondBtn');
+                btn.classList.add('bg-indigo-600', 'text-white');
+            }
+            styleSuggestBtn();
+            if (prefs.statsOpen) {
+                document.getElementById('spotStatsBody').classList.remove('hidden');
+                document.getElementById('spotStatsArrow').innerText = '▾';
+            }
+            selectTool(prefs.tool && items[prefs.tool] && !items[prefs.tool].hidden ? prefs.tool : 'library');
+            fitGrid();
+
+            // 載入優先序：分享連結 → 自動儲存 → 空地圖
+            let restored = false;
+            const shareMatch = location.hash.match(/^#m=(.+)$/);
+            if (shareMatch) {
+                const shared = decodeMap(shareMatch[1]);
+                if (shared) {
+                    restored = importGridData(shared);
+                    if (restored) showSysMsg('已載入分享的地圖');
+                }
+            }
+            if (!restored) {
+                try {
+                    const auto = JSON.parse(localStorage.getItem(AUTOSAVE_KEY));
+                    if (Array.isArray(auto)) {
+                        restored = importGridData(auto);
+                        if (restored) {
+                            if (prefs.lastSave) {
+                                document.getElementById('saveName').value = prefs.lastSave;
+                                document.getElementById('loadLocalSelect').value = prefs.lastSave;
+                            }
+                            showSysMsg('已還原上次的編輯進度');
+                        }
+                    }
+                } catch (e) {}
+            }
+        });
+
+        function showSysMsg(text, isError = false) {
+            const toast = document.getElementById('sysMsgToast');
+            const icon = document.getElementById('sysMsgIcon');
+            const msg = document.getElementById('sysMsgText');
+            clearTimeout(toastTimeout);
+            icon.innerText = isError ? '❌' : '✅';
+            msg.innerText = text;
+            toast.className = `fixed top-4 left-1/2 transform -translate-x-1/2 px-5 py-2 rounded-full shadow-lg text-xs font-bold z-50 transition-all duration-300 pointer-events-none flex items-center gap-2 ${isError ? 'bg-red-500 text-white' : 'bg-gray-800 text-white'}`;
+            void toast.offsetWidth;
+            toast.classList.remove('-translate-y-20', 'opacity-0');
+            toastTimeout = setTimeout(() => { toast.classList.add('-translate-y-20', 'opacity-0'); }, 2500);
+        }
+
+        // GA4 事件埋點：只記錄有意義的離散動作（不追蹤逐格塗畫）
+        let lastToolTracked = '';
+        function track(name, params) {
+            try { if (window.gtag) gtag('event', name, params || {}); } catch (e) {}
+        }
+
+        function renderPalette() {
+            const containers = {
+                'tool': document.getElementById('palette-tools'),
+                'sports': document.getElementById('palette-sports'),
+                'classroom': document.getElementById('palette-classroom'),
+                'life': document.getElementById('palette-life'),
+                'env': document.getElementById('palette-env')
+            };
+
+            Object.values(items).forEach(item => {
+                if (item.hidden) return;
+                const el = document.createElement('div');
+                el.className = `palette-item flex flex-col items-center justify-center p-1.5 rounded border border-transparent bg-white shadow-sm`;
+                el.id = `tool-${item.id}`;
+                el.onclick = () => selectTool(item.id);
+                const fpW = item.w || 1, fpH = item.h || 1;
+                const jp = JP_NAMES[item.id] ? `／日文：${JP_NAMES[item.id]}` : '';
+                el.title = (fpW * fpH > 1 ? `${item.name}（占地 ${fpW}×${fpH}）` : item.name) + jp;
+                
+                const colorBox = document.createElement('div');
+                colorBox.className = 'w-6 h-6 mb-1 rounded flex items-center justify-center text-[14px] font-black shadow-inner';
+                colorBox.style.backgroundColor = item.color;
+                colorBox.style.color = item.textCol || 'black';
+                colorBox.innerText = ITEM_ICONS[item.id] || item.short;
+                if (item.id === 'empty') colorBox.classList.add('border', 'border-gray-300');
+
+                const nameLabel = document.createElement('span');
+                nameLabel.className = 'text-[9px] text-center leading-tight font-bold text-gray-500 whitespace-nowrap overflow-hidden w-full';
+                nameLabel.innerText = item.name;
+
+                el.appendChild(colorBox);
+                el.appendChild(nameLabel);
+                containers[item.type].appendChild(el);
+            });
+        }
+
+        function createAxisLabel(text) {
+            const div = document.createElement('div');
+            div.className = 'axis-label';
+            div.innerText = text;
+            return div;
+        }
+
+        function renderGrid() {
+            const gridEl = document.getElementById('gameGrid');
+            gridEl.innerHTML = '';
+            
+            // --- TOP AXIS ROW (列 1..24) ---
+            gridEl.appendChild(createAxisLabel('')); // Top-left corner
+            for (let c = 0; c < gridCols; c++) {
+                gridEl.appendChild(createAxisLabel(c + 1));
+            }
+            gridEl.appendChild(createAxisLabel('')); // Top-right corner
+
+            // --- MAIN GRID ROWS (行 1..26) ---
+            for (let r = 0; r < gridRows; r++) {
+                const currentX = r + 1;
+
+                // Left axis (行 index)
+                gridEl.appendChild(createAxisLabel(currentX));
+
+                // Map Tiles
+                for (let c = 0; c < gridCols; c++) {
+                    const currentY = c + 1;
+
+                    const tile = document.createElement('div');
+                    tile.className = 'tile';
+                    tile.dataset.r = r;
+                    tile.dataset.c = c;
+                    tile.title = `[行:${currentX}, 列:${currentY}]`;
+
+                    const contentSpan = document.createElement('span');
+                    contentSpan.className = 'content-span relative z-10 pointer-events-none drop-shadow-sm';
+                    tile.appendChild(contentSpan);
+                    
+                    tile.addEventListener('mousedown', (e) => {
+                        if (e.button === 2) return; // 右鍵留給吸管
+                        e.preventDefault();
+                        pushHistory(); // 一次筆劃（含拖曳）記錄一步
+                        const fp = getFootprint(currentTool);
+                        if ((rectMode || e.shiftKey) && fp.w === 1 && fp.h === 1) {
+                            rectStart = { r, c }; rectEnd = { r, c };
+                            previewRect();
+                            return;
+                        }
+                        isDrawing = (fp.w === 1 && fp.h === 1); // 多格建築不支援拖曳連放
+                        applyTool(r, c);
+                    });
+                    tile.addEventListener('contextmenu', (e) => {
+                        e.preventDefault(); // 右鍵吸管：選取此格的類型
+                        const t = gridData[r][c].type;
+                        selectTool(t);
+                        showSysMsg(t === 'empty' ? '吸管：已切換為清除模式' : `吸管：已選取「${items[t].name}」`);
+                    });
+                    tile.addEventListener('mouseenter', () => {
+                        updateCoordHint(r, c);
+                        if (rectStart) { rectEnd = { r, c }; previewRect(); return; }
+                        previewFootprint(r, c);
+                        if (isDrawing) applyTool(r, c);
+                    });
+                    tile.addEventListener('touchstart', (e) => {
+                        e.preventDefault();
+                        touchState = { r, c, lastR: r, lastC: c, painted: false, longFired: false };
+                        updateCoordHint(r, c);
+                        clearTimeout(longPressTimer);
+                        longPressTimer = setTimeout(() => {
+                            if (touchState && !touchState.painted) {
+                                touchState.longFired = true; // 長按 = 吸管
+                                const t = gridData[r][c].type;
+                                selectTool(t);
+                                showSysMsg(t === 'empty' ? '吸管：已切換為清除模式' : `吸管：已選取「${items[t].name}」`);
+                            }
+                        }, 500);
+                    }, { passive: false });
+                    
+                    gridEl.appendChild(tile);
+                }
+
+                // Right axis
+                gridEl.appendChild(createAxisLabel(currentX));
+            }
+
+            // --- BOTTOM AXIS ROW ---
+            gridEl.appendChild(createAxisLabel('')); // Bottom-left corner
+            for (let c = 0; c < gridCols; c++) {
+                gridEl.appendChild(createAxisLabel(c + 1));
+            }
+            gridEl.appendChild(createAxisLabel('')); // Bottom-right corner
+
+            document.addEventListener('mouseup', () => {
+                if (rectStart && rectEnd) commitRect();
+                isDrawing = false;
+            });
+            document.getElementById('gameGrid').addEventListener('contextmenu', e => e.preventDefault());
+
+            // 觸控：移動中依手指位置找格子（touchmove 不會觸發各格的 mouseenter）
+            gridEl.addEventListener('touchmove', (e) => {
+                if (!touchState || touchState.longFired) return;
+                e.preventDefault();
+                const touch = e.touches[0];
+                const hit = document.elementFromPoint(touch.clientX, touch.clientY);
+                const tileEl = hit && hit.closest ? hit.closest('.tile') : null;
+                if (!tileEl) return;
+                const nr = +tileEl.dataset.r, nc = +tileEl.dataset.c;
+                if (nr === touchState.lastR && nc === touchState.lastC && touchState.painted) return;
+                const fp = getFootprint(currentTool);
+                if (!touchState.painted) {
+                    // 開始移動才上色（保留長按吸管的判定時間）
+                    clearTimeout(longPressTimer);
+                    pushHistory();
+                    touchState.painted = true;
+                    if (rectMode && fp.w === 1 && fp.h === 1) {
+                        rectStart = { r: touchState.r, c: touchState.c };
+                        rectEnd = { r: nr, c: nc };
+                        previewRect();
+                        touchState.lastR = nr; touchState.lastC = nc;
+                        return;
+                    }
+                    isDrawing = (fp.w === 1 && fp.h === 1);
+                    applyTool(touchState.r, touchState.c);
+                }
+                if (rectStart) { rectEnd = { r: nr, c: nc }; previewRect(); }
+                else if (isDrawing) applyTool(nr, nc);
+                updateCoordHint(nr, nc);
+                touchState.lastR = nr; touchState.lastC = nc;
+            }, { passive: false });
+
+            gridEl.addEventListener('touchend', () => {
+                clearTimeout(longPressTimer);
+                if (!touchState) return;
+                if (!touchState.painted && !touchState.longFired) {
+                    // 單點 = 畫一格／放一棟
+                    pushHistory();
+                    applyTool(touchState.r, touchState.c);
+                }
+                if (rectStart && rectEnd) commitRect();
+                isDrawing = false;
+                touchState = null;
+            });
+            document.getElementById('mapContainer').addEventListener('mouseleave', () => {
+                isDrawing = false;
+                document.querySelectorAll('.tile.fp-preview').forEach(t => t.classList.remove('fp-preview'));
+            });
+        }
+
+        function selectTool(id) {
+            document.querySelectorAll('.palette-item').forEach(el => el.classList.remove('active'));
+            const selected = document.getElementById(`tool-${id}`);
+            if (selected) selected.classList.add('active');
+            currentTool = id;
+            savePrefs({ tool: id });
+            if (id !== lastToolTracked) { lastToolTracked = id; track('select_tool', { tool_id: id, category: (items[id] && items[id].type) || '' }); }
+            if (id !== 'empty' && items[id] && !items[id].hidden) {
+                const rec = (prefs.recent || []).filter(x => x !== id);
+                rec.unshift(id);
+                savePrefs({ recent: rec.slice(0, 8) });
+                renderRecent();
+            }
+            // 狀態一律顯示在右下資訊卡，不再每次選取都跳提示訊息
+            updateToolHint(id, updateSuggestions());
+        }
+
+        // 右下角資訊卡：選取的建築能組成哪些景點、目前地圖上的狀態
+        function updateToolHint(id, res) {
+            const el = document.getElementById('toolHint');
+            const item = items[id];
+            if (!item || id === 'empty') { el.classList.add('hidden'); return; }
+            const inGroup = g => (Array.isArray(g) ? g.includes(id) : g === id);
+            const related = SPOTS.filter(s => s.req.some(inGroup));
+            const fp = getFootprint(id);
+            const sizeTxt = fp.w * fp.h > 1 ? `（占地 ${fp.w}×${fp.h}）` : '';
+            let html = `<div class="font-black text-gray-800 mb-1">${item.name}${sizeTxt}</div>`;
+            if (!related.length) {
+                html += '<div class="text-gray-500">不參與任何景點 combo</div>';
+            } else {
+                html += related.map(s => {
+                    const others = s.req.filter(g => !inGroup(g)).map(g => grpName(g)).join('＋');
+                    let status = '';
+                    if (lastSpotStats.activeIds.has(s.id)) {
+                        status = ' <span class="text-green-600 font-bold">✔ 已成立</span>';
+                    } else if (res && res.hitSpots && res.hitSpots.has(s.name)) {
+                        status = ' <span class="text-blue-600 font-bold">✔ 藍框可立即完成</span>';
+                    } else if (res && res.count === 0 && res.near && res.near.has(s.name)) {
+                        status = ` <span class="text-sky-600 font-bold">△ 放天藍框處，再補「${res.near.get(s.name)}」</span>`;
+                    }
+                    return `<div class="text-gray-600"><b class="text-gray-800">${s.name}</b>（${s.bonus}）：搭配 ${others}${status}</div>`;
+                }).join('');
+            }
+            html += '<div class="text-gray-400 mt-1 border-t border-gray-100 pt-1">要訣：combo 成員彼此在 3 格（切比雪夫距離 ≤ 3）內即觸發，可疊加、同一棟建築可同時湊多個 combo。</div>';
+            el.innerHTML = html;
+            el.classList.remove('hidden');
+        }
+
+        // 口袋學院無高低差／斜坡，永遠回傳 false（保留介面供舊呼叫相容）。
+        function isSlopeIn(g, r, c) { return false; }
+        function isSlope(r, c) { return false; }
+
+        // 同一棟建築判定：同類型且同棟別編號（bid）。手繪的 1×1 地形沒有 bid、不合併。
+        function sameBlockIn(g, r, c, nr, nc) {
+            if (nr < 0 || nr >= gridRows || nc < 0 || nc >= gridCols) return false;
+            const a = g[r][c], b = g[nr][nc];
+            return a.type === b.type && a.bid !== undefined && a.bid === b.bid;
+        }
+        function sameBlock(r, c, nr, nc) { return sameBlockIn(gridData, r, c, nr, nc); }
+
+        function updateTileVisuals(r, c) {
+            const tileEl = document.querySelector(`.tile[data-r="${r}"][data-c="${c}"]`);
+            if (!tileEl) return;
+            const tileData = gridData[r][c];
+            const toolId = tileData.type;
+            const item = items[toolId] || items['empty'];
+            const contentSpan = tileEl.querySelector('.content-span');
+
+            tileEl.classList.toggle('elevation-2', tileData.elevation === 2);
+            tileEl.classList.toggle('elevation-3', tileData.elevation === 3);
+            tileEl.classList.toggle('slope-tile', isSlope(r, c));
+
+            if (toolId === 'empty') {
+                tileEl.style.backgroundColor = '';
+                tileEl.style.boxShadow = '';
+                if(contentSpan) contentSpan.innerText = '';
+            } else {
+                tileEl.style.backgroundColor = item.color;
+                // 同一棟建築的相鄰格：用同色陰影填滿格線縫隙，視覺上合併成一整塊
+                const shadows = [];
+                if (sameBlock(r, c, r, c + 1)) shadows.push(`1px 0 0 ${item.color}`);
+                if (sameBlock(r, c, r, c - 1)) shadows.push(`-1px 0 0 ${item.color}`);
+                if (sameBlock(r, c, r + 1, c)) shadows.push(`0 1px 0 ${item.color}`);
+                if (sameBlock(r, c, r - 1, c)) shadows.push(`0 -1px 0 ${item.color}`);
+                if (tileData.elevation === 2) shadows.push('inset -2px -2px 4px rgba(0,0,0,0.1)');
+                if (tileData.elevation === 3) shadows.push('inset -3px -3px 5px rgba(0,0,0,0.2)');
+                tileEl.style.boxShadow = shadows.join(', ');
+                if(contentSpan) {
+                    contentSpan.style.color = item.textCol || 'black';
+                    // 標籤只顯示在整棟的左上角格
+                    const corner = !(sameBlock(r, c, r - 1, c) || sameBlock(r, c, r, c - 1));
+                    contentSpan.innerText = corner ? item.short : '';
+                }
+            }
+        }
+
+        function updateSpotIndicators(r, c, coreSet, areaSet) {
+            const tileEl = document.querySelector(`.tile[data-r="${r}"][data-c="${c}"]`);
+            if (!tileEl) return;
+
+            tileEl.querySelectorAll('.spot-indicators, .spot-tooltip, .spot-area-ov').forEach(n => n.remove());
+            tileEl.classList.remove('ring-2', 'ring-yellow-400', 'ring-inset', 'z-10');
+
+            // 影響範圍：只上淡黃底色，不加框（降低視覺噪音）
+            if (areaSet.size > 0 && coreSet.size === 0) {
+                const ov = document.createElement('div');
+                ov.className = 'spot-area-ov absolute inset-0 bg-yellow-300/30 pointer-events-none z-[3]';
+                tileEl.appendChild(ov);
+            }
+
+            // 核心格（條件建築本身）：黃框＋圓點＋懸浮說明
+            const spotSet = coreSet;
+            if (spotSet.size > 0) {
+                tileEl.classList.add('ring-2', 'ring-yellow-400', 'ring-inset', 'z-10');
+
+                const indContainer = document.createElement('div');
+                indContainer.className = 'spot-indicators absolute -top-1 -right-1 flex flex-wrap-reverse gap-0.5 justify-end w-[120%] pointer-events-none z-20';
+
+                const tooltip = document.createElement('div');
+                tooltip.className = 'spot-tooltip flex flex-col gap-1.5 text-left';
+                
+                spotSet.forEach(spotId => {
+                    const spot = SPOTS.find(s => s.id === spotId);
+                    const dot = document.createElement('div');
+                    dot.className = `w-2 h-2 rounded-full border border-white shadow-sm ${spot.dotColor}`;
+                    indContainer.appendChild(dot);
+
+                    // Map requirement building names for display（自然物群組收合為「自然物」）
+                    const reqNames = spot.req.map(g => grpName(g)).join(' + ');
+
+                    const tooltipItem = document.createElement('div');
+                    tooltipItem.className = 'flex flex-col border-b border-gray-100 last:border-0 pb-1 last:pb-0';
+                    tooltipItem.innerHTML = `
+                        <div class="flex justify-between items-center gap-2">
+                            <span class="text-[10px] font-black flex items-center gap-1 text-gray-800">
+                                <div class="w-1.5 h-1.5 rounded-full ${spot.dotColor}"></div>
+                                ${spot.name}<span class="text-gray-400 font-normal">（${spot.en || ''}）</span>
+                            </span>
+                            <span class="bg-yellow-100 text-yellow-800 px-1 py-0.5 rounded text-[8px] font-bold">${spot.bonus}</span>
+                        </div>
+                        <span class="text-[9px] text-gray-500 mt-0.5">條件：${reqNames}</span>
+                        ${spot.teacher ? `<span class="text-[9px] text-purple-500 mt-0.5">招募教師：${spot.teacher}</span>` : ''}
+                    `;
+                    tooltip.appendChild(tooltipItem);
+                });
+                
+                tileEl.appendChild(indContainer);
+                tileEl.appendChild(tooltip);
+            }
+        }
+
+        // 設施類型（用於報告的「設施種類」統計）：運動/教室/生活/環境皆計入。
+        function isBuildingType(t) {
+            const it = items[t];
+            return !!it && (it.type === 'sports' || it.type === 'classroom' || it.type === 'life' || it.type === 'env');
+        }
+
+        // req 條件判定：每一項可以是單一 id 或「其中一種即可」的陣列
+        function reqSatisfied(req, typeSet) {
+            return req.every(g => (Array.isArray(g) ? g : [g]).some(t => typeSet.has(t)));
+        }
+
+        // 口袋學院相鄰規則：一個景點 combo 成立 ⟺ 其每個 req 建築都有一棟被放置，且這些成員
+        // 兩兩的切比雪夫距離 ≤ ADJ（3 格）。此條件等價於「全部成員落在某個 WIN×WIN（4×4）視窗內」，
+        // 因此沿用滑動視窗掃描：某視窗內若集齊 combo 的全部 req，即成立。成立後，視窗內的條件建築格
+        // 與其周圍一圈（占地 4 格以上的大建築為兩圈）被標為 combo 範圍高亮。
+        function checkSpots() {
+            const coreGrid = Array(gridRows).fill(null).map(() => Array(gridCols).fill(null).map(() => new Set()));
+            const areaGrid = Array(gridRows).fill(null).map(() => Array(gridCols).fill(null).map(() => new Set()));
+            const activeIds = new Set();
+            const nearMap = new Map(); // 只差一項的 combo id → 缺的建築名集合
+
+            for (let wr = 0; wr <= gridRows - WIN; wr++) {
+                for (let wc = 0; wc <= gridCols - WIN; wc++) {
+                    const typesIn = new Set();
+                    for (let dr = 0; dr < WIN; dr++) {
+                        for (let dc = 0; dc < WIN; dc++) {
+                            const t = gridData[wr + dr][wc + dc].type;
+                            if (t !== 'empty') typesIn.add(t);
+                        }
+                    }
+                    if (!typesIn.size) continue;
+
+                    SPOTS.forEach(spot => {
+                        const unmet = spot.req.filter(g => !(Array.isArray(g) ? g : [g]).some(t => typesIn.has(t)));
+                        if (unmet.length === 1) {
+                            // 只差一項 → 進統計面板的「差一項就成立」清單（記名稱與可點選的建築 id）
+                            const g = Array.isArray(unmet[0]) ? unmet[0] : [unmet[0]];
+                            const nm = grpName(unmet[0]);
+                            if (!nearMap.has(spot.id)) nearMap.set(spot.id, new Map());
+                            nearMap.get(spot.id).set(nm, g[0]);
+                            return;
+                        }
+                        if (unmet.length > 0) return;
+                        activeIds.add(spot.id);
+                        const reqTypes = spot.req.flat();
+                        for (let dr = 0; dr < WIN; dr++) {
+                            for (let dc = 0; dc < WIN; dc++) {
+                                const nr = wr + dr, nc = wc + dc;
+                                const t = gridData[nr][nc].type;
+                                if (!reqTypes.includes(t)) continue;
+                                coreGrid[nr][nc].add(spot.id);
+                                const it = items[t];
+                                const ring = it && ((it.w || 1) * (it.h || 1) >= 4) ? 2 : 1;
+                                for (let rr = -ring; rr <= ring; rr++) {
+                                    for (let rc = -ring; rc <= ring; rc++) {
+                                        const mr = nr + rr, mc = nc + rc;
+                                        if (mr >= 0 && mr < gridRows && mc >= 0 && mc < gridCols) {
+                                            areaGrid[mr][mc].add(spot.id);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+
+            for (let r = 0; r < gridRows; r++) {
+                for (let c = 0; c < gridCols; c++) {
+                    updateSpotIndicators(r, c, coreGrid[r][c], areaGrid[r][c]);
+                }
+            }
+            lastSpotStats = { activeIds, nearMap };
+            renderSpotStats(activeIds, nearMap);
+            updateToolHint(currentTool, updateSuggestions());
+            scheduleAutosave();
+        }
+
+        // ─── 佈局體檢報告 ───
+        function buildReport() {
+            const { activeIds, nearMap } = lastSpotStats;
+            const act = SPOTS.filter(s => activeIds.has(s.id));
+            // 屬性加成合計
+            const totals = {};
+            act.forEach(s => {
+                for (const m of s.bonus.matchAll(/(\S+?)\+(\d+)/g)) {
+                    totals[m[1]] = (totals[m[1]] || 0) + Number(m[2]);
+                }
+            });
+            // 使用率與設施統計
+            let builtCells = 0;
+            const typeSet = new Set();
+            for (let r = 0; r < gridRows; r++) {
+                for (let c = 0; c < gridCols; c++) {
+                    const t = gridData[r][c].type;
+                    if (t !== 'empty') { builtCells++; if (isBuildingType(t)) typeSet.add(t); }
+                }
+            }
+            let html = `<div class="mb-2"><b class="text-gray-800">整體：</b>已使用 ${builtCells}／${gridRows * gridCols} 格，建築 ${typeSet.size} 種。</div>`;
+            html += `<div class="mb-2"><b class="text-gray-800">成立景點：${act.length} 種</b>`;
+            html += act.length ? '<br>' + act.map(s => `・${s.name}（${s.bonus}）`).join('<br>') : '（尚無）';
+            html += '</div>';
+            const tKeys = Object.keys(totals);
+            if (tKeys.length) {
+                html += `<div class="mb-2"><b class="text-gray-800">加成合計：</b>${tKeys.map(k => `${k}+${totals[k]}%`).join('、')}</div>`;
+            }
+            const nears = SPOTS.filter(s => !activeIds.has(s.id) && nearMap.has(s.id));
+            if (nears.length) {
+                html += '<div class="mb-2"><b class="text-gray-800">差一項就成立：</b><br>' +
+                    nears.map(s => `・${s.name}：缺 ${[...nearMap.get(s.id).keys()].join(' 或 ')}`).join('<br>') + '</div>';
+            }
+            document.getElementById('reportTitle').innerText = '📋 佈局體檢報告';
+            document.getElementById('reportBody').innerHTML = html;
+            document.getElementById('reportModal').classList.remove('hidden');
+        }
+
+        // 把任意地圖資料畫到 canvas（axis=0 表示不畫座標軸；diffSet 內的格子加紅框）
+        function drawMapToCanvas(ctx, grid, cell, axis, diffSet) {
+            const W = axis * 2 + gridCols * cell, H = axis * 2 + gridRows * cell;
+            ctx.fillStyle = '#f3f4f6';
+            ctx.fillRect(0, 0, W, H);
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            if (axis > 0) {
+                ctx.fillStyle = '#4b5563';
+                ctx.font = 'bold 10px sans-serif';
+                for (let c = 0; c < gridCols; c++) {
+                    const x = axis + c * cell + cell / 2;
+                    ctx.fillText(c + 1, x, axis / 2);
+                    ctx.fillText(c + 1, x, H - axis / 2);
+                }
+                for (let r = 0; r < gridRows; r++) {
+                    const y = axis + r * cell + cell / 2;
+                    ctx.fillText(r + 1, axis / 2, y);
+                    ctx.fillText(r + 1, W - axis / 2, y);
+                }
+            }
+            const labelFont = 'bold ' + Math.max(8, Math.floor(cell * 0.46)) + 'px sans-serif';
+            for (let r = 0; r < gridRows; r++) {
+                for (let c = 0; c < gridCols; c++) {
+                    const cellData = (grid[r] && grid[r][c]) || { type: 'empty', elevation: 1 };
+                    const item = items[cellData.type] || items['empty'];
+                    const x = axis + c * cell, y = axis + r * cell;
+                    ctx.fillStyle = cellData.type === 'empty' ? '#bbf7d0' : item.color;
+                    ctx.fillRect(x, y, cell - 1, cell - 1);
+                    if (cellData.elevation >= 2) {
+                        ctx.strokeStyle = cellData.elevation === 3 ? '#7c2d12' : '#b45309';
+                        ctx.lineWidth = cell >= 20 ? 2 : 1;
+                        ctx.strokeRect(x + 1.5, y + 1.5, cell - 4, cell - 4);
+                    }
+                    if (cell >= 10) {
+                        if (cellData.type !== 'empty') {
+                            const corner = !(sameBlockIn(grid, r, c, r - 1, c) || sameBlockIn(grid, r, c, r, c - 1));
+                            if (corner) {
+                                ctx.fillStyle = item.textCol || 'black';
+                                ctx.font = labelFont;
+                                ctx.fillText(item.short, x + cell / 2, y + cell / 2);
+                            }
+                        }
+                    }
+                    if (diffSet && diffSet.has(r + ',' + c)) {
+                        ctx.strokeStyle = '#dc2626';
+                        ctx.lineWidth = 2;
+                        ctx.strokeRect(x + 0.5, y + 0.5, cell - 2, cell - 2);
+                    }
+                }
+            }
+        }
+
+        // 將目前地圖畫成 PNG 下載（俯視圖）
+        function exportImage() {
+            const cell = 26, axis = 20;
+            const cv = document.createElement('canvas');
+            cv.width = axis * 2 + gridCols * cell;
+            cv.height = axis * 2 + gridRows * cell;
+            drawMapToCanvas(cv.getContext('2d'), gridData, cell, axis);
+            const a = document.createElement('a');
+            const name = document.getElementById('saveName').value.trim() || 'school1_map';
+            a.download = `${name}.png`;
+            a.href = cv.toDataURL('image/png');
+            a.click();
+            showSysMsg('已下載地圖圖片');
+        }
+
+        // ─── 存檔比較 ───
+        function buildCompare() {
+            let maps = {};
+            try { maps = JSON.parse(localStorage.getItem(MAPS_KEY)) || {}; } catch (e) {}
+            const opts = ['__current__', ...Object.keys(maps)];
+            const optHtml = sel => opts.map(k =>
+                `<option value="${k}" ${k === sel ? 'selected' : ''}>${k === '__current__' ? '目前地圖' : k}</option>`).join('');
+            document.getElementById('reportTitle').innerText = '🆚 存檔比較';
+            document.getElementById('reportBody').innerHTML = `
+                <div class="flex gap-2 mb-2 items-center text-xs">
+                    <select id="cmpA" class="border border-gray-300 rounded p-1 flex-1">${optHtml('__current__')}</select>
+                    <span class="text-gray-400 font-bold">vs</span>
+                    <select id="cmpB" class="border border-gray-300 rounded p-1 flex-1">${optHtml(opts[1] || '__current__')}</select>
+                </div>
+                <div class="flex gap-3 justify-center mb-2 flex-wrap">
+                    <canvas id="cmpCanvasA" class="border border-gray-200 rounded"></canvas>
+                    <canvas id="cmpCanvasB" class="border border-gray-200 rounded"></canvas>
+                </div>
+                <div id="cmpSummary" class="text-xs text-gray-600"></div>`;
+            const getGrid = k => {
+                if (k === '__current__') return gridData;
+                const e = maps[k];
+                return Array.isArray(e) ? e : (e && e.data);
+            };
+            const render = () => {
+                const gA = getGrid(document.getElementById('cmpA').value);
+                const gB = getGrid(document.getElementById('cmpB').value);
+                if (!gA || !gB) return;
+                const diff = new Set();
+                const delta = {};
+                for (let r = 0; r < gridRows; r++) {
+                    for (let c = 0; c < gridCols; c++) {
+                        const a = (gA[r] && gA[r][c]) || { type: 'empty', elevation: 1 };
+                        const b = (gB[r] && gB[r][c]) || { type: 'empty', elevation: 1 };
+                        if (a.type !== b.type || (a.elevation || 1) !== (b.elevation || 1)) {
+                            diff.add(r + ',' + c);
+                            if (a.type !== b.type) {
+                                if (a.type !== 'empty') delta[a.type] = (delta[a.type] || 0) - 1;
+                                if (b.type !== 'empty') delta[b.type] = (delta[b.type] || 0) + 1;
+                            }
+                        }
+                    }
+                }
+                const cell = 11;
+                [[gA, 'cmpCanvasA'], [gB, 'cmpCanvasB']].forEach(([g, id]) => {
+                    const cv = document.getElementById(id);
+                    cv.width = gridCols * cell;
+                    cv.height = gridRows * cell;
+                    drawMapToCanvas(cv.getContext('2d'), g, cell, 0, diff);
+                });
+                const deltaTxt = Object.entries(delta)
+                    .map(([t, n]) => `${items[t] ? items[t].name : t} ${n > 0 ? '+' : ''}${n}`).join('、');
+                document.getElementById('cmpSummary').innerHTML =
+                    `<b>差異：${diff.size} 格</b>${diff.size ? '（紅框標示）' : '，兩張地圖相同'}` +
+                    (deltaTxt ? `<br>左→右格數變化：${deltaTxt}` : '');
+            };
+            document.getElementById('cmpA').addEventListener('change', render);
+            document.getElementById('cmpB').addEventListener('change', render);
+            render();
+            document.getElementById('reportModal').classList.remove('hidden');
+        }
+
+        // 側欄統計面板：已成立的景點 + 只差一項就成立的景點
+        function renderSpotStats(activeIds, nearMap) {
+            const el = document.getElementById('spotStats');
+            if (!el) return;
+            const act = SPOTS.filter(s => activeIds.has(s.id));
+            const nears = SPOTS.filter(s => !activeIds.has(s.id) && nearMap.has(s.id));
+            const summary = document.getElementById('spotStatsSummary');
+            if (summary) summary.innerText = `已成立 ${act.length}｜差一項 ${nears.length}`;
+            let html = '';
+            if (act.length) {
+                // 精簡徽章排版：加成％改為滑過顯示
+                html += '<div class="flex flex-wrap gap-1 mb-1">' + act.map(s =>
+                    `<span class="inline-flex items-center gap-1 bg-white border border-yellow-200 rounded px-1.5 py-0.5 whitespace-nowrap" title="${s.bonus}"><span class="w-2 h-2 rounded-full ${s.dotColor} inline-block"></span>${s.name}</span>`
+                ).join('') + '</div>';
+            } else {
+                html += '<div class="text-gray-400">尚無成立的景點</div>';
+            }
+            if (nears.length) {
+                html += '<div class="font-bold text-gray-500 mt-1.5 pt-1.5 border-t border-yellow-200">差一項就成立：</div>';
+                html += '<div class="text-[10px] text-gray-400 mb-0.5">（點建築名稱，地圖會亮出可放置位置）</div>';
+                html += nears.map(s => {
+                    const chips = [...nearMap.get(s.id).entries()].map(([nm, id]) =>
+                        `<button class="near-chip underline decoration-dotted text-sky-700 hover:text-sky-900 font-bold cursor-pointer" data-tool="${id}">${nm}</button>`
+                    ).join(' 或 ');
+                    return `<div class="text-gray-500">△ <b class="text-gray-700">${s.name}</b>：缺 ${chips}</div>`;
+                }).join('');
+            }
+            el.innerHTML = html;
+        }
+
+        function getFootprint(id) {
+            const it = items[id] || items['empty'];
+            return { w: it.w || 1, h: it.h || 1 };
+        }
+
+        function canPlaceAllEmpty(r, c, w, h) {
+            if (r + h > gridRows || c + w > gridCols) return false;
+            for (let dr = 0; dr < h; dr++) {
+                for (let dc = 0; dc < w; dc++) {
+                    if (gridData[r + dr][c + dc].type !== 'empty') return false;
+                }
+            }
+            return true;
+        }
+
+        function applyTool(r, c) {
+            if (!window._paintedOnce) { window._paintedOnce = true; track('first_paint'); }
+            // 清除模式點到多格建築 → 整棟拆除
+            if (currentTool === 'empty' && gridData[r][c].bid !== undefined) {
+                const bid = gridData[r][c].bid;
+                for (let rr = 0; rr < gridRows; rr++) {
+                    for (let cc = 0; cc < gridCols; cc++) {
+                        if (gridData[rr][cc].bid === bid) {
+                            gridData[rr][cc] = { type: 'empty', elevation: gridData[rr][cc].elevation };
+                            updateTileVisuals(rr, cc);
+                        }
+                    }
+                }
+                checkSpots();
+                updateCoordHint(r, c);
+                return;
+            }
+            const fp = getFootprint(currentTool);
+            if (r + fp.h > gridRows || c + fp.w > gridCols) {
+                showSysMsg(`超出地圖範圍，${items[currentTool].name} 需要 ${fp.w}×${fp.h} 的空間`, true);
+                return;
+            }
+            const bid = fp.w * fp.h > 1 ? ++blockIdCounter : undefined;
+            for (let dr = 0; dr < fp.h; dr++) {
+                for (let dc = 0; dc < fp.w; dc++) {
+                    const cell = { type: currentTool, elevation: currentElevation };
+                    if (bid) cell.bid = bid;
+                    gridData[r + dr][c + dc] = cell;
+                }
+            }
+            // 連同周圍一圈重繪：合併縫隙與鄰格的標籤顯示會受影響
+            for (let dr = -1; dr <= fp.h; dr++) {
+                for (let dc = -1; dc <= fp.w; dc++) {
+                    const nr = r + dr, nc = c + dc;
+                    if (nr >= 0 && nr < gridRows && nc >= 0 && nc < gridCols) updateTileVisuals(nr, nc);
+                }
+            }
+            checkSpots();
+            updateCoordHint(r, c);
+        }
+
+        // 面板搜尋：依名稱/標籤過濾，整組沒結果的分類自動隱藏
+        function filterPalette(q) {
+            q = (q || '').trim().toLowerCase();
+            document.querySelectorAll('.palette-item').forEach(el => {
+                const id = el.id.replace('tool-', '');
+                const item = items[id];
+                const hit = !q || item.name.toLowerCase().includes(q) || id.includes(q) || (item.short && item.short.includes(q));
+                el.style.display = hit ? '' : 'none';
+            });
+            ['palette-tools', 'palette-sports', 'palette-classroom', 'palette-life', 'palette-env'].forEach(cid => {
+                const cont = document.getElementById(cid);
+                if (!cont) return;
+                const any = [...cont.children].some(ch => ch.style.display !== 'none');
+                cont.parentElement.style.display = any ? '' : 'none';
+            });
+        }
+
+        // 最近使用列（存進偏好，跨次記憶）
+        function renderRecent() {
+            const row = document.getElementById('recentRow');
+            if (!row) return;
+            const list = (prefs.recent || []).filter(id => items[id] && !items[id].hidden);
+            row.innerHTML = list.length
+                ? '<span class="text-[10px] text-gray-400 self-center">最近：</span>' + list.map(id =>
+                    `<button class="recent-chip w-7 h-7 rounded border border-gray-200 shadow-sm text-[14px] flex items-center justify-center hover:scale-110 transition" style="background:${items[id].color}" title="${items[id].name}" data-tool="${id}">${ITEM_ICONS[id] || items[id].short}</button>`
+                ).join('')
+                : '';
+        }
+
+        function loadSavedMapsList() {
+            const select = document.getElementById('loadLocalSelect');
+            select.innerHTML = '<option value="">-- 讀取存檔 --</option>';
+            try {
+                const maps = JSON.parse(localStorage.getItem(MAPS_KEY)) || {};
+                Object.keys(maps).forEach(name => {
+                    const opt = document.createElement('option');
+                    opt.value = name;
+                    const ts = maps[name] && !Array.isArray(maps[name]) && maps[name].ts;
+                    if (ts) {
+                        const d = new Date(ts);
+                        opt.innerText = `${name}（${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}）`;
+                    } else {
+                        opt.innerText = name;
+                    }
+                    select.appendChild(opt);
+                });
+            } catch (e) { console.error("讀取清單失敗"); }
+        }
+
+        // 為預設圖/舊存檔中的多格建築自動標記棟別（貪婪：由左上往右下找完整 w×h 區塊）
+        function assignBlockIds() {
+            let maxBid = 0;
+            for (let r = 0; r < gridRows; r++) {
+                for (let c = 0; c < gridCols; c++) {
+                    const b = gridData[r][c].bid;
+                    if (b && b > maxBid) maxBid = b;
+                }
+            }
+            for (let r = 0; r < gridRows; r++) {
+                for (let c = 0; c < gridCols; c++) {
+                    const t = gridData[r][c].type;
+                    const it = items[t];
+                    if (!it) continue;
+                    const w = it.w || 1, h = it.h || 1;
+                    if (w * h <= 1 || gridData[r][c].bid) continue;
+                    if (r + h > gridRows || c + w > gridCols) continue;
+                    let ok = true;
+                    for (let dr = 0; dr < h && ok; dr++) {
+                        for (let dc = 0; dc < w && ok; dc++) {
+                            const cell = gridData[r + dr][c + dc];
+                            if (cell.type !== t || cell.bid) ok = false;
+                        }
+                    }
+                    if (!ok) continue;
+                    const bid = ++maxBid;
+                    for (let dr = 0; dr < h; dr++) {
+                        for (let dc = 0; dc < w; dc++) gridData[r + dr][c + dc].bid = bid;
+                    }
+                }
+            }
+            blockIdCounter = maxBid;
+        }
+
+        function importGridData(parsed) {
+            if (!Array.isArray(parsed)) return false;
+
+            for (let r = 0; r < gridRows; r++) {
+                for (let c = 0; c < gridCols; c++) {
+                    const val = parsed[r] && parsed[r][c] ? parsed[r][c] : { type: 'empty', elevation: 1 };
+                    const cellValue = typeof val === 'object' ? (val.type || 'empty') : (val || 'empty');
+                    const cellElev = typeof val === 'object' ? (val.elevation || 1) : 1;
+
+                    gridData[r][c] = { type: cellValue, elevation: cellElev };
+                    if (typeof val === 'object' && val.bid) gridData[r][c].bid = val.bid;
+                }
+            }
+            assignBlockIds();
+            for (let r = 0; r < gridRows; r++) {
+                for (let c = 0; c < gridCols; c++) updateTileVisuals(r, c);
+            }
+            checkSpots();
+            return true;
+        }
+
+        function setupEventListeners() {
+            document.getElementById('undoBtn').addEventListener('click', undo);
+            document.getElementById('redoBtn').addEventListener('click', redo);
+
+            document.getElementById('paletteSearch').addEventListener('input', (e) => filterPalette(e.target.value));
+            document.getElementById('paletteSearch').addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') { e.target.value = ''; filterPalette(''); e.target.blur(); }
+            });
+            document.getElementById('recentRow').addEventListener('click', (e) => {
+                const btn = e.target.closest('.recent-chip');
+                if (btn) selectTool(btn.dataset.tool);
+            });
+
+            document.getElementById('rectBtn').addEventListener('click', () => {
+                rectMode = !rectMode;
+                track('toggle_rect', { on: rectMode });
+                const b = document.getElementById('rectBtn');
+                b.classList.toggle('bg-indigo-600', rectMode);
+                b.classList.toggle('text-white', rectMode);
+                showSysMsg(rectMode ? '矩形模式：拖曳框選範圍一次填滿（限 1×1 項目）' : '已關閉矩形模式');
+            });
+
+            document.getElementById('spotStatsToggle').addEventListener('click', () => {
+                const body = document.getElementById('spotStatsBody');
+                const open = !body.classList.toggle('hidden');
+                document.getElementById('spotStatsArrow').innerText = open ? '▾' : '▸';
+                savePrefs({ statsOpen: open });
+            });
+
+            document.getElementById('searchClearBtn').addEventListener('click', () => {
+                const inp = document.getElementById('paletteSearch');
+                inp.value = '';
+                filterPalette('');
+                inp.focus();
+            });
+
+            document.getElementById('suggestBtn').addEventListener('click', () => {
+                savePrefs({ suggestOff: !prefs.suggestOff });
+                track('toggle_suggest', { on: !prefs.suggestOff });
+                styleSuggestBtn();
+                updateToolHint(currentTool, updateSuggestions());
+                showSysMsg(prefs.suggestOff ? '已隱藏地圖上的建議標示' : '已顯示建議標示');
+            });
+
+            document.getElementById('exportImgBtn').addEventListener('click', () => { track('export_image'); exportImage(); });
+            document.getElementById('shareBtn').addEventListener('click', () => {
+                track('share_map');
+                const url = location.href.split('#')[0] + '#m=' + encodeMap();
+                navigator.clipboard.writeText(url)
+                    .then(() => showSysMsg('分享連結已複製！對方開啟即載入此地圖'))
+                    .catch(() => { prompt('請手動複製此連結：', url); });
+            });
+            document.getElementById('reportBtn').addEventListener('click', () => { track('open_report'); buildReport(); });
+            document.getElementById('compareBtn').addEventListener('click', () => { track('open_compare'); buildCompare(); });
+            document.getElementById('reportCloseBtn').addEventListener('click', () => document.getElementById('reportModal').classList.add('hidden'));
+            document.getElementById('reportModal').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('reportModal')) e.target.classList.add('hidden');
+            });
+
+            document.getElementById('renameLocalBtn').addEventListener('click', () => {
+                const name = document.getElementById('loadLocalSelect').value;
+                if (!name) { showSysMsg('請先選擇要改名的存檔！', true); return; }
+                const input = prompt(`將「${name}」改名為：`, name);
+                const newName = input && input.trim();
+                if (!newName || newName === name) return;
+                try {
+                    const maps = JSON.parse(localStorage.getItem(MAPS_KEY)) || {};
+                    if (maps[newName]) { showSysMsg('已有同名存檔！', true); return; }
+                    maps[newName] = maps[name];
+                    delete maps[name];
+                    localStorage.setItem(MAPS_KEY, JSON.stringify(maps));
+                    loadSavedMapsList();
+                    document.getElementById('loadLocalSelect').value = newName;
+                    document.getElementById('saveName').value = newName;
+                    if (prefs.lastSave === name) savePrefs({ lastSave: newName });
+                    showSysMsg(`已改名：${newName}`);
+                } catch (e) { showSysMsg('改名失敗！', true); }
+            });
+
+            // 統計面板「差一項」的建築名稱可點：自動選取該建築，地圖亮出建議位置
+            document.getElementById('spotStats').addEventListener('click', (e) => {
+                const btn = e.target.closest('.near-chip');
+                if (!btn) return;
+                selectTool(btn.dataset.tool);
+                document.getElementById(`tool-${btn.dataset.tool}`)?.scrollIntoView({ block: 'nearest' });
+                showSysMsg(`藍框＝放「${items[btn.dataset.tool].name}」即成立景點的位置。全部成員必須彼此在 3 格內（切比雪夫距離 ≤ 3），較遠處的同種建築不算數。`);
+            });
+            document.addEventListener('keydown', (e) => {
+                if (!(e.ctrlKey || e.metaKey)) return;
+                const k = e.key.toLowerCase();
+                if (k === 'z' && !e.shiftKey) { e.preventDefault(); undo(); }
+                else if (k === 'y' || (k === 'z' && e.shiftKey)) { e.preventDefault(); redo(); }
+            });
+
+            document.getElementById('diamondBtn').addEventListener('click', () => {
+                const on = document.body.classList.toggle('diamond');
+                track('toggle_diamond', { on });
+                const btn = document.getElementById('diamondBtn');
+                btn.classList.toggle('bg-indigo-600', on);
+                btn.classList.toggle('text-white', on);
+                savePrefs({ diamond: on });
+                fitGrid();
+            });
+
+            document.getElementById('saveLocalBtn').addEventListener('click', () => {
+                const name = document.getElementById('saveName').value.trim() || "未命名";
+                try {
+                    const maps = JSON.parse(localStorage.getItem(MAPS_KEY)) || {};
+                    maps[name] = { data: gridData, ts: Date.now() };
+                    localStorage.setItem(MAPS_KEY, JSON.stringify(maps));
+                    track('save_map');
+                    loadSavedMapsList();
+                    document.getElementById('loadLocalSelect').value = name;
+                    savePrefs({ lastSave: name });
+                    showSysMsg(`已儲存：${name}`);
+                } catch (e) { showSysMsg('儲存失敗！', true); }
+            });
+
+            document.getElementById('loadLocalBtn').addEventListener('click', () => {
+                const name = document.getElementById('loadLocalSelect').value;
+                if (!name) { showSysMsg('請選擇存檔！', true); return; }
+                try {
+                    const maps = JSON.parse(localStorage.getItem(MAPS_KEY)) || {};
+                    const entry = maps[name];
+                    const data = Array.isArray(entry) ? entry : (entry && entry.data); // 相容舊格式
+                    if (data) {
+                        pushHistory();
+                        if (importGridData(data)) {
+                            track('load_map');
+                            document.getElementById('saveName').value = name;
+                            savePrefs({ lastSave: name });
+                            showSysMsg(`已讀取：${name}`);
+                        }
+                    }
+                } catch (e) { showSysMsg('讀取失敗！', true); }
+            });
+
+            document.getElementById('deleteLocalBtn').addEventListener('click', () => {
+                const name = document.getElementById('loadLocalSelect').value;
+                if (!name) { showSysMsg('請先選擇要刪除的存檔！', true); return; }
+                if (!confirm(`確定刪除存檔「${name}」？此動作無法復原。`)) return;
+                try {
+                    track('delete_map');
+                    const maps = JSON.parse(localStorage.getItem(MAPS_KEY)) || {};
+                    delete maps[name];
+                    localStorage.setItem(MAPS_KEY, JSON.stringify(maps));
+                    loadSavedMapsList();
+                    showSysMsg(`已刪除：${name}`);
+                } catch (e) { showSysMsg('刪除失敗！', true); }
+            });
+
+            document.getElementById('loadLocalSelect').addEventListener('change', (e) => {
+                if (e.target.value) document.getElementById('saveName').value = e.target.value;
+            });
+
+            document.getElementById('clearBtn').addEventListener('click', () => {
+                if (confirm('確定清空地圖？')) {
+                    track('clear_map');
+                    pushHistory();
+                    for (let r = 0; r < gridRows; r++) {
+                        for (let c = 0; c < gridCols; c++) {
+                            gridData[r][c] = { type: 'empty', elevation: 1 };
+                            updateTileVisuals(r, c);
+                        }
+                    }
+                    checkSpots();
+                    document.getElementById('saveName').value = "";
+                    document.getElementById('loadLocalSelect').value = "";
+                    showSysMsg('地圖已清空');
+                }
+            });
+
+            document.getElementById('saveCodeBtn').addEventListener('click', () => {
+                track('export_code');
+                const dataStr = JSON.stringify(gridData);
+                navigator.clipboard.writeText(dataStr).then(() => {
+                    showSysMsg('存檔碼已複製到剪貼簿！');
+                }).catch(() => {
+                    const io = document.getElementById('ioData');
+                    io.value = dataStr;
+                    io.classList.remove('hidden');
+                    io.select();
+                    document.execCommand('copy');
+                    io.classList.add('hidden');
+                    showSysMsg('存檔碼已複製！');
+                });
+            });
+
+            document.getElementById('loadCodeBtn').addEventListener('click', () => {
+                navigator.clipboard.readText().then(text => {
+                    try {
+                        const parsed = JSON.parse(text);
+                        if (Array.isArray(parsed)) pushHistory();
+                        if (importGridData(parsed)) { track('import_code'); showSysMsg('代碼匯入成功！'); }
+                        else showSysMsg('格式錯誤', true);
+                    } catch (e) { showSysMsg('無法解析剪貼簿內容', true); }
+                }).catch(() => {
+                     showSysMsg('無法存取剪貼簿，請允許權限。', true);
+                });
+            });
+        }
+    </script>
 </body>
 </html>
