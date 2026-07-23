@@ -12,6 +12,7 @@
     'use strict';
 
     var GA_ID = 'G-EL4J27F89B';
+    var ADS_CLIENT = 'ca-pub-5891811504833462';
     var SITE = '開羅攻略站';
 
     // 依頁面深度推導站根相對路徑（根 = '', kairosoft/school2/ = '../../'）
@@ -41,6 +42,19 @@
         document.head.appendChild(s);
         gtag('js', new Date());
         gtag('config', GA_ID);
+    }
+
+    /* ---------- Google AdSense ---------- */
+    function ensureAdsense() {
+        if (window.__adsenseLoaded || !ADS_CLIENT) return;
+        // 若頁面已靜態放了 AdSense 代碼（例如首頁），不重複載入
+        if (document.querySelector('script[src*="adsbygoogle.js"]')) { window.__adsenseLoaded = true; return; }
+        window.__adsenseLoaded = true;
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + ADS_CLIENT;
+        s.crossOrigin = 'anonymous';
+        document.head.appendChild(s);
     }
 
     // 統一事件封裝：自動帶 game_id / game_type
@@ -129,6 +143,7 @@
         opts = opts || {};
         Shell.game = opts.game || null;
         ensureGtag();
+        ensureAdsense();
 
         // header 置於 body 最前
         var header = buildHeader(opts.page || (Shell.game ? 'guide' : 'home'));
