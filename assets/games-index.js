@@ -35,7 +35,7 @@ window.GAMES = [
     },
 
     /* ---- 即將推出（撐廣度與內鏈；逐步上線） ---- */
-    { id: 'hotspring', slug: 'kairosoft/hotspring/', title: '溫泉物語', jp: 'ゆけむり温泉郷', en: 'Hot Springs Story', emoji: '♨️', accent: '#e9f4f6', status: 'soon', type: 'simulator', tags: [['sim', '模擬器']], desc: '溫泉旅館佈局與客源攻略（規劃中）。' },
+    { id: 'hotspring', slug: 'kairosoft/hotspring/', title: '溫泉物語', jp: 'ゆけむり温泉郷', en: 'Hot Springs Story', emoji: '♨️', accent: '#e9f4f6', status: 'live', type: 'guide', tags: [['guide', '攻略'], ['combo', '相性 combo']], desc: '溫泉旅館攻略：設施相性 combo、景色與泡湯衝人氣。' },
     { id: 'dungeon-village', slug: 'kairosoft/dungeon-village/', title: '冒險村物語', jp: '冒険ダンジョン村', en: 'Dungeon Village', emoji: '⚔️', accent: '#f1ece2', status: 'soon', type: 'simulator', tags: [['sim', '模擬器']], desc: '冒險者村莊建設與店舖擺放（規劃中）。' },
     { id: 'mega-mall2', slug: 'kairosoft/mega-mall2/', title: '都市大亨物語2', jp: 'メガモール物語2', en: 'Mega Mall Story 2', emoji: '🛍️', accent: '#f3e9ff', status: 'soon', type: 'simulator', tags: [['sim', '模擬器'], ['combo', '樓層 combo']], desc: '百貨商場樓層 combo 最佳化（規劃中）。' },
     { id: 'dream-park', slug: 'kairosoft/dream-park/', title: '遊樂園夢物語', jp: 'ゆうえんち', en: 'Dream Park Story', emoji: '🎡', accent: '#ffeef2', status: 'soon', type: 'simulator', tags: [['sim', '模擬器']], desc: '遊樂園設施擺放與人氣（規劃中）。' },
