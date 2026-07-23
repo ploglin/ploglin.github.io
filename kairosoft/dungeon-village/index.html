@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>冒險村物語 攻略｜冒險者養成、轉職路線與維護費控管</title>
+    <meta name="description" content="冒險村物語（冒険ダンジョン村／Dungeon Village）完整攻略：24 種職業轉職與屬性繼承、六大屬性養成、設施品質強化、維護費控管與住宅靠邊佈局、衝五星解鎖開羅（Kairobot）職業，繁體中文原創整理。">
+    <meta name="keywords" content="冒險村物語,冒険ダンジョン村,Dungeon Village,攻略,轉職,職業,Kairobot,開羅,維護費,冒險者養成,開羅遊戲,Kairosoft">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://ploglin.github.io/kairosoft/dungeon-village/">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚔️</text></svg>">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="冒險村物語 攻略｜冒險者養成、轉職路線與維護費控管">
+    <meta property="og:description" content="24 種職業轉職與屬性繼承、六大屬性養成、設施品質強化、維護費控管與住宅靠邊佈局、衝五星解鎖開羅職業。">
+    <meta property="og:locale" content="zh_TW">
+    <meta property="og:url" content="https://ploglin.github.io/kairosoft/dungeon-village/">
+    <meta name="twitter:card" content="summary">
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": "冒險村物語 攻略：冒險者養成、轉職路線與維護費控管",
+        "inLanguage": "zh-Hant",
+        "about": { "@type": "VideoGame", "name": "冒險村物語", "alternateName": ["冒険ダンジョン村", "Dungeon Village"] },
+        "author": { "@type": "Organization", "name": "開羅攻略站" },
+        "publisher": { "@type": "Organization", "name": "開羅攻略站" }
+    }
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../assets/shell.css">
+</head>
+<body>
+    <main class="container-narrow article">
+        <h1>冒險村物語 攻略：養冒險者、轉職路線與維護費控管</h1>
+        <p class="lead">《冒險村物語》（冒険ダンジョン村／Dungeon Village）是打造 RPG 冒險小鎮的經營遊戲。它<strong>沒有格子相鄰 combo</strong>，勝負關鍵在兩件事：<strong>把冒險者透過轉職養強</strong>，以及<strong>控管每棟建築的月維護費</strong>。本篇整理轉職路線、設施加成與最有效的佈局與養成優先序。</p>
+        <p class="meta">最後更新：2026 年 7 月 · 繁體中文原創整理</p>
+
+        <p>
+            <a class="btn" href="#jobs">📋 看轉職路線表</a>
+            &nbsp;
+            <a class="btn ghost" href="../../index.html">← 回攻略站</a>
+        </p>
+
+        <div class="toc">
+            <div class="t">本篇目錄</div>
+            <ol>
+                <li><a href="#basic">新手：這遊戲在玩什麼</a></li>
+                <li><a href="#combo">核心機制：沒有 combo，靠養成與控費</a></li>
+                <li><a href="#build">設施清單與屬性加成</a></li>
+                <li><a href="#jobs">職業與轉職路線</a></li>
+                <li><a href="#special">屬性、滿足度與魔法釜</a></li>
+                <li><a href="#tips">攻略技巧</a></li>
+                <li><a href="#faq">常見問題</a></li>
+            </ol>
+        </div>
+
+        <div class="prose">
+            <h2 id="basic">新手：這遊戲在玩什麼</h2>
+            <p>你打造一座供冒險者與商人居住的 RPG 風格村莊。落腳的冒險者會外出打怪、探索地城、賺金幣、撿裝備；你則靠建設拉高村莊人氣，吸引更多冒險者定居並變強。目標是把村莊養成<strong>五星</strong>，成績以「資金」與「Clear Points（過關分數）」衡量，主線在<strong>第 16 年第 3 個月</strong>告一段落。</p>
+            <ul>
+                <li><strong>城鎮點數（Town Points）：</strong>每月依「當月打倒的怪物數量」發放，用於轉職與購買／研究設施。</li>
+                <li><strong>稅金：</strong>有房子定居的冒險者每年繳稅，金額與其打怪數掛鉤。</li>
+                <li><strong>設施收入：</strong>冒險者付費使用旅館、道場、圖書館等設施，是主要金流之一。</li>
+                <li><strong>五星解鎖頂級職：</strong>村莊升到五星才會出現「開羅（Kairobot）」等頂級職業。</li>
+            </ul>
+
+            <h2 id="combo">核心機制：沒有 combo，靠養成與控費</h2>
+            <p>要先破除一個誤解：<strong>冒險村物語沒有格子相鄰／範圍 combo</strong>。官方手冊與英文 wiki 的 Tips、Structures 頁面都沒有任何「設施相鄰加成」的描述，設施擺在一起<strong>不會</strong>互相加成。真正影響效益的是兩件事：</p>
+            <ul>
+                <li><strong>設施單體強化：</strong>用道具強化設施可提高其<strong>價格、品質與吸引力</strong>，冒險者就更常來用、屬性成長更多。這是「單體強化」不是「相鄰組合」。</li>
+                <li><strong>佈局＝動線與維護成本：</strong>每棟建築都有<strong>每月維護費</strong>，蓋太多會反而虧錢。建議把<strong>住宅（空屋）集中排在村莊邊緣（最好南側牆邊）</strong>，中央黃金地段留給賺錢與加屬性的設施。</li>
+            </ul>
+            <div class="callout key"><span class="k">一句話心法</span>本作是「<strong>養冒險者＋控成本</strong>」的 RPG 經營，不是「排格子湊 combo」的擺放解謎。和「口袋學院物語 2」把三大類別擠進 4×4 窗口的玩法完全不同——這裡把資源砸在轉職養成與少數關鍵設施上，比計較擺位更重要。</div>
+
+            <h2 id="build">設施清單與屬性加成</h2>
+            <p>設施分「特殊功能建築」與「加屬性設施」，所有設施使用前需先研究，且都有月維護費。吸引力越高，冒險者來訪越勤。價格為 wiki 參考值：</p>
+            <div class="table-wrap">
+            <table class="data">
+                <thead><tr><th>設施</th><th>價格</th><th>類型／功能</th><th>主要加成</th></tr></thead>
+                <tbody>
+                    <tr><td>武器店 Weapon Shop</td><td>1000G</td><td>商店</td><td>冒險者自費買武器</td></tr>
+                    <tr><td>防具店 Armor Shop</td><td>1000G</td><td>商店</td><td>買防具</td></tr>
+                    <tr><td>飾品店 Accessory Shop</td><td>1000G</td><td>商店</td><td>買飾品</td></tr>
+                    <tr><td>旅館 Inn</td><td>1000G（維護 480G）</td><td>恢復</td><td>全回 HP，優先強化到滿（900）</td></tr>
+                    <tr><td>空屋 Vacant House</td><td>—</td><td>住宅</td><td>讓冒險者永久定居並繳稅</td></tr>
+                    <tr><td>花店 Florist</td><td>500G</td><td>加屬性</td><td>敏捷 DEX</td></tr>
+                    <tr><td>藥局 Pharmacy</td><td>600G</td><td>加屬性</td><td>敏捷 DEX</td></tr>
+                    <tr><td>格鬥學校 Combat School</td><td>800G</td><td>加屬性</td><td>力量 STR＋耐力</td></tr>
+                    <tr><td>圖書館 Library</td><td>1500G</td><td>加屬性</td><td>精神／魔力 Spirit</td></tr>
+                    <tr><td>魔法研究所 Magic Lab</td><td>2000G</td><td>加屬性</td><td>精神／魔力 Spirit</td></tr>
+                    <tr><td>賭場 Casino</td><td>2000G</td><td>加屬性</td><td>幸運 Luck（高幅）</td></tr>
+                    <tr><td>馬戲團廣場 Circus</td><td>3000G</td><td>加屬性</td><td>敏捷＋幸運</td></tr>
+                    <tr><td>餐飲類（蛋糕店／麵包店／餐廳等）</td><td>維護 180–750G</td><td>加屬性</td><td>主加體力 Health</td></tr>
+                </tbody>
+            </table>
+            </div>
+            <div class="callout tip"><span class="k">旅館先強化</span>旅館使用率最高（戰敗的冒險者都被送來恢復），優先把價格強化到滿的 <strong>900</strong>，回血快、收入也高，CP 值最好。</div>
+
+            <div class="ad-slot" aria-hidden="true">廣告位（AdSense 核准後啟用）</div>
+
+            <h2 id="jobs">職業與轉職路線</h2>
+            <p>全作共 <strong>24 種職業</strong>，用城鎮點數轉職。關鍵在<strong>屬性可繼承</strong>——精通一職後轉下一職，越轉越強（mastery-switching）。新職先限該來訪居民使用，等他精通後全村可轉。</p>
+            <div class="table-wrap">
+            <table class="data">
+                <thead><tr><th>階層</th><th>代表職業</th><th>加成／需求</th></tr></thead>
+                <tbody>
+                    <tr><td>基礎職</td><td>冒險者 Adventurer</td><td>+20 HP</td></tr>
+                    <tr><td>基礎職</td><td>農夫 Farmer</td><td>+20 DEX</td></tr>
+                    <tr><td>基礎職</td><td>木匠 Carpenter</td><td>男限，+20 STR</td></tr>
+                    <tr><td>基礎職</td><td>商人 Merchant</td><td>+20 DEX</td></tr>
+                    <tr><td>進階戰鬥（物理）</td><td>戰士 Warrior → 騎士 Knight → 英雄 Hero</td><td>Warrior 需 'Donkey Hotty' 或 'Angie Jelly' Lv10</td></tr>
+                    <tr><td>進階戰鬥（魔法）</td><td>法師 Mage → 巫師 Wizard</td><td>Mage 需 'Harry Gorn' 練到 Lv10</td></tr>
+                    <tr><td>進階戰鬥（遠程）</td><td>弓箭手 Archer</td><td>遠程輸出</td></tr>
+                    <tr><td>特化職</td><td>僧侶／廚師／小丑／吟遊詩人／忍者／傭兵／摔角手／功夫大師／黑市商人</td><td>Ninja 需 'Book Shields' Lv10；黑市商人有銷售加成</td></tr>
+                    <tr><td>頂級職</td><td>國王／公主 King/Princess</td><td>40 精通、5 獎章</td></tr>
+                    <tr><td>頂級職</td><td>開羅 Kairobot</td><td>男限，50 精通、5 獎章，需村莊五星</td></tr>
+                    <tr><td>頂級職</td><td>莎莉公主 Princess Sally</td><td>女限，55 精通、5 獎章</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <h2 id="special">屬性、滿足度與魔法釜</h2>
+            <ul>
+                <li><strong>六大屬性：</strong>體力 Health、力量 Strength、敏捷 Dexterity、耐力 Toughness、魔力 Magic/Spirit、幸運 Luck。「工作值（Work）」提升會拉高基礎屬性並觸發<strong>光環（Aura）</strong>：攻擊／速度／防禦的臨時加成。</li>
+                <li><strong>滿足度：</strong>決定冒險者是否永久定居。獎章、禮物、設施品質都大幅影響滿足度與工作值——多送禮很有用。</li>
+                <li><strong>任務系統：</strong>地城探索與討伐怪物，效果隨參戰人數提升。</li>
+                <li><strong>魔法釜（Magic Cauldron）：</strong>本作最接近「組合」的系統——把蒐集的道具轉成魔法點數，依可發現的<strong>配方</strong>合成稀有設施／裝備。</li>
+                <li><strong>季節事件：</strong>海之特訓、魔法理論、運動會等，花約 200 城鎮點數換取大幅屬性與滿足度提升，限時。</li>
+            </ul>
+
+            <h2 id="tips">攻略技巧</h2>
+            <ul>
+                <li><strong>新手四大件：</strong>先蓋武器店／防具店／飾品店／旅館，讓冒險者能補血買裝；別急著狂蓋。</li>
+                <li><strong>旅館強化到滿：</strong>使用率最高，優先把價格強化到 900。</li>
+                <li><strong>控制維護費：</strong>每棟都有月維護費，建築太多會月月虧損。寧可少而精、選能加多種屬性的設施，別無腦擴建。</li>
+                <li><strong>住宅靠邊：</strong>空屋集中在村莊邊緣、尤其南側牆邊，中央留給賺錢與加屬性設施，最大化生產區。</li>
+                <li><strong>衝五星＝解鎖開羅：</strong>儘快把村莊養成五星，才會出現開羅（Kairobot）職業，屬性加成很強。</li>
+                <li><strong>養冒險者：</strong>配頂級武防＋消耗品（如雪芋 Snow Potato），多送禮拉工作值與滿足度，靠季節事件大幅衝屬性。</li>
+                <li><strong>後期拆舊商店：</strong>後期拆掉賣劣質裝的低階商店，逼冒險者買好裝，避免他們用爛裝。</li>
+            </ul>
+
+            <h2 id="faq">常見問題</h2>
+            <h3>設施擺一起會互相加成嗎？</h3>
+            <p>不會。本作<strong>沒有相鄰／範圍 combo</strong>，設施效益來自<strong>單體品質與吸引力強化</strong>。擺位重點是動線效率與維護成本，不是相鄰加成。</p>
+            <h3>怎麼壓低維護費？</h3>
+            <p>少而精：只蓋必要的四大件與能<strong>一館加多種屬性</strong>的設施，別為了湊數量狂蓋。社群甚至有「六建築通關」流派，前期極度摳門、把資源全砸在冒險者養成。</p>
+            <h3>怎麼解鎖開羅（Kairobot）？</h3>
+            <p>先把村莊升到<strong>五星</strong>，該職才會出現；轉職還需 <strong>50 精通、5 獎章</strong>（男限）。屬性繼承下越轉越強，是通關核心思路。</p>
+            <h3>法師好用嗎？</h3>
+            <p>法師精神 600+ 時法術傷害爆表，但<strong>防禦低</strong>，需搭配物理前排或僧侶補血，別讓他單獨頂在前面。</p>
+
+            <div class="callout tip"><span class="k">同系推薦</span>喜歡開羅這種養成經營，也可以玩玩已上線、能即時判定佈局的<a href="../school2/">口袋學院物語2 佈局模擬器</a>。</div>
+
+            <p style="font-size:13px;color:var(--muted);margin-top:26px">資料來源：Kairosoft Wiki（kairosoft.wiki.gg）、Fandom、kairoguide 等公開資料整理，並參考繁中社群攻略（痞客邦、Steam 社群指南、萌娘百科）。譯名對齊 Steam 官方繁體中文（冒險村物語，App 1859360）；部分職業名以社群對照為準。若有誤歡迎指正。</p>
+            <p style="margin-top:18px"><a class="back-hub" href="../../index.html">← 回到開羅攻略站</a></p>
+        </div>
+    </main>
+
+    <script src="../../assets/shell.js"></script>
+    <script>Shell.mount({ page: 'guide', game: { id: 'dungeon-village', type: 'guide' }, breadcrumb: [{ t: '冒險村物語' }] });</script>
+</body>
+</html>

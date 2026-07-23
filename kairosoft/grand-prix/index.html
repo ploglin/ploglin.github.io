@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>賽車物語 攻略｜車手技師育成、光環系統與結算計分</title>
+    <meta name="description" content="賽車物語（G1グランプリ／Grand Prix Story）完整攻略：車手與技師育成、賽車與零件研發、光環（Aura）系統、跨輪傳承機制、結算計分公式與衝分方向，繁體中文原創整理。">
+    <meta name="keywords" content="賽車物語,G1グランプリ,Grand Prix Story,攻略,光環,Aura,零件,結算計分,開羅遊戲,Kairosoft">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://ploglin.github.io/kairosoft/grand-prix/">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏎️</text></svg>">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="賽車物語 攻略｜車手技師育成、光環系統與結算計分">
+    <meta property="og:description" content="車手與技師育成、賽車零件研發、光環系統、跨輪傳承與結算計分全解析。">
+    <meta property="og:locale" content="zh_TW">
+    <meta property="og:url" content="https://ploglin.github.io/kairosoft/grand-prix/">
+    <meta name="twitter:card" content="summary">
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": "賽車物語 攻略：車手技師育成、光環系統與結算計分",
+        "inLanguage": "zh-Hant",
+        "about": { "@type": "VideoGame", "name": "賽車物語", "alternateName": ["G1グランプリ〜栄光への軌跡〜", "Grand Prix Story"] },
+        "author": { "@type": "Organization", "name": "開羅攻略站" },
+        "publisher": { "@type": "Organization", "name": "開羅攻略站" }
+    }
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../assets/shell.css">
+</head>
+<body>
+    <main class="container-narrow article">
+        <h1>賽車物語 攻略：育成、光環與結算計分全解析</h1>
+        <p class="lead">《賽車物語》（G1グランプリ〜栄光への軌跡〜／Grand Prix Story）是把小車隊經營成世界冠軍勁旅的模擬遊戲。你要同時養成<strong>車手與技師</strong>、研發<strong>賽車與零件</strong>，靠<strong>光環（Aura）</strong>把數值打到極致，並在遊戲結束時衝出最高分。本篇整理育成路線、光環運用與結算計分權重。</p>
+        <p class="meta">最後更新：2026 年 7 月 · 繁體中文原創整理</p>
+
+        <p>
+            <a class="btn" href="#score">📋 看結算計分表</a>
+            &nbsp;
+            <a class="btn ghost" href="../../index.html">← 回攻略站</a>
+        </p>
+
+        <div class="toc">
+            <div class="t">本篇目錄</div>
+            <ol>
+                <li><a href="#basic">新手：這遊戲在玩什麼</a></li>
+                <li><a href="#core">核心系統：人員、賽車、零件</a></li>
+                <li><a href="#aura">光環（Aura）與跨輪傳承</a></li>
+                <li><a href="#score">結算計分公式</a></li>
+                <li><a href="#parts">零件分類與 RP 成本</a></li>
+                <li><a href="#vehicles">車體育成路線</a></li>
+                <li><a href="#tips">攻略技巧</a></li>
+                <li><a href="#faq">常見問題</a></li>
+            </ol>
+        </div>
+
+        <div class="prose">
+            <h2 id="basic">新手：這遊戲在玩什麼</h2>
+            <p>你扮演車隊老闆，一邊研發賽車與零件、一邊訓練車手，報名世界各地的賽道與大獎賽（Grand Prix）搶積分奪冠。基本循環是：<strong>研發／升級賽車零件 → 安裝零件 → 訓練車手 → 報名比賽 → 觀看比賽觸發光環 → 收獎金與經驗值 → 再投資</strong>。開局約有 $300K 備用金，收入靠比賽獎金、贊助合約，以及控制薪資成本。</p>
+            <ul>
+                <li><strong>研發點（RP）：</strong>自第 1 年 6 月（Y1 M6）起可開始研發與升級零件車體，是進度核心資源。</li>
+                <li><strong>故事結算：</strong>劇情在<strong>第 14 年 4 月（Y14 M4）</strong>結算，之後可帶部分資料進入下一輪（New Game+）。</li>
+                <li><strong>衝分導向：</strong>結束時的總分才是目標，過程中的每個決策都應對齊計分權重（見下方公式）。</li>
+            </ul>
+            <div class="callout key"><span class="k">最重要的心法</span>賽車物語是「四種資源同步滾雪球」的遊戲：<strong>金錢、研究點、光環、跨輪資料</strong>缺一不可。前期別急著換頂級車，先把便宜好做的起步車＋零件慢慢養強，累積 RP 與光環，後期才有本錢一次拉滿。</div>
+
+            <h2 id="core">核心系統：人員、賽車、零件</h2>
+            <p>車隊有兩類人員，用不同資源成長：</p>
+            <ul>
+                <li><strong>車手（Drivers）：</strong>出賽並負責機械操作，用「體力＋金錢」訓練；也是光環的持有者，跨輪傳承的關鍵。</li>
+                <li><strong>技師（Mechanics）：</strong>靠研發點成長，決定打造與零件安裝的品質；工作時也會隨機小幅升能力。</li>
+            </ul>
+            <p>工作室（Workshop）分級擴充人員與賽車容量：</p>
+            <div class="table-wrap">
+            <table class="data">
+                <thead><tr><th>工作室等級</th><th>技師</th><th>車手／車隊</th><th>賽車</th></tr></thead>
+                <tbody>
+                    <tr><td>Workshop 1</td><td>2</td><td>1</td><td>1</td></tr>
+                    <tr><td>Workshop 2</td><td>4</td><td>2</td><td>2</td></tr>
+                    <tr><td>Workshop 3</td><td>6</td><td>2</td><td>2</td></tr>
+                </tbody>
+            </table>
+            </div>
+            <p>全遊戲約有 <strong>16 台車</strong>，等級由 S 到 E，各有 6 大屬性：耐久、速度、加速、操控、擴充（可裝零件量）、維修時間。零件靠研發點解鎖，<strong>每個零件最多升 5 級</strong>，成本逐級遞增；高階零件難以快速正確安裝，需要技師合計技術足夠。</p>
+            <div class="callout tip"><span class="k">拆解勝過賣車</span>舊車不要用「賣」，而是「拆解（Scrap）」換研究點。以 RP 加速研發，是整個進度最重要的加速手法。</div>
+
+            <div class="ad-slot" aria-hidden="true">廣告位（AdSense 核准後啟用）</div>
+
+            <h2 id="aura">光環（Aura）與跨輪傳承</h2>
+            <p><strong>光環（Aura）</strong>是車手身上隨機觸發的稀有加成，可用於「比賽／升級／打造／訓練」四種情境，其中<strong>金光環（Gold Aura）</strong>效果最強。光環稀有且能帶進下一輪，是最重要的隱藏成長軸。</p>
+            <ul>
+                <li><strong>打造與升級務必配金光環：</strong>零件／車體升到 6 級、升級 100% 後會<strong>永久入庫、數值鎖死</strong>。若沒等金光環就動手，等於把主力鎖在次佳數值，無法反悔。</li>
+                <li><strong>跨輪傳承（New Game+）：</strong>只有<strong>車體資料</strong>（含等級與升級）與<strong>零件資料</strong>（含等級與升級）會帶到下一輪；金錢、車手、技師不會保留。</li>
+                <li><strong>滾雪球思路：</strong>每輪把一台接近金光環的車＋一件零件慢慢養強，逐輪累積，起跑點越來越高。</li>
+            </ul>
+
+            <h2 id="score">結算計分公式</h2>
+            <p>遊戲結束時的總分由多項加權組成，越大越好。理解權重才知道資源該往哪投：</p>
+            <div class="table-wrap">
+            <table class="data">
+                <thead><tr><th>項目</th><th>權重</th><th>說明</th></tr></thead>
+                <tbody>
+                    <tr><td>大獎賽冠軍 GPs Won</td><td>×15,000</td><td>單項權重最高，衝分主力</td></tr>
+                    <tr><td>車體種類數 Vehicle Types</td><td>×2,500</td><td>集齊車體種類</td></tr>
+                    <tr><td>勝場數 Races Won</td><td>×2,000</td><td>多贏一般賽事</td></tr>
+                    <tr><td>零件數 Parts</td><td>×1,300</td><td>集齊零件種類</td></tr>
+                    <tr><td>贊助數 Sponsors</td><td>×950</td><td>養好贊助商</td></tr>
+                    <tr><td>升級次數 Upgrades</td><td>×320</td><td>把主力升到滿級</td></tr>
+                    <tr><td>研究資料 Research Data</td><td>×30</td><td>累積研究進度</td></tr>
+                    <tr><td>累計廣告 Total Advertising</td><td>×2</td><td>長期投放廣告</td></tr>
+                    <tr><td>最終資金 Final Funds</td><td>×3/10</td><td>結算時的存款</td></tr>
+                </tbody>
+            </table>
+            </div>
+            <div class="callout key"><span class="k">衝分優先序</span>大獎賽冠軍（15,000／座）＞車體與零件種類齊全＞多贏場次＞把主力升滿。最終資金權重最低，別為了存錢犧牲研發與奪冠。</div>
+
+            <h2 id="parts">零件分類與 RP 成本</h2>
+            <p>零件靠研發點解鎖，解鎖方式包含贊助滿級、前一階零件升到指定百分比、比賽勝利，或到達特定年月。各類代表零件與方向如下：</p>
+            <div class="table-wrap">
+            <table class="data">
+                <thead><tr><th>類別</th><th>代表零件（等級／RP）</th><th>效果方向</th></tr></thead>
+                <tbody>
+                    <tr><td>輪胎 Tires</td><td>Radial（D，20 RP）→ Slick（A，150 RP）</td><td>操控、加速、地形加成</td></tr>
+                    <tr><td>引擎 Engines</td><td>V6 → V12（30–160 RP）</td><td>速度、加速</td></tr>
+                    <tr><td>齒輪 Gears</td><td>速度型／力量型（30–100 RP）</td><td>速度 vs. 動力取捨</td></tr>
+                    <tr><td>晶片 Chips</td><td>32-bit／64-bit（50–110 RP）</td><td>排位賽加成</td></tr>
+                    <tr><td>增壓 Superchargers</td><td>Supercharger（B，80 RP）／Turbocharger（A，120 RP）</td><td>加速爆發</td></tr>
+                    <tr><td>翼／底盤／煞車／車身</td><td>Wings, Chassis, Brakes, Body</td><td>操控、耐久、空力</td></tr>
+                    <tr><td>特殊零件</td><td>Gold Egg、Camera、Emblem、Oil、Coating、Tire Chains</td><td>經驗、分析、廣告等功能加成</td></tr>
+                </tbody>
+            </table>
+            </div>
+            <p>終局最佳零件組合：<strong>V12 引擎</strong>（配金光環大幅提升動力）、<strong>Supercharger</strong>（起步爆發）、<strong>Turbocharger</strong>（高速段加速）。</p>
+
+            <h2 id="vehicles">車體育成路線</h2>
+            <p>從起始車一路換到終局神車的推薦順序：</p>
+            <div class="table-wrap">
+            <table class="data">
+                <thead><tr><th>階段</th><th>推薦車體</th><th>重點</th></tr></thead>
+                <tbody>
+                    <tr><td>開局</td><td>Roadster</td><td>起始車，免研發</td></tr>
+                    <tr><td>前期</td><td>Buggy／Wing Car</td><td>贏特定 GP 解鎖</td></tr>
+                    <tr><td>中期</td><td>Proto Car／Aero Car</td><td>數值均衡好操作</td></tr>
+                    <tr><td>後期</td><td>Super Car（A，200 RP）</td><td>$900K，可裝大量零件</td></tr>
+                    <tr><td>後期</td><td>SL Car（A，800 RP）</td><td>$280K，耐久最高 280 但操控差</td></tr>
+                    <tr><td>終局</td><td>Kairo Car（S，12 RP）</td><td>$10K，加速 260／操控 230，超便宜強力（需補耐久）；贏 Kairo Island GP 解鎖</td></tr>
+                    <tr><td>終局</td><td>Mach Car（S，400 RP）</td><td>$1,200K，速度上限最高（基礎 200）；Spiral 與 Aero 各升 50% 解鎖</td></tr>
+                </tbody>
+            </table>
+            </div>
+            <div class="callout tip"><span class="k">起步車推薦</span>Banana Car（C 級便宜好做、帶研究／經驗加成）、Duck Car（早期高數值＋廣告加成）、Kairo Car（S 級便宜強力）都是滾雪球階段的好選擇。</div>
+
+            <h2 id="tips">攻略技巧</h2>
+            <ul>
+                <li><strong>新手順序：</strong>Roadster 起步 → 早期靠贏 GP 解 Buggy／Wing Car → Y1 M6 起開始研發零件 → 中期換均衡車 → 用金光環打造終局車。</li>
+                <li><strong>衝分方向：</strong>優先多贏大獎賽（15,000／座）、集滿車體與零件種類、把主力升到滿級、養好贊助。</li>
+                <li><strong>資源運用：</strong>舊車一律「拆解」換 RP，別用「賣」。</li>
+                <li><strong>等金光環再動手：</strong>升級／打造前務必等到金光環，避免零件被鎖在次佳數值。</li>
+                <li><strong>顧好技師合計技術：</strong>技術不足時高階零件裝不好，效益大打折扣。</li>
+            </ul>
+
+            <h2 id="faq">常見問題</h2>
+            <h3>光環一定要等金色的嗎？</h3>
+            <p>打造與升級<strong>強烈建議等金光環</strong>，因為滿級後數值永久鎖死，無法補救。比賽與訓練情境用一般光環即可，不必苛求。</p>
+            <h3>舊車該賣還是拆？</h3>
+            <p>一律「<strong>拆解（Scrap）</strong>」換研究點。RP 是加速研發的關鍵，遠比賣車拿的現金有價值。</p>
+            <h3>下一輪能帶什麼過去？</h3>
+            <p>只有<strong>車體資料與零件資料</strong>（含等級與升級）會保留，金錢、車手、技師都會歸零。所以每輪重心放在把車體與零件養強。</p>
+
+            <div class="callout tip"><span class="k">同系推薦</span>喜歡這種「育成＋數值最佳化」的玩法，也可以看看<a href="../hotspring/">溫泉物語 佈局攻略</a>與<a href="../school2/">口袋學院物語2 佈局模擬器</a>。</div>
+
+            <p style="font-size:13px;color:var(--muted);margin-top:26px">資料來源：Kairosoft Wiki（wiki.gg）、StrategyWiki 與 Fandom 等公開資料整理。多數零件／車體以英文原名標示，繁中版譯名可能因版本而異。若有誤歡迎指正。</p>
+            <p style="margin-top:18px"><a class="back-hub" href="../../index.html">← 回到開羅攻略站</a></p>
+        </div>
+    </main>
+
+    <script src="../../assets/shell.js"></script>
+    <script>Shell.mount({ page: 'guide', game: { id: 'grand-prix', type: 'guide' }, breadcrumb: [{ t: '賽車物語' }] });</script>
+</body>
+</html>
