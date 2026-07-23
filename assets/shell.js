@@ -165,6 +165,39 @@
         return wrap;
     }
 
+    /* ---------- 章節浮動導覽（☰ 目錄 + ↑ 回頂端），自動由 h2[id] 生成 ---------- */
+    function buildPageNav() {
+        var heads = [].slice.call(document.querySelectorAll('.prose h2[id], main.article h2[id]'))
+            .filter(function (h) { return h.id; });
+        if (heads.length < 2) return;
+
+        var box = document.createElement('div'); box.className = 'pagenav';
+        var menu = document.createElement('div'); menu.className = 'pagenav-menu';
+        menu.innerHTML = '<div class="pagenav-h">章節目錄</div>';
+        heads.forEach(function (h) {
+            var a = document.createElement('a');
+            a.href = '#' + h.id;
+            a.textContent = h.textContent.replace(/\s+/g, ' ').trim();
+            a.addEventListener('click', function () { menu.classList.remove('open'); });
+            menu.appendChild(a);
+        });
+
+        var tocBtn = document.createElement('button');
+        tocBtn.className = 'pagenav-btn'; tocBtn.type = 'button'; tocBtn.title = '章節目錄'; tocBtn.textContent = '☰';
+        var topBtn = document.createElement('button');
+        topBtn.className = 'pagenav-btn pagenav-top'; topBtn.type = 'button'; topBtn.title = '回到頂端'; topBtn.textContent = '↑';
+        topBtn.style.display = 'none';
+
+        box.appendChild(menu); box.appendChild(topBtn); box.appendChild(tocBtn);
+        document.body.appendChild(box);
+
+        tocBtn.addEventListener('click', function (e) { e.stopPropagation(); menu.classList.toggle('open'); });
+        topBtn.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); if (window.Shell) Shell.track('nav_top', {}); });
+        document.addEventListener('click', function (e) { if (!box.contains(e.target)) menu.classList.remove('open'); });
+        function onScroll() { topBtn.style.display = window.pageYOffset > 400 ? '' : 'none'; }
+        onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
+    }
+
     /* ---------- mount ---------- */
     Shell.mount = function (opts) {
         opts = opts || {};
@@ -187,6 +220,9 @@
         if (!document.body.hasAttribute('data-no-footer')) {
             document.body.appendChild(buildFooter());
         }
+
+        // 章節浮動導覽（攻略頁）
+        buildPageNav();
 
         // 送出頁面瀏覽事件（帶 game_id）
         Shell.track('page_engage', { page: opts.page || 'home' });

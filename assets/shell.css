@@ -428,9 +428,21 @@ table.data tbody tr:last-child td { border-bottom: none; }
 .sim-gridwrap.iso + * { }
 .grid-scroll { padding: 4px; }
 
+/* ---------- 章節浮動導覽 (pagenav) ---------- */
+.pagenav { position: fixed; right: 16px; bottom: 16px; z-index: 60; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.pagenav-btn { width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--line); background: var(--card); color: var(--ink); font-size: 20px; cursor: pointer; box-shadow: var(--shadow-hover); display: grid; place-items: center; line-height: 1; }
+.pagenav-btn:hover { background: var(--brand); color: #fff; border-color: var(--brand); }
+.pagenav-menu { width: 240px; max-height: 62vh; overflow: auto; background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow-hover); padding: 8px; display: none; }
+.pagenav-menu.open { display: block; }
+.pagenav-menu .pagenav-h { font-weight: 900; font-size: 12px; color: var(--muted); padding: 4px 8px 6px; }
+.pagenav-menu a { display: block; padding: 7px 10px; border-radius: 8px; font-size: 13.5px; color: var(--ink-soft); line-height: 1.4; }
+.pagenav-menu a:hover { background: var(--brand-soft); color: var(--brand-strong); text-decoration: none; }
+
 @media (max-width: 640px) {
     .site-nav { gap: 0; }
     .site-nav a { padding: 7px 9px; font-size: 13px; }
     .hero { padding: 34px 0 30px; }
     .section { padding: 30px 0; }
+    .pagenav-btn { width: 42px; height: 42px; font-size: 18px; }
+    .pagenav-menu { width: min(240px, 72vw); }
 }
