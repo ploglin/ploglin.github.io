@@ -966,6 +966,12 @@
             toastTimeout = setTimeout(() => { toast.classList.add('-translate-y-20', 'opacity-0'); }, 2500);
         }
 
+        // GA4 事件埋點：只記錄有意義的離散動作（不追蹤逐格塗畫）
+        let lastToolTracked = '';
+        function track(name, params) {
+            try { if (window.gtag) gtag('event', name, params || {}); } catch (e) {}
+        }
+
         function setElevation(lvl) {
             currentElevation = lvl;
             savePrefs({ elevation: lvl });
@@ -1168,6 +1174,7 @@
             if (selected) selected.classList.add('active');
             currentTool = id;
             savePrefs({ tool: id });
+            if (id !== lastToolTracked) { lastToolTracked = id; track('select_tool', { tool_id: id, category: (items[id] && items[id].type) || '' }); }
             if (id !== 'empty' && items[id] && !items[id].hidden) {
                 const rec = (prefs.recent || []).filter(x => x !== id);
                 rec.unshift(id);
@@ -1841,6 +1848,7 @@
 
         function buildHandbook(section) {
             if (!HANDBOOK[section]) section = 'tips';
+            track('open_handbook', { section });
             const nav = Object.entries(HANDBOOK).map(([k, s]) =>
                 `<button class="hb-tab px-2 py-0.5 rounded border text-[11px] font-bold transition ${k === section ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100'}" data-hb="${k}">${s.title}</button>`
             ).join('');
@@ -2031,6 +2039,7 @@
         }
 
         function applyTool(r, c) {
+            if (!window._paintedOnce) { window._paintedOnce = true; track('first_paint'); }
             // 清除模式點到多格建築 → 整棟拆除
             if (currentTool === 'empty' && gridData[r][c].bid !== undefined) {
                 const bid = gridData[r][c].bid;
@@ -2094,6 +2103,7 @@
                 const parsed = JSON.parse(preset.data);
                 pushHistory();
                 if (importGridData(parsed)) {
+                    track('load_preset', { preset: key });
                     document.getElementById('saveName').value = preset.name;
                     showSysMsg(`已載入：${preset.name}`);
                 } else {
@@ -2246,6 +2256,7 @@
 
             document.getElementById('rectBtn').addEventListener('click', () => {
                 rectMode = !rectMode;
+                track('toggle_rect', { on: rectMode });
                 const b = document.getElementById('rectBtn');
                 b.classList.toggle('bg-indigo-600', rectMode);
                 b.classList.toggle('text-white', rectMode);
@@ -2268,6 +2279,7 @@
 
             document.getElementById('suggestBtn').addEventListener('click', () => {
                 savePrefs({ suggestOff: !prefs.suggestOff });
+                track('toggle_suggest', { on: !prefs.suggestOff });
                 styleSuggestBtn();
                 updateToolHint(currentTool, updateSuggestions());
                 showSysMsg(prefs.suggestOff ? '已隱藏地圖上的建議標示' : '已顯示建議標示');
@@ -2279,22 +2291,24 @@
                     return;
                 }
                 savePrefs({ flowOn: !prefs.flowOn });
+                track('toggle_flow', { on: prefs.flowOn });
                 styleFlowBtn();
                 updateFlowOverlay();
                 showSysMsg(prefs.flowOn ? '動線圖層：綠＝離校門近、紅＝遠、灰斜紋＝走不到' : '已關閉動線圖層');
             });
 
-            document.getElementById('exportImgBtn').addEventListener('click', exportImage);
+            document.getElementById('exportImgBtn').addEventListener('click', () => { track('export_image'); exportImage(); });
             document.getElementById('shareBtn').addEventListener('click', () => {
+                track('share_map');
                 const url = location.href.split('#')[0] + '#m=' + encodeMap();
                 navigator.clipboard.writeText(url)
                     .then(() => showSysMsg('分享連結已複製！對方開啟即載入此地圖'))
                     .catch(() => { prompt('請手動複製此連結：', url); });
             });
-            document.getElementById('reportBtn').addEventListener('click', buildReport);
-            document.getElementById('devGuideBtn').addEventListener('click', buildDevGuide);
+            document.getElementById('reportBtn').addEventListener('click', () => { track('open_report'); buildReport(); });
+            document.getElementById('devGuideBtn').addEventListener('click', () => { track('open_dev_guide'); buildDevGuide(); });
             document.getElementById('handbookBtn').addEventListener('click', () => buildHandbook('tips'));
-            document.getElementById('compareBtn').addEventListener('click', buildCompare);
+            document.getElementById('compareBtn').addEventListener('click', () => { track('open_compare'); buildCompare(); });
             document.getElementById('reportBody').addEventListener('click', (e) => {
                 const b = e.target.closest('.hb-tab');
                 if (b) buildHandbook(b.dataset.hb);
@@ -2345,6 +2359,7 @@
 
             document.getElementById('diamondBtn').addEventListener('click', () => {
                 const on = document.body.classList.toggle('diamond');
+                track('toggle_diamond', { on });
                 const btn = document.getElementById('diamondBtn');
                 btn.classList.toggle('bg-indigo-600', on);
                 btn.classList.toggle('text-white', on);
@@ -2360,6 +2375,7 @@
                     const maps = JSON.parse(localStorage.getItem('pa2_maps_v9')) || {};
                     maps[name] = { data: gridData, ts: Date.now() };
                     localStorage.setItem('pa2_maps_v9', JSON.stringify(maps));
+                    track('save_map');
                     loadSavedMapsList();
                     document.getElementById('loadLocalSelect').value = name;
                     savePrefs({ lastSave: name });
@@ -2377,6 +2393,7 @@
                     if (data) {
                         pushHistory();
                         if (importGridData(data)) {
+                            track('load_map');
                             document.getElementById('saveName').value = name;
                             savePrefs({ lastSave: name });
                             showSysMsg(`已讀取：${name}`);
@@ -2390,6 +2407,7 @@
                 if (!name) { showSysMsg('請先選擇要刪除的存檔！', true); return; }
                 if (!confirm(`確定刪除存檔「${name}」？此動作無法復原。`)) return;
                 try {
+                    track('delete_map');
                     const maps = JSON.parse(localStorage.getItem('pa2_maps_v9')) || {};
                     delete maps[name];
                     localStorage.setItem('pa2_maps_v9', JSON.stringify(maps));
@@ -2404,6 +2422,7 @@
 
             document.getElementById('clearBtn').addEventListener('click', () => {
                 if (confirm('確定清空地圖？')) {
+                    track('clear_map');
                     pushHistory();
                     for (let r = 0; r < gridRows; r++) {
                         for (let c = 0; c < gridCols; c++) {
@@ -2419,6 +2438,7 @@
             });
 
             document.getElementById('saveCodeBtn').addEventListener('click', () => {
+                track('export_code');
                 const dataStr = JSON.stringify(gridData);
                 navigator.clipboard.writeText(dataStr).then(() => {
                     showSysMsg('存檔碼已複製到剪貼簿！');
@@ -2438,7 +2458,7 @@
                     try {
                         const parsed = JSON.parse(text);
                         if (Array.isArray(parsed)) pushHistory();
-                        if (importGridData(parsed)) showSysMsg('代碼匯入成功！');
+                        if (importGridData(parsed)) { track('import_code'); showSysMsg('代碼匯入成功！'); }
                         else showSysMsg('格式錯誤', true);
                     } catch (e) { showSysMsg('無法解析剪貼簿內容', true); }
                 }).catch(() => {
