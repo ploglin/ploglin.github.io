@@ -1,15 +1,7 @@
 /* ============================================================
    開羅攻略站 — 資料庫瀏覽元件 (db.js)
-   讀 window.GAME_DB，渲染「每分類獨立頁」的可搜尋/排序表格，
-   以及該遊戲的資料庫索引頁。與各分類頁互相連結。
-
-   資料格式（每款遊戲的 db/data.js）：
-   window.GAME_DB = {
-     game: { id, title },
-     categories: [
-       { key, slug, label, icon, intro, columns:[...], rows:[[...],[...]] }
-     ]
-   };
+   讀 window.GAME_DB，渲染「每分類獨立頁」的可搜尋/排序表格、
+   自訂比較模式，以及該遊戲的資料庫索引頁。
 
    分類頁：kairosoft/<game>/db/<slug>/index.html → DB.mountCategory('<key>')
    索引頁：kairosoft/<game>/db/index.html          → DB.mountIndex()
@@ -25,7 +17,6 @@
         return e;
     }
 
-    // 分類導覽列（分類頁彼此連結）。fromIndex=true 表示由索引頁呼叫（連結相對路徑不同）
     function catNav(activeKey, fromIndex) {
         var d = window.GAME_DB, nav = el('nav', 'db-nav');
         d.categories.forEach(function (c) {
@@ -55,14 +46,25 @@
         inp.setAttribute('aria-label', '搜尋' + cat.label);
         inp.placeholder = '🔎 搜尋' + cat.label;
         tools.appendChild(inp);
+        var cmpBtn = el('button', 'db-cmp-btn', '⚖️ 比較');
+        cmpBtn.type = 'button';
+        cmpBtn.title = '開啟比較模式：勾選要比較的項目，並排檢視、數值高亮';
+        tools.appendChild(cmpBtn);
         app.appendChild(tools);
 
         var cnt = el('p', 'db-cnt');
         app.appendChild(cnt);
 
+        var cmpPanel = el('div', 'db-cmp-panel');
+        cmpPanel.style.display = 'none';
+        app.appendChild(cmpPanel);
+
         var wrap = el('div', 'table-wrap');
         var table = el('table', 'data db-table');
         var thead = el('thead'), htr = el('tr');
+        var selTh = el('th', 'db-selcol', '☑');
+        selTh.style.display = 'none';
+        htr.appendChild(selTh);
         cat.columns.forEach(function (col, i) {
             var th = el('th', 'db-th', col + '<span class="db-ar"></span>');
             th.dataset.i = i;
@@ -76,34 +78,82 @@
         app.appendChild(wrap);
 
         var sort = { i: -1, dir: 1 };
+        var compareMode = false, selected = [];
 
         function render() {
             var kw = (inp.value || '').trim().toLowerCase();
-            var rows = cat.rows.filter(function (r) {
-                return !kw || r.join('  ').toLowerCase().indexOf(kw) >= 0;
-            });
+            var idx = [];
+            for (var n = 0; n < cat.rows.length; n++) {
+                if (!kw || cat.rows[n].join('  ').toLowerCase().indexOf(kw) >= 0) idx.push(n);
+            }
             if (sort.i >= 0) {
-                rows = rows.slice().sort(function (a, b) {
-                    var x = (a[sort.i] == null ? '' : a[sort.i]) + '';
-                    var y = (b[sort.i] == null ? '' : b[sort.i]) + '';
+                idx.sort(function (a, b) {
+                    var x = (cat.rows[a][sort.i] == null ? '' : cat.rows[a][sort.i]) + '';
+                    var y = (cat.rows[b][sort.i] == null ? '' : cat.rows[b][sort.i]) + '';
                     return x.localeCompare(y, 'zh-Hant', { numeric: true }) * sort.dir;
                 });
             }
             tbody.innerHTML = '';
-            rows.forEach(function (r) {
+            idx.forEach(function (i) {
                 var tr = el('tr');
-                r.forEach(function (c) { tr.appendChild(el('td', null, c == null ? '' : c)); });
+                if (compareMode) {
+                    var td = el('td', 'db-selcol');
+                    var cb = document.createElement('input');
+                    cb.type = 'checkbox';
+                    cb.checked = selected.indexOf(i) >= 0;
+                    cb.addEventListener('change', function () {
+                        var p = selected.indexOf(i);
+                        if (cb.checked) { if (p < 0) selected.push(i); } else if (p >= 0) selected.splice(p, 1);
+                        renderCompare();
+                    });
+                    td.appendChild(cb);
+                    tr.appendChild(td);
+                }
+                cat.rows[i].forEach(function (c) { tr.appendChild(el('td', null, c == null ? '' : c)); });
                 tbody.appendChild(tr);
             });
-            cnt.textContent = '共 ' + rows.length + ' / ' + cat.rows.length + ' 筆';
-            if (!rows.length) {
-                tbody.innerHTML = '<tr><td colspan="' + cat.columns.length + '" style="text-align:center;color:var(--muted);padding:22px">找不到符合的資料</td></tr>';
+            cnt.textContent = '共 ' + idx.length + ' / ' + cat.rows.length + ' 筆' + (compareMode ? '　（勾選要比較的項目）' : '');
+            if (!idx.length) {
+                tbody.innerHTML = '<tr><td colspan="' + (cat.columns.length + (compareMode ? 1 : 0)) + '" style="text-align:center;color:var(--muted);padding:22px">找不到符合的資料</td></tr>';
             }
             htr.querySelectorAll('.db-ar').forEach(function (a, i) {
                 a.textContent = sort.i === i ? (sort.dir > 0 ? ' ▲' : ' ▼') : '';
             });
         }
 
+        function renderCompare() {
+            if (!compareMode || !selected.length) { cmpPanel.style.display = 'none'; cmpPanel.innerHTML = ''; return; }
+            cmpPanel.style.display = 'block';
+            var h = '<div class="db-cmp-head">⚖️ 比較（' + selected.length + ' 項）<button type="button" class="db-cmp-clear">清除</button></div>';
+            h += '<div class="table-wrap"><table class="data"><thead><tr><th>項目</th>';
+            selected.forEach(function (i) { h += '<th>' + (cat.rows[i][0] == null ? '' : cat.rows[i][0]) + '</th>'; });
+            h += '</tr></thead><tbody>';
+            for (var ci = 1; ci < cat.columns.length; ci++) {
+                var nums = selected.map(function (i) { var v = parseInt(String(cat.rows[i][ci]).replace(/[^0-9\-]/g, ''), 10); return isNaN(v) ? null : v; });
+                var valid = nums.filter(function (v) { return v != null; });
+                var mx = valid.length ? Math.max.apply(null, valid) : null;
+                h += '<tr><th style="text-align:left">' + cat.columns[ci] + '</th>';
+                selected.forEach(function (i, k) {
+                    var v = cat.rows[i][ci];
+                    var hot = mx != null && nums[k] === mx && selected.length > 1 && valid.length > 1;
+                    h += '<td' + (hot ? ' class="db-cmp-max"' : '') + '>' + (v == null ? '' : v) + '</td>';
+                });
+                h += '</tr>';
+            }
+            h += '</tbody></table></div>';
+            cmpPanel.innerHTML = h;
+            cmpPanel.querySelector('.db-cmp-clear').addEventListener('click', function () { selected = []; render(); renderCompare(); });
+        }
+
+        cmpBtn.addEventListener('click', function () {
+            compareMode = !compareMode;
+            cmpBtn.classList.toggle('on', compareMode);
+            selTh.style.display = compareMode ? '' : 'none';
+            if (!compareMode) selected = [];
+            render();
+            renderCompare();
+            if (window.Shell) Shell.track('db_compare', { cat: catKey, on: compareMode });
+        });
         inp.addEventListener('input', function () {
             render();
             if (window.Shell) Shell.track('db_search', { cat: catKey, q: inp.value.slice(0, 40) });
@@ -126,7 +176,7 @@
         app.innerHTML = '';
         app.appendChild(el('h1', null, d.game.title + '　資料庫'));
         app.appendChild(el('p', 'lead',
-            '分類查詢《' + d.game.title + '》的遊戲內資料，可搜尋與排序：' +
+            '分類查詢《' + d.game.title + '》的遊戲內資料，可搜尋、排序與自訂比較：' +
             d.categories.map(function (c) { return c.label; }).join('、') + '。'));
 
         var grid = el('div', 'db-cat-grid');

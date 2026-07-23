@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>大農場物語 資料庫</title>
+  <meta name="description" content="大農場物語（大空ヘクタール農園／Pocket Harvest）繁體中文資料庫：設施 combo 相鄰加成、作物與畜牧清單、設施與地形一覽、比賽奪冠佈陣，可搜尋與排序。">
+  <meta name="keywords" content="大農場物語,大空ヘクタール農園,Pocket Harvest,資料庫,combo,相鄰加成,作物,設施,比賽,開羅遊戲,カイロソフト">
+  <meta name="robots" content="index, follow">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚜</text></svg>">
+  <link rel="canonical" href="https://ploglin.github.io/kairosoft/harvest/db/">
+  <meta property="og:url" content="https://ploglin.github.io/kairosoft/harvest/db/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="大農場物語 資料庫">
+  <meta property="og:description" content="大農場物語 繁體中文資料庫：設施 combo 相鄰加成、作物與畜牧、設施地形、比賽奪冠，可搜尋與排序。">
+  <meta property="og:locale" content="zh_TW">
+  <meta name="twitter:card" content="summary">
+  <link rel="stylesheet" href="../../../assets/shell.css">
+</head>
+<body>
+  <main class="container-narrow article">
+    <div id="dbApp"></div>
+    <p style="margin-top:24px"><a class="btn ghost" href="../">← 回大農場物語</a></p>
+  </main>
+  <script src="./data.js"></script>
+  <script src="../../../assets/db.js"></script>
+  <script>DB.mountIndex();</script>
+  <script src="../../../assets/shell.js"></script>
+  <script>Shell.mount({ page:'guide', game:{id:'harvest', type:'database'}, breadcrumb:[{t:'大農場物語', href:'../'},{t:'資料庫'}] });</script>
+</body>
+</html>

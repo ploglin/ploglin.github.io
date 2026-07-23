@@ -14,10 +14,52 @@
     <loc>https://ploglin.github.io/kairosoft/airport/</loc>
   </url>
   <url>
+    <loc>https://ploglin.github.io/kairosoft/airport/db/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/airport/db/avoid/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/airport/db/combos/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/airport/db/facilities/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/airport/db/menus/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/airport/sim/</loc>
+  </url>
+  <url>
     <loc>https://ploglin.github.io/kairosoft/arcade/</loc>
   </url>
   <url>
     <loc>https://ploglin.github.io/kairosoft/astro/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/astro/db/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/astro/db/equipment/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/astro/db/pit/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/astro/db/planets/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/astro/db/products/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/astro/db/residents/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/astro/db/skills/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/astro/db/structures/</loc>
   </url>
   <url>
     <loc>https://ploglin.github.io/kairosoft/beastie-bay/</loc>
@@ -176,6 +218,24 @@
     <loc>https://ploglin.github.io/kairosoft/harvest/</loc>
   </url>
   <url>
+    <loc>https://ploglin.github.io/kairosoft/harvest/db/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/harvest/db/combos/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/harvest/db/contests/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/harvest/db/crops/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/harvest/db/facilities/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/harvest/sim/</loc>
+  </url>
+  <url>
     <loc>https://ploglin.github.io/kairosoft/high-sea-saga/</loc>
   </url>
   <url>
@@ -216,6 +276,24 @@
   </url>
   <url>
     <loc>https://ploglin.github.io/kairosoft/ninja-village/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/ninja-village/db/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/ninja-village/db/decor/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/ninja-village/db/facilities/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/ninja-village/db/shops/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/ninja-village/db/troops/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/ninja-village/db/villagers/</loc>
   </url>
   <url>
     <loc>https://ploglin.github.io/kairosoft/ooedo/</loc>
@@ -348,6 +426,24 @@
   </url>
   <url>
     <loc>https://ploglin.github.io/kairosoft/zoo/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/zoo/db/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/zoo/db/animals/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/zoo/db/build/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/zoo/db/combos/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/zoo/db/mechanics/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/zoo/sim/</loc>
   </url>
   <url>
     <loc>https://ploglin.github.io/kindergarten/20260303.html</loc>
