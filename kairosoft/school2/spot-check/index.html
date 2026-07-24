@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>口袋學院物語2 景點達成檢查器｜有哪些設施能湊什麼景點</title>
+    <meta name="description" content="口袋學院物語2（名門ポケット学院2）人氣景點達成檢查器：勾選你已有的設施，即時算出能成立哪些人氣景點、還差哪一種設施，比開模擬器更快查。">
+    <meta name="keywords" content="口袋學院物語2,人氣景點,檢查器,設施,能湊什麼,名門ポケット学院2,開羅遊戲">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://ploglin.github.io/kairosoft/school2/spot-check/">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏫</text></svg>">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="口袋學院物語2 景點達成檢查器">
+    <meta property="og:description" content="勾選你有的設施，即時算出能成立哪些人氣景點、還差什麼。">
+    <meta property="og:locale" content="zh_TW">
+    <meta property="og:url" content="https://ploglin.github.io/kairosoft/school2/spot-check/">
+    <meta name="twitter:card" content="summary">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../../assets/shell.css?v=3">
+    <style>
+        .sc-tools { display: flex; gap: 8px; margin: 12px 0 8px; }
+        .sc-tools input { flex: 1; font: inherit; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); color: var(--ink); }
+        .sc-tools button { font: inherit; font-size: 13px; font-weight: 800; padding: 0 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--card-2); color: var(--ink-soft); cursor: pointer; }
+        .sc-res { margin-top: 6px; }
+        .sc-h { font-weight: 900; font-size: 15px; margin: 16px 0 6px; }
+        .sc-list { list-style: none; margin: 0; padding: 0; }
+        .sc-list li { padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); margin: 5px 0; font-size: 14px; background: var(--card); }
+        .sc-list li.ok { border-color: color-mix(in srgb, var(--brand) 45%, var(--line)); background: var(--brand-soft); }
+        .sc-name { font-weight: 900; }
+        .sc-miss { color: var(--brand-strong); font-weight: 800; }
+        .sc-bonus { color: var(--muted); font-size: 12.5px; }
+    </style>
+</head>
+<body>
+    <main class="container-narrow article">
+        <p><a class="btn ghost" href="../">← 口袋學院物語2</a></p>
+        <h1>口袋學院物語2 景點達成檢查器</h1>
+        <p class="lead">勾選你<strong>已經有（或打算蓋）的設施</strong>，即時算出能成立哪些人氣景點、還差哪一種。比開模擬器更快查。想直接排版面請用<a href="../sim/">佈局模擬器</a>。</p>
+
+        <div class="sc-tools">
+            <input id="q" type="search" placeholder="🔎 搜尋設施（如 焚化爐、圖書室）" aria-label="搜尋設施">
+            <button id="clr" type="button">清除</button>
+        </div>
+        <p class="db-cnt" id="cnt"></p>
+        <div id="facPick" class="db-chipcloud"></div>
+
+        <div class="sc-res" id="result"></div>
+
+        <p style="font-size:13px;color:var(--muted);margin-top:26px">景點條件取自本站資料庫；「差一步」= 三種設施已備兩種。標「A／B」的條件兩者擇一即可。</p>
+    </main>
+
+    <script src="../db/data.js"></script>
+    <script>
+        (function () {
+            var GD = window.GAME_DB;
+            var sp = GD.categories.filter(function (c) { return c.key === 'spots'; })[0];
+            var ci = { name: sp.columns.indexOf('景點'), req: sp.columns.indexOf('需要設施'), bonus: sp.columns.indexOf('加成') };
+            // 解析景點：req = [[選項...], ...]
+            var spots = sp.rows.map(function (r) {
+                var reqs = String(r[ci.req]).split('・').map(function (t) { return t.trim().split('／').map(function (x) { return x.trim(); }); });
+                return { name: r[ci.name], reqs: reqs, bonus: r[ci.bonus] };
+            });
+            // 所有設施（去重）
+            var facSet = {};
+            spots.forEach(function (s) { s.reqs.forEach(function (opts) { opts.forEach(function (f) { facSet[f] = 1; }); }); });
+            var facs = Object.keys(facSet).sort(function (a, b) { return a.localeCompare(b, 'zh-Hant'); });
+
+            var owned = {};
+            var q = document.getElementById('q'), pick = document.getElementById('facPick'),
+                result = document.getElementById('result'), cnt = document.getElementById('cnt');
+
+            function renderPick() {
+                var kw = (q.value || '').trim();
+                pick.innerHTML = '';
+                facs.forEach(function (f) {
+                    if (kw && f.indexOf(kw) < 0) return;
+                    var on = owned[f];
+                    var b = document.createElement('button');
+                    b.type = 'button';
+                    b.className = 'db-pick' + (on ? ' on' : '');
+                    b.textContent = (on ? '✓ ' : '') + f;
+                    b.addEventListener('click', function () { owned[f] = !owned[f]; renderPick(); renderResult(); });
+                    pick.appendChild(b);
+                });
+                var n = Object.keys(owned).filter(function (k) { return owned[k]; }).length;
+                cnt.textContent = '已勾選 ' + n + ' 種設施';
+            }
+
+            function satisfied(opts) { return opts.some(function (f) { return owned[f]; }); }
+
+            function renderResult() {
+                var done = [], near = [];
+                spots.forEach(function (s) {
+                    var miss = s.reqs.filter(function (opts) { return !satisfied(opts); });
+                    if (miss.length === 0) done.push(s);
+                    else if (miss.length === 1) near.push({ s: s, miss: miss[0] });
+                });
+                var h = '';
+                h += '<div class="sc-h">✅ 可成立景點（' + done.length + '）</div>';
+                if (done.length) {
+                    h += '<ul class="sc-list">' + done.map(function (s) {
+                        return '<li class="ok"><span class="sc-name">' + s.name + '</span> <span class="sc-bonus">' + s.bonus + '</span></li>';
+                    }).join('') + '</ul>';
+                } else h += '<p class="empty-hint">還沒有可成立的景點，多勾幾個設施試試。</p>';
+
+                h += '<div class="sc-h">🔧 差一步（還差一種設施，' + near.length + '）</div>';
+                if (near.length) {
+                    h += '<ul class="sc-list">' + near.map(function (o) {
+                        return '<li><span class="sc-name">' + o.s.name + '</span>　還差 <span class="sc-miss">' + o.miss.join('／') + '</span> <span class="sc-bonus">' + o.s.bonus + '</span></li>';
+                    }).join('') + '</ul>';
+                } else h += '<p class="empty-hint">目前沒有「差一步」的景點。</p>';
+
+                result.innerHTML = h;
+                if (window.Shell) Shell.track('spotcheck', { owned: Object.keys(owned).filter(function (k) { return owned[k]; }).length, done: done.length });
+            }
+
+            q.addEventListener('input', renderPick);
+            document.getElementById('clr').addEventListener('click', function () { owned = {}; renderPick(); renderResult(); });
+            renderPick(); renderResult();
+        })();
+    </script>
+    <script src="../../../assets/shell.js?v=3"></script>
+    <script>Shell.mount({ page: 'guide', game: { id: 'school2', type: 'guide' }, breadcrumb: [{ t: '口袋學院物語2', href: '../' }, { t: '景點達成檢查器' }] });</script>
+</body>
+</html>
