@@ -298,6 +298,11 @@
                 <button id="suggestBtn" title="開關地圖上的建議標示（藍框／天藍框）" class="text-xs font-bold bg-gray-100 text-gray-600 px-2.5 py-1.5 rounded hover:bg-gray-200 transition border border-gray-300">💡 建議</button>
                 <button id="flowBtn" title="顯示從校門出發的步行距離（近綠遠紅，灰斜紋＝走不到）" class="text-xs font-bold bg-gray-100 text-gray-600 px-2.5 py-1.5 rounded hover:bg-gray-200 transition border border-gray-300">👣 動線</button>
                 <select id="presetSelect" class="text-xs font-bold bg-amber-50 text-amber-700 px-2 py-1.5 rounded border border-amber-200 outline-none cursor-pointer"></select>
+                <select id="sizeSelect" title="地圖尺寸（依城鎮而異；切換會保留左上角已畫內容）" class="text-xs font-bold bg-sky-50 text-sky-700 px-2 py-1.5 rounded border border-sky-200 outline-none cursor-pointer">
+                    <option value="26x24">26×24（健康鎮）</option>
+                    <option value="25x25">25×25（湖畔鎮）</option>
+                    <option value="27x27">27×27（東部・溪谷・百靈）</option>
+                </select>
                 <button id="loadPresetBtn" class="text-xs font-bold bg-amber-50 text-amber-700 px-2.5 py-1.5 rounded hover:bg-amber-100 transition border border-amber-200">載入</button>
             </div>
         </div>
@@ -608,8 +613,11 @@
         let longPressTimer = null;
         
         // Grid Dimensions
-        const gridRows = 26; // X: 2 to 27
-        const gridCols = 24; // Y: 25 to 2
+        // 地圖尺寸依城鎮而異（玩家實機確認）：健康鎮 26×24、湖畔鎮 25×25、
+        // 東部小鎮／溪谷鎮／百靈山丘 27×27。預設為健康鎮；
+        // setGridSize() 可切換，載入不同尺寸的存檔/分享碼時也會自動切換。
+        let gridRows = 26; // X: 2 起，由上而下
+        let gridCols = 24; // Y: (gridCols+1) 起，由左而右遞減至 2
         
         let gridData = Array(gridRows).fill(null).map(() => Array(gridCols).fill(null).map(() => ({ type: 'empty', elevation: 1 })));
         let toastTimeout;
@@ -627,11 +635,68 @@
         }
 
         function restoreSnapshot(json) {
-            gridData = JSON.parse(json);
+            const parsed = JSON.parse(json);
+            // 快照可能是不同尺寸（例如切換地圖尺寸前的狀態）→ 先切回該尺寸
+            if (parsed.length !== gridRows || (parsed[0] && parsed[0].length !== gridCols)) {
+                setGridSize(parsed.length, parsed[0].length, false);
+            }
+            gridData = parsed;
             for (let r = 0; r < gridRows; r++) {
                 for (let c = 0; c < gridCols; c++) updateTileVisuals(r, c);
             }
             checkSpots();
+        }
+
+        /* ─── 地圖尺寸切換 ───
+           preserve=true 時保留左上角重疊區的內容（縮小會裁掉超界格，呼叫端先確認）。
+           會重建 gridData 與整個網格 DOM，並重算版面與景點。 */
+        function setGridSize(rows, cols, preserve) {
+            rows = Math.max(5, Math.min(40, rows | 0));
+            cols = Math.max(5, Math.min(40, cols | 0));
+            if (rows === gridRows && cols === gridCols) return;
+            const old = gridData;
+            gridData = Array(rows).fill(null).map((_, r) => Array(cols).fill(null).map((_, c) => {
+                if (preserve && old[r] && old[r][c]) return old[r][c];
+                return { type: 'empty', elevation: 1 };
+            }));
+            gridRows = rows; gridCols = cols;
+            renderGrid();
+            fitGrid();
+            assignBlockIds();
+            for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++) updateTileVisuals(r, c);
+            checkSpots();
+            const sel = document.getElementById('sizeSelect');
+            if (sel) {
+                const val = rows + 'x' + cols;
+                // 非常見尺寸(例如匯入外部存檔)動態補一個選項,讓下拉能正確顯示
+                if (![...sel.options].some(o => o.value === val)) {
+                    const opt = document.createElement('option');
+                    opt.value = val; opt.innerText = rows + '×' + cols;
+                    sel.appendChild(opt);
+                }
+                sel.value = val;
+            }
+        }
+
+        // 尺寸下拉：切換前若會裁掉已畫內容，先確認
+        function changeGridSize(val) {
+            const m = /^(\d+)x(\d+)$/.exec(val);
+            if (!m) return;
+            const rows = +m[1], cols = +m[2];
+            if (rows === gridRows && cols === gridCols) return;
+            let lost = 0;
+            for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++) {
+                if ((r >= rows || c >= cols) && gridData[r][c].type !== 'empty') lost++;
+            }
+            if (lost && !confirm(`縮小到 ${rows}×${cols} 會裁掉 ${lost} 格已放置的內容，確定？`)) {
+                const sel = document.getElementById('sizeSelect');
+                if (sel) sel.value = gridRows + 'x' + gridCols;
+                return;
+            }
+            pushHistory();
+            setGridSize(rows, cols, true);
+            showSysMsg(`地圖尺寸已切換為 ${rows}×${cols}`);
+            track('grid_resize', { size: rows + 'x' + cols });
         }
 
         function undo() {
@@ -722,21 +787,29 @@
                 }
             }
             if (prev !== null) parts.push(prev + '.' + count);
-            return btoa(parts.join(',')).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+            // 非預設尺寸（健康鎮 26×24）時在最前面帶尺寸；26×24 維持無前綴，
+            // 舊分享連結與外部產生器完全相容。
+            const prefix = (gridRows === 26 && gridCols === 24) ? '' : gridRows + 'x' + gridCols + ';';
+            return btoa(prefix + parts.join(',')).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
         }
 
         function decodeMap(code) {
             try {
-                const str = atob(code.replace(/-/g, '+').replace(/_/g, '/'));
+                let str = atob(code.replace(/-/g, '+').replace(/_/g, '/'));
+                // 選用的尺寸前綴「RxC;」；沒有 = 舊格式 26×24
+                let rows = 26, cols = 24;
+                const sm = /^(\d+)x(\d+);/.exec(str);
+                if (sm) { rows = +sm[1]; cols = +sm[2]; str = str.slice(sm[0].length); }
+                if (rows < 5 || rows > 40 || cols < 5 || cols > 40) return null;
                 const cells = [];
                 for (const p of str.split(',')) {
                     const [t, e, n] = p.split('.').map(Number);
                     for (let k = 0; k < n; k++) cells.push({ type: TYPE_KEYS[t] || 'empty', elevation: e || 1 });
                 }
-                if (cells.length !== gridRows * gridCols) return null;
+                if (cells.length !== rows * cols) return null;
                 const grid = [];
-                for (let r = 0; r < gridRows; r++) grid.push(cells.slice(r * gridCols, (r + 1) * gridCols));
-                return grid;
+                for (let r = 0; r < rows; r++) grid.push(cells.slice(r * cols, (r + 1) * cols));
+                return grid;  // importGridData 會依陣列尺寸自動切換畫布
             } catch (err) { return null; }
         }
 
@@ -767,13 +840,13 @@
             let tile;
             if (diamond) {
                 // 2:1 等角：外框寬 = (原寬+原高)×sin45°，高再壓一半
-                const fixed = 4 * axis + gap * (25 + 27) + 8;
+                const fixed = 4 * axis + gap * ((gridCols + 1) + (gridRows + 1)) + 8;
                 const totalW = availW / 0.7071;
                 const totalH = availH / 0.3536;
                 tile = Math.floor((Math.min(totalW, totalH) - fixed) / (gridCols + gridRows));
             } else {
-                const tileW = (availW - axis * 2 - gap * 25 - 4) / gridCols;
-                const tileH = (availH - axis * 2 - gap * 27 - 4) / gridRows;
+                const tileW = (availW - axis * 2 - gap * (gridCols + 1) - 4) / gridCols;
+                const tileH = (availH - axis * 2 - gap * (gridRows + 1) - 4) / gridRows;
                 tile = Math.floor(Math.min(tileW, tileH));
             }
             tile = Math.max(10, Math.min(40, tile));
@@ -784,8 +857,8 @@
             const container = document.getElementById('mapContainer');
             if (container) {
                 if (diamond) {
-                    const w = axis * 2 + gridCols * tile + gap * 25 + 4;
-                    const h = axis * 2 + gridRows * tile + gap * 27 + 4;
+                    const w = axis * 2 + gridCols * tile + gap * (gridCols + 1) + 4;
+                    const h = axis * 2 + gridRows * tile + gap * (gridRows + 1) + 4;
                     const side = Math.ceil((w + h) * 0.7071);
                     container.style.width = side + 'px';
                     container.style.height = Math.ceil(side / 2) + 'px';
@@ -804,7 +877,7 @@
             const tileEl = document.querySelector(`.tile[data-r="${r}"][data-c="${c}"]`);
             const warn = tileEl && tileEl.classList.contains('blocked') ? '　⚠ 被包圍，學生無法進入' : '';
             const elevName = cell.elevation === 3 ? '高地2層' : cell.elevation === 2 ? '高地1層' : '平地';
-            document.getElementById('coordHint').innerText = `X:${r + 2}　Y:${25 - c}　${label}（${elevName}）${warn}`;
+            document.getElementById('coordHint').innerText = `X:${r + 2}　Y:${gridCols + 1 - c}　${label}（${elevName}）${warn}`;
         }
 
         // 多格建築的放置預覽：標示滑鼠所在位置放下去會占據的範圍
@@ -1029,15 +1102,18 @@
         function renderGrid() {
             const gridEl = document.getElementById('gameGrid');
             gridEl.innerHTML = '';
-            
-            // --- TOP AXIS ROW (Y: 25 down to 2) ---
+            // 行列數依目前地圖尺寸（CSS 類別裡的 24/26 只是預設值）
+            gridEl.style.gridTemplateColumns = 'var(--axis) repeat(' + gridCols + ', var(--tile)) var(--axis)';
+            gridEl.style.gridTemplateRows = 'var(--axis) repeat(' + gridRows + ', var(--tile)) var(--axis)';
+
+            // --- TOP AXIS ROW (Y: 由 gridCols+1 遞減到 2) ---
             gridEl.appendChild(createAxisLabel('')); // Top-left corner
             for (let c = 0; c < gridCols; c++) {
-                gridEl.appendChild(createAxisLabel(25 - c));
+                gridEl.appendChild(createAxisLabel(gridCols + 1 - c));
             }
             gridEl.appendChild(createAxisLabel('')); // Top-right corner
 
-            // --- MAIN GRID ROWS (X: 2 up to 27) ---
+            // --- MAIN GRID ROWS (X: 2 起) ---
             for (let r = 0; r < gridRows; r++) {
                 const currentX = r + 2;
                 
@@ -1046,7 +1122,7 @@
 
                 // Map Tiles
                 for (let c = 0; c < gridCols; c++) {
-                    const currentY = 25 - c;
+                    const currentY = gridCols + 1 - c;
 
                     const tile = document.createElement('div');
                     tile.className = 'tile';
@@ -1108,10 +1184,13 @@
             // --- BOTTOM AXIS ROW ---
             gridEl.appendChild(createAxisLabel('')); // Bottom-left corner
             for (let c = 0; c < gridCols; c++) {
-                gridEl.appendChild(createAxisLabel(25 - c));
+                gridEl.appendChild(createAxisLabel(gridCols + 1 - c));
             }
             gridEl.appendChild(createAxisLabel('')); // Bottom-right corner
 
+            // 全域監聽器只綁一次（renderGrid 會因尺寸切換被重複呼叫）
+            if (window.__gridListenersBound) return;
+            window.__gridListenersBound = true;
             document.addEventListener('mouseup', () => {
                 if (rectStart && rectEnd) commitRect();
                 isDrawing = false;
@@ -1870,8 +1949,8 @@
                 ctx.font = 'bold 10px sans-serif';
                 for (let c = 0; c < gridCols; c++) {
                     const x = axis + c * cell + cell / 2;
-                    ctx.fillText(25 - c, x, axis / 2);
-                    ctx.fillText(25 - c, x, H - axis / 2);
+                    ctx.fillText(gridCols + 1 - c, x, axis / 2);
+                    ctx.fillText(gridCols + 1 - c, x, H - axis / 2);
                 }
                 for (let r = 0; r < gridRows; r++) {
                     const y = axis + r * cell + cell / 2;
@@ -2088,17 +2167,26 @@
         // 系統預設地圖：遊戲共有 5 個城鎮。data 為 null 的表示還沒匯入地圖資料，
         // 會在下拉選單顯示「待匯入」；拿到該城鎮的存檔碼後，把 null 換成 `存檔碼` 即可。
         const PRESETS = {
-            health: { name: '健康鎮', desc: '比例優良的標準地區', data: PRESET_DEFAULT_DATA },
-            winter: { name: '東部小鎮', desc: '東京西邊的普通盆地（ヒガシクメールタウン）', data: null },
-            lake:   { name: '湖畔鎮', desc: '被湖泊環繞的美麗地區', data: null },
-            valley: { name: '溪谷鎮', desc: '位於山區的峭壁地區', data: null },
-            hill:   { name: '百靈山丘', desc: '位於市中心有許多有錢人，開局資金多 40 萬', data: null }
+            health: { name: '健康鎮', desc: '比例優良的標準地區', rows: 26, cols: 24, data: PRESET_DEFAULT_DATA },
+            winter: { name: '東部小鎮', desc: '東京西邊的普通盆地（ヒガシクメールタウン）', rows: 27, cols: 27, data: null },
+            lake:   { name: '湖畔鎮', desc: '被湖泊環繞的美麗地區', rows: 25, cols: 25, data: null },
+            valley: { name: '溪谷鎮', desc: '位於山區的峭壁地區', rows: 27, cols: 27, data: null },
+            hill:   { name: '百靈山丘', desc: '位於市中心有許多有錢人，開局資金多 40 萬', rows: 27, cols: 27, data: null }
         };
 
         function loadPreset(key) {
             const preset = PRESETS[key];
             if (!preset) return;
-            if (!preset.data) { showSysMsg(`「${preset.name}」的地圖資料尚未匯入`, true); return; }
+            if (!preset.data) {
+                // 尚無地形資料 → 以該城鎮的正確尺寸開空白畫布，方便照著遊戲畫
+                pushHistory();
+                setGridSize(preset.rows || 26, preset.cols || 24, false);
+                importGridData(gridData.map(row => row.map(() => ({ type: 'empty', elevation: 1 }))));
+                document.getElementById('saveName').value = preset.name;
+                track('load_preset_blank', { preset: key });
+                showSysMsg(`「${preset.name}」尚無地形資料，已開啟 ${preset.rows}×${preset.cols} 空白畫布`);
+                return;
+            }
             try {
                 const parsed = JSON.parse(preset.data);
                 pushHistory();
@@ -2159,9 +2247,9 @@
             Object.entries(PRESETS).forEach(([key, p]) => {
                 const opt = document.createElement('option');
                 opt.value = key;
-                opt.innerText = p.data ? p.name : `${p.name}（待匯入）`;
+                // 尚無地形資料的城鎮也可選：會以該鎮的正確尺寸開空白畫布
+                opt.innerText = p.data ? p.name : `${p.name}（${p.rows}×${p.cols} 空白）`;
                 opt.title = p.desc || '';
-                if (!p.data) opt.disabled = true;
                 select.appendChild(opt);
             });
         }
@@ -2221,7 +2309,13 @@
         }
 
         function importGridData(parsed) {
-            if (!Array.isArray(parsed)) return false;
+            if (!Array.isArray(parsed) || !parsed.length || !Array.isArray(parsed[0])) return false;
+
+            // 自動偵測尺寸：存檔/預設圖/分享碼帶著自己的行列數，跟目前不同就切換
+            const pr = parsed.length, pc = Math.max(...parsed.map(row => (row || []).length));
+            if (pr >= 5 && pr <= 40 && pc >= 5 && pc <= 40 && (pr !== gridRows || pc !== gridCols)) {
+                setGridSize(pr, pc, false);
+            }
 
             for (let r = 0; r < gridRows; r++) {
                 for (let c = 0; c < gridCols; c++) {
@@ -2368,6 +2462,7 @@
             });
 
             document.getElementById('loadPresetBtn').addEventListener('click', () => loadPreset(document.getElementById('presetSelect').value));
+            document.getElementById('sizeSelect').addEventListener('change', (e) => changeGridSize(e.target.value));
 
             document.getElementById('saveLocalBtn').addEventListener('click', () => {
                 const name = document.getElementById('saveName').value.trim() || "未命名";

@@ -89,5 +89,41 @@ if (roundtrip) {
 }
 ok('分享編碼往返一致', roundtrip);
 
+// 7) 多尺寸分享編碼（鏡像帶「RxC;」前綴的新格式；26×24 必須維持無前綴的舊格式）
+{
+    // 造一張 27×27 測試圖（角落放設施、含高地），走「前綴編碼 → 解碼」往返
+    const R2 = 27, C2 = 27;
+    const g2 = Array(R2).fill(null).map(() => Array(C2).fill(null).map(() => ({ type: 'empty', elevation: 1 })));
+    g2[0][0] = { type: 'woods', elevation: 1 };
+    g2[26][26] = { type: 'pond', elevation: 1 };
+    g2[13][13] = { type: 'class', elevation: 2 };
+    const parts2 = [];
+    let prev2 = null, count2 = 0;
+    for (let r = 0; r < R2; r++) for (let c = 0; c < C2; c++) {
+        const key = TYPE_KEYS.indexOf(g2[r][c].type) + '.' + (g2[r][c].elevation || 1);
+        if (key === prev2) count2++;
+        else { if (prev2 !== null) parts2.push(prev2 + '.' + count2); prev2 = key; count2 = 1; }
+    }
+    parts2.push(prev2 + '.' + count2);
+    const encoded2 = R2 + 'x' + C2 + ';' + parts2.join(',');
+    // 解碼（鏡像 decodeMap）
+    let str2 = encoded2, rows2 = 26, cols2 = 24;
+    const sm2 = /^(\d+)x(\d+);/.exec(str2);
+    if (sm2) { rows2 = +sm2[1]; cols2 = +sm2[2]; str2 = str2.slice(sm2[0].length); }
+    const cells2 = [];
+    for (const p of str2.split(',')) {
+        const [t, e, n] = p.split('.').map(Number);
+        for (let k = 0; k < n; k++) cells2.push({ type: TYPE_KEYS[t] || 'empty', elevation: e || 1 });
+    }
+    let rt2 = rows2 === R2 && cols2 === C2 && cells2.length === R2 * C2;
+    if (rt2) for (let r = 0; r < R2; r++) for (let c = 0; c < C2; c++) {
+        const back = cells2[r * C2 + c];
+        if (back.type !== g2[r][c].type || back.elevation !== g2[r][c].elevation) rt2 = false;
+    }
+    ok('多尺寸分享編碼（27×27 前綴格式）往返一致', rt2);
+    // encodeMap 原始碼必須保留「26×24 無前綴」的相容規則
+    ok('26×24 維持無前綴舊格式', /gridRows === 26 && gridCols === 24\) \? ''/.test(html));
+}
+
 console.log(fails ? `\n共 ${fails} 項未通過` : '\n全部通過 ✔');
 process.exit(fails ? 1 : 0);
