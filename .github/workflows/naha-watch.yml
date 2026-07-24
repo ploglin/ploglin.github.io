@@ -1,0 +1,36 @@
+name: 那覇燒肉 8/27 空位監控
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: naha-watch
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Restore previous state
+        uses: actions/cache/restore@v4
+        with:
+          path: state.json
+          key: naha-state-${{ github.run_id }}
+          restore-keys: naha-state-
+
+      - name: Check availability
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          STATE_FILE: state.json
+        run: python .github/scripts/check_naha.py
+
+      - name: Save state
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: state.json
+          key: naha-state-${{ github.run_id }}
