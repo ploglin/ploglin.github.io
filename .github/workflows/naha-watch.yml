@@ -2,7 +2,8 @@ name: 那覇燒肉 8/27 空位監控
 
 on:
   schedule:
-    - cron: "*/15 * * * *"
+    # 避開 :00/:15/:30/:45 — 全平台排程都擠在那幾分鐘，尖峰時 GitHub 會直接丟棄不補跑
+    - cron: "4,19,34,49 * * * *"
   workflow_dispatch:
 
 concurrency:
