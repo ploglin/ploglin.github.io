@@ -160,7 +160,7 @@
     var GAME_NAV = {
         "school2": { e: "🏫", t: "口袋學院物語2", j: "名門ポケット学院2", a: "#e6f4ec",
             main: [["","攻略總覽","📄"],["sim/","佈局模擬器","🧩"],["db/","資料庫","📚"]],
-            more: [["layouts/","佈局範例","🗺️","tool"],["spot-check/","景點檢查器","🔎","tool"],["walkthrough/","流程攻略","🧭","guide"],["teachers/","老師培育","👩‍🏫","guide"],["students/","學生養成","🎓","guide"],["economy/","經營與資金","💰","guide"],["activities/","行事與活動","🎪","guide"],["challenges/","挑戰目標","🏆","guide"],["glossary/","中日對照","📖","guide"]] },
+            more: [["layouts/","佈局範例","🗺️","tool"],["spot-check/","景點檢查器","🔎","tool"],["walkthrough/","流程攻略","🧭","guide"],["teachers/","老師培育","👩‍🏫","guide"],["students/","學生養成","🎓","guide"],["economy/","經營與資金","💰","guide"],["activities/","行事與活動","🎪","guide"],["challenges/","挑戰目標","🏆","guide"],["maps/","五城鎮地圖","🗾","guide"],["ng-plus/","二周目與結算","🔁","guide"],["romance/","戀愛與告白","💘","guide"],["secrets/","隱藏要素","🛸","guide"],["glossary/","中日對照","📖","guide"]] },
         "ooedo": { e: "🏯", t: "大江戶物語", j: "大江戸タウンズ", a: "#fdeee0",
             main: [["","攻略總覽","📄"],["sim/","佈局模擬器","🧩"],["db/","資料庫","📚"]],
             more: [] },

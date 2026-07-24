@@ -392,10 +392,16 @@
     <loc>https://ploglin.github.io/kairosoft/school2/db/spots/</loc>
   </url>
   <url>
+    <loc>https://ploglin.github.io/kairosoft/school2/db/students/</loc>
+  </url>
+  <url>
     <loc>https://ploglin.github.io/kairosoft/school2/db/tasks/</loc>
   </url>
   <url>
     <loc>https://ploglin.github.io/kairosoft/school2/db/teachers/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/school2/db/towns/</loc>
   </url>
   <url>
     <loc>https://ploglin.github.io/kairosoft/school2/economy/</loc>
@@ -405,6 +411,18 @@
   </url>
   <url>
     <loc>https://ploglin.github.io/kairosoft/school2/layouts/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/school2/maps/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/school2/ng-plus/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/school2/romance/</loc>
+  </url>
+  <url>
+    <loc>https://ploglin.github.io/kairosoft/school2/secrets/</loc>
   </url>
   <url>
     <loc>https://ploglin.github.io/kairosoft/school2/sim/</loc>

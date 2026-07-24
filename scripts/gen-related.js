@@ -30,7 +30,7 @@ const RELATED = {
         'walkthrough': [
             { href: '../economy/', desc: '資金週轉與收支控管' },
             { href: '../challenges/', desc: '各關卡達成條件一覽' },
-            { href: '../teachers/', desc: '老師招募與能力養成' }
+            { href: '../ng-plus/', desc: '二周目繼承與結算' }
         ],
         'teachers': [
             { href: '../students/', desc: '學生能力與升學培養' },
@@ -39,13 +39,13 @@ const RELATED = {
         ],
         'students': [
             { href: '../teachers/', desc: '老師招募與能力養成' },
-            { href: '../activities/', desc: '每月行事與活動安排' },
+            { href: '../romance/', desc: '學生戀愛與告白' },
             { href: '../db/careers/', icon: '🎓', label: '進路資料庫', desc: '各進路條件與去向' }
         ],
         'economy': [
             { href: '../walkthrough/', desc: '序盤到通關的節奏' },
             { href: '../challenges/', desc: '各關卡達成條件一覽' },
-            { href: '../activities/', desc: '每月行事與活動安排' }
+            { href: '../maps/', desc: '五城鎮選圖建議' }
         ],
         'activities': [
             { href: '../students/', desc: '學生能力與升學培養' },
@@ -54,7 +54,7 @@ const RELATED = {
         ],
         'challenges': [
             { href: '../economy/', desc: '資金週轉與收支控管' },
-            { href: '../walkthrough/', desc: '序盤到通關的節奏' },
+            { href: '../ng-plus/', desc: '二周目繼承與結算' },
             { href: '../db/tasks/', icon: '📝', label: '挑戰資料庫', desc: '全挑戰目標一覽表' }
         ],
         'glossary': [
@@ -65,12 +65,32 @@ const RELATED = {
         'layouts': [
             { href: '../spot-check/', desc: '勾設施查可成景點' },
             { href: '../#combo', icon: '🧩', label: '29 種景點 combo 總表', desc: '29 景點成立配方' },
-            { href: '../walkthrough/', desc: '序盤到通關的節奏' }
+            { href: '../maps/', desc: '五城鎮地形比較' }
         ],
         'spot-check': [
             { href: '../layouts/', desc: '完美佈局實例參考' },
             { href: '../#combo', icon: '🧩', label: '29 種景點 combo 總表', desc: '29 景點成立配方' },
             { href: '../db/spots/', icon: '🎯', label: '景點資料庫', desc: '全人氣景點條件表' }
+        ],
+        'maps': [
+            { href: '../economy/', desc: '資金週轉與收支控管' },
+            { href: '../walkthrough/', desc: '序盤到通關的節奏' },
+            { href: '../layouts/', desc: '健康鎮完美佈局' }
+        ],
+        'ng-plus': [
+            { href: '../challenges/', desc: '各關卡達成條件一覽' },
+            { href: '../romance/', desc: '學生戀愛與告白' },
+            { href: '../economy/', desc: '資金週轉與收支控管' }
+        ],
+        'romance': [
+            { href: '../ng-plus/', desc: '二周目繼承與結算' },
+            { href: '../students/', desc: '學生能力與升學培養' },
+            { href: '../db/items/', icon: '🎒', label: '道具資料庫', desc: '全道具效果一覽' }
+        ],
+        'secrets': [
+            { href: '../db/spots/', icon: '🎯', label: '景點資料庫', desc: '全人氣景點條件表' },
+            { href: '../teachers/', desc: '老師招募與能力養成' },
+            { href: '../ng-plus/', desc: '二周目繼承與結算' }
         ]
     }
 };

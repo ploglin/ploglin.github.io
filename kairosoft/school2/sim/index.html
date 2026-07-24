@@ -491,8 +491,8 @@
 
             // 運動與社團 (Sports)
             'field': { id: 'field', name: '操場', short: '操', color: '#84cc16', type: 'sports' },
-            'tennis': { id: 'tennis', name: '網球場', short: '網', color: '#f97316', type: 'sports', textCol: 'white' },
-            'basketball': { id: 'basketball', name: '籃球場', short: '籃', color: '#ea580c', type: 'sports', textCol: 'white' },
+            'tennis': { id: 'tennis', name: '網球場', short: '網', color: '#f97316', type: 'sports', textCol: 'white', w: 1, h: 2 },
+            'basketball': { id: 'basketball', name: '籃球場', short: '籃', color: '#ea580c', type: 'sports', textCol: 'white', w: 1, h: 2 },
             'gym': { id: 'gym', name: '體育館', short: '體', color: '#64748b', type: 'sports', textCol: 'white' },
             'pool': { id: 'pool', name: '游泳池', short: '泳', color: '#0284c7', type: 'sports', textCol: 'white' },
             'baseball': { id: 'baseball', name: '棒球場', short: '棒', color: '#65a30d', type: 'sports', textCol: 'white' },
@@ -2089,10 +2089,10 @@
         // 會在下拉選單顯示「待匯入」；拿到該城鎮的存檔碼後，把 null 換成 `存檔碼` 即可。
         const PRESETS = {
             health: { name: '健康鎮', desc: '比例優良的標準地區', data: PRESET_DEFAULT_DATA },
-            winter: { name: '冬郵小鎮', desc: '東京西邊的普通盆地', data: null },
-            lake:   { name: '湖岸小鎮', desc: '被湖泊環繞的美麗地區', data: null },
-            valley: { name: '溪谷小鎮', desc: '位於山區的峭壁地區', data: null },
-            hill:   { name: '百靈山丘', desc: '位於市中心有許多有錢人', data: null }
+            winter: { name: '東部小鎮', desc: '東京西邊的普通盆地（ヒガシクメールタウン）', data: null },
+            lake:   { name: '湖畔鎮', desc: '被湖泊環繞的美麗地區', data: null },
+            valley: { name: '溪谷鎮', desc: '位於山區的峭壁地區', data: null },
+            hill:   { name: '百靈山丘', desc: '位於市中心有許多有錢人，開局資金多 40 萬', data: null }
         };
 
         function loadPreset(key) {
@@ -2467,7 +2467,7 @@
             });
         }
     </script>
-    <script src="../../../assets/shell.js?v=5"></script>
+    <script src="../../../assets/shell.js?v=6"></script>
     <script data-shell>Shell.mountBar();</script>
 </body>
 </html>

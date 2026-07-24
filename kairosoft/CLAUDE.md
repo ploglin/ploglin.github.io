@@ -24,7 +24,7 @@ kairosoft/<game>/            index.html = 內容豐富的攻略專頁(SEO 主力
 
 ## 內容深度標準(對齊 school2)
 
-**攻略專頁 (`index.html`)** 至少包含：H1 + lead + 更新日期、TOC 目錄、多個 `<h2>` 章節(新手玩法 / 核心機制或 combo / **主要資料表** / 進階技巧 / FAQ)、`.callout`(tip/warn/key) 重點框、`.table-wrap`+`table.data` 資料表、**至少一個 `.ad-slot`**、資料來源致謝、返回連結。字數要足(參考 school2 攻略頁的深度)。
+**攻略專頁 (`index.html`)** 至少包含：H1 + lead + 更新日期、TOC 目錄、多個 `<h2>` 章節(新手玩法 / 核心機制或 combo / **主要資料表** / 進階技巧 / FAQ)、`.callout`(tip/warn/key) 重點框、`.table-wrap`+`table.data` 資料表、資料來源致謝、返回連結。字數要足(參考 school2 攻略頁的深度)。
 
 **資料庫 (`db/`)**：把該遊戲的遊戲內資料拆成多個可查詢分類(例如 school2：人氣景點/設施/老師/社團/進路/行事活動/特別授業/學校排名/道具/挑戰)。每分類一個獨立可索引頁，具專屬 SEO。
 
@@ -51,7 +51,7 @@ kairosoft/<game>/            index.html = 內容豐富的攻略專頁(SEO 主力
   <script data-shell>Shell.mountBar();</script>
   ```
   `data-shell` 屬性不可省略——`school2/scripts/check.js` 靠「無屬性的 `<script>`」找主程式。
-- **快取**：改動 `shell.js` / `shell.css` 後，全站 `?v=N` 要一起加一號(目前 `?v=5`，含各頁對 `db.js` 的引用)。
+- **快取**：改動 `shell.js` / `shell.css` 後，全站 `?v=N` 要一起加一號(目前 `?v=6`，含各頁對 `db.js` 的引用)。
 
 ## 導覽分層原則
 

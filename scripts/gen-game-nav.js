@@ -24,6 +24,10 @@ const LABELS = {
     'economy': { t: '經營與資金', icon: '💰', group: 'guide' },
     'activities': { t: '行事與活動', icon: '🎪', group: 'guide' },
     'challenges': { t: '挑戰目標', icon: '🏆', group: 'guide' },
+    'maps':    { t: '五城鎮地圖', icon: '🗾', group: 'guide' },
+    'ng-plus': { t: '二周目與結算', icon: '🔁', group: 'guide' },
+    'romance': { t: '戀愛與告白', icon: '💘', group: 'guide' },
+    'secrets': { t: '隱藏要素', icon: '🛸', group: 'guide' },
     'glossary': { t: '中日對照', icon: '📖', group: 'guide' }
 };
 
