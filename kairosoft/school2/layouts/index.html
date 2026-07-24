@@ -30,7 +30,7 @@
     }
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../../assets/shell.css?v=3">
+    <link rel="stylesheet" href="../../../assets/shell.css?v=4">
     <style>
         .layout-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; margin: 16px 0; box-shadow: var(--shadow); }
         .layout-card h3 { margin: 0 0 4px; font-size: 18px; font-weight: 900; }
@@ -64,16 +64,18 @@
                 <img src="health-perfect.svg" width="568" height="612"
                      alt="口袋學院物語2 健康鎮完美佈局地圖：26×24 格校園全圖，含棋盤式走廊路網、五大分區與 29 個人氣景點">
             </div>
-            <p style="font-size:13px;color:var(--muted);margin-top:-6px">圖中每格上的字是設施簡稱（操＝操場、樹＝樹林、走＝走廊…）。灰色是高地，帶斜線的黃綠色是<strong>斜坡</strong>（高低差自動形成的地形）。邊緣數字是遊戲內座標，上方為 Y、左側為 X，與模擬器一致。</p>
+            <p style="font-size:13px;color:var(--muted);margin-top:-6px">圖中每格上的字是設施簡稱（操＝操場、樹＝樹林、走＝走廊…）。<strong>虛線深色外框</strong>代表高地；帶斜線的黃綠色是<strong>斜坡</strong>（高低差自動形成的地形，不能蓋東西，是上下高地唯一的通道）。邊緣數字是遊戲內座標，上方為 Y、左側為 X，與模擬器一致。</p>
 
             <div class="statgrid">
                 <div><b>29 / 29</b><span>人氣景點成立</span></div>
                 <div><b>0</b><span>被包圍走不到的建築</span></div>
-                <div><b>122</b><span>建築棟數</span></div>
+                <div><b>147</b><span>建築棟數</span></div>
                 <div><b>9</b><span>教室（3 年級各 3 間）</span></div>
+                <div><b>2</b><span>校門（西側＋南側）</span></div>
+                <div><b>24</b><span>蓋在高地上的設施</span></div>
             </div>
 
-            <p><a class="btn" href="../sim/#m=MC4xLjMsMC4yLjgsMC4xLjEzLDIzLjEuMSwzNS4xLjIsMC4yLjgsNjMuMS4xLDY1LjEuMSwzOC4xLjEsMy4xLjEsMzAuMS4xLDUwLjEuMSw3LjEuMiwzLjEuMSw0OC4xLjEsNDYuMS4xLDUyLjEuMSw0Ny4xLjEsMS4xLjEsMzUuMS4yLDAuMi42LDMuMS4xLDcuMS4xLDEuMS4xLDM1LjEuMiwzLjEuMSwzNC4xLjIsNy4xLjIsMy4xLjEsNDkuMS4xLDEuMS4zLDM0LjEuMiwxLjEuMSwwLjIuNiwzLjEuMSw3LjEuMSw0NS4xLjEsMzUuMS4yLDMuMS4xLDM0LjEuMiwxLjEuMSwzOS4xLjEsMy4xLjEsNzMuMS4xLDEuMS4zLDM0LjEuMiw3MC4xLjEsNzEuMS4xLDMuMS4xLDAuMi40LDMuMS4xLDUzLjEuMSw0NS4xLjEsNjQuMS4xLDY2LjEuMSwzLjEuMSw0MC4xLjEsNTQuMS4xLDU4LjEuMSw0OC4xLjEsMy4xLjEsNjMuMS4xLDYwLjEuMSw2MS4xLjEsMzAuMS4xLDMuMS4xMCwxNi4xLjEsMy4xLjEzLDI3LjEuMSwxOS4xLjEsMzEuMS4xLDE1LjEuMSwzLjEuMSw3Ny4xLjEsNzguMS4xLDM3LjEuMSwxNi4xLjMsNTkuMS4xLDI0LjEuMSwxMS4xLjEsMy4xLjEsNzcuMS4xLDMxLjEuMSwzNy4xLjEsMTYuMS43LDEuMS4zLDE2LjEuNiwxLjEuMywzNi4xLjEsMy4xLjEsMjAuMS4xLDEuMS4yLDE2LjEuNiwxLjEuNCwxNi4xLjYsNTcuMS4yLDEuMS4yLDMuMS4xLDIxLjEuMSwxLjEuMiwzMy4xLjEsMy4xLjEsNjMuMS4xLDEuMS4zLDMyLjEuMSw0OS4xLjEsMjUuMS4xLDEuMS4xLDE2LjEuNiw1Ny4xLjIsMjYuMS4xLDEuMS4xLDMuMS4xLDY3LjEuMSw1MC4xLjEsMTkuMS4xLDMwLjEuMSwzLjEuMSw1OS4xLjEsMzAuMS4xLDEuMS4yLDMuMS4yMSwwLjIuMyw1OC4xLjEsNDQuMS4yLDI1LjEuMSwzLjEuMSwyNS4xLjEsMS4xLjMsMy4yLjEsNDEuMS40LDMuMS4xLDQxLjEuNCwzLjEuMSwxMy4xLjEsMC4yLjMsMS4xLjQsMy4xLjEsMTEuMS4xLDcuMS4yLDEuMS4xLDMuMi4xLDQxLjEuNCwzLjEuMSw0MS4xLjQsMy4xLjEsMC4yLjQsMS4xLjEsNy4xLjEsNC4xLjIsMy4xLjEsNC4xLjEsMy4xLjQsNDEuMS4yLDMuMS4xLDYuMS4xLDMuMS4xLDQxLjEuMiw0Mi4xLjIsMy4xLjEsMC4yLjQsMS4xLjEsNy4xLjEsNC4xLjIsMy4xLjEsNC4xLjEsMy4xLjQsNDEuMS4yLDMuMS4xLDYuMS4xLDMuMS4xLDQxLjEuMiw0Mi4xLjIsMy4xLjEsMC4yLjQsNTUuMS4xLDMuMS4xOCwwLjIuNSw1NS4xLjEsNC4xLjMsMy4xLjEsNDMuMS4xLDQyLjEuMiwzLjEuNSwyOC4xLjEsMy4xLjEsNDEuMS40LDAuMi41LDEuMS4yLDQ0LjEuMiwzLjEuMSw0My4xLjEsNDIuMS4yLDMuMS4yLDIzLjEuMSwyNy4xLjEsMy4xLjEsMjkuMS4xLDMuMS4xLDQxLjEuNCwwLjIuNSwyNy4xLjEsNi4xLjEsNDUuMS4xLDYuMS4xLDMuMS4xLDMzLjEuMSwxNS4xLjEsMTQuMS4xLDMuMS41LDM2LjEuMSwzLjEuMSw0MS4xLjIsMTkuMS4xLDIwLjEuMSwwLjIuNSwzNi4xLjEsMzEuMS4xLDQ1LjEuMSw2LjEuMSwzLjEuMSw0LjEuMSwzMC4xLjEsNC4xLjIsMy4xLjEsNTEuMS4xLDUyLjEuMSwxLjEuMiwzLjEuMSw0MS4xLjIsMS4xLjEsMjIuMS4xLDAuMi41LDMuMS4xOSwwLjIuNSw2Ny4xLjEsNjguMS4xLDcwLjEuMSw3MS4xLjEsMy4xLjEsNjcuMS4xLDczLjEuMSw3NC4xLjEsNzUuMS4xLDMuMS4xLDU3LjEuMSw2Mi4xLjEsNjMuMS4xLDU4LjEuMSwzLjEuMSw2MC4xLjEsNjQuMS4xLDY2LjEuMSw2NS4xLjEsMy4xLjEsMC4yLjQsNjkuMS4xLDcyLjEuMSwxLjEuMiwzLjEuMSw3Ni4xLjEsNzIuMS4xLDEuMS4yLDMuMS4xLDU5LjEuMSw2MS4xLjEsMS4xLjIsMy4xLjEsNy4xLjEsNTcuMS4xLDIyLjEuMSwxLjEuMSwzLjEuMSwwLjIuNCwxLjEuNCwzLjEuMSwxLjEuNCwzLjEuMSwxLjEuNCwzLjEuMSw3LjEuMSwxLjEuMywzLjEuMSw3LjEuMSwzNi4xLjEsMzEuMS4xLDEzLjEuMSwxLjEuNCwzLjEuMSwxLjEuNCwzLjEuMSwxLjEuNCwzLjEuMSwxLjEuNCwzLjEuMSw2Mi4xLjEsMTMuMS4zLDAuMS4yNA">🧩 在模擬器開啟完美佈局</a></p>
+            <p><a class="btn" href="../sim/#m=MC4xLjMsMC4yLjEsMy4yLjEsMzMuMi4xLDM2LjIuMSwzMS4yLjEsMjcuMi4xLDMuMi4xLDAuMi4xLDAuMS4xMywyMy4xLjEsMzUuMS4yLDAuMi4xLDMuMi4xLDE5LjIuMSwwLjIuMiwzLjIuMSwwLjIuMiw2My4xLjEsNjUuMS4xLDM4LjEuMSwzLjEuMSwzMC4xLjEsNTAuMS4xLDcuMS4yLDMuMS4xLDQ4LjEuMSw0Ni4xLjEsNTIuMS4xLDQ3LjEuMSwxLjEuMSwzNS4xLjIsMC4yLjEsMy4yLjEsMjQuMi4xLDMzLjIuMSwzLjIuMSwwLjIuMSwzLjEuMSw3LjEuMSwxLjEuMSwzNS4xLjIsMy4xLjEsMzQuMS4yLDcuMS4yLDMuMS4xLDQ5LjEuMSwxLjEuMywzNC4xLjIsMS4xLjEsMC4yLjIsMy4yLjEsMzYuMi4xLDMuMi4xLDAuMi4xLDMuMS4xLDcuMS4xLDQ1LjEuMSwzNS4xLjIsMy4xLjEsMzQuMS4yLDEuMS4xLDM5LjEuMSwzLjEuMSw3My4xLjEsMS4xLjMsMzQuMS4yLDcwLjEuMSw3MS4xLjEsMy4xLjEsMC4yLjQsMy4xLjEsNTMuMS4xLDQ1LjEuMSw2NC4xLjEsNjYuMS4xLDMuMS4xLDQwLjEuMSw1NC4xLjEsNTguMS4xLDQ4LjEuMSwzLjEuMSw2My4xLjEsNjAuMS4xLDYxLjEuMSwzMC4xLjEsMy4xLjEwLDE2LjEuMSwzLjEuMTMsMjcuMS4xLDE5LjEuMSwzMS4xLjEsMTUuMS4xLDMuMS4xLDc3LjEuMSw3OC4xLjEsMzcuMS4xLDE2LjEuMyw1OS4xLjEsMjQuMS4xLDExLjEuMSwzLjEuMSw3Ny4xLjEsMzEuMS4xLDM3LjEuMSwxNi4xLjcsMS4xLjMsMTYuMS42LDEuMS4zLDM2LjEuMSwzLjEuMSwyMC4xLjEsMS4xLjIsMTYuMS42LDEuMS40LDE2LjEuNiw1Ny4xLjIsMS4xLjIsMy4xLjEsMjEuMS4xLDEuMS4yLDMzLjEuMSwzLjEuMSw2My4xLjEsMS4xLjMsMzIuMS4xLDQ5LjEuMSwyNS4xLjEsMS4xLjEsMTYuMS42LDU3LjEuMiwyNi4xLjEsMS4xLjEsMy4xLjEsNjcuMS4xLDUwLjEuMSwxOS4xLjEsMzAuMS4xLDMuMS4xLDU5LjEuMSwzMC4xLjEsMS4xLjIsMy4xLjIxLDAuMi4zLDU4LjEuMSw0NC4xLjIsMjUuMS4xLDMuMS4xLDI1LjEuMSwxLjEuMywzLjIuMSw0MS4xLjQsMy4xLjEsNDEuMS40LDMuMS4xLDEzLjEuMSwwLjIuMSwzLjIuMiwxLjEuNCwzLjEuMSwxMS4xLjEsNy4xLjIsMS4xLjEsMy4yLjEsNDEuMS40LDMuMS4xLDQxLjEuNCwzLjEuMSwwLjIuMSwzLjIuMSw2MS4yLjEsMy4yLjEsMS4xLjEsNy4xLjEsNC4xLjIsMy4xLjEsNC4xLjEsMy4xLjQsNDEuMS4yLDMuMS4xLDYuMS4xLDMuMS4xLDQxLjEuMiw0Mi4xLjIsMy4xLjEsMC4yLjEsMy4yLjEsNTguMi4xLDMuMi4xLDEuMS4xLDcuMS4xLDQuMS4yLDMuMS4xLDQuMS4xLDMuMS40LDQxLjEuMiwzLjEuMSw2LjEuMSwzLjEuMSw0MS4xLjIsNDIuMS4yLDMuMS4xLDAuMi4xLDMuMi4xLDU5LjIuMSwzLjIuMSw1NS4xLjEsMy4xLjE4LDAuMi4xLDMuMi4xLDY1LjIuMSwyMi4yLjEsMy4yLjEsNTUuMS4xLDQuMS4zLDMuMS4xLDQzLjEuMSw0Mi4xLjIsMy4xLjUsMjguMS4xLDMuMS4xLDQxLjEuNCwwLjIuMSwzLjIuMSwyMC4yLjEsMTkuMi4xLDMuMi4xLDEuMS4yLDQ0LjEuMiwzLjEuMSw0My4xLjEsNDIuMS4yLDMuMS4yLDIzLjEuMSwyNy4xLjEsMy4xLjEsMjkuMS4xLDMuMS4xLDQxLjEuNCwwLjIuMSwzLjIuMSwzNi4yLjEsNzcuMi4xLDMuMi4xLDI3LjEuMSw2LjEuMSw0NS4xLjEsNi4xLjEsMy4xLjEsMzMuMS4xLDE1LjEuMSwxNC4xLjEsMy4xLjUsMzYuMS4xLDMuMS4xLDQxLjEuMiwxOS4xLjEsMjAuMS4xLDAuMi4xLDMuMi4xLDc4LjIuMSw2OS4yLjEsMy4yLjEsMzYuMS4xLDMxLjEuMSw0NS4xLjEsNi4xLjEsMy4xLjEsNC4xLjEsMzAuMS4xLDQuMS4yLDMuMS4xLDUxLjEuMSw1Mi4xLjEsMS4xLjIsMy4xLjEsNDEuMS4yLDEuMS4xLDIyLjEuMSwwLjIuMSwzLjIuMSwzMS4yLjEsNjEuMi4xLDMuMi4xLDMuMS4xOSwwLjIuMSwzLjIuMSw1OC4yLjEsNTkuMi4xLDMuMi4xLDY3LjEuMSw2OC4xLjEsNzAuMS4xLDcxLjEuMSwzLjEuMSw2Ny4xLjEsNzMuMS4xLDc0LjEuMSw3NS4xLjEsMy4xLjEsNTcuMS4xLDYyLjEuMSw2My4xLjEsNTguMS4xLDMuMS4xLDYwLjEuMSw2NC4xLjEsNjYuMS4xLDY1LjEuMSwzLjEuMSwwLjIuMSwzLjIuMSw2NS4yLjEsMy4yLjEsNjkuMS4xLDcyLjEuMSwxLjEuMiwzLjEuMSw3Ni4xLjEsNzIuMS4xLDEuMS4yLDMuMS4xLDU5LjEuMSw2MS4xLjEsMS4xLjIsMy4xLjEsNy4xLjEsNTcuMS4xLDIyLjEuMSwxLjEuMSwzLjEuMSwwLjIuNCwxLjEuNCwzLjEuMSwxLjEuNCwzLjEuMSwxLjEuNCwzLjEuMSw3LjEuMSwxLjEuMywzLjEuMSw3LjEuMSwzNi4xLjEsMzEuMS4xLDEzLjEuMSwxLjEuNCwzLjEuMSwxLjEuNCwzLjEuMSwxLjEuNCwzLjEuMSwxLjEuNCwzLjEuMSw2Mi4xLjEsMTMuMS4zLDAuMS4xMyw1Ni4xLjIsMC4xLjk">🧩 在模擬器開啟完美佈局</a></p>
 
             <div class="callout key"><span class="k">怎麼驗證的</span>這張圖不是用眼睛喬出來的。我們把模擬器的判定程式（4×4 窗口景點判定、斜坡的高低差推導、從校門出發的可達性 BFS）搬到腳本裡，反覆放置與檢查，最後<strong>只用分享碼重新解碼再驗一次</strong>：29 個景點全成立、0 棟建築被包圍、地圖上沒有任何玩家蓋不出來的假地形。</div>
 
@@ -85,16 +87,19 @@
                 <li><strong>教室依年級分棟。</strong>學校要收三個年級的學生，教室不是蓋一間就好。圖上規劃了<strong>三棟教學樓、每棟 3 間教室，共 9 間</strong>：1 年級棟與 2 年級棟在東側（各附一間辦公室或生活設施），3 年級棟利用健康鎮原本就有的那間舊校舍再擴建 2 間。<strong>辦公室 2 間</strong>——原有的那間留在校門旁的行政區，新的一間設在 1 年級棟。</li>
                 <li><strong>一個街廓剛好 4 棟大型建築。</strong>2×2 的教室、辦公室、餐廳、便利商店都對齊街廓的四個象限，一個 4×4 街廓正好排下 4 棟，而且每棟都有一面貼到外圈的路。這是「大型建築要怎麼排才不會把自己圍死」的標準解。</li>
                 <li><strong>校長室只有一間，位置要挑。</strong>校長室被刻意蓋在辦公室旁邊，讓「選舉」（校長室＋辦公室＋茶室）和「學習」（校長室＋圖書室＋多媒體教室）共用同一間，省下一整組設施。</li>
-                <li><strong>地形照用不改。</strong>水塘留著給「水岸」，東側高地邊緣天然形成的斜坡留著給「黃昏」。斜坡在遊戲裡<strong>不是設施</strong>、蓋不出來，只能靠高低差生出來，所以高地一定要留。</li>
+                <li><strong>高地要開發，斜坡要留。</strong>高地上一樣可以蓋建築——本圖在南北兩塊高地上放了 <strong>24 棟設施</strong>（北高地花園、東高地園區），做法是<strong>每一列高地最外側留成步道</strong>接上坡道，中間才蓋房子。唯一不能碰的是<strong>斜坡</strong>：斜坡是高低差自動生成的地形，一旦在上面蓋東西，那格就不再是斜坡，學生也就<strong>上不了高地</strong>了。本圖把原始地形的 32 格斜坡<strong>一格不動</strong>全部保留。</li>
+                <li><strong>兩座校門。</strong>校門不限一座、四邊都能開。除了西側原有的校門（直式 1×2），本圖在南側邊界加開一座橫式校門（2×1）接上 Y11 街道，讓南區的農牧與運動園區不必繞整張地圖。多開校門對動線只有好處——可達性是從<strong>每一座</strong>校門同時往外算的。</li>
+                <li><strong>水塘照用不改。</strong>原有水塘直接拿來當「水岸」的材料，不用填也不用挖。</li>
             </ul>
 
-            <h3>五大分區</h3>
+            <h3>分區規劃</h3>
             <ul class="zone-list">
                 <li><span class="zt">北區（X3–X6）</span>設施密度最高的一區，16 個景點集中在這裡：怪談、藝術、購物、特盛、時尚、埋伏、清爽、生物、吃醋、澀谷、熱血、動作、青空、非洲、宇宙、開羅。景點會擠在一起是刻意的——設施可以被多個景點共用，越密集越省。</li>
                 <li><span class="zt">池畔區（X8–X11）</span>圍著原有水塘展開，9 個景點：運動、好友、家庭、菜園、力量、熱情、水岸、燒水、名門。水塘本身就是「水岸」的材料，不用動它。</li>
                 <li><span class="zt">中央區（X13–X16）</span>主要幹道的轉運點，成立「約會」。<strong>3 年級棟</strong>在這裡（X13–X16 / Y12–Y15）：健康鎮原本的舊校舍加蓋 2 間，湊成 3 間教室。<strong>1 年級棟</strong>在它東邊（X13–X16 / Y7–Y10），3 間教室＋1 間辦公室。</li>
                 <li><span class="zt">校門區（X17–X21）</span>校門、原有辦公室、校長室所在的行政區，成立「學習」與「選舉」。<strong>2 年級棟</strong>在東側（X18–X21 / Y7–Y10），3 間教室＋洗手間、飲水處、更衣室等生活設施。</li>
-                <li><span class="zt">南區（X23–X26）</span>新開發區：西半邊是農牧園區（小農場、養雞、養豬、養牛、養兔、飼鴨與各種飼育小屋），東半邊是運動園區（體育館、道場、游泳池、棒球場等），靠著東側高地的斜坡成立「黃昏」。</li>
+                <li><span class="zt">南區（X23–X26）</span>新開發區：西半邊是農牧園區（小農場、養雞、養豬、養牛、養兔、飼鴨與各種飼育小屋），東半邊是運動園區（體育館、道場、游泳池、棒球場等），靠著東側高地的斜坡成立「黃昏」。<strong>南側邊界另開一座校門</strong>，這一區不必再繞回西側大門。</li>
+                <li><span class="zt">兩塊高地</span>北高地（X2–X6 / Y15–Y22）規劃成花園，東高地（X12–X24 / Y2–Y6）是運動與飼育園區，合計 24 棟設施。每列最外側鋪成步道接上坡道，斜坡本身全部留空。</li>
             </ul>
 
             <h3>29 個景點的成立位置</h3>
@@ -200,7 +205,7 @@
             <p style="margin-top:18px"><a class="back-hub" href="../">← 回口袋學院物語2</a></p>
         </div>
     </main>
-    <script src="../../../assets/shell.js?v=3"></script>
+    <script src="../../../assets/shell.js?v=4"></script>
     <script>Shell.mount({ page: 'guide', game: { id: 'school2', type: 'guide' }, breadcrumb: [{ t: '口袋學院物語2', href: '../' }, { t: '佈局範例集' }] });</script>
 </body>
 </html>

@@ -13,7 +13,11 @@ const ok = (name, pass, detail) => {
 // 1) JS 語法
 let script;
 try {
-    script = html.match(/<script>([\s\S]*)<\/script>/)[1];
+    // 取所有無屬性的 <script> 區塊，挑最大的那個當主程式
+    // （頁面另有 gtag 與外殼的小 script，不能貪婪比對跨過它們）
+    const blocks = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1]);
+    if (!blocks.length) throw new Error('找不到主程式 <script> 區塊');
+    script = blocks.sort((a, b) => b.length - a.length)[0];
     new Function(script);
     ok('JS 語法', true);
 } catch (e) {

@@ -5,14 +5,28 @@
 <rect x="42" y="20" width="22" height="22" fill="#bbf7d0" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="64" y="20" width="22" height="22" fill="#bbf7d0" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="86" y="20" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="87" y="21" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M86 42L108 20" stroke="#65a30d" stroke-width="1.6"/>
-<rect x="108" y="20" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="130" y="20" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="152" y="20" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="174" y="20" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="196" y="20" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="218" y="20" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="108" y="20" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="109" y="21" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="119" y="35.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
+<rect x="130" y="20" width="22" height="22" fill="#65a30d" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="131" y="21" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="141" y="35.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">茶</text>
+<rect x="152" y="20" width="22" height="22" fill="#d6d3d1" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="153" y="21" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="163" y="35.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">椅</text>
+<rect x="174" y="20" width="22" height="22" fill="#b45309" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="175" y="21" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="185" y="35.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">銅</text>
+<rect x="196" y="20" width="22" height="22" fill="#fef08a" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="197" y="21" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="207" y="35.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">告</text>
+<rect x="218" y="20" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="219" y="21" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="229" y="35.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
 <rect x="240" y="20" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="241" y="21" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M240 42L262 20" stroke="#65a30d" stroke-width="1.6"/>
 <rect x="262" y="20" width="22" height="22" fill="#bbf7d0" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="284" y="20" width="22" height="22" fill="#bbf7d0" stroke="#ffffff" stroke-width="0.6"/>
@@ -34,15 +48,26 @@
 <rect x="64" y="42" width="22" height="22" fill="#f472b6" stroke="#ffffff" stroke-width="0.6"/>
 <text x="75" y="57.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">便</text>
 <rect x="86" y="42" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="87" y="43" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M86 64L108 42" stroke="#65a30d" stroke-width="1.6"/>
-<rect x="108" y="42" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="130" y="42" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="108" y="42" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="109" y="43" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="119" y="57.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
+<rect x="130" y="42" width="22" height="22" fill="#94a3b8" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="131" y="43" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="141" y="57.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">洗</text>
 <rect x="152" y="42" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="153" y="43" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <rect x="174" y="42" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="196" y="42" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="175" y="43" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<rect x="196" y="42" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="197" y="43" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="207" y="57.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
 <rect x="218" y="42" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="219" y="43" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M218 64L240 42" stroke="#65a30d" stroke-width="1.6"/>
 <rect x="240" y="42" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="241" y="43" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M240 64L262 42" stroke="#65a30d" stroke-width="1.6"/>
 <rect x="262" y="42" width="22" height="22" fill="#16a34a" stroke="#ffffff" stroke-width="0.6"/>
 <text x="273" y="57.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">足</text>
@@ -76,12 +101,22 @@
 <rect x="64" y="64" width="22" height="22" fill="#f472b6" stroke="#ffffff" stroke-width="0.6"/>
 <text x="75" y="79.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">便</text>
 <rect x="86" y="64" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="87" y="65" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M86 86L108 64" stroke="#65a30d" stroke-width="1.6"/>
-<rect x="108" y="64" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="130" y="64" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="152" y="64" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="174" y="64" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="108" y="64" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="109" y="65" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="119" y="79.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
+<rect x="130" y="64" width="22" height="22" fill="#fcd34d" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="131" y="65" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="141" y="79.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">販</text>
+<rect x="152" y="64" width="22" height="22" fill="#65a30d" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="153" y="65" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="163" y="79.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">茶</text>
+<rect x="174" y="64" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="175" y="65" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="185" y="79.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
 <rect x="196" y="64" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="197" y="65" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M196 86L218 64" stroke="#65a30d" stroke-width="1.6"/>
 <rect x="218" y="64" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
 <text x="229" y="79.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
@@ -115,13 +150,22 @@
 <text x="53" y="101.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">餐</text>
 <rect x="64" y="86" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="86" y="86" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="87" y="87" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M86 108L108 86" stroke="#65a30d" stroke-width="1.6"/>
 <rect x="108" y="86" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="109" y="87" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M108 108L130 86" stroke="#65a30d" stroke-width="1.6"/>
-<rect x="130" y="86" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="152" y="86" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="174" y="86" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="130" y="86" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="131" y="87" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="141" y="101.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
+<rect x="152" y="86" width="22" height="22" fill="#d6d3d1" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="153" y="87" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="163" y="101.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">椅</text>
+<rect x="174" y="86" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="175" y="87" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="185" y="101.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
 <rect x="196" y="86" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="197" y="87" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M196 108L218 86" stroke="#65a30d" stroke-width="1.6"/>
 <rect x="218" y="86" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
 <text x="229" y="101.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
@@ -160,12 +204,16 @@
 <rect x="108" y="108" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
 <text x="119" y="123.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
 <rect x="130" y="108" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="131" y="109" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M130 130L152 108" stroke="#65a30d" stroke-width="1.6"/>
 <rect x="152" y="108" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="153" y="109" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M152 130L174 108" stroke="#65a30d" stroke-width="1.6"/>
 <rect x="174" y="108" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="175" y="109" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M174 130L196 108" stroke="#65a30d" stroke-width="1.6"/>
 <rect x="196" y="108" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="197" y="109" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M196 130L218 108" stroke="#65a30d" stroke-width="1.6"/>
 <rect x="218" y="108" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
 <text x="229" y="123.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
@@ -457,10 +505,13 @@
 <rect x="460" y="240" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
 <text x="471" y="255.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
 <rect x="482" y="240" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="483" y="241" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M482 262L504 240" stroke="#65a30d" stroke-width="1.6"/>
 <rect x="504" y="240" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="505" y="241" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M504 262L526 240" stroke="#65a30d" stroke-width="1.6"/>
 <rect x="526" y="240" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="527" y="241" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M526 262L548 240" stroke="#65a30d" stroke-width="1.6"/>
 <rect x="20" y="262" width="22" height="22" fill="#f97316" stroke="#ffffff" stroke-width="0.6"/>
 <text x="31" y="277.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">網</text>
@@ -478,6 +529,7 @@
 <rect x="174" y="262" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="196" y="262" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="218" y="262" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="219" y="263" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <text x="229" y="277.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
 <rect x="240" y="262" width="22" height="22" fill="#ef4444" stroke="#ffffff" stroke-width="0.6"/>
 <text x="251" y="277.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">教</text>
@@ -502,9 +554,14 @@
 <rect x="460" y="262" width="22" height="22" fill="#f9a8d4" stroke="#ffffff" stroke-width="0.6"/>
 <text x="471" y="277.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">櫻</text>
 <rect x="482" y="262" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="483" y="263" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M482 284L504 262" stroke="#65a30d" stroke-width="1.6"/>
-<rect x="504" y="262" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="526" y="262" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="504" y="262" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="505" y="263" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="515" y="277.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
+<rect x="526" y="262" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="527" y="263" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="537" y="277.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
 <rect x="20" y="284" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="42" y="284" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="64" y="284" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
@@ -519,6 +576,7 @@
 <text x="185" y="299.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">樹</text>
 <rect x="196" y="284" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="218" y="284" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="219" y="285" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <text x="229" y="299.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
 <rect x="240" y="284" width="22" height="22" fill="#ef4444" stroke="#ffffff" stroke-width="0.6"/>
 <text x="251" y="299.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">教</text>
@@ -541,10 +599,17 @@
 <rect x="438" y="284" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
 <text x="449" y="299.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
 <rect x="460" y="284" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="461" y="285" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M460 306L482 284" stroke="#65a30d" stroke-width="1.6"/>
-<rect x="482" y="284" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="504" y="284" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="526" y="284" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="482" y="284" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="483" y="285" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="493" y="299.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
+<rect x="504" y="284" width="22" height="22" fill="#0284c7" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="505" y="285" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="515" y="299.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">泳</text>
+<rect x="526" y="284" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="527" y="285" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="537" y="299.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
 <rect x="20" y="306" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="42" y="306" width="22" height="22" fill="#4ade80" stroke="#ffffff" stroke-width="0.6"/>
 <text x="53" y="321.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">樹</text>
@@ -585,10 +650,17 @@
 <rect x="438" y="306" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
 <text x="449" y="321.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
 <rect x="460" y="306" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="461" y="307" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M460 328L482 306" stroke="#65a30d" stroke-width="1.6"/>
-<rect x="482" y="306" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="504" y="306" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="526" y="306" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="482" y="306" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="483" y="307" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="493" y="321.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
+<rect x="504" y="306" width="22" height="22" fill="#f97316" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="505" y="307" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="515" y="321.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">網</text>
+<rect x="526" y="306" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="527" y="307" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="537" y="321.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
 <rect x="20" y="328" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="42" y="328" width="22" height="22" fill="#4ade80" stroke="#ffffff" stroke-width="0.6"/>
 <text x="53" y="343.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">樹</text>
@@ -629,10 +701,17 @@
 <rect x="438" y="328" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
 <text x="449" y="343.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
 <rect x="460" y="328" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="461" y="329" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M460 350L482 328" stroke="#65a30d" stroke-width="1.6"/>
-<rect x="482" y="328" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="504" y="328" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="526" y="328" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="482" y="328" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="483" y="329" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="493" y="343.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
+<rect x="504" y="328" width="22" height="22" fill="#ea580c" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="505" y="329" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="515" y="343.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">籃</text>
+<rect x="526" y="328" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="527" y="329" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="537" y="343.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
 <rect x="20" y="350" width="22" height="22" fill="#cbd5e1" stroke="#ffffff" stroke-width="0.6"/>
 <text x="31" y="365.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">門</text>
 <rect x="42" y="350" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
@@ -672,11 +751,20 @@
 <rect x="416" y="350" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
 <text x="427" y="365.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
 <rect x="438" y="350" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="439" y="351" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M438 372L460 350" stroke="#65a30d" stroke-width="1.6"/>
-<rect x="460" y="350" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="482" y="350" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="504" y="350" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="526" y="350" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="460" y="350" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="461" y="351" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="471" y="365.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
+<rect x="482" y="350" width="22" height="22" fill="#78716c" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="483" y="351" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="493" y="365.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">社</text>
+<rect x="504" y="350" width="22" height="22" fill="#2dd4bf" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="505" y="351" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="515" y="365.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">更</text>
+<rect x="526" y="350" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="527" y="351" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="537" y="365.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
 <rect x="20" y="372" width="22" height="22" fill="#cbd5e1" stroke="#ffffff" stroke-width="0.6"/>
 <text x="31" y="387.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">門</text>
 <rect x="42" y="372" width="22" height="22" fill="#374151" stroke="#ffffff" stroke-width="0.6"/>
@@ -716,11 +804,20 @@
 <rect x="416" y="372" width="22" height="22" fill="#ef4444" stroke="#ffffff" stroke-width="0.6"/>
 <text x="427" y="387.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">教</text>
 <rect x="438" y="372" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="439" y="373" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M438 394L460 372" stroke="#65a30d" stroke-width="1.6"/>
-<rect x="460" y="372" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="482" y="372" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="504" y="372" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="526" y="372" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="460" y="372" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="461" y="373" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="471" y="387.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
+<rect x="482" y="372" width="22" height="22" fill="#93c5fd" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="483" y="373" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="493" y="387.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">飲</text>
+<rect x="504" y="372" width="22" height="22" fill="#94a3b8" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="505" y="373" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="515" y="387.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">洗</text>
+<rect x="526" y="372" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="527" y="373" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="537" y="387.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
 <rect x="20" y="394" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="42" y="394" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="64" y="394" width="22" height="22" fill="#6366f1" stroke="#ffffff" stroke-width="0.6"/>
@@ -758,11 +855,20 @@
 <rect x="416" y="394" width="22" height="22" fill="#ef4444" stroke="#ffffff" stroke-width="0.6"/>
 <text x="427" y="409.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">教</text>
 <rect x="438" y="394" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="439" y="395" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M438 416L460 394" stroke="#65a30d" stroke-width="1.6"/>
-<rect x="460" y="394" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="482" y="394" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="504" y="394" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="526" y="394" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="460" y="394" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="461" y="395" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="471" y="409.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
+<rect x="482" y="394" width="22" height="22" fill="#d6d3d1" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="483" y="395" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="493" y="409.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">椅</text>
+<rect x="504" y="394" width="22" height="22" fill="#fbbf24" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="505" y="395" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="515" y="409.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">鹿</text>
+<rect x="526" y="394" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="527" y="395" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="537" y="409.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
 <rect x="20" y="416" width="22" height="22" fill="#fef08a" stroke="#ffffff" stroke-width="0.6"/>
 <text x="31" y="431.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">告</text>
 <rect x="42" y="416" width="22" height="22" fill="#fbcfe8" stroke="#ffffff" stroke-width="0.6"/>
@@ -802,11 +908,20 @@
 <rect x="416" y="416" width="22" height="22" fill="#93c5fd" stroke="#ffffff" stroke-width="0.6"/>
 <text x="427" y="431.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">飲</text>
 <rect x="438" y="416" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="439" y="417" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M438 438L460 416" stroke="#65a30d" stroke-width="1.6"/>
-<rect x="460" y="416" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="482" y="416" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="504" y="416" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="526" y="416" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="460" y="416" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="461" y="417" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="471" y="431.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
+<rect x="482" y="416" width="22" height="22" fill="#9ca3af" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="483" y="417" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="493" y="431.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">象</text>
+<rect x="504" y="416" width="22" height="22" fill="#fcd34d" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="505" y="417" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="515" y="431.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">兔</text>
+<rect x="526" y="416" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="527" y="417" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="537" y="431.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
 <rect x="20" y="438" width="22" height="22" fill="#d6d3d1" stroke="#ffffff" stroke-width="0.6"/>
 <text x="31" y="453.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">椅</text>
 <rect x="42" y="438" width="22" height="22" fill="#b45309" stroke="#ffffff" stroke-width="0.6"/>
@@ -843,11 +958,20 @@
 <rect x="416" y="438" width="22" height="22" fill="#2dd4bf" stroke="#ffffff" stroke-width="0.6"/>
 <text x="427" y="453.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">更</text>
 <rect x="438" y="438" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="439" y="439" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M438 460L460 438" stroke="#65a30d" stroke-width="1.6"/>
-<rect x="460" y="438" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="482" y="438" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="504" y="438" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="526" y="438" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="460" y="438" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="461" y="439" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="471" y="453.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
+<rect x="482" y="438" width="22" height="22" fill="#b45309" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="483" y="439" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="493" y="453.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">銅</text>
+<rect x="504" y="438" width="22" height="22" fill="#0284c7" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="505" y="439" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="515" y="453.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">泳</text>
+<rect x="526" y="438" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="527" y="439" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="537" y="453.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
 <rect x="20" y="460" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
 <text x="31" y="475.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
 <rect x="42" y="460" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
@@ -887,11 +1011,20 @@
 <rect x="416" y="460" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
 <text x="427" y="475.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
 <rect x="438" y="460" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="439" y="461" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M438 482L460 460" stroke="#65a30d" stroke-width="1.6"/>
-<rect x="460" y="460" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="482" y="460" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="504" y="460" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="526" y="460" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="460" y="460" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="461" y="461" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="471" y="475.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
+<rect x="482" y="460" width="22" height="22" fill="#f97316" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="483" y="461" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="493" y="475.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">網</text>
+<rect x="504" y="460" width="22" height="22" fill="#ea580c" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="505" y="461" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="515" y="475.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">籃</text>
+<rect x="526" y="460" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="527" y="461" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="537" y="475.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
 <rect x="20" y="482" width="22" height="22" fill="#b45309" stroke="#ffffff" stroke-width="0.6"/>
 <text x="31" y="497.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">農</text>
 <rect x="42" y="482" width="22" height="22" fill="#fde047" stroke="#ffffff" stroke-width="0.6"/>
@@ -933,10 +1066,17 @@
 <rect x="438" y="482" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
 <text x="449" y="497.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
 <rect x="460" y="482" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="461" y="483" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M460 504L482 482" stroke="#65a30d" stroke-width="1.6"/>
-<rect x="482" y="482" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="504" y="482" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="526" y="482" width="22" height="22" fill="#a3a3a3" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="482" y="482" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="483" y="483" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="493" y="497.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
+<rect x="504" y="482" width="22" height="22" fill="#78716c" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="505" y="483" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="515" y="497.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">社</text>
+<rect x="526" y="482" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="527" y="483" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="537" y="497.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
 <rect x="20" y="504" width="22" height="22" fill="#fcd34d" stroke="#ffffff" stroke-width="0.6"/>
 <text x="31" y="519.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">兔</text>
 <rect x="42" y="504" width="22" height="22" fill="#38bdf8" stroke="#ffffff" stroke-width="0.6"/>
@@ -971,12 +1111,16 @@
 <rect x="438" y="504" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
 <text x="449" y="519.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">走</text>
 <rect x="460" y="504" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="461" y="505" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M460 526L482 504" stroke="#65a30d" stroke-width="1.6"/>
 <rect x="482" y="504" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="483" y="505" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M482 526L504 504" stroke="#65a30d" stroke-width="1.6"/>
 <rect x="504" y="504" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="505" y="505" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M504 526L526 504" stroke="#65a30d" stroke-width="1.6"/>
 <rect x="526" y="504" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="527" y="505" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M526 526L548 504" stroke="#65a30d" stroke-width="1.6"/>
 <rect x="20" y="526" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="42" y="526" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
@@ -1056,8 +1200,10 @@
 <rect x="240" y="570" width="22" height="22" fill="#bbf7d0" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="262" y="570" width="22" height="22" fill="#bbf7d0" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="284" y="570" width="22" height="22" fill="#bbf7d0" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="306" y="570" width="22" height="22" fill="#bbf7d0" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="328" y="570" width="22" height="22" fill="#bbf7d0" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="306" y="570" width="22" height="22" fill="#cbd5e1" stroke="#ffffff" stroke-width="0.6"/>
+<text x="317" y="585.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">門</text>
+<rect x="328" y="570" width="22" height="22" fill="#cbd5e1" stroke="#ffffff" stroke-width="0.6"/>
+<text x="339" y="585.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">門</text>
 <rect x="350" y="570" width="22" height="22" fill="#bbf7d0" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="372" y="570" width="22" height="22" fill="#bbf7d0" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="394" y="570" width="22" height="22" fill="#bbf7d0" stroke="#ffffff" stroke-width="0.6"/>

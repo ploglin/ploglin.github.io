@@ -138,6 +138,101 @@ img { max-width: 100%; height: auto; }
 .theme-btn { margin-left: 4px; width: 34px; height: 34px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--ink); font-size: 15px; cursor: pointer; display: grid; place-items: center; line-height: 1; flex-shrink: 0; }
 .theme-btn:hover { background: var(--brand-soft); }
 
+/* ---------- 遊戲內功能列（店中店）---------- */
+.game-bar {
+    position: sticky;
+    top: var(--hdr-h, 55px);   /* 貼在站台 header 底下（高度由 shell.js 量測） */
+    z-index: 35;
+    background: color-mix(in srgb, var(--game-accent, var(--brand-soft)) 55%, var(--card));
+    border-bottom: 1px solid var(--line);
+    backdrop-filter: saturate(1.3) blur(6px);
+}
+.gb-inner {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 8px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.gb-title { display: inline-flex; align-items: center; gap: 9px; color: var(--ink); flex-shrink: 0; }
+.gb-title:hover { text-decoration: none; }
+.gb-emoji {
+    display: inline-grid; place-items: center;
+    width: 34px; height: 34px; border-radius: 9px;
+    background: var(--card); border: 1px solid var(--line);
+    font-size: 19px; line-height: 1;
+}
+.gb-name { display: flex; flex-direction: column; line-height: 1.15; }
+.gb-name b { font-size: 15px; font-weight: 900; letter-spacing: -.01em; }
+.gb-name i { font-style: normal; font-size: 11px; color: var(--muted); font-weight: 700; }
+
+.gb-nav {
+    display: flex; align-items: center; gap: 3px;
+    margin-left: auto;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
+.gb-nav::-webkit-scrollbar { display: none; }
+.gb-tab {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 7px 12px; border-radius: 9px;
+    font-size: 13.5px; font-weight: 800;
+    color: var(--ink-soft);
+    white-space: nowrap;
+    border: 1px solid transparent;
+    background: none; font-family: inherit; cursor: pointer;
+}
+.gb-tab .gb-i { font-size: 14px; line-height: 1; }
+.gb-tab:hover { background: var(--card); color: var(--brand-strong); text-decoration: none; }
+.gb-tab.on {
+    background: var(--card);
+    color: var(--brand-strong);
+    border-color: color-mix(in srgb, var(--brand) 40%, var(--line));
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .05);
+}
+
+.gb-more { position: relative; flex-shrink: 0; }
+.gb-menu {
+    display: none;
+    position: absolute; right: 0; top: calc(100% + 6px);
+    min-width: 176px; padding: 6px;
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 12px; box-shadow: var(--shadow-hover, 0 10px 30px rgba(0, 0, 0, .14));
+    z-index: 50;
+}
+.gb-menu.open { display: block; }
+.gb-mitem {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 10px; border-radius: 8px;
+    font-size: 13.5px; font-weight: 700; color: var(--ink-soft);
+    white-space: nowrap;
+}
+.gb-mitem:hover { background: var(--brand-soft); color: var(--brand-strong); text-decoration: none; }
+.gb-mitem.on { background: var(--brand-soft); color: var(--brand-strong); }
+
+@media (max-width: 720px) {
+    .gb-inner { padding: 7px 14px; gap: 10px; }
+    .gb-name i { display: none; }
+    .gb-name b { font-size: 14px; }
+    .gb-emoji { width: 30px; height: 30px; font-size: 17px; }
+    .gb-tab { padding: 6px 10px; font-size: 13px; }
+}
+
+/* 深色模式：遊戲色系是淺色調，直接用會太亮 */
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .game-bar {
+        background: color-mix(in srgb, var(--card-2) 80%, var(--brand-soft));
+    }
+}
+:root[data-theme="dark"] .game-bar {
+    background: color-mix(in srgb, var(--card-2) 80%, var(--brand-soft));
+}
+
+/* 錨點捲動時避開固定的站台 header ＋ 遊戲功能列 */
+h1[id], h2[id], h3[id], [id].anchor-target { scroll-margin-top: calc(var(--hdr-h, 55px) + 68px); }
+
 /* ---------- 麵包屑 ---------- */
 .breadcrumb {
     font-size: 13px;
