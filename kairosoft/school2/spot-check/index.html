@@ -16,7 +16,7 @@
     <meta property="og:url" content="https://ploglin.github.io/kairosoft/school2/spot-check/">
     <meta name="twitter:card" content="summary">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../../assets/shell.css?v=4">
+    <link rel="stylesheet" href="../../../assets/shell.css?v=5">
     <style>
         .sc-tools { display: flex; gap: 8px; margin: 12px 0 8px; }
         .sc-tools input { flex: 1; font: inherit; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); color: var(--ink); }
@@ -33,9 +33,9 @@
 </head>
 <body>
     <main class="container-narrow article">
-        <p><a class="btn ghost" href="../">← 口袋學院物語2</a></p>
         <h1>口袋學院物語2 景點達成檢查器</h1>
         <p class="lead">勾選你<strong>已經有（或打算蓋）的設施</strong>，即時算出能成立哪些人氣景點、還差哪一種。比開模擬器更快查。想直接排版面請用<a href="../sim/">佈局模擬器</a>。</p>
+        <p class="meta">最後更新：2026 年 7 月 · 繁體中文原創整理</p>
 
         <div class="sc-tools">
             <input id="q" type="search" placeholder="🔎 搜尋設施（如 焚化爐、圖書室）" aria-label="搜尋設施">
@@ -47,6 +47,17 @@
         <div class="sc-res" id="result"></div>
 
         <p style="font-size:13px;color:var(--muted);margin-top:26px">景點條件取自本站資料庫；「差一步」= 三種設施已備兩種。標「A／B」的條件兩者擇一即可。</p>
+        <!-- related:start -->
+        <section class="related">
+            <h2>延伸閱讀</h2>
+            <div class="db-cat-grid">
+                <a class="db-cat-card" href="../layouts/"><span class="ic">🗺️</span><span class="lb">佈局範例</span><span class="n">完美佈局實例參考</span></a>
+                <a class="db-cat-card" href="../#combo"><span class="ic">🧩</span><span class="lb">29 種景點 combo 總表</span><span class="n">29 景點成立配方</span></a>
+                <a class="db-cat-card" href="../db/spots/"><span class="ic">🎯</span><span class="lb">景點資料庫</span><span class="n">全人氣景點條件表</span></a>
+            </div>
+            <p style="margin-top:14px"><a class="back-hub" href="../">← 口袋學院物語2 攻略總覽</a></p>
+        </section>
+        <!-- related:end -->
     </main>
 
     <script src="../db/data.js"></script>
@@ -119,7 +130,7 @@
             renderPick(); renderResult();
         })();
     </script>
-    <script src="../../../assets/shell.js?v=4"></script>
+    <script src="../../../assets/shell.js?v=5"></script>
     <script>Shell.mount({ page: 'guide', game: { id: 'school2', type: 'guide' }, breadcrumb: [{ t: '口袋學院物語2', href: '../' }, { t: '景點達成檢查器' }] });</script>
 </body>
 </html>

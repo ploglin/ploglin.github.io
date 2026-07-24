@@ -43,13 +43,28 @@ kairosoft/<game>/            index.html = 內容豐富的攻略專頁(SEO 主力
 - **頁面端不需任何設定**：`shell.js` 由網址 `kairosoft/<id>/…` 推導出遊戲與所在層級，自動算出相對連結。只要照樣板呼叫 `Shell.mount({...})` 就會有。
 - **資料來源**：`assets/shell.js` 裡的 `GAME_NAV` 區塊，由 `node scripts/gen-game-nav.js` **掃描實際檔案**產生(遊戲名／emoji／色系取自 `games-index.js`)。**新增或刪除子頁後要重跑這支腳本**，否則功能列不會出現新分頁。
 - **新的子頁 slug** 要先在 `scripts/gen-game-nav.js` 的 `LABELS` 加中文標籤與圖示，否則產生時會警告並略過。
+- **功能列版面**：`main` 固定**最多 4 個 tab**（攻略總覽／模擬器／資料庫／更多攻略▾），其餘子頁一律收進「更多攻略▾」下拉；下拉依 `LABELS` 的 `group` 欄位分成 `tool`（工具：佈局範例、景點檢查器…）與 `guide`（攻略：流程、老師、學生…）兩群顯示。要進 main 的子頁在 `LABELS` 標 `main:true`，其餘標 `group:'tool'` 或 `group:'guide'`。
+- **新增子頁後也要在 `scripts/gen-related.js` 的 `RELATED` 加精選連結**（game → 頁面 slug → 3 個相關頁，含 href／icon／標題／一句短描述）；沒設定就走 fallback（依 GAME_NAV 的上一頁／下一頁＋資料庫自動湊），品質較差。改標記或 RELATED 後重跑 `node scripts/gen-related.js` 即冪等蓋章。
 - **全螢幕工具(模擬器)**：不套 `shell.css`、不注入站台 header/footer，改呼叫 `Shell.mountBar()`，只加一條自帶樣式的精簡功能列(含回站台鈕)。模擬器頁尾固定為：
   ```html
   <script src="../../../assets/shell.js?v=N"></script>
   <script data-shell>Shell.mountBar();</script>
   ```
   `data-shell` 屬性不可省略——`school2/scripts/check.js` 靠「無屬性的 `<script>`」找主程式。
-- **快取**：改動 `shell.js` / `shell.css` 後，全站 `?v=N` 要一起加一號(目前 `?v=4`)。
+- **快取**：改動 `shell.js` / `shell.css` 後，全站 `?v=N` 要一起加一號(目前 `?v=5`，含各頁對 `db.js` 的引用)。
+
+## 導覽分層原則
+
+每一層導覽各司其職，**頁面不得再手寫頂部返回列或導覽按鈕列**——麵包屑＋遊戲功能列已涵蓋「往上」與「橫向切換」：
+
+- **站台 header**(shell.js 注入)＝站級：回首頁、全站識別。
+- **麵包屑**＝往上：回遊戲首頁／資料庫索引等上層節點。
+- **遊戲功能列(`.game-bar`)**＝橫向切換：在同款遊戲的各分頁間跳。
+- **index 店面區(`.db-cat-grid` 卡片)**＝往下全覽：從遊戲首頁點進 sim／db／各攻略。
+- **頁尾「延伸閱讀」**(`gen-related.js` 蓋章於 `<!-- related:start/end -->`)＝橫向推薦：3 張相關頁卡片＋一顆回遊戲總覽的 `.back-hub`。
+- **內文連結**＝語境引用：在句子裡自然帶出相關頁。
+
+因此各頁**只**保留：index 店面區指向自家 sim／db 的主要 CTA、db 分類頁底部統一的一行 `<p style="margin-top:22px"><a class="back-hub" href="../">← 資料庫索引</a> · <a class="back-hub" href="../../">攻略總覽</a></p>`、以及 gen-related 蓋章的延伸閱讀。**不要**再出現 `← 回攻略站`／`← 回○○`／`← 回資料庫` 這類手寫返回鈕，或 h1 附近連 sim/db 的 `.btn` 導覽列（該功能已由 `.game-bar` 取代）。
 
 ## 共用基礎建設(assets/)
 
@@ -64,6 +79,9 @@ kairosoft/<game>/            index.html = 內容豐富的攻略專頁(SEO 主力
 - 引入 `../../assets/shell.css`(依頁面深度調整層數)。
 - body 只寫 `<main class="container-narrow article">` 內容；結尾兩個 script：`shell.js` 與 `Shell.mount({...})`。
 - 資料庫分類頁另引入 `db.js` 與該遊戲 `db/data.js`。
+- **H1 採前綴式**「遊戲名 ○○攻略」(例：`口袋學院物語2 老師育成攻略`)；子頁 H1 也帶遊戲名前綴，與麵包屑一致、利於 SEO。
+- **更新日期用 `.meta`**：`<p class="meta">最後更新：YYYY 年 M 月 · 繁體中文原創整理</p>`，緊接 lead 之後。
+- **頁尾埋延伸閱讀標記**：內容主體結束、`</main>` 之前放一組空的 `<!-- related:start --><!-- related:end -->`，由 `node scripts/gen-related.js` 蓋章；**不要**手寫該區塊或手寫返回列(見「導覽分層原則」)。
 
 ### db/data.js 格式
 ```js

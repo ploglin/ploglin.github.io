@@ -198,11 +198,14 @@ img { max-width: 100%; height: auto; }
     display: none;
     position: absolute; right: 0; top: calc(100% + 6px);
     min-width: 176px; padding: 6px;
+    max-height: 70vh; overflow-y: auto;
     background: var(--card); border: 1px solid var(--line);
     border-radius: 12px; box-shadow: var(--shadow-hover, 0 10px 30px rgba(0, 0, 0, .14));
     z-index: 50;
 }
 .gb-menu.open { display: block; }
+.gb-mh { font-size: 11px; font-weight: 800; color: var(--muted); padding: 6px 10px 2px; }
+.gb-mitem + .gb-mh { margin-top: 4px; border-top: 1px solid var(--line); padding-top: 8px; }
 .gb-mitem {
     display: flex; align-items: center; gap: 8px;
     padding: 8px 10px; border-radius: 8px;
@@ -242,6 +245,12 @@ h1[id], h2[id], h3[id], [id].anchor-target { scroll-margin-top: calc(var(--hdr-h
 .breadcrumb a { color: var(--muted); }
 .breadcrumb a:hover { color: var(--brand); }
 .breadcrumb .sep { margin: 0 7px; opacity: .5; }
+
+/* 店面區群組小標（遊戲首頁用） */
+.store-h { font-size: 15px; font-weight: 900; margin: 18px 0 8px; }
+/* 頁尾延伸閱讀區塊 */
+.related { border-top: 1px solid var(--line); margin-top: 34px; padding-top: 18px; }
+.related h2 { font-size: 18px; margin: 0 0 12px; }
 
 /* ---------- Hero ---------- */
 .hero {

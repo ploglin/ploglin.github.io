@@ -16,15 +16,15 @@ const SHELL = path.join(ROOT, 'assets', 'shell.js');
 const LABELS = {
     'sim': { t: '佈局模擬器', icon: '🧩', main: true },
     'db': { t: '資料庫', icon: '📚', main: true },
-    'layouts': { t: '佈局範例', icon: '🗺️', main: true },
-    'spot-check': { t: '景點檢查器', icon: '🔎', main: true },
-    'walkthrough': { t: '流程攻略', icon: '🧭' },
-    'teachers': { t: '老師培育', icon: '👩‍🏫' },
-    'students': { t: '學生養成', icon: '🎓' },
-    'economy': { t: '經營與資金', icon: '💰' },
-    'activities': { t: '行事與活動', icon: '🎪' },
-    'challenges': { t: '挑戰目標', icon: '🏆' },
-    'glossary': { t: '中日對照', icon: '📖' }
+    'layouts': { t: '佈局範例', icon: '🗺️', group: 'tool' },
+    'spot-check': { t: '景點檢查器', icon: '🔎', group: 'tool' },
+    'walkthrough': { t: '流程攻略', icon: '🧭', group: 'guide' },
+    'teachers': { t: '老師培育', icon: '👩‍🏫', group: 'guide' },
+    'students': { t: '學生養成', icon: '🎓', group: 'guide' },
+    'economy': { t: '經營與資金', icon: '💰', group: 'guide' },
+    'activities': { t: '行事與活動', icon: '🎪', group: 'guide' },
+    'challenges': { t: '挑戰目標', icon: '🏆', group: 'guide' },
+    'glossary': { t: '中日對照', icon: '📖', group: 'guide' }
 };
 
 // 讀 games-index.js 取標題／日文名／emoji／色系
@@ -54,7 +54,8 @@ GAMES.forEach(g => {
         .forEach(slug => {
             const L = LABELS[slug];
             if (!L) { console.warn('  ⚠ 未知子頁 slug（沒有中文標籤）:', g.id + '/' + slug); return; }
-            (L.main ? main : more).push([slug + '/', L.t, L.icon]);
+            if (L.main) main.push([slug + '/', L.t, L.icon]);
+            else more.push([slug + '/', L.t, L.icon, L.group]);
         });
 
     out[g.id] = { e: g.emoji, t: g.title, j: g.jp, a: g.accent, main: main, more: more };

@@ -159,8 +159,8 @@
     /* <<< GAME_NAV：由 scripts/gen-game-nav.js 產生，勿手改 >>> */
     var GAME_NAV = {
         "school2": { e: "🏫", t: "口袋學院物語2", j: "名門ポケット学院2", a: "#e6f4ec",
-            main: [["","攻略總覽","📄"],["sim/","佈局模擬器","🧩"],["db/","資料庫","📚"],["layouts/","佈局範例","🗺️"],["spot-check/","景點檢查器","🔎"]],
-            more: [["walkthrough/","流程攻略","🧭"],["teachers/","老師培育","👩‍🏫"],["students/","學生養成","🎓"],["economy/","經營與資金","💰"],["activities/","行事與活動","🎪"],["challenges/","挑戰目標","🏆"],["glossary/","中日對照","📖"]] },
+            main: [["","攻略總覽","📄"],["sim/","佈局模擬器","🧩"],["db/","資料庫","📚"]],
+            more: [["layouts/","佈局範例","🗺️","tool"],["spot-check/","景點檢查器","🔎","tool"],["walkthrough/","流程攻略","🧭","guide"],["teachers/","老師培育","👩‍🏫","guide"],["students/","學生養成","🎓","guide"],["economy/","經營與資金","💰","guide"],["activities/","行事與活動","🎪","guide"],["challenges/","挑戰目標","🏆","guide"],["glossary/","中日對照","📖","guide"]] },
         "ooedo": { e: "🏯", t: "大江戶物語", j: "大江戸タウンズ", a: "#fdeee0",
             main: [["","攻略總覽","📄"],["sim/","佈局模擬器","🧩"],["db/","資料庫","📚"]],
             more: [] },
@@ -278,9 +278,20 @@
         var tabs = g.cfg.main.map(function (it) { return link(it, 'gb-tab'); }).join('');
         var more = '';
         if (g.cfg.more.length) {
+            var GH = { tool: '工具', guide: '主題攻略' };
+            var prev = null;
+            var menu = g.cfg.more.map(function (it) {
+                var h = '', grp = it[3];
+                // group 換組且屬已知群組 → 先插群組小標（未知/缺欄不插，向下相容）
+                if (grp && grp !== prev && GH[grp]) h = '<div class="gb-mh">' + GH[grp] + '</div>';
+                prev = grp;
+                return h + link(it, 'gb-mitem');
+            }).join('');
+            // 當前頁在下拉內時，「更多攻略」鈕本身加 .on（它有 gb-tab class，樣式直接生效）
+            var moreOn = g.cfg.more.some(function (it) { return it[0] === g.active; }) ? ' on' : '';
             more = '<div class="gb-more">' +
-                '<button type="button" class="gb-tab gb-morebtn" aria-expanded="false">更多 ▾</button>' +
-                '<div class="gb-menu">' + g.cfg.more.map(function (it) { return link(it, 'gb-mitem'); }).join('') + '</div>' +
+                '<button type="button" class="gb-tab gb-morebtn' + moreOn + '" aria-expanded="false">更多攻略 ▾</button>' +
+                '<div class="gb-menu">' + menu + '</div>' +
                 '</div>';
         }
 
@@ -294,7 +305,7 @@
             '<a class="gb-title" href="' + g.up + '">' +
             '<span class="gb-emoji">' + g.cfg.e + '</span>' +
             '<span class="gb-name"><b>' + g.cfg.t + '</b><i>' + (g.cfg.j || '') + '</i></span></a>' +
-            '<nav class="gb-nav">' + tabs + more + '</nav>' +
+            '<nav class="gb-nav">' + tabs + '</nav>' + more +
             '</div>';
 
         // 「更多」下拉
@@ -337,8 +348,10 @@
         '.gb-tab:hover{background:#fff;color:#0f5d38}' +
         '.gb-tab.on{background:#fff;color:#0f5d38;border-color:#a8cfba}' +
         '.gb-more{position:relative;flex-shrink:0}' +
-        '.gb-menu{display:none;position:absolute;right:0;top:calc(100% + 6px);min-width:170px;padding:6px;background:#fff;border:1px solid #dde5e0;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.14);z-index:60}' +
+        '.gb-menu{display:none;position:absolute;right:0;top:calc(100% + 6px);min-width:170px;max-height:70vh;overflow-y:auto;padding:6px;background:#fff;border:1px solid #dde5e0;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.14);z-index:60}' +
         '.gb-menu.open{display:block}' +
+        '.gb-mh{font-size:11px;font-weight:800;color:#7b8a82;padding:6px 10px 2px}' +
+        '.gb-mitem + .gb-mh{margin-top:4px;border-top:1px solid #dde5e0;padding-top:8px}' +
         '.gb-mitem{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;font-size:13px;font-weight:700;color:#4b5b53;white-space:nowrap}' +
         '.gb-mitem:hover{background:#e6f4ec;color:#0f5d38}' +
         '@media(max-width:720px){.gb-name i{display:none}.gb-tab{padding:5px 9px;font-size:12.5px}}';
