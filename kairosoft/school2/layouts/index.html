@@ -3,24 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>口袋學院物語2 佈局範例集｜一鍵載入模擬器</title>
-    <meta name="description" content="口袋學院物語2（名門ポケット学院2）佈局範例集：序盤 CP 值三景點、樞紐共用、教室學習區等現成擺法，一鍵載入本站佈局模擬器直接開出來，照著擺或自由改。">
-    <meta name="keywords" content="口袋學院物語2,佈局範例,擺法,人氣景點,模擬器,名門ポケット学院2,開羅遊戲">
+    <title>口袋學院物語2 完美佈局｜健康鎮 29 景點全成立地圖＋一鍵載入模擬器</title>
+    <meta name="description" content="口袋學院物語2（名門ポケット学院2）健康鎮完美佈局：一張圖同時成立全部 29 個人氣景點，含完整路網動線、校門、農牧與非景點設施，每一格都經程式驗證沒有建築被包圍。附完整景點座標對照表、設施清單與一鍵載入模擬器。">
+    <meta name="keywords" content="口袋學院物語2,完美佈局,健康鎮,人氣景點,29景點,佈局範例,動線,擺法,模擬器,名門ポケット学院2,開羅遊戲">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://ploglin.github.io/kairosoft/school2/layouts/">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏫</text></svg>">
     <meta property="og:type" content="article">
-    <meta property="og:title" content="口袋學院物語2 佈局範例集｜一鍵載入模擬器">
-    <meta property="og:description" content="現成擺法一鍵載入佈局模擬器，照著擺或自由改。">
+    <meta property="og:title" content="口袋學院物語2 完美佈局｜健康鎮 29 景點全成立">
+    <meta property="og:description" content="一張圖成立全部 29 個人氣景點，含完整動線與農牧設施，經程式逐格驗證。">
     <meta property="og:locale" content="zh_TW">
     <meta property="og:url" content="https://ploglin.github.io/kairosoft/school2/layouts/">
-    <meta name="twitter:card" content="summary">
+    <meta property="og:image" content="https://ploglin.github.io/kairosoft/school2/layouts/health-perfect.svg">
+    <meta name="twitter:card" content="summary_large_image">
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
         "@type": "Article",
-        "headline": "口袋學院物語2 佈局範例集：一鍵載入模擬器",
+        "headline": "口袋學院物語2 完美佈局：健康鎮 29 個人氣景點全成立",
+        "description": "一張健康鎮地圖同時成立全部 29 個人氣景點，含完整路網動線與農牧設施，經程式逐格驗證。",
         "inLanguage": "zh-Hant",
+        "image": "https://ploglin.github.io/kairosoft/school2/layouts/health-perfect.svg",
         "about": { "@type": "VideoGame", "name": "口袋學院物語2", "alternateName": "名門ポケット学院2" },
         "author": { "@type": "Organization", "name": "開羅攻略站" },
         "publisher": { "@type": "Organization", "name": "開羅攻略站" }
@@ -33,18 +36,134 @@
         .layout-card h3 { margin: 0 0 4px; font-size: 18px; font-weight: 900; }
         .layout-card .spots { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 12px; }
         .layout-card .sp { font-size: 12.5px; font-weight: 800; padding: 3px 10px; border-radius: 999px; background: var(--brand-soft); color: var(--brand-strong); }
+        .mapwrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: #f8fafc; padding: 10px; margin: 14px 0; }
+        .mapwrap img { display: block; width: 568px; max-width: none; height: auto; }
+        .statgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin: 14px 0; }
+        .statgrid div { background: var(--card-2); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+        .statgrid b { display: block; font-size: 22px; font-weight: 900; color: var(--brand-strong); line-height: 1.2; }
+        .statgrid span { font-size: 12.5px; color: var(--muted); font-weight: 700; }
+        .zone-list { list-style: none; padding: 0; margin: 12px 0; }
+        .zone-list li { border-left: 3px solid var(--brand); padding: 8px 0 8px 12px; margin: 10px 0; }
+        .zone-list .zt { font-weight: 900; }
     </style>
 </head>
 <body>
     <main class="container-narrow article">
         <p><a class="btn ghost" href="../">← 口袋學院物語2</a></p>
         <h1>口袋學院物語2 佈局範例集</h1>
-        <p class="lead">下面幾套現成擺法，點「<strong>在模擬器開啟</strong>」就會直接載入本站的<a href="../sim/">佈局模擬器</a>，你可以照著擺、或在上面自由修改。適合對照學習「怎麼把景點湊在一起」。</p>
-        <p class="meta">最後更新：2026 年 7 月 · 一鍵載入模擬器</p>
+        <p class="lead">下面的擺法都可以點「<strong>在模擬器開啟</strong>」直接載入本站的<a href="../sim/">佈局模擬器</a>，照著擺或自由修改。最上面那張是<strong>健康鎮完美佈局</strong>——一張圖同時成立全部 <strong>29 個人氣景點</strong>，而且每一棟都走得到。</p>
+        <p class="meta">最後更新：2026 年 7 月 · 地圖經程式逐格驗證</p>
 
         <div class="callout warn"><span class="k">小提醒</span>載入範例會覆蓋模擬器目前的地圖。若想保留現有的，先在模擬器用「存檔碼」備份；載入後也可用 <strong>Ctrl+Z</strong> 復原。</div>
 
         <div class="prose">
+            <h2 id="perfect">健康鎮完美佈局：29 個人氣景點全成立</h2>
+            <p>這張圖以遊戲第一個地區「<strong>健康鎮</strong>」的原始地形為底——水塘、東西兩塊高地、原本的樹林與校舍全部保留——在上面規劃出一套完整的校園。它不是把設施硬塞在一起的示意圖，而是<strong>把全部 29 個人氣景點同時湊齊</strong>，同時保證動線、校門、以及沒有景點效果的農牧與生活設施都有交代。</p>
+
+            <div class="mapwrap">
+                <img src="health-perfect.svg" width="568" height="612"
+                     alt="口袋學院物語2 健康鎮完美佈局地圖：26×24 格校園全圖，含棋盤式走廊路網、五大分區與 29 個人氣景點">
+            </div>
+            <p style="font-size:13px;color:var(--muted);margin-top:-6px">圖中每格上的字是設施簡稱（操＝操場、樹＝樹林、走＝走廊…）。灰色是高地，帶斜線的黃綠色是<strong>斜坡</strong>（高低差自動形成的地形）。邊緣數字是遊戲內座標，上方為 Y、左側為 X，與模擬器一致。</p>
+
+            <div class="statgrid">
+                <div><b>29 / 29</b><span>人氣景點成立</span></div>
+                <div><b>0</b><span>被包圍走不到的建築</span></div>
+                <div><b>126</b><span>建築棟數（含原有校舍）</span></div>
+                <div><b>159</b><span>走廊格數（動線）</span></div>
+            </div>
+
+            <p><a class="btn" href="../sim/#m=MC4xLjMsMC4yLjgsMC4xLjEzLDIzLjEuMSwzNS4xLjIsMC4yLjgsNjMuMS4xLDY1LjEuMSwzOC4xLjEsMy4xLjEsMzAuMS4xLDUwLjEuMSw3LjEuMiwzLjEuMSw0OC4xLjEsNDYuMS4xLDUyLjEuMSw0Ny4xLjEsMS4xLjEsMzUuMS4yLDAuMi42LDMuMS4xLDcuMS4xLDEuMS4xLDM1LjEuMiwzLjEuMSwzNC4xLjIsNy4xLjIsMy4xLjEsNDkuMS4xLDEuMS4zLDM0LjEuMiwxLjEuMSwwLjIuNiwzLjEuMSw3LjEuMSw0NS4xLjEsMzUuMS4yLDMuMS4xLDM0LjEuMiwxLjEuMSwzOS4xLjEsMy4xLjEsNzMuMS4xLDEuMS4zLDM0LjEuMiw3MC4xLjEsNzEuMS4xLDMuMS4xLDAuMi40LDMuMS4xLDUzLjEuMSw0NS4xLjEsNjQuMS4xLDY2LjEuMSwzLjEuMSw0MC4xLjEsNTQuMS4xLDU4LjEuMSw0OC4xLjEsMy4xLjEsNjMuMS4xLDYwLjEuMSw2MS4xLjEsMzAuMS4xLDMuMS4xMCwxNi4xLjEsMy4xLjEzLDI3LjEuMSwxOS4xLjEsMzEuMS4xLDE1LjEuMSwzLjEuMSw3Ny4xLjEsNzguMS4xLDM3LjEuMSwxNi4xLjMsNTkuMS4xLDI0LjEuMSwxMS4xLjEsMy4xLjEsNzcuMS4xLDMxLjEuMSwzNy4xLjEsMTYuMS43LDEuMS4zLDE2LjEuNiwxLjEuMywzNi4xLjEsMy4xLjEsMjAuMS4xLDEuMS4yLDE2LjEuNiwxLjEuNCwxNi4xLjYsNTcuMS4yLDEuMS4yLDMuMS4xLDIxLjEuMSwxLjEuMiwzMy4xLjEsMy4xLjEsNjMuMS4xLDEuMS4zLDMyLjEuMSw0OS4xLjEsMjUuMS4xLDEuMS4xLDE2LjEuNiw1Ny4xLjIsMjYuMS4xLDEuMS4xLDY3LjEuMiw1MC4xLjEsMTkuMS4xLDMwLjEuMSwzLjEuMSw1OS4xLjEsMzAuMS4xLDEuMS4yLDMuMS4xMiw2OC4xLjEsMy4xLjEsNjcuMS4xLDMuMS42LDAuMi4zLDU4LjEuMSw0NC4xLjIsMjUuMS4xLDMuMS4xLDI1LjEuMSwxLjEuMywzLjIuMSw2LjEuMSwxLjEuMywzLjEuMSw0MS4xLjIsNDQuMS4yLDMuMS4xLDEzLjEuMSwwLjIuMywxLjEuNCwzLjEuMSwxMS4xLjEsNy4xLjIsMS4xLjEsMy4yLjEsNi4xLjMsMjIuMS4xLDMuMS4xLDQxLjEuMiw2LjEuMSw0Ni4xLjEsMy4xLjEsMC4yLjQsMS4xLjEsNy4xLjEsNC4xLjIsMy4xLjEsNC4xLjEsMy4xLjQsNDEuMS4yLDMuMS4xLDUxLjEuMSwzLjEuMSw0Ny4xLjEsNi4xLjIsNDguMS4xLDMuMS4xLDAuMi40LDEuMS4xLDcuMS4xLDQuMS4yLDMuMS4xLDQuMS4xLDMuMS40LDQxLjEuMiwzLjEuMSw2LjEuMSwzLjEuMSw2LjEuNCwzLjEuMSwwLjIuNCw1NS4xLjEsMy4xLjE4LDAuMi41LDU1LjEuMSw0LjEuMywzLjEuMSw0My4xLjEsNDIuMS4yLDMuMS41LDE5LjEuMSwzLjEuMSw0OS4xLjEsNTEuMS4xLDUyLjEuMSw1My4xLjEsMC4yLjUsMS4xLjIsNDQuMS4yLDMuMS4xLDQzLjEuMSw0Mi4xLjIsMy4xLjIsMjMuMS4xLDI3LjEuMSwzLjEuMSwyMC4xLjEsMy4xLjEsNTAuMS4xLDYuMS4zLDAuMi41LDYuMS4yLDQ1LjEuMSw2LjEuMSwzLjEuMSwzMy4xLjEsMTUuMS4xLDE0LjEuMSwzLjEuNSwyNC4xLjEsMy4xLjEsNi4xLjQsMC4yLjUsMjcuMS4xLDM2LjEuMSw0NS4xLjEsMzEuMS4xLDMuMS4xLDQuMS4xLDMwLjEuMSw0LjEuMiwzLjEuMSwyOC4xLjEsMjkuMS4xLDM2LjEuMSwxLjEuMSwzLjEuMSw2LjEuNCwwLjIuNSwzLjEuMTksMC4yLjUsNjcuMS4xLDY4LjEuMSw3MC4xLjEsNzEuMS4xLDMuMS4xLDY3LjEuMSw3My4xLjEsNzQuMS4xLDc1LjEuMSwzLjEuMSw1Ny4xLjEsNjIuMS4xLDYzLjEuMSw1OC4xLjEsMy4xLjEsNjAuMS4xLDY0LjEuMSw2Ni4xLjEsNjUuMS4xLDMuMS4xLDAuMi40LDEuMS4zLDY5LjEuMSwzLjEuMSw3Ni4xLjEsMS4xLjIsNzIuMS4xLDMuMS4xLDU5LjEuMSwxLjEuMiw2MS4xLjEsMy4xLjEsNy4xLjEsMS4xLjIsNTcuMS4xLDMuMS4xLDAuMi40LDEuMS4zLDcyLjEuMSwzLjEuMSwxLjEuNCwzLjEuMSwxLjEuNCwzLjEuMSw3LjEuMSwxLjEuMiwyMi4xLjEsMy4xLjEsNy4xLjEsMTMuMS4zLDEuMS40LDMuMS4xLDEuMS40LDMuMS4xLDEuMS40LDMuMS4xLDEuMS40LDMuMS4xLDYyLjEuMSwzNi4xLjEsMzEuMS4xLDEzLjEuMSwwLjEuMjQ">🧩 在模擬器開啟完美佈局</a></p>
+
+            <div class="callout key"><span class="k">怎麼驗證的</span>這張圖不是用眼睛喬出來的。我們把模擬器的判定程式（4×4 窗口景點判定、斜坡的高低差推導、從校門出發的可達性 BFS）搬到腳本裡，反覆放置與檢查，最後<strong>只用分享碼重新解碼再驗一次</strong>：29 個景點全成立、0 棟建築被包圍、地圖上沒有任何玩家蓋不出來的假地形。</p>
+
+            <h3>設計原則：為什麼長這樣</h3>
+            <ul>
+                <li><strong>棋盤式路網。</strong>橫向大道走在 X7 / X12 / X17 / X22，縱向街道走在 Y21 / Y16 / Y11 / Y6，全部從校門串起來。這是動線的骨架——只要每棟至少有一面貼到路，學生就走得到。</li>
+                <li><strong>街廓剛好 4×4。</strong>路與路之間圍出的方塊正好是一個 4×4，也就是景點判定的窗口大小。所以「同一個街廓裡的設施」＝「有機會湊成同一個景點」，規劃時只要顧好一個街廓就好。</li>
+                <li><strong>外圈蓋房、中庭留綠。</strong>每個街廓外圈 12 格蓋設施（都貼路），中間 4 格放草地或花壇。中庭不但好看，草地本身還是「菜園」「力量」「清爽」等景點的材料。</li>
+                <li><strong>唯一設施先定位。</strong>校長室、辦公室、校門全校只有一份。校長室被刻意蓋在辦公室旁邊，讓「選舉」（校長室＋辦公室＋茶室）和「學習」（校長室＋圖書室＋多媒體教室）共用同一間，省下一整組設施。</li>
+                <li><strong>地形照用不改。</strong>水塘留著給「水岸」，東側高地邊緣天然形成的斜坡留著給「黃昏」。斜坡在遊戲裡<strong>不是設施</strong>、蓋不出來，只能靠高低差生出來，所以高地一定要留。</li>
+            </ul>
+
+            <h3>五大分區</h3>
+            <ul class="zone-list">
+                <li><span class="zt">北區（X3–X6）</span>設施密度最高的一區，16 個景點集中在這裡：怪談、藝術、購物、特盛、時尚、埋伏、清爽、生物、吃醋、澀谷、熱血、動作、青空、非洲、宇宙、開羅。景點會擠在一起是刻意的——設施可以被多個景點共用，越密集越省。</li>
+                <li><span class="zt">池畔區（X8–X11）</span>圍著原有水塘展開，9 個景點：運動、好友、家庭、菜園、力量、熱情、水岸、燒水、名門。水塘本身就是「水岸」的材料，不用動它。</li>
+                <li><span class="zt">中央區（X13–X16）</span>保留原本的教室與主要幹道，是人流的轉運點，成立「約會」。</li>
+                <li><span class="zt">校門區（X17–X21）</span>校門、辦公室、校長室所在的行政區，成立「學習」與「選舉」。</li>
+                <li><span class="zt">南區（X23–X26）</span>新開發區：西半邊是農牧園區（小農場、養雞、養豬、養牛、養兔、飼鴨與各種飼育小屋），東半邊是運動園區（體育館、道場、游泳池、棒球場等），靠著東側高地的斜坡成立「黃昏」。</li>
+            </ul>
+
+            <h3>29 個景點的成立位置</h3>
+            <p>座標是該景點 4×4 判定範圍的左上角，用遊戲內的顯示方式（X 由上而下、Y 由左而右）。在模擬器裡把滑鼠移到格子上就會顯示座標，可以直接對照。</p>
+            <div class="table-wrap">
+                <table class="data">
+                    <thead><tr><th>景點</th><th>座標</th><th>需要設施</th><th>屬性加成</th></tr></thead>
+                    <tbody>
+                        <tr><td>運動</td><td>X7 / Y16</td><td>操場＋籃球場＋販賣機</td><td>體育+3 頭腦+3 態度+2</td></tr>
+                        <tr><td>約會</td><td>X12 / Y25</td><td>網球場＋樹林／櫻花樹＋圖書室</td><td>文系+2 理系+3 人氣+2 態度+2</td></tr>
+                        <tr><td>好友</td><td>X7 / Y10</td><td>飲水處＋保健室＋茶室</td><td>文系+3 運動+2 人氣+2</td></tr>
+                        <tr><td>怪談</td><td>X3 / Y5</td><td>音樂室＋理科室＋焚化爐</td><td>理系+3 頭腦+3</td></tr>
+                        <tr><td>學習</td><td>X17 / Y23</td><td>校長室＋圖書室＋多媒體教室</td><td>文系+3 理系+3 態度+3</td></tr>
+                        <tr><td>藝術</td><td>X2 / Y6</td><td>美術室＋音樂室＋多功能室</td><td>理系+3 運動+3</td></tr>
+                        <tr><td>家庭</td><td>X8 / Y11</td><td>保健室＋家政室＋洗手間</td><td>文系+2 體育+2 人氣+3</td></tr>
+                        <tr><td>購物</td><td>X2 / Y25</td><td>福利社＋便利商店＋餐廳</td><td>體育+3 運動+3 態度+1</td></tr>
+                        <tr><td>特盛</td><td>X3 / Y25</td><td>養豬小屋＋養牛小屋＋餐廳</td><td>體育+5 頭腦+4</td></tr>
+                        <tr><td>菜園</td><td>X8 / Y13</td><td>草地＋小農場＋飲水處</td><td>理系+2 運動+2 人氣+2 態度+2</td></tr>
+                        <tr><td>黃昏</td><td>X23 / Y8</td><td>樹林／櫻花樹＋斜坡＋棒球場</td><td>文系+3 體育+3 人氣+3 態度+3</td></tr>
+                        <tr><td>力量</td><td>X11 / Y22</td><td>水井＋樹林／櫻花樹＋草地</td><td>文系+3 體育+3 頭腦+2 態度+2</td></tr>
+                        <tr><td>時尚</td><td>X3 / Y10</td><td>網球場＋美術室＋家政室</td><td>文系+3 理系+3 人氣+2 態度+2</td></tr>
+                        <tr><td>熱情</td><td>X8 / Y8</td><td>足球場＋籃球場＋焚化爐</td><td>理系+3 體育+3 人氣+2 態度+2</td></tr>
+                        <tr><td>埋伏</td><td>X5 / Y25</td><td>公告欄＋巨石＋洗手間</td><td>文系+3 體育+1 頭腦+2 人氣+2</td></tr>
+                        <tr><td>清爽</td><td>X6 / Y15</td><td>映山紅＋草地＋長椅</td><td>文系+3 理系+3 人氣+2 態度+2</td></tr>
+                        <tr><td>水岸</td><td>X8 / Y25</td><td>水塘＋洗手間＋水井</td><td>文系+2 理系+3 頭腦+2</td></tr>
+                        <tr><td>生物</td><td>X2 / Y5</td><td>理科室＋電腦室＋飼育鼴鼠</td><td>理系+3 頭腦+2 運動+2 人氣+2</td></tr>
+                        <tr><td>燒水</td><td>X8 / Y10</td><td>焚化爐＋家政室＋飲水處</td><td>文系+1 理系+1 人氣+1 態度+1</td></tr>
+                        <tr><td>選舉</td><td>X17 / Y22</td><td>校長室＋辦公室＋茶室</td><td>理系+2 體育+3 運動+2 人氣+2</td></tr>
+                        <tr><td>吃醋</td><td>X2 / Y12</td><td>焚化爐＋餐廳＋家政室</td><td>理系+3 體育+2 頭腦+2 態度+2</td></tr>
+                        <tr><td>澀谷</td><td>X2 / Y16</td><td>足球場＋社團教室＋便利商店</td><td>文系+3 體育+1 人氣+2</td></tr>
+                        <tr><td>熱血</td><td>X3 / Y6</td><td>足球場＋體育館＋游泳池</td><td>文系+2 理系+3 頭腦+3 運動+3</td></tr>
+                        <tr><td>動作</td><td>X3 / Y15</td><td>道場＋社團教室＋彈跳床</td><td>體育+3 頭腦+2 運動+2</td></tr>
+                        <tr><td>名門</td><td>X8 / Y25</td><td>銅像＋金像＋電腦室</td><td>文系+3 體育+3 人氣+3 態度+3</td></tr>
+                        <tr><td>青空</td><td>X5 / Y11</td><td>飼育長頸鹿＋銅像＋圖騰柱</td><td>文系+3 頭腦+2 人氣+2</td></tr>
+                        <tr><td>非洲</td><td>X5 / Y21</td><td>飼育長頸鹿＋飼育大象＋圖騰柱</td><td>文系+5 理系+3 態度+2</td></tr>
+                        <tr><td>宇宙</td><td>X3 / Y15</td><td>宇宙火箭＋天象館＋多媒體教室</td><td>理系+3 頭腦+2 人氣+2</td></tr>
+                        <tr><td>開羅</td><td>X3 / Y10</td><td>金開羅君＋開羅君像＋開羅君房間</td><td>文系+5 理系+5 人氣+3 態度+3</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>29 個景點全開時的屬性加成合計為：<strong>文系 +49、理系 +49、人氣 +37、體育 +35、態度 +32、頭腦 +29、運動 +19</strong>。</p>
+
+            <h3>用到的設施清單</h3>
+            <p>沒有標數字的表示只蓋一棟。有些設施會重複出現（例如焚化爐 ×5、操場 ×6），是因為它們被好幾個相隔很遠的景點各自需要；如果想省錢，可以把那些景點集中到同一區再共用。</p>
+            <div class="table-wrap">
+                <table class="data">
+                    <thead><tr><th>分類</th><th>設施</th></tr></thead>
+                    <tbody>
+                        <tr><td>生活與設施</td><td>便利商店 ×2、保健室、公告欄 ×3、圖騰柱 ×2、宇宙火箭、廣播室、更衣室 ×2、水井 ×3、洗手間 ×3、焚化爐 ×5、百葉箱、福利社 ×2、茶室 ×2、販賣機 ×2、遊戲區、金像、金開羅君、銅像 ×4、長椅 ×4、開羅君像、飲水處 ×2、餐廳 ×2</td></tr>
+                        <tr><td>教室與專科</td><td>圖書室 ×3、多功能室 ×2、多媒體教室 ×2、天象館 ×2、家政室 ×3、教室 ×2、校長室、校門(左右用)、理科室 ×2、美術室 ×3、辦公室、進路室 ×2、開羅君房間、電腦室 ×3、音樂室 ×2</td></tr>
+                        <tr><td>運動與社團</td><td>彈跳床 ×2、操場 ×6、棒球場 ×2、游泳池 ×2、社團教室 ×2、籃球場 ×3、網球場 ×3、足球場 ×4、道場 ×2、體育館 ×2</td></tr>
+                        <tr><td>動植物農牧</td><td>小農場 ×5、飼育大象、飼育無尾熊、飼育熊貓、飼育長頸鹿 ×2、飼育鱷魚、飼育鼴鼠 ×2、飼鴨小屋 ×2、養兔小屋、養牛小屋 ×2、養豬小屋 ×2、養雞小屋 ×2</td></tr>
+                        <tr><td>環境地形</td><td>在意之樹、巨石 ×2、映山紅 ×2、樹林 ×13、櫻花樹 ×5、水塘 ×35、花壇 ×26、草地 ×87、走廊 ×159、道路 ×12</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>實際照著蓋的順序建議</h3>
+            <p>這張圖是<strong>最終目標</strong>，不是開局就能蓋出來的東西。多數設施要到一定的學校排名才解鎖，資金也要慢慢累積。建議分四階段推進：</p>
+            <ol>
+                <li><strong>先鋪路。</strong>照著圖把橫向大道與縱向街道的走廊鋪出來，街廓的框先立好。之後每蓋一棟都不必再擔心動線，也不用回頭拆房子重排。</li>
+                <li><strong>先做便宜的景點。</strong>池畔區的「菜園」「力量」「運動」「燒水」用的都是前期就有的東西（草地、樹林、水井、飲水處、小農場、操場、籃球場、販賣機、焚化爐、家政室），先把這一區做起來吃加成。</li>
+                <li><strong>行政區與教學區。</strong>校長室一解鎖就蓋在辦公室旁邊（圖上的位置），把「選舉」「學習」一次收掉；接著補教學區的圖書室、多媒體教室、音樂室、理科室、美術室。</li>
+                <li><strong>南區與後期景點。</strong>農牧園區、運動園區，以及最後才解鎖的宇宙火箭、天象館、開羅君系列、飼育大象／長頸鹿等，留到後期填。</li>
+            </ol>
+
+            <div class="callout warn"><span class="k">誠實說明</span>這張圖保證的是「<strong>在模擬器的規則下</strong>，29 個景點全部成立、沒有建築被包圍」。它假設同一種設施可以重複建造（校長室、辦公室、校門除外，圖中都只有一份）。實際遊戲裡的解鎖條件、建造費用與土地取得進度不在模擬範圍內，請把它當成規劃藍圖而不是逐步施工單。若你發現遊戲中某項設施無法重複建造，歡迎指正，我們會重算。</div>
+
+            <h2 id="basic">入門範例：先從小規模練手</h2>
+            <p>完美佈局一次要顧 29 個景點，剛開始不用這麼複雜。下面三套只用少數設施，適合對照學習「怎麼把景點湊在一起」。</p>
+
             <div class="layout-card">
                 <h3>① 序盤 CP 值三景點</h3>
                 <div class="spots"><span class="sp">運動</span><span class="sp">菜園</span><span class="sp">力量</span></div>
@@ -69,12 +188,12 @@
             <h2 id="how">怎麼用這些範例</h2>
             <ul>
                 <li>點「在模擬器開啟」→ 模擬器會載入該地圖，右側即時顯示成立的景點。</li>
-                <li>想改就直接在模擬器上拖曳增減；<a href="../sim/">模擬器</a>會提示「差一步」與建議位置。</li>
+                <li>想改就直接在模擬器上拖曳增減；<a href="../sim/">模擬器</a>會提示「差一步」與建議位置，也會用紅框標出被包圍、走不到的建築。</li>
                 <li>做出自己的佈局後，模擬器的「分享」鈕會產生你自己的網址，可存起來或分享給別人。</li>
             </ul>
-            <div class="callout tip"><span class="k">延伸</span>想了解景點怎麼湊，see <a href="../#combo">全 29 種景點 combo 總表</a>與<a href="../#hub">樞紐設施</a>；想快速查「我有的設施能湊什麼」，用<a href="../spot-check/">景點達成檢查器</a>。</div>
+            <div class="callout tip"><span class="k">延伸</span>想了解景點怎麼湊，看<a href="../#combo">全 29 種景點 combo 總表</a>與<a href="../#hub">樞紐設施</a>；想快速查「我有的設施能湊什麼」，用<a href="../spot-check/">景點達成檢查器</a>。</div>
 
-            <p style="font-size:13px;color:var(--muted);margin-top:26px">範例地圖由本站產生，僅供規劃參考。若有更好的擺法歡迎指正。</p>
+            <p style="font-size:13px;color:var(--muted);margin-top:26px">範例地圖由本站產生並以模擬器邏輯驗證，僅供規劃參考。景點條件參考カイロパーク攻略 Wiki 等公開資料整理。若有更好的擺法歡迎指正。</p>
             <p style="margin-top:18px"><a class="back-hub" href="../">← 回口袋學院物語2</a></p>
         </div>
     </main>
