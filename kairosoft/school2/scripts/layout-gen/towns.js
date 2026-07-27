@@ -25,11 +25,11 @@ const TOWNS = {
     },
     east: {
         key: 'east',
-        name: '東部小鎮',
+        name: '冬郵小鎮',
         rows: 26, cols: 26,                 // 座標 [2,2]–[27,27]
         preset: 'PRESET_EAST_DATA',
         svg: 'east-perfect.svg',
-        // 東部小鎮的校門在「上緣」(gate_h @ r0,c19-20)，所以路網要讓
+        // 冬郵小鎮的校門在「上緣」(gate_h @ r0,c19-20)，所以路網要讓
         // 縱向街道穿過 c19/c20 才接得到校門；水塘與高地由 layRoads 自行避開。
         roads: {
             AV: [4, 9, 14, 19, 24],

@@ -2,7 +2,7 @@
    把 code(-east).txt 解碼回地圖，再用模擬器的判定邏輯從頭驗一次。
 
    用法：node verify.js            → 驗健康鎮 code.txt
-         node verify.js east       → 驗東部小鎮 code-east.txt
+         node verify.js east       → 驗冬郵小鎮 code-east.txt
          node verify.js east page → 驗 layouts/index.html 上實際貼的那一串（最重要）
          node verify.js east <code> → 直接驗任意分享碼
 
@@ -22,7 +22,8 @@ if (arg === 'page') {
     const html = fs.readFileSync(PAGE, 'utf8');
     const hits = [...html.matchAll(/sim\/#m=([A-Za-z0-9\-_]+)">🧩 在模擬器開啟([^<]*)</g)]
         .filter(m => m[2].includes('完美佈局'));
-    const hit = hits.find(m => townKey === 'east' ? m[2].includes('東部') : !m[2].includes('東部'));
+    const eastName = require('./towns.js').TOWNS.east.name; // 鎮名以 towns.js 為準，改名不會掉
+    const hit = hits.find(m => townKey === 'east' ? m[2].includes(eastName) : !m[2].includes(eastName));
     if (!hit) throw new Error('layouts/index.html 找不到 ' + townKey + ' 的完美佈局分享碼');
     arg = hit[1]; source = 'layouts/index.html';
 }

@@ -1,5 +1,5 @@
 /* 完美佈局的共用機具（城鎮無關）。
-   健康鎮 final.js 與東部小鎮 east.js 都只提供「設定」，流程一律走這裡：
+   健康鎮 final.js 與冬郵小鎮 east.js 都只提供「設定」，流程一律走這裡：
      景點骨架 → 4×4 補位 → 分區填充 → 綠化 → 加開校門 → 高地開發 → 驗證 → 分享碼
    每一次放置都有「景點數不可變少、被包圍建築數不可變多」的守衛。 */
 const fs = require('fs');
@@ -8,7 +8,7 @@ const D = require('./design2.js');
 const { items, SPOTS, gridRows, gridCols } = E;
 
 /* 純裝飾地形：可被補位／填充覆蓋（不動道路、水塘與既有建築）。
-   DECOR 是保守的預設（健康鎮用）；東部小鎮再用 DECOR_EAST 放寬 —— 田埂路(aze_path)
+   DECOR 是保守的預設（健康鎮用）；冬郵小鎮再用 DECOR_EAST 放寬 —— 田埂路(aze_path)
    與竹林(bamboo) 在模擬器裡都不可通行、也不是任何景點的材料，等同裝飾。 */
 const DECOR = new Set(['rock', 'special_tree', 'azalea', 'pine', 'flower', 'grass', 'woods']);
 const DECOR_EAST = new Set([...DECOR, 'aze_path', 'bamboo', 'sakura']);

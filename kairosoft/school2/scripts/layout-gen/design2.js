@@ -12,7 +12,7 @@ const COL_BANDS = ROADS.COL_BANDS;   // 街廓的欄區間
 /* 可被道路覆蓋的地形。除了自然景觀，也包含原本散落在路線上的小農舍
    （小雞、小農場、田地、百葉箱）——它們卡在幹道上會讓動線只剩一條草地，
    非常脆弱；拆掉改鋪路，農牧設施之後在農牧園區重建。
-   ※ 東部小鎮的『田埂路(aze_path)』與竹林在模擬器裡都不可通行，等同景觀，
+   ※ 冬郵小鎮的『田埂路(aze_path)』與竹林在模擬器裡都不可通行，等同景觀，
      鋪成走廊才有動線可言，因此也列入。教室／辦公室／網球場等既有校舍不動。 */
 const PAVEABLE = new Set(['empty', 'grass', 'woods', 'flower', 'azalea', 'pine', 'rock', 'special_tree', 'sakura', 'wood_path', 'asphalt',
     'aze_path', 'bamboo', 'chicken', 'farm', 'field', 'weather']);
@@ -94,7 +94,7 @@ function hasType(g, t) {
 function build(spotOrder, opts) {
     opts = opts || {};
     const g = layRoads(E.loadTerrain());
-    // 鋪路後、切街廓前的整地鉤子（東部小鎮用它打通高地坡道，讓 parcels 算到正確的可達性）
+    // 鋪路後、切街廓前的整地鉤子（冬郵小鎮用它打通高地坡道，讓 parcels 算到正確的可達性）
     if (opts.prepare) opts.prepare(g);
     // 預先卡位（唯一設施要蓋在對的地方，例如校長室緊鄰辦公室，讓「學習」與「選舉」共用）
     (opts.preplace || []).forEach(x => {

@@ -3,7 +3,7 @@
 產生並驗證各城鎮的「完美佈局」(layouts/ 頁上 29 景點全成立的地圖)。
 設施尺寸、SPOTS、地形都**直接從 ../../sim/index.html 抽取**,模擬器資料改了重跑即可。
 
-目前已產出:**健康鎮 26×24**(`health-perfect.svg`)與**東部小鎮 26×26**(`east-perfect.svg`),
+目前已產出:**健康鎮 26×24**(`health-perfect.svg`)與**冬郵小鎮 26×26**(`east-perfect.svg`),
 兩張都是 29/29 景點、0 棟被包圍。
 
 ## 檔案
@@ -15,7 +15,7 @@
 | `design2.js` | 路網佈局器:鋪路 → 切 4×4 街廓 → 街廓填景點骨架(唯一設施不重複、整組放置有包圍守衛)。 |
 | `builder.js` | **城鎮無關的共用機具**:4×4 補位、分區填充、綠化、加開校門、打通高地坡道、高地開發、斷頭路整理、驗證輸出。 |
 | `final.js` | 健康鎮的**設定檔**(街廓分區、校長室位置、第二座校門、高地園區)。 |
-| `east.js` | 東部小鎮的**設定檔**。 |
+| `east.js` | 冬郵小鎮的**設定檔**。 |
 | `verify.js` | **可重跑的驗證器**,只吃分享碼。 |
 | `gen-assets.js` | 由分享碼產生 `layouts/*.svg` 與頁面要用的表格 HTML。 |
 
@@ -25,7 +25,7 @@
 
 ```sh
 node final.js                 # 健康鎮 → code.txt
-node east.js                  # 東部小鎮 → code-east.txt
+node east.js                  # 冬郵小鎮 → code-east.txt
 node gen-assets.js            # code.txt      → layouts/health-perfect.svg + spots/fac-table-health.html
 node gen-assets.js east       # code-east.txt → layouts/east-perfect.svg  + spots/fac-table-east.html
 node verify.js health page    # 驗「layouts/index.html 上實際貼的那一串分享碼」
@@ -56,7 +56,7 @@ node verify.js east page
 - **高地可以蓋房**,每列最外側留步道接坡道。
 - **不放 `hidden` 磚**(例如 `slope`),地圖上不能有玩家蓋不出來的東西。
 
-## 東部小鎮的三個特殊處理
+## 冬郵小鎮的三個特殊處理
 
 - **田埂路(`aze_path`)不可通行**,等同景觀;幹道會直接鋪過去,其餘留著當地形。
 - **高地鋪滿草地／竹林時沒有斜坡**——`builder.openPlateaus()` 會貪婪地把邊界格

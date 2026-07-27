@@ -1,6 +1,6 @@
 /* 由分享碼產生：地圖 SVG + 攻略頁要用的表格 HTML
    用法：node gen-assets.js          → 健康鎮（code.txt → health-perfect.svg）
-         node gen-assets.js east     → 東部小鎮（code-east.txt → east-perfect.svg）
+         node gen-assets.js east     → 冬郵小鎮（code-east.txt → east-perfect.svg）
    產出的 SVG 直接寫到 ../../layouts/，表格 HTML 留在本目錄供貼上。 */
 const fs = require('fs');
 const path = require('path');
