@@ -1,8 +1,10 @@
-/* 從 sim/index.html 抽出 items / SPOTS / 健康鎮地形，並複製模擬器的判定邏輯（Node 版） */
+/* 從 sim/index.html 抽出 items / SPOTS / 該城鎮地形，並複製模擬器的判定邏輯（Node 版）。
+   城鎮由 towns.js 決定 —— 進入點腳本要在 require 本檔之前先 select()，預設 health。 */
 const fs = require('fs');
 const path = require('path');
+const TOWNS = require('./towns.js');
 
-const SIM = path.join('D:', 'dev', 'web', 'ploglin.github.io', 'kairosoft', 'school2', 'sim', 'index.html');
+const SIM = path.join(__dirname, '..', '..', 'sim', 'index.html');
 const src = fs.readFileSync(SIM, 'utf8');
 
 function grab(startMarker, endMarker) {
@@ -15,19 +17,28 @@ function grab(startMarker, endMarker) {
 
 const items = eval('({' + grab('const items = {', '\n        };') + '})');
 const SPOTS = eval('([' + grab('const SPOTS = [', '\n        ];') + '])');
-const PRESET_JSON = grab('const PRESET_DEFAULT_DATA = `', '`;');
 
-const gridRows = 26, gridCols = 24;
+const town = TOWNS.current();
+const PRESET_JSON = grab('const ' + town.preset + ' = `', '`;');
+
+const gridRows = town.rows, gridCols = town.cols;
 const TYPE_KEYS = Object.keys(items);
 const PASSABLE = new Set(['empty', 'grass', 'wood_path', 'asphalt', 'concrete', 'slope']);
+
+/* 地形自檢：presets 的形狀必須跟 towns.js 宣告的尺寸一致 */
+const PRESET_GRID = JSON.parse(PRESET_JSON);
+if (PRESET_GRID.length !== gridRows || PRESET_GRID[0].length !== gridCols) {
+    throw new Error(`${town.name} 地形尺寸 ${PRESET_GRID.length}×${PRESET_GRID[0].length} 與 towns.js 的 ${gridRows}×${gridCols} 不符`);
+}
 
 function isBuildingType(t) {
     const it = items[t];
     return !!it && (it.type === 'fac' || it.type === 'spec' || it.type === 'sports' || it.type === 'farm');
 }
 
-function loadHealth() {
-    return JSON.parse(PRESET_JSON).map(row => row.map(c => ({ type: c.type, elevation: c.elevation })));
+/* 該城鎮的原始地形（每次呼叫都是新的一份） */
+function loadTerrain() {
+    return PRESET_GRID.map(row => row.map(c => ({ type: c.type, elevation: c.elevation })));
 }
 
 function isSlopeIn(g, r, c) {
@@ -100,28 +111,49 @@ function blockedBuildings(g) {
 }
 
 /* 與 sim 的 checkSpots 同邏輯：4×4 窗口，empty 且是斜坡者算 'slope' */
+function typesInWindow(g, wr, wc) {
+    const s = new Set();
+    for (let dr = 0; dr < 4; dr++) for (let dc = 0; dc < 4; dc++) {
+        const t = g[wr + dr][wc + dc].type;
+        if (t !== 'empty') s.add(t);
+        else if (isSlopeIn(g, wr + dr, wc + dc)) s.add('slope');
+    }
+    return s;
+}
+
+function spotOk(spot, typesIn) {
+    return spot.req.every(gr => (Array.isArray(gr) ? gr : [gr]).some(t => typesIn.has(t)));
+}
+
 function activeSpots(g) {
     const active = new Set();
     for (let wr = 0; wr <= gridRows - 4; wr++) {
         for (let wc = 0; wc <= gridCols - 4; wc++) {
-            const typesIn = new Set();
-            for (let dr = 0; dr < 4; dr++) for (let dc = 0; dc < 4; dc++) {
-                const t = g[wr + dr][wc + dc].type;
-                if (t !== 'empty') typesIn.add(t);
-                else if (isSlopeIn(g, wr + dr, wc + dc)) typesIn.add('slope');
-            }
+            const typesIn = typesInWindow(g, wr, wc);
             if (!typesIn.size) continue;
             for (const spot of SPOTS) {
                 if (active.has(spot.id)) continue;
-                const ok = spot.req.every(gr => (Array.isArray(gr) ? gr : [gr]).some(t => typesIn.has(t)));
-                if (ok) active.add(spot.id);
+                if (spotOk(spot, typesIn)) active.add(spot.id);
             }
         }
     }
     return active;
 }
 
-/* 分享碼（與 sim 的 encodeMap 相同） */
+/* 每個景點最先成立的 4×4 窗口左上角（頁面表格用） */
+function spotWindows(g) {
+    const where = new Map();
+    for (let wr = 0; wr <= gridRows - 4; wr++) for (let wc = 0; wc <= gridCols - 4; wc++) {
+        const ts = typesInWindow(g, wr, wc);
+        if (!ts.size) continue;
+        for (const s of SPOTS) if (!where.has(s.id) && spotOk(s, ts)) where.set(s.id, [wr, wc]);
+    }
+    return where;
+}
+
+/* 分享碼（與 sim 的 encodeMap / decodeMap 相同；非 26×24 帶 RxC; 前綴） */
+function btoa(s) { return Buffer.from(s, 'binary').toString('base64'); }
+
 function encodeMap(g) {
     const parts = [];
     let prev = null, count = 0;
@@ -132,12 +164,35 @@ function encodeMap(g) {
         else { if (prev !== null) parts.push(prev + '.' + count); prev = key; count = 1; }
     }
     if (prev !== null) parts.push(prev + '.' + count);
-    return btoa(parts.join(',')).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    const prefix = (gridRows === 26 && gridCols === 24) ? '' : gridRows + 'x' + gridCols + ';';
+    return btoa(prefix + parts.join(',')).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
-function btoa(s) { return Buffer.from(s, 'binary').toString('base64'); }
+
+/* 回傳 { rows, cols, grid }；尺寸取自分享碼本身，不預設城鎮 */
+function decodeMap(code) {
+    let str = Buffer.from(String(code).replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('binary');
+    let rows = 26, cols = 24;
+    const sm = /^(\d+)x(\d+);/.exec(str);
+    if (sm) { rows = +sm[1]; cols = +sm[2]; str = str.slice(sm[0].length); }
+    if (rows < 5 || rows > 40 || cols < 5 || cols > 40) return null;
+    const cells = [];
+    for (const p of str.split(',')) {
+        const [t, e, n] = p.split('.').map(Number);
+        for (let k = 0; k < n; k++) cells.push({ type: TYPE_KEYS[t] || 'empty', elevation: e || 1 });
+    }
+    if (cells.length !== rows * cols) return null;
+    const grid = [];
+    for (let r = 0; r < rows; r++) grid.push(cells.slice(r * cols, (r + 1) * cols));
+    return { rows, cols, grid };
+}
+
+/* 遊戲座標：X = r + 2（上到下）、Y = gridCols + 1 − c（左到右遞減） */
+const gameX = r => r + 2;
+const gameY = c => gridCols + 1 - c;
 
 module.exports = {
-    items, SPOTS, TYPE_KEYS, gridRows, gridCols, PASSABLE,
-    isBuildingType, loadHealth, isSlopeIn, computeReachability,
-    blockedBuildings, activeSpots, encodeMap
+    town, items, SPOTS, TYPE_KEYS, gridRows, gridCols, PASSABLE,
+    isBuildingType, loadTerrain, loadHealth: loadTerrain, isSlopeIn, canStep, computeReachability,
+    blockedBuildings, typesInWindow, spotOk, activeSpots, spotWindows,
+    encodeMap, decodeMap, gameX, gameY
 };

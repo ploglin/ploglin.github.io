@@ -26,3 +26,16 @@
 與 `sim/index.html` 的 `PRESET_EAST_DATA` 內容一致(單行字串、無 bid,
 匯入時由 `assignBlockIds()` 自動補回多格建築的 bid);改地形時兩處要同步,
 並跑 `node scripts/check.js`。
+
+**改東部地形後,完美佈局也要重跑**:`scripts/layout-gen/` 底下
+`node east.js && node gen-assets.js east`,再把新的分享碼與表格貼回
+`layouts/index.html`,最後 `node verify.js east page` 必須全 PASS。
+
+已知的地形性質(由 `layout-gen/verify.js` 與泛洪檢查得出,不是 bug):
+
+- **田埂路(`aze_path`)在模擬器裡不可通行**,所以原始地形有幾棟建築(網球場、百葉箱、
+  小農場)一開始就被判成「走不到」——那是地形本身造成的,不是資料錯誤。
+- **高地上鋪的是草地/竹林而非空地時不會生成斜坡**,整片高地一開始沒有任何坡道。
+- **東南角有一塊 39 格的陸地被水塘完全圍死**(座標約 X13–X27 / Y2–Y7),
+  跟地圖其餘部分沒有任何相連格;島上的既有養豬小屋(X13/Y2)因此永遠走不到。
+  若之後實機確認水塘邊界有缺口,改完地形記得重跑完美佈局。

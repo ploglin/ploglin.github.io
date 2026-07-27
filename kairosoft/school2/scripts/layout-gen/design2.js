@@ -1,17 +1,21 @@
-/* 健康鎮完美佈局 v2：先鋪路網 → 街廓填設施 → 真實邏輯驗證 */
+/* 路網佈局器 v2：先鋪路網 → 街廓填設施 → 真實邏輯驗證。
+   路網參數(大道/街道/街廓帶)取自 towns.js 的該城鎮設定，非健康鎮專用。 */
 const E = require('./engine.js');
 const { items, SPOTS, gridRows, gridCols } = E;
 
-const AV = [5, 10, 15, 20];        // 橫向大道
-const ST = [4, 9, 14, 19];         // 縱向街道
-const ROW_BANDS = [[1, 4], [6, 9], [11, 14], [16, 19], [21, 24]];
-const COL_BANDS = [[0, 3], [5, 8], [10, 13], [15, 18], [20, 23]];
+const ROADS = E.town.roads;
+const AV = ROADS.AV;                 // 橫向大道（列）
+const ST = ROADS.ST;                 // 縱向街道（欄）
+const ROW_BANDS = ROADS.ROW_BANDS;   // 街廓的列區間
+const COL_BANDS = ROADS.COL_BANDS;   // 街廓的欄區間
 
-/* 可被道路覆蓋的地形。除了自然景觀，也包含健康鎮原本散落在路線上的小農舍
-   （小雞、小農場、田地、百葉箱）——它們卡在幹道上會讓南北動線只剩中間一條
-   草地，非常脆弱；拆掉改鋪路，農牧設施之後在南區的農牧園區重建。 */
+/* 可被道路覆蓋的地形。除了自然景觀，也包含原本散落在路線上的小農舍
+   （小雞、小農場、田地、百葉箱）——它們卡在幹道上會讓動線只剩一條草地，
+   非常脆弱；拆掉改鋪路，農牧設施之後在農牧園區重建。
+   ※ 東部小鎮的『田埂路(aze_path)』與竹林在模擬器裡都不可通行，等同景觀，
+     鋪成走廊才有動線可言，因此也列入。教室／辦公室／網球場等既有校舍不動。 */
 const PAVEABLE = new Set(['empty', 'grass', 'woods', 'flower', 'azalea', 'pine', 'rock', 'special_tree', 'sakura', 'wood_path', 'asphalt',
-    'chicken', 'farm', 'field', 'weather']);
+    'aze_path', 'bamboo', 'chicken', 'farm', 'field', 'weather']);
 
 function clone(g) { return g.map(r => r.map(c => ({ type: c.type, elevation: c.elevation }))); }
 function sizeOf(t) { const it = items[t] || {}; return [it.w || 1, it.h || 1]; }
@@ -52,15 +56,7 @@ function parcels(g) {
     return out;
 }
 
-function typesInWindow(g, wr, wc) {
-    const s = new Set();
-    for (let dr = 0; dr < 4; dr++) for (let dc = 0; dc < 4; dc++) {
-        const t = g[wr + dr][wc + dc].type;
-        if (t !== 'empty') s.add(t);
-        else if (E.isSlopeIn(g, wr + dr, wc + dc)) s.add('slope');
-    }
-    return s;
-}
+const typesInWindow = E.typesInWindow;
 
 /* 在 parcel 裡找放得下 t 的位置。
    規則：所有格都要空著；若 t 是「建築」，整棟只需至少一格臨路（served）即可。 */
@@ -97,7 +93,9 @@ function hasType(g, t) {
 
 function build(spotOrder, opts) {
     opts = opts || {};
-    const g = layRoads(E.loadHealth());
+    const g = layRoads(E.loadTerrain());
+    // 鋪路後、切街廓前的整地鉤子（東部小鎮用它打通高地坡道，讓 parcels 算到正確的可達性）
+    if (opts.prepare) opts.prepare(g);
     // 預先卡位（唯一設施要蓋在對的地方，例如校長室緊鄰辦公室，讓「學習」與「選舉」共用）
     (opts.preplace || []).forEach(x => {
         const [w, h] = sizeOf(x.t);
@@ -111,7 +109,8 @@ function build(spotOrder, opts) {
     for (const spot of spotOrder) {
         let best = null;
         ps.forEach((p, pi) => {
-            const have = typesInWindow(g, p.r0, p.c0);
+            // 街廓左上角當 4×4 判定窗口的原點；貼邊的窄街廓要往內夾，才不會超出地圖
+            const have = typesInWindow(g, Math.min(p.r0, gridRows - 4), Math.min(p.c0, gridCols - 4));
             const missing = spot.req.filter(gr => !(Array.isArray(gr) ? gr : [gr]).some(t => have.has(t)));
             if (!missing.length) { if (!best || best.cells > 0) best = { pi, plan: [], cells: 0 }; return; }
             const tmpFree = new Set(freeSets[pi]);
@@ -138,8 +137,21 @@ function build(spotOrder, opts) {
             if (!best || cells < best.cells) best = { pi, plan, cells };
         });
         if (!best) { log.push({ spot: spot.name, fail: true }); continue; }
+        // 守衛：整組放下去若把某棟建築圍死（例如卡住高地上唯一的一條走道）就整組作廢，
+        // 該景點交給 builder 的 4×4 補位另找地方。
+        const snap = [];
+        for (const x of best.plan) for (let dr = 0; dr < x.slot.h; dr++) for (let dc = 0; dc < x.slot.w; dc++) {
+            const cell = g[x.slot.r + dr][x.slot.c + dc];
+            snap.push([x.slot.r + dr, x.slot.c + dc, cell.type, cell.elevation]);
+        }
+        const blockedBefore = E.blockedBuildings(g).count;
+        best.plan.forEach(x => place(g, x.slot, x.t));
+        if (E.blockedBuildings(g).count > blockedBefore) {
+            snap.forEach(([r, c, t, e]) => { g[r][c] = { type: t, elevation: e }; });
+            log.push({ spot: spot.name, fail: true, reason: 'blocked' });
+            continue;
+        }
         for (const x of best.plan) {
-            place(g, x.slot, x.t);
             for (let dr = 0; dr < x.slot.h; dr++) for (let dc = 0; dc < x.slot.w; dc++)
                 freeSets[best.pi].delete((x.slot.r + dr) + ',' + (x.slot.c + dc));
             log.push({ spot: spot.name, t: x.t, at: [x.slot.r, x.slot.c] });

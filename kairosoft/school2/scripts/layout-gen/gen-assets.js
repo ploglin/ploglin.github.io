@@ -1,25 +1,29 @@
-/* 由分享碼產生：地圖 SVG + 攻略頁要用的表格 HTML */
+/* 由分享碼產生：地圖 SVG + 攻略頁要用的表格 HTML
+   用法：node gen-assets.js          → 健康鎮（code.txt → health-perfect.svg）
+         node gen-assets.js east     → 東部小鎮（code-east.txt → east-perfect.svg）
+   產出的 SVG 直接寫到 ../../layouts/，表格 HTML 留在本目錄供貼上。 */
 const fs = require('fs');
+const path = require('path');
+const townKey = (process.argv[2] || 'health').replace(/^--?/, '');
+require('./towns.js').select(townKey);
 const E = require('./engine.js');
-const { items, SPOTS, gridRows, gridCols, TYPE_KEYS } = E;
+const { items, SPOTS, gridRows, gridCols, town } = E;
 
-const code = fs.readFileSync('code.txt', 'utf8').trim();
-const str = Buffer.from(code.replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('binary');
-const cells = [];
-for (const p of str.split(',')) {
-    const [t, e, n] = p.split('.').map(Number);
-    for (let k = 0; k < n; k++) cells.push({ type: TYPE_KEYS[t] || 'empty', elevation: e || 1 });
-}
-const g = [];
-for (let r = 0; r < gridRows; r++) g.push(cells.slice(r * gridCols, (r + 1) * gridCols));
+const CODE_FILE = { health: 'code.txt', east: 'code-east.txt' }[townKey];
+const OUT_DIR = path.join(__dirname, '..', '..', 'layouts');
+
+const code = fs.readFileSync(path.join(__dirname, CODE_FILE), 'utf8').trim();
+const dec = E.decodeMap(code);
+if (!dec || dec.rows !== gridRows || dec.cols !== gridCols) throw new Error('分享碼尺寸與 ' + town.name + ' 不符');
+const g = dec.grid;
 
 /* ---------- SVG ---------- */
 const S = 22, PAD = 20;
 const W = gridCols * S + PAD * 2, H = gridRows * S + PAD * 2;
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 const out = [];
-out.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Noto Sans TC',sans-serif" role="img" aria-label="口袋學院物語2 健康鎮完美佈局地圖">`);
-out.push(`<title>口袋學院物語2 健康鎮完美佈局（29 個人氣景點全成立）</title>`);
+out.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Noto Sans TC',sans-serif" role="img" aria-label="口袋學院物語2 ${town.name}完美佈局地圖">`);
+out.push(`<title>口袋學院物語2 ${town.name}完美佈局（29 個人氣景點全成立）</title>`);
 out.push(`<rect width="${W}" height="${H}" fill="#f8fafc"/>`);
 
 for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++) {
@@ -38,29 +42,21 @@ for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++) {
         out.push(`<text x="${x + S / 2}" y="${y + S / 2 + 4.5}" font-size="12.5" font-weight="700" text-anchor="middle" fill="${it.textCol === 'white' ? '#ffffff' : '#1f2937'}">${esc(sh)}</text>`);
     }
 }
-// 座標軸（遊戲座標：X = r+2 由上而下、Y = 25-c 由左而右）
-for (let r = 0; r < gridRows; r += 2) out.push(`<text x="${PAD - 5}" y="${PAD + r * S + S / 2 + 4}" font-size="10" text-anchor="end" fill="#94a3b8">${r + 2}</text>`);
-for (let c = 0; c < gridCols; c += 2) out.push(`<text x="${PAD + c * S + S / 2}" y="${PAD - 6}" font-size="10" text-anchor="middle" fill="#94a3b8">${25 - c}</text>`);
+// 座標軸（遊戲座標：X = r+2 由上而下、Y = gridCols+1-c 由左而右遞減）
+for (let r = 0; r < gridRows; r += 2) out.push(`<text x="${PAD - 5}" y="${PAD + r * S + S / 2 + 4}" font-size="10" text-anchor="end" fill="#94a3b8">${E.gameX(r)}</text>`);
+for (let c = 0; c < gridCols; c += 2) out.push(`<text x="${PAD + c * S + S / 2}" y="${PAD - 6}" font-size="10" text-anchor="middle" fill="#94a3b8">${E.gameY(c)}</text>`);
 out.push('</svg>');
-fs.writeFileSync('health-perfect.svg', out.join('\n'));
-console.log('SVG 大小：', Math.round(out.join('\n').length / 1024) + 'KB');
+fs.writeFileSync(path.join(OUT_DIR, town.svg), out.join('\n'));
+console.log('SVG：' + town.svg + '（' + W + '×' + H + '，' + Math.round(out.join('\n').length / 1024) + 'KB）');
 
 /* ---------- 景點位置表 ---------- */
-const where = new Map();
-for (let wr = 0; wr <= gridRows - 4; wr++) for (let wc = 0; wc <= gridCols - 4; wc++) {
-    const ts = new Set();
-    for (let dr = 0; dr < 4; dr++) for (let dc = 0; dc < 4; dc++) {
-        const t = g[wr + dr][wc + dc].type;
-        if (t !== 'empty') ts.add(t); else if (E.isSlopeIn(g, wr + dr, wc + dc)) ts.add('slope');
-    }
-    for (const s of SPOTS) if (!where.has(s.id) && s.req.every(gr => (Array.isArray(gr) ? gr : [gr]).some(t => ts.has(t)))) where.set(s.id, [wr, wc]);
-}
+const where = E.spotWindows(g);
 const rows = SPOTS.map(s => {
-    const [wr, wc] = where.get(s.id);
+    const w = where.get(s.id);
     const req = s.req.map(gr => (Array.isArray(gr) ? gr : [gr]).map(t => items[t].name).join('／')).join('＋');
-    return `                        <tr><td>${s.name}</td><td>X${wr + 2} / Y${25 - wc}</td><td>${req}</td><td>${s.bonus || ''}</td></tr>`;
+    return `                        <tr><td>${s.name}</td><td>X${E.gameX(w[0])} / Y${E.gameY(w[1])}</td><td>${req}</td><td>${s.bonus || ''}</td></tr>`;
 }).join('\n');
-fs.writeFileSync('spots-table.html', rows);
+fs.writeFileSync(path.join(__dirname, 'spots-table-' + townKey + '.html'), rows);
 
 /* ---------- 設施統計表 ---------- */
 const cnt = {};
@@ -75,8 +71,23 @@ Object.entries(cnt).forEach(([t, n]) => {
 const facRows = ['生活與設施', '教室與專科', '運動與社團', '動植物農牧', '環境地形']
     .filter(k => byCat[k])
     .map(k => `                        <tr><td>${k}</td><td>${byCat[k].sort().join('、')}</td></tr>`).join('\n');
-fs.writeFileSync('fac-table.html', facRows);
+fs.writeFileSync(path.join(__dirname, 'fac-table-' + townKey + '.html'), facRows);
+
+/* ---------- 屬性加成合計（29 景點全開） ---------- */
+const bonus = {};
+SPOTS.forEach(s => (s.bonus || '').split(/\s+/).forEach(tok => {
+    const m = /^(.+?)\+(\d+)$/.exec(tok);
+    if (m) bonus[m[1]] = (bonus[m[1]] || 0) + Number(m[2]);
+}));
 
 const bCount = Object.entries(cnt).filter(([t]) => E.isBuildingType(t))
     .reduce((n, [t, v]) => n + v / ((items[t].w || 1) * (items[t].h || 1)), 0);
-console.log('建築棟數：', Math.round(bCount), '｜走廊格數：', cnt.wood_path || 0, '｜分享碼長度：', code.length);
+let plateauFac = 0;
+for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++)
+    if (g[r][c].elevation > 1 && E.isBuildingType(g[r][c].type)) plateauFac += 1 / ((items[g[r][c].type].w || 1) * (items[g[r][c].type].h || 1));
+let gateCells = 0;
+g.flat().forEach(c => { if (c.type === 'gate' || c.type === 'gate_h') gateCells++; });
+console.log('建築棟數：' + Math.round(bCount) + '（高地上 ' + Math.round(plateauFac) + '）｜走廊：' + (cnt.wood_path || 0) +
+    '｜教室：' + Math.round((cnt.class || 0) / 4) + ' 間｜校門：' + (gateCells / 2) + ' 座｜分享碼長度：' + code.length);
+console.log('屬性加成合計：' + Object.entries(bonus).sort((a, b) => b[1] - a[1]).map(([k, v]) => k + ' +' + v).join('、'));
+console.log('表格：spots-table-' + townKey + '.html / fac-table-' + townKey + '.html');
