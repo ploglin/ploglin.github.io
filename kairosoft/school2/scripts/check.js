@@ -50,18 +50,22 @@ const badGuide = guide
     .filter(id => !items[id]);
 ok('發展建議的設施 id 全部存在', !badGuide.length, [...new Set(badGuide)].join(','));
 
-// 5) 內建地圖資料（預設圖與進度種子）
-for (const m of html.matchAll(/(PRESET_DEFAULT_DATA|PROGRESS_SEED_DATA) = \`(\[\[[\s\S]*?\]\])\`/g)) {
+// 5) 內建地圖資料（預設圖、進度種子、各鎮地形）——每張圖各有預期尺寸
+const MAP_SIZES = { PRESET_DEFAULT_DATA: [26, 24], PROGRESS_SEED_DATA: [26, 24], PRESET_EAST_DATA: [26, 26] };
+for (const m of html.matchAll(/(PRESET_DEFAULT_DATA|PROGRESS_SEED_DATA|PRESET_EAST_DATA) = \`(\[\[[\s\S]*?\]\])\`/g)) {
     const name = m[1];
     try {
         const g = JSON.parse(m[2]);
-        ok(`${name} 為 26×24`, g.length === 26 && g.every(row => row.length === 24));
+        const [R, C] = MAP_SIZES[name];
+        ok(`${name} 為 ${R}×${C}`, g.length === R && g.every(row => row.length === C));
         const badType = [...new Set(g.flat().map(c => c.type).filter(t => t !== 'empty' && !items[t]))];
         ok(`${name} 的設施 id 全部存在`, !badType.length, badType.join(','));
     } catch (e) {
         ok(`${name} JSON 可解析`, false, e.message);
     }
 }
+
+ok('內建地圖齊全', Object.keys(MAP_SIZES).every(n => html.includes(n + ' = ')));
 
 // 6) 分享編碼往返（鏡像 encodeMap/decodeMap 的邏輯）
 const TYPE_KEYS = Object.keys(items);
@@ -91,11 +95,11 @@ ok('分享編碼往返一致', roundtrip);
 
 // 7) 多尺寸分享編碼（鏡像帶「RxC;」前綴的新格式；26×24 必須維持無前綴的舊格式）
 {
-    // 造一張 27×27 測試圖（角落放設施、含高地），走「前綴編碼 → 解碼」往返
-    const R2 = 27, C2 = 27;
+    // 造一張 26×26 測試圖（角落放設施、含高地），走「前綴編碼 → 解碼」往返
+    const R2 = 26, C2 = 26;
     const g2 = Array(R2).fill(null).map(() => Array(C2).fill(null).map(() => ({ type: 'empty', elevation: 1 })));
     g2[0][0] = { type: 'woods', elevation: 1 };
-    g2[26][26] = { type: 'pond', elevation: 1 };
+    g2[25][25] = { type: 'pond', elevation: 1 };
     g2[13][13] = { type: 'class', elevation: 2 };
     const parts2 = [];
     let prev2 = null, count2 = 0;
@@ -120,7 +124,7 @@ ok('分享編碼往返一致', roundtrip);
         const back = cells2[r * C2 + c];
         if (back.type !== g2[r][c].type || back.elevation !== g2[r][c].elevation) rt2 = false;
     }
-    ok('多尺寸分享編碼（27×27 前綴格式）往返一致', rt2);
+    ok('多尺寸分享編碼（26×26 前綴格式）往返一致', rt2);
     // encodeMap 原始碼必須保留「26×24 無前綴」的相容規則
     ok('26×24 維持無前綴舊格式', /gridRows === 26 && gridCols === 24\) \? ''/.test(html));
 }

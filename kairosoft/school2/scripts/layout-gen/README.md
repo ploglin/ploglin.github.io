@@ -12,4 +12,4 @@ SPOTS、地形都**直接從 ../../sim/index.html 抽取**,模擬器資料改了
 
 用法:`node final.js` → `node gen-assets.js`,再把 code.txt / SVG / 表格
 注入 layouts/index.html(佈局頁的分享碼與統計要同步更新並解碼重驗)。
-東部小鎮地形完成後,擴充 engine.js 讀取 presets/east-wip.json 即可做東部版。
+東部小鎮地形已定稿(sim 內 PRESET_EAST_DATA / presets/east.json),擴充 engine.js 讀取即可做東部版。
