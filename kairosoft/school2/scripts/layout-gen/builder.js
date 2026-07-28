@@ -206,6 +206,92 @@ function countReachable(g) {
     return n;
 }
 
+/* 開水道：實機確認**水塘可以被建設直接覆蓋破壞，該格變回平地**（可通行、可蓋）。
+   所以被水圍死的陸地不是死地——只要鑿最少量的水塘就能接上動線。
+
+   作法：0-1 Dijkstra 從「現在走得到的格」往外算，每經過一格水塘 +1，
+   得到每一格「要破壞幾格水塘才走得到」；再對所有 dist ≤ maxCarve 的陸地目標
+   實際模擬一次，挑「打通面積最大、破壞格數最少」的那條水道鑿開。
+
+   破壞後保留原本的高度 —— 水塘沒了就是「那個高度的普通地面」，不會憑空長出斜坡。 */
+function carveWaterChannel(g, opt) {
+    opt = opt || {};
+    const maxCarve = opt.maxCarve || 2, minGain = opt.minGain || 8;
+    const fill = opt.fill || 'wood_path';       // 鑿開後直接鋪走廊當橋
+    const rounds = opt.rounds || 2;
+    const carved = [];
+
+    const isWater = t => t === 'pond' || t === 'lake';
+    // 破壞水塘後那格變成「該高度的平地」——不是斜坡，所以只有同高度才走得過去。
+    // 兩格都是現有地形時就用模擬器真正的 canStep（吃斜坡規則）。
+    const walkable = (r, c, nr, nc) => {
+        const a = g[r][c], b = g[nr][nc];
+        if (isWater(a.type) || isWater(b.type)) return a.elevation === b.elevation;
+        return E.canStep(g, r, c, nr, nc);
+    };
+
+    for (let round = 0; round < rounds; round++) {
+        const reach = E.computeReachability(g);
+        if (!reach) break;
+        // dist[r][c] = 走到這格要破壞幾格水塘；prev 用來回推水道路徑
+        const dist = Array.from({ length: gridRows }, () => Array(gridCols).fill(Infinity));
+        const prev = Array.from({ length: gridRows }, () => Array(gridCols).fill(null));
+        const deque = [];
+        for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++)
+            if (reach[r][c] >= 0) { dist[r][c] = 0; deque.push([r, c]); }
+        while (deque.length) {
+            const [r, c] = deque.shift();
+            for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+                const nr = r + dr, nc = c + dc;
+                if (nr < 0 || nr >= gridRows || nc < 0 || nc >= gridCols) continue;
+                const t = g[nr][nc].type;
+                let cost;
+                if (isWater(t)) cost = 1;                                // 破壞它
+                else if (E.PASSABLE.has(t)) cost = 0;
+                else continue;                                           // 建築／樹林等繞不過
+                if (!walkable(r, c, nr, nc)) continue;
+                if (dist[r][c] + cost >= dist[nr][nc] || dist[r][c] + cost > maxCarve) continue;
+                dist[nr][nc] = dist[r][c] + cost;
+                prev[nr][nc] = [r, c];
+                if (cost) deque.push([nr, nc]); else deque.unshift([nr, nc]);
+            }
+        }
+        // 候選目標：要破壞 1～maxCarve 格才到得了的「陸地」
+        const targets = [];
+        for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++) {
+            const t = g[r][c].type;
+            if (isWater(t)) continue;
+            if (dist[r][c] > 0 && dist[r][c] <= maxCarve) targets.push([r, c]);
+        }
+        const pathOf = (r, c) => {                 // 回推路徑上要破壞的水塘格
+            const cells = [];
+            let cur = [r, c];
+            while (cur && dist[cur[0]][cur[1]] > 0) {
+                if (isWater(g[cur[0]][cur[1]].type)) cells.push(cur);
+                cur = prev[cur[0]][cur[1]];
+            }
+            return cells;
+        };
+        const base = countReachable(g);
+        let best = null;
+        for (const [r, c] of targets) {
+            const cells = pathOf(r, c);
+            if (!cells.length || cells.length > maxCarve) continue;
+            const snap = snapshot(g, cells);
+            cells.forEach(([cr, cc]) => { g[cr][cc] = { type: fill, elevation: g[cr][cc].elevation }; });
+            const gain = countReachable(g) - base;
+            restore(g, snap);
+            if (gain < minGain) continue;
+            if (!best || gain > best.gain || (gain === best.gain && cells.length < best.cells.length)) best = { cells, gain };
+        }
+        if (!best) break;
+        best.cells.forEach(([r, c]) => { g[r][c] = { type: fill, elevation: g[r][c].elevation }; carved.push([r, c]); });
+        console.log('  鑿開水道：' + best.cells.map(([r, c]) => 'X' + E.gameX(r) + '/Y' + E.gameY(c)).join('、') +
+            '（打通 ' + best.gain + ' 格）');
+    }
+    return carved;
+}
+
 /* 打通高地：高地上的「非空地形」（草地／竹林／田埂路等）不是斜坡，若某塊高地四周
    完全沒有斜坡，學生就永遠上不去，蓋在上面的既有建築也會被判成走不到。
    把邊界那一格清成空地，遊戲規則會自動判成斜坡（isSlope 是從高低差推導的、不是存的），
@@ -286,7 +372,11 @@ function fillPlateau(g, zones) {
         if (z.clear) {
             for (let r = z.rows[0]; r <= z.rows[1]; r++) for (let c = z.cols[0]; c <= z.cols[1]; c++) {
                 const cell = g[r][c];
-                if (cell.elevation >= 2 && CLEARABLE.has(cell.type)) g[r][c] = { type: 'empty', elevation: cell.elevation };
+                if (cell.elevation < 2 || !CLEARABLE.has(cell.type)) continue;
+                // 守衛：這格地形若正好是某個景點的材料（草地→清爽／菜園、櫻花→約會…），擦掉會弄掉景點
+                const before = E.activeSpots(g).size;
+                g[r][c] = { type: 'empty', elevation: cell.elevation };
+                if (E.activeSpots(g).size < before) g[r][c] = { type: cell.type, elevation: cell.elevation };
             }
         }
         const rowsOf = {};
@@ -392,5 +482,5 @@ function report(g, title, codeFile) {
 
 module.exports = {
     DECOR, DECOR_EAST, CLEARABLE, spotOrder, guarded, fallback, fallbackAll,
-    fill, addGate, openPlateaus, fillPlateau, tidyUnreachable, countReachable, report
+    fill, addGate, carveWaterChannel, openPlateaus, fillPlateau, tidyUnreachable, countReachable, report
 };

@@ -63,9 +63,21 @@ const RELATED = {
             { href: '../db/spots/', icon: '🎯', label: '景點資料庫', desc: '全人氣景點條件表' }
         ],
         'layouts': [
-            { href: '../spot-check/', desc: '勾設施查可成景點' },
-            { href: '../#combo', icon: '🧩', label: '29 種景點 combo 總表', desc: '29 景點成立配方' },
-            { href: '../maps/', desc: '五城鎮地形比較' }
+            { href: 'health/', icon: '🏫', label: '健康鎮完美佈局', desc: '26×24 · 29 景點全成立' },
+            { href: 'east/', icon: '🏞️', label: '冬郵小鎮完美佈局', desc: '26×26 · 29 景點全成立' },
+            { href: '../spot-check/', desc: '勾設施查可成景點' }
+        ],
+        // 各鎮子頁在 layouts/<鎮>/，相對路徑要多退一層（gen-game-nav 只掃第一層，
+        // 所以這些子頁不進遊戲功能列，橫向切換由各鎮頁上方的城鎮 pills 負責）
+        'layouts/health': [
+            { href: '../east/', icon: '🏞️', label: '冬郵小鎮完美佈局', desc: '26×26 · 29 景點全成立' },
+            { href: '../../maps/', desc: '五城鎮地形比較' },
+            { href: '../../spot-check/', desc: '勾設施查可成景點' }
+        ],
+        'layouts/east': [
+            { href: '../health/', icon: '🏫', label: '健康鎮完美佈局', desc: '26×24 · 29 景點全成立' },
+            { href: '../../maps/', desc: '五城鎮地形比較' },
+            { href: '../../spot-check/', desc: '勾設施查可成景點' }
         ],
         'spot-check': [
             { href: '../layouts/', desc: '完美佈局實例參考' },
@@ -75,7 +87,7 @@ const RELATED = {
         'maps': [
             { href: '../economy/', desc: '資金週轉與收支控管' },
             { href: '../walkthrough/', desc: '序盤到通關的節奏' },
-            { href: '../layouts/', desc: '健康鎮完美佈局' }
+            { href: '../layouts/', desc: '各鎮 29 景點全成立圖' }
         ],
         'ng-plus': [
             { href: '../challenges/', desc: '各關卡達成條件一覽' },

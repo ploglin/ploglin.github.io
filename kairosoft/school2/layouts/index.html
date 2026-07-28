@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>口袋學院物語2 完美佈局｜健康鎮＋冬郵小鎮 29 景點全成立地圖</title>
-    <meta name="description" content="口袋學院物語2（名門ポケット学院2）完美佈局：健康鎮與冬郵小鎮各一張圖，同時成立全部 29 個人氣景點，含完整路網動線、校門、農牧與非景點設施，每一格都經程式驗證沒有建築被包圍。附兩城鎮的景點座標對照表、設施清單與一鍵載入模擬器。">
-    <meta name="keywords" content="口袋學院物語2,完美佈局,健康鎮,冬郵小鎮,人氣景點,29景點,佈局範例,動線,擺法,斜坡,田埂路,模擬器,名門ポケット学院2,開羅遊戲">
+    <title>口袋學院物語2 佈局範例集｜各城鎮完美佈局與擺法原則</title>
+    <meta name="description" content="口袋學院物語2（名門ポケット学院2）佈局範例集：健康鎮與冬郵小鎮各一張「29 個人氣景點全成立」的完美佈局，可一鍵載入模擬器；另有通用的擺法設計原則（棋盤路網、4×4 街廓、大型建築排法、高地與斜坡、校門動線）與三套適合新手練手的小範例。所有地圖都以模擬器的判定程式逐格驗證。">
+    <meta name="keywords" content="口袋學院物語2,佈局範例,完美佈局,健康鎮,冬郵小鎮,人氣景點,29景點,擺法,動線,4x4,街廓,模擬器,名門ポケット学院2,開羅遊戲">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://ploglin.github.io/kairosoft/school2/layouts/">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏫</text></svg>">
     <meta property="og:type" content="article">
-    <meta property="og:title" content="口袋學院物語2 完美佈局｜健康鎮＋冬郵小鎮 29 景點全成立">
-    <meta property="og:description" content="健康鎮與冬郵小鎮各一張完美佈局，都同時成立全部 29 個人氣景點，含完整動線與農牧設施，經程式逐格驗證。">
+    <meta property="og:title" content="口袋學院物語2 佈局範例集｜各城鎮完美佈局">
+    <meta property="og:description" content="健康鎮與冬郵小鎮各一張 29 景點全成立的完美佈局，附通用擺法原則與新手小範例，全部經程式逐格驗證。">
     <meta property="og:locale" content="zh_TW">
     <meta property="og:url" content="https://ploglin.github.io/kairosoft/school2/layouts/">
     <meta property="og:image" content="https://ploglin.github.io/kairosoft/school2/layouts/health-perfect.svg">
@@ -19,17 +19,20 @@
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
-        "@type": "Article",
-        "headline": "口袋學院物語2 完美佈局：健康鎮與冬郵小鎮 29 個人氣景點全成立",
-        "description": "健康鎮（26×24）與冬郵小鎮（26×26）各一張地圖，都同時成立全部 29 個人氣景點，含完整路網動線與農牧設施，經程式逐格驗證。",
+        "@type": "CollectionPage",
+        "name": "口袋學院物語2 佈局範例集",
+        "description": "各城鎮的完美佈局（29 個人氣景點全成立）與通用擺法原則。",
         "inLanguage": "zh-Hant",
-        "image": [
-            "https://ploglin.github.io/kairosoft/school2/layouts/health-perfect.svg",
-            "https://ploglin.github.io/kairosoft/school2/layouts/east-perfect.svg"
-        ],
+        "url": "https://ploglin.github.io/kairosoft/school2/layouts/",
         "about": { "@type": "VideoGame", "name": "口袋學院物語2", "alternateName": "名門ポケット学院2" },
-        "author": { "@type": "Organization", "name": "開羅攻略站" },
-        "publisher": { "@type": "Organization", "name": "開羅攻略站" }
+        "publisher": { "@type": "Organization", "name": "開羅攻略站" },
+        "mainEntity": {
+            "@type": "ItemList",
+            "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "健康鎮完美佈局（26×24）", "url": "https://ploglin.github.io/kairosoft/school2/layouts/health/" },
+                { "@type": "ListItem", "position": 2, "name": "冬郵小鎮完美佈局（26×26）", "url": "https://ploglin.github.io/kairosoft/school2/layouts/east/" }
+            ]
+        }
     }
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
@@ -39,276 +42,86 @@
         .layout-card h3 { margin: 0 0 4px; font-size: 18px; font-weight: 900; }
         .layout-card .spots { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 12px; }
         .layout-card .sp { font-size: 12.5px; font-weight: 800; padding: 3px 10px; border-radius: 999px; background: var(--brand-soft); color: var(--brand-strong); }
-        .mapwrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: #f8fafc; padding: 10px; margin: 14px 0; }
-        .mapwrap img { display: block; width: 568px; max-width: none; height: auto; }
-        .mapwrap.wide img { width: 612px; }
-        .statgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin: 14px 0; }
-        .statgrid div { background: var(--card-2); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
-        .statgrid b { display: block; font-size: 22px; font-weight: 900; color: var(--brand-strong); line-height: 1.2; }
-        .statgrid span { font-size: 12.5px; color: var(--muted); font-weight: 700; }
-        .zone-list { list-style: none; padding: 0; margin: 12px 0; }
-        .zone-list li { border-left: 3px solid var(--brand); padding: 8px 0 8px 12px; margin: 10px 0; }
-        .zone-list .zt { font-weight: 900; }
+        .town-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin: 16px 0 6px; }
+        .town-card { display: block; border: 1px solid var(--line); border-radius: var(--radius); background: var(--card); box-shadow: var(--shadow); overflow: hidden; text-decoration: none; color: inherit; }
+        .town-card:hover { border-color: var(--brand); }
+        .town-card .thumb { display: block; width: 100%; height: 150px; object-fit: cover; object-position: top center; background: #f8fafc; border-bottom: 1px solid var(--line); }
+        .town-card .tc-b { display: block; padding: 12px 14px 14px; }
+        .town-card .tc-t { display: block; font-weight: 900; font-size: 17px; }
+        .town-card .tc-j { display: block; font-size: 12px; color: var(--muted); font-weight: 700; margin-top: 1px; }
+        .town-card .tc-d { display: block; font-size: 13.5px; color: var(--ink-soft); margin-top: 7px; line-height: 1.55; }
+        .town-card .tc-k { display: inline-block; margin-top: 9px; font-size: 12px; font-weight: 800; padding: 3px 9px; border-radius: 999px; background: var(--brand-soft); color: var(--brand-strong); }
+        .town-card.soon { opacity: .6; box-shadow: none; }
+        .town-card.soon .tc-k { background: var(--card-2); color: var(--muted); }
     </style>
 </head>
 <body>
     <main class="container-narrow article">
         <h1>口袋學院物語2 佈局範例集</h1>
-        <p class="lead">下面的擺法都可以點「<strong>在模擬器開啟</strong>」直接載入本站的<a href="../sim/">佈局模擬器</a>，照著擺或自由修改。最上面兩張是<strong>完美佈局</strong>——<a href="#perfect">健康鎮</a>與<a href="#east">冬郵小鎮</a>各一張，都在同一張圖上成立全部 <strong>29 個人氣景點</strong>，而且每一棟都走得到。</p>
-        <p class="meta">最後更新：2026 年 7 月 · 兩張地圖都經程式逐格驗證</p>
+        <p class="lead">這裡收錄可以直接抄的校園擺法。每個城鎮都有一張<strong>完美佈局</strong>——同一張圖上成立<strong>全部 29 個人氣景點</strong>，而且沒有任何一棟建築走不到；點進去就能一鍵載入本站的<a href="../sim/">佈局模擬器</a>，照著擺或自由修改。下面另有<strong>通用的擺法原則</strong>與三套適合新手練手的小範例。</p>
+        <p class="meta">最後更新：2026 年 7 月 · 所有地圖經程式逐格驗證</p>
+
+        <div class="callout warn"><span class="k">小提醒</span>載入範例會覆蓋模擬器目前的地圖。若想保留現有的，先在模擬器用「存檔碼」備份；載入後也可用 <strong>Ctrl+Z</strong> 復原。</div>
 
         <div class="toc">
             <div class="t">本篇目錄</div>
             <ol>
-                <li><a href="#perfect">健康鎮完美佈局（26×24）</a></li>
-                <li><a href="#east">冬郵小鎮完美佈局（26×26）</a></li>
+                <li><a href="#perfect">各城鎮完美佈局（29 景點全成立）</a></li>
+                <li><a href="#rules">通用設計原則：完美佈局為什麼長這樣</a></li>
                 <li><a href="#basic">入門範例：先從小規模練手</a></li>
                 <li><a href="#how">怎麼用這些範例</a></li>
             </ol>
         </div>
 
-        <div class="callout warn"><span class="k">小提醒</span>載入範例會覆蓋模擬器目前的地圖。若想保留現有的，先在模擬器用「存檔碼」備份；載入後也可用 <strong>Ctrl+Z</strong> 復原。</div>
-
         <div class="prose">
-            <h2 id="perfect">健康鎮完美佈局：29 個人氣景點全成立</h2>
-            <p>這張圖以遊戲第一個地區「<strong>健康鎮</strong>」的原始地形為底——水塘、東西兩塊高地、原本的樹林與校舍全部保留——在上面規劃出一套完整的校園。它不是把設施硬塞在一起的示意圖，而是<strong>把全部 29 個人氣景點同時湊齊</strong>，同時交代清楚一所學校真正需要的東西：<strong>三個年級各 3 間、共 9 間教室</strong>、2 間辦公室、從校門串起來的完整路網動線，以及沒有景點效果的農牧與生活設施。</p>
+            <h2 id="perfect">各城鎮完美佈局：29 個人氣景點全成立</h2>
+            <p>遊戲共有五張城鎮地圖，地形差很多，所以「最佳擺法」也不一樣——同一套街廓邏輯放到水塘多的圖上就得改。目前收錄兩張，其餘陸續補上。每張都附完整的景點座標表、設施清單與施工順序。</p>
 
-            <div class="mapwrap">
-                <img src="health-perfect.svg" width="568" height="612"
-                     alt="口袋學院物語2 健康鎮完美佈局地圖：26×24 格校園全圖，含棋盤式走廊路網、五大分區與 29 個人氣景點">
+            <div class="town-grid">
+                <a class="town-card" href="health/">
+                    <img class="thumb" src="health-thumb.svg" width="212" height="212" alt="健康鎮完美佈局縮圖" loading="lazy">
+                    <span class="tc-b">
+                        <span class="tc-t">健康鎮完美佈局</span>
+                        <span class="tc-j">スコヤカタウン · 26×24</span>
+                        <span class="tc-d">最方正好規劃的第一張圖。標準的棋盤路網＋4×4 街廓解，兩塊高地全部開發成園區，水塘與 32 格斜坡原封不動。</span>
+                        <span class="tc-k">29 / 29 景點 · 147 棟</span>
+                    </span>
+                </a>
+                <a class="town-card" href="east/">
+                    <img class="thumb" src="east-thumb.svg" width="212" height="212" alt="冬郵小鎮完美佈局縮圖" loading="lazy">
+                    <span class="tc-b">
+                        <span class="tc-t">冬郵小鎮完美佈局</span>
+                        <span class="tc-j">ヒガシクメールタウン · 26×26</span>
+                        <span class="tc-d">校門開在北緣、水塘吃掉 76 格。示範田埂路不可通行、草地高地要擦出坡道，以及<strong>破壞 2 格水塘</strong>鑿水道打通東南湖心地。</span>
+                        <span class="tc-k">29 / 29 景點 · 136 棟</span>
+                    </span>
+                </a>
+                <span class="town-card soon">
+                    <span class="tc-b">
+                        <span class="tc-t">湖岸小鎮 · 溪谷小鎮 · 百靈山丘</span>
+                        <span class="tc-j">レイクサイド／ケイコクバレー／ヒバリーヒルズ</span>
+                        <span class="tc-d">地形資料整理中。三張圖的地形比較可先看<a href="../maps/">五城鎮地圖</a>，完成後會加進這一區。</span>
+                        <span class="tc-k">整理中</span>
+                    </span>
+                </span>
             </div>
-            <p style="font-size:13px;color:var(--muted);margin-top:-6px">圖中每格上的字是設施簡稱（操＝操場、樹＝樹林、走＝走廊…）。<strong>虛線深色外框</strong>代表高地；帶斜線的黃綠色是<strong>斜坡</strong>（高低差自動形成的地形，不能蓋東西，是上下高地唯一的通道）。邊緣數字是遊戲內座標，上方為 Y、左側為 X，與模擬器一致。</p>
 
-            <div class="statgrid">
-                <div><b>29 / 29</b><span>人氣景點成立</span></div>
-                <div><b>0</b><span>被包圍走不到的建築</span></div>
-                <div><b>147</b><span>建築棟數</span></div>
-                <div><b>9</b><span>教室（3 年級各 3 間）</span></div>
-                <div><b>2</b><span>校門（西側＋南側）</span></div>
-                <div><b>24</b><span>蓋在高地上的設施</span></div>
-            </div>
-
-            <p><a class="btn" href="../sim/#m=MC4xLjMsMC4yLjEsMy4yLjEsMzMuMi4xLDM2LjIuMSwzMS4yLjEsMjcuMi4xLDMuMi4xLDAuMi4xLDAuMS4xMywyMy4xLjEsMzUuMS4yLDAuMi4xLDMuMi4xLDE5LjIuMSwwLjIuMiwzLjIuMSwwLjIuMiw2My4xLjEsNjUuMS4xLDY0LjEuMSwzLjEuMSwzOC4xLjEsNTMuMS4xLDcuMS4yLDMuMS4xLDM5LjEuMSw0MC4xLjEsNTQuMS4xLDQ4LjEuMSwxLjEuMSwzNS4xLjIsMC4yLjEsMy4yLjEsMjQuMi4xLDMzLjIuMSwzLjIuMSwwLjIuMSwzLjEuMSw3LjEuMSwxLjEuMSwzNS4xLjIsMy4xLjEsNDUuMS4xLDEuMS4xLDcuMS4yLDMuMS4xLDQ2LjEuMSwxLjEuMywzNC4xLjIsMS4xLjEsMC4yLjIsMy4yLjEsMzYuMi4xLDMuMi4xLDAuMi4xLDMuMS4xLDcuMS4xLDU4LjEuMSwzNS4xLjIsMy4xLjEsNDUuMS4xLDM0LjEuMiwzMC4xLjEsMy4xLjEsNTIuMS4xLDU4LjEuMSwxLjEuMiwzNC4xLjIsNzAuMS4xLDcxLjEuMSwzLjEuMSwwLjIuNCwzLjEuMSw2Ni4xLjEsNTguMS4xLDQ0LjEuMiwzLjEuMSw1MC4xLjEsMzQuMS4yLDIwLjEuMSwzLjEuMSw1MC4xLjEsNTguMS4xLDQ3LjEuMSwzMC4xLjEsMy4xLjEwLDE2LjEuMSwzLjEuMTMsMjcuMS4xLDE5LjEuMSw0Ny4xLjEsMTUuMS4xLDMuMS4xLDYzLjEuMSw2MC4xLjEsNjEuMS4xLDE2LjEuMyw1OS4xLjEsMjQuMS4xLDExLjEuMSwzLjEuMSw3Ny4xLjEsNzguMS4xLDM3LjEuMSwxNi4xLjYsMS4xLjQsMTYuMS42LDEuMS4xLDU5LjEuMSwxLjEuMSwzNi4xLjEsMy4xLjEsNjMuMS4xLDEuMS4yLDE2LjEuNiwxLjEuNCwxNi4xLjYsNTcuMS4yLDEuMS4yLDMuMS4xLDU5LjEuMSwxLjEuMiwzMC4xLjEsMy4xLjEsMjAuMS4xLDEuMS4zLDQ5LjEuMSw3My4xLjEsMzEuMS4xLDMyLjEuMSwxNi4xLjYsNTcuMS4yLDI2LjEuMSwxLjEuMSwzLjEuMSw1OS4xLjEsMTkuMS4xLDI1LjEuMSwzMS4xLjEsMy4xLjEsMjEuMS4xLDMzLjEuMSw2Ny4xLjEsMS4xLjEsMy4xLjIxLDAuMi4zLDI1LjEuMSwyMS4xLjEsNTAuMS4xLDE5LjEuMSwzLjEuMSwyNS4xLjEsMS4xLjMsMy4yLjEsNDEuMS40LDMuMS4xLDQxLjEuNCwzLjEuMSwxMy4xLjEsMC4yLjEsMy4yLjIsMS4xLjQsMy4xLjEsMTEuMS4xLDcuMS4yLDEuMS4xLDMuMi4xLDQxLjEuNCwzLjEuMSw0MS4xLjQsMy4xLjEsMC4yLjEsMy4yLjEsNjEuMi4xLDMuMi4xLDEuMS4xLDcuMS4xLDQuMS4yLDMuMS4xLDQuMS4xLDMuMS40LDQxLjEuMiwzLjEuMSw2LjEuMSwzLjEuMSw0MS4xLjIsNDIuMS4yLDMuMS4xLDAuMi4xLDMuMi4xLDYwLjIuMSwzLjIuMSwxLjEuMSw3LjEuMSw0LjEuMiwzLjEuMSw0LjEuMSwzLjEuNCw0MS4xLjIsMy4xLjEsNi4xLjEsMy4xLjEsNDEuMS4yLDQyLjEuMiwzLjEuMSwwLjIuMSwzLjIuMSw2NC4yLjEsMy4yLjEsNTUuMS4xLDMuMS4xOCwwLjIuMSwzLjIuMSw2NS4yLjEsMjIuMi4xLDMuMi4xLDU1LjEuMSw0LjEuMywzLjEuMSw0My4xLjEsNDIuMS4yLDMuMS41LDI4LjEuMSwzLjEuMSw0MS4xLjQsMC4yLjEsMy4yLjEsMjAuMi4xLDE5LjIuMSwzLjIuMSwxLjEuMiw0NC4xLjIsMy4xLjEsNDMuMS4xLDQyLjEuMiwzLjEuMiwyMy4xLjEsMjcuMS4xLDMuMS4xLDI5LjEuMSwzLjEuMSw0MS4xLjQsMC4yLjEsMy4yLjEsMzYuMi4xLDc3LjIuMSwzLjIuMSwyNy4xLjEsNi4xLjEsNDUuMS4xLDYuMS4xLDMuMS4xLDMzLjEuMSwxNS4xLjEsMTQuMS4xLDMuMS41LDM2LjEuMSwzLjEuMSw0MS4xLjIsMTkuMS4xLDIwLjEuMSwwLjIuMSwzLjIuMSw3OC4yLjEsNjkuMi4xLDMuMi4xLDM2LjEuMSwzMS4xLjEsNDUuMS4xLDYuMS4xLDMuMS4xLDQuMS4xLDMwLjEuMSw0LjEuMiwzLjEuMSw1MS4xLjEsNTIuMS4xLDEuMS4yLDMuMS4xLDQxLjEuMiwxLjEuMSwyMi4xLjEsMC4yLjEsMy4yLjEsMzEuMi4xLDYxLjIuMSwzLjIuMSwzLjEuMTksMC4yLjEsMy4yLjEsNjAuMi4xLDY0LjIuMSwzLjIuMSw2Ny4xLjEsNjguMS4xLDcwLjEuMSw3MS4xLjEsMy4xLjEsNjcuMS4xLDczLjEuMSw3NC4xLjEsNzUuMS4xLDMuMS4xLDU3LjEuMSw2Mi4xLjEsNjMuMS4xLDU4LjEuMSwzLjEuMSw2MC4xLjEsNjQuMS4xLDY2LjEuMSw2NS4xLjEsMy4xLjEsMC4yLjEsMy4yLjEsNjUuMi4xLDMuMi4xLDY5LjEuMSw3Mi4xLjEsMS4xLjIsMy4xLjEsNzYuMS4xLDcyLjEuMSwxLjEuMiwzLjEuMSw1OS4xLjEsNjEuMS4xLDEuMS4xLDU4LjEuMSwzLjEuMSw3LjEuMSw1Ny4xLjEsMjIuMS4xLDEuMS4xLDMuMS4xLDAuMi40LDEuMS40LDMuMS4xLDEuMS40LDMuMS4xLDU5LjEuMSwxLjEuMywzLjEuMSw3LjEuMSwxLjEuMywzLjEuMSw3LjEuMSwzNi4xLjEsMzEuMS4xLDEzLjEuMSwxLjEuNCwzLjEuMSwxLjEuNCwzLjEuMSwxLjEuNCwzLjEuMSwxLjEuNCwzLjEuMSw2Mi4xLjEsMTMuMS4zLDAuMS4xMyw1Ni4xLjIsMC4xLjk">🧩 在模擬器開啟完美佈局</a></p>
-
-            <div class="callout key"><span class="k">怎麼驗證的</span>這張圖不是用眼睛喬出來的。我們把模擬器的判定程式（4×4 窗口景點判定、斜坡的高低差推導、從校門出發的可達性 BFS）搬到腳本裡，反覆放置與檢查，最後<strong>只用分享碼重新解碼再驗一次</strong>：29 個景點全成立、0 棟建築被包圍、地圖上沒有任何玩家蓋不出來的假地形。</div>
-
-            <h3>設計原則：為什麼長這樣</h3>
+            <h2 id="rules">通用設計原則：完美佈局為什麼長這樣</h2>
+            <p>下面這幾條在<strong>每一張地圖上都成立</strong>，是先讀懂再看個別城鎮頁比較快。各鎮頁面只寫該地形特有的取捨。</p>
             <ul>
-                <li><strong>棋盤式路網。</strong>橫向大道走在 X7 / X12 / X17 / X22，縱向街道走在 Y21 / Y16 / Y11 / Y6，全部從校門串起來。這是動線的骨架——只要每棟至少有一面貼到路，學生就走得到。</li>
-                <li><strong>街廓剛好 4×4。</strong>路與路之間圍出的方塊正好是一個 4×4，也就是景點判定的窗口大小。所以「同一個街廓裡的設施」＝「有機會湊成同一個景點」，規劃時只要顧好一個街廓就好。</li>
+                <li><strong>棋盤式路網。</strong>每隔 5 格拉一條走廊，橫向縱向都要，全部從校門串起來。這是動線的骨架——只要每棟至少有一面貼到路，學生就走得到；反過來說，只要有一條幹道被卡死，後面幾十棟房子會同時變成「走不到」。</li>
+                <li><strong>街廓剛好 4×4。</strong>路與路之間圍出的方塊正好是一個 4×4，也就是<a href="../#spot">景點判定的窗口大小</a>。所以「同一個街廓裡的設施」＝「有機會湊成同一個景點」，規劃時只要顧好一個街廓就好。</li>
                 <li><strong>外圈蓋房、中庭留綠。</strong>每個街廓外圈 12 格蓋設施（都貼路），中間 4 格放草地或花壇。中庭不但好看，草地本身還是「菜園」「力量」「清爽」等景點的材料。</li>
-                <li><strong>教室依年級分棟。</strong>學校要收三個年級的學生，教室不是蓋一間就好。圖上規劃了<strong>三棟教學樓、每棟 3 間教室，共 9 間</strong>：1 年級棟與 2 年級棟在東側（各附一間辦公室或生活設施），3 年級棟利用健康鎮原本就有的那間舊校舍再擴建 2 間。<strong>辦公室 2 間</strong>——原有的那間留在校門旁的行政區，新的一間設在 1 年級棟。</li>
-                <li><strong>一個街廓剛好 4 棟大型建築。</strong>2×2 的教室、辦公室、餐廳、便利商店都對齊街廓的四個象限，一個 4×4 街廓正好排下 4 棟，而且每棟都有一面貼到外圈的路。這是「大型建築要怎麼排才不會把自己圍死」的標準解。</li>
-                <li><strong>校長室只有一間，位置要挑。</strong>校長室被刻意蓋在辦公室旁邊，讓「選舉」（校長室＋辦公室＋茶室）和「學習」（校長室＋圖書室＋多媒體教室）共用同一間，省下一整組設施。</li>
-                <li><strong>高地要開發，斜坡要留。</strong>高地上一樣可以蓋建築——本圖在南北兩塊高地上放了 <strong>24 棟設施</strong>（北高地花園、東高地園區），做法是<strong>每一列高地最外側留成步道</strong>接上坡道，中間才蓋房子。唯一不能碰的是<strong>斜坡</strong>：斜坡是高低差自動生成的地形，一旦在上面蓋東西，那格就不再是斜坡，學生也就<strong>上不了高地</strong>了。本圖把原始地形的 32 格斜坡<strong>一格不動</strong>全部保留。</li>
-                <li><strong>兩座校門。</strong>校門不限一座、四邊都能開。除了西側原有的校門（直式 1×2），本圖在南側邊界加開一座橫式校門（2×1）接上 Y11 街道，讓南區的農牧與運動園區不必繞整張地圖。多開校門對動線只有好處——可達性是從<strong>每一座</strong>校門同時往外算的。</li>
-                <li><strong>水塘照用不改。</strong>原有水塘直接拿來當「水岸」的材料，不用填也不用挖。</li>
+                <li><strong>一個街廓剛好 4 棟大型建築。</strong>2×2 的教室、辦公室、餐廳、便利商店對齊街廓的四個象限，一個 4×4 街廓正好排下 4 棟，而且每棟都有一面貼到外圈的路。這是「大型建築要怎麼排才不會把自己圍死」的標準解。</li>
+                <li><strong>校長室只有一間，位置要挑。</strong>把校長室蓋在辦公室旁邊，「選舉」（校長室＋辦公室＋茶室）和「學習」（校長室＋圖書室＋多媒體教室）就能共用同一間，省下一整組設施。這是全遊戲最值錢的一次卡位。</li>
+                <li><strong>設施共用越多越省。</strong>景點會擠在一起是刻意的——一棟焚化爐可以同時進「怪談」「熱情」「燒水」「吃醋」的判定窗口。想省錢就把用到同一種設施的景點排在相鄰街廓。</li>
+                <li><strong>高地要開發，斜坡不能碰。</strong>高地上一樣可以蓋建築，作法是<strong>每一列高地最外側留成步道</strong>接上坡道，中間才蓋房子。唯一不能動的是<strong>斜坡</strong>：斜坡是高低差自動生成的地形（空地才會變成斜坡），一旦在上面蓋東西，那格就不再是斜坡，學生也就上不了高地。斜坡本身還是「黃昏」的材料。</li>
+                <li><strong>校門不限一座，四邊都能開。</strong>多開一座校門對動線只有好處——可達性是從<strong>每一座</strong>校門同時往外算的。地圖夠大時，在離主校門最遠的那一側加開一座，可以省下大量繞路。</li>
+                <li><strong>水塘可以拆，但通常不必。</strong>實機上<strong>水塘可以被建設直接覆蓋、破壞成平地</strong>，所以「被水圍起來的空地」不是死地，算一下最短要破壞幾格就能接進動線（冬郵小鎮那張只用了 2 格）。但水塘本身是「水岸」的材料，沒必要為了平整而大面積填掉。</li>
+                <li><strong>教室不是景點材料。</strong>教室、辦公室這類「學校必需但沒有景點效果」的建築，數量可以依你的遊戲進度自由增減，完全不影響那 29 個景點。我們的圖一律排成每年級 3 間、共 9 間，當作規劃上限。</li>
             </ul>
 
-            <h3>分區規劃</h3>
-            <ul class="zone-list">
-                <li><span class="zt">北區（X3–X6）</span>設施密度最高的一區，16 個景點集中在這裡：怪談、藝術、購物、特盛、時尚、埋伏、清爽、生物、吃醋、澀谷、熱血、動作、青空、非洲、宇宙、開羅。景點會擠在一起是刻意的——設施可以被多個景點共用，越密集越省。</li>
-                <li><span class="zt">池畔區（X8–X11）</span>圍著原有水塘展開，9 個景點：運動、好友、家庭、菜園、力量、熱情、水岸、燒水、名門。水塘本身就是「水岸」的材料，不用動它。</li>
-                <li><span class="zt">中央區（X13–X16）</span>主要幹道的轉運點，成立「約會」。<strong>3 年級棟</strong>在這裡（X13–X16 / Y12–Y15）：健康鎮原本的舊校舍加蓋 2 間，湊成 3 間教室。<strong>1 年級棟</strong>在它東邊（X13–X16 / Y7–Y10），3 間教室＋1 間辦公室。</li>
-                <li><span class="zt">校門區（X17–X21）</span>校門、原有辦公室、校長室所在的行政區，成立「學習」與「選舉」。<strong>2 年級棟</strong>在東側（X18–X21 / Y7–Y10），3 間教室＋洗手間、飲水處、更衣室等生活設施。</li>
-                <li><span class="zt">南區（X23–X26）</span>新開發區：西半邊是農牧園區（小農場、養雞、養豬、養牛、養兔、飼鴨與各種飼育小屋），東半邊是運動園區（體育館、道場、游泳池、棒球場等），靠著東側高地的斜坡成立「黃昏」。<strong>南側邊界另開一座校門</strong>，這一區不必再繞回西側大門。</li>
-                <li><span class="zt">兩塊高地</span>北高地（X2–X6 / Y15–Y22）規劃成花園，東高地（X12–X24 / Y2–Y6）是運動與飼育園區，合計 24 棟設施。每列最外側鋪成步道接上坡道，斜坡本身全部留空。</li>
-            </ul>
-
-            <h3>29 個景點的成立位置</h3>
-            <p>座標是該景點 4×4 判定範圍的左上角，用遊戲內的顯示方式（X 由上而下、Y 由左而右）。在模擬器裡把滑鼠移到格子上就會顯示座標，可以直接對照。</p>
-            <div class="table-wrap">
-                <table class="data">
-                    <thead><tr><th>景點</th><th>座標</th><th>需要設施</th><th>屬性加成</th></tr></thead>
-                    <tbody>
-                        <tr><td>運動</td><td>X7 / Y16</td><td>操場＋籃球場＋販賣機</td><td>體育+3 頭腦+3 態度+2</td></tr>
-                        <tr><td>約會</td><td>X12 / Y25</td><td>網球場＋樹林／櫻花樹＋圖書室</td><td>文系+2 理系+3 人氣+2 態度+2</td></tr>
-                        <tr><td>好友</td><td>X7 / Y10</td><td>飲水處＋保健室＋茶室</td><td>文系+3 運動+2 人氣+2</td></tr>
-                        <tr><td>怪談</td><td>X3 / Y5</td><td>音樂室＋理科室＋焚化爐</td><td>理系+3 頭腦+3</td></tr>
-                        <tr><td>學習</td><td>X17 / Y23</td><td>校長室＋圖書室＋多媒體教室</td><td>文系+3 理系+3 態度+3</td></tr>
-                        <tr><td>藝術</td><td>X2 / Y6</td><td>美術室＋音樂室＋多功能室</td><td>理系+3 運動+3</td></tr>
-                        <tr><td>家庭</td><td>X8 / Y11</td><td>保健室＋家政室＋洗手間</td><td>文系+2 體育+2 人氣+3</td></tr>
-                        <tr><td>購物</td><td>X2 / Y25</td><td>福利社＋便利商店＋餐廳</td><td>體育+3 運動+3 態度+1</td></tr>
-                        <tr><td>特盛</td><td>X3 / Y25</td><td>養豬小屋＋養牛小屋＋餐廳</td><td>體育+5 頭腦+4</td></tr>
-                        <tr><td>菜園</td><td>X8 / Y13</td><td>草地＋小農場＋飲水處</td><td>理系+2 運動+2 人氣+2 態度+2</td></tr>
-                        <tr><td>黃昏</td><td>X23 / Y8</td><td>樹林／櫻花樹＋斜坡＋棒球場</td><td>文系+3 體育+3 人氣+3 態度+3</td></tr>
-                        <tr><td>力量</td><td>X11 / Y22</td><td>水井＋樹林／櫻花樹＋草地</td><td>文系+3 體育+3 頭腦+2 態度+2</td></tr>
-                        <tr><td>時尚</td><td>X3 / Y10</td><td>網球場＋美術室＋家政室</td><td>文系+3 理系+3 人氣+2 態度+2</td></tr>
-                        <tr><td>熱情</td><td>X8 / Y8</td><td>足球場＋籃球場＋焚化爐</td><td>理系+3 體育+3 人氣+2 態度+2</td></tr>
-                        <tr><td>埋伏</td><td>X5 / Y25</td><td>公告欄＋巨石＋洗手間</td><td>文系+3 體育+1 頭腦+2 人氣+2</td></tr>
-                        <tr><td>清爽</td><td>X6 / Y15</td><td>映山紅＋草地＋長椅</td><td>文系+3 理系+3 人氣+2 態度+2</td></tr>
-                        <tr><td>水岸</td><td>X8 / Y25</td><td>水塘＋洗手間＋水井</td><td>文系+2 理系+3 頭腦+2</td></tr>
-                        <tr><td>生物</td><td>X2 / Y5</td><td>理科室＋電腦室＋飼育鼴鼠</td><td>理系+3 頭腦+2 運動+2 人氣+2</td></tr>
-                        <tr><td>燒水</td><td>X8 / Y10</td><td>焚化爐＋家政室＋飲水處</td><td>文系+1 理系+1 人氣+1 態度+1</td></tr>
-                        <tr><td>選舉</td><td>X17 / Y22</td><td>校長室＋辦公室＋茶室</td><td>理系+2 體育+3 運動+2 人氣+2</td></tr>
-                        <tr><td>吃醋</td><td>X2 / Y12</td><td>焚化爐＋餐廳＋家政室</td><td>理系+3 體育+2 頭腦+2 態度+2</td></tr>
-                        <tr><td>澀谷</td><td>X2 / Y16</td><td>足球場＋社團教室＋便利商店</td><td>文系+3 體育+1 人氣+2</td></tr>
-                        <tr><td>熱血</td><td>X3 / Y6</td><td>足球場＋體育館＋游泳池</td><td>文系+2 理系+3 頭腦+3 運動+3</td></tr>
-                        <tr><td>動作</td><td>X3 / Y15</td><td>道場＋社團教室＋彈跳床</td><td>體育+3 頭腦+2 運動+2</td></tr>
-                        <tr><td>名門</td><td>X8 / Y25</td><td>銅像＋金像＋電腦室</td><td>文系+3 體育+3 人氣+3 態度+3</td></tr>
-                        <tr><td>青空</td><td>X5 / Y11</td><td>飼育長頸鹿＋銅像＋圖騰柱</td><td>文系+3 頭腦+2 人氣+2</td></tr>
-                        <tr><td>非洲</td><td>X5 / Y21</td><td>飼育長頸鹿＋飼育大象＋圖騰柱</td><td>文系+5 理系+3 態度+2</td></tr>
-                        <tr><td>宇宙</td><td>X3 / Y15</td><td>宇宙火箭＋天象館＋多媒體教室</td><td>理系+3 頭腦+2 人氣+2</td></tr>
-                        <tr><td>開羅</td><td>X3 / Y10</td><td>金開羅君＋開羅君像＋開羅君房間</td><td>文系+5 理系+5 人氣+3 態度+3</td></tr>
-                    </tbody>
-                </table>
-            </div>
-            <p>29 個景點全開時的屬性加成合計為：<strong>文系 +49、理系 +49、人氣 +37、體育 +35、態度 +32、頭腦 +29、運動 +19</strong>。</p>
-
-            <h3>用到的設施清單</h3>
-            <p>沒有標數字的表示只蓋一棟。有些設施會重複出現（例如焚化爐 ×5、操場 ×6），是因為它們被好幾個相隔很遠的景點各自需要；如果想省錢，可以把那些景點集中到同一區再共用。</p>
-            <div class="table-wrap">
-                <table class="data">
-                    <thead><tr><th>分類</th><th>設施</th></tr></thead>
-                    <tbody>
-                        <tr><td>生活與設施</td><td>便利商店 ×2、保健室、公告欄 ×3、圖騰柱 ×2、宇宙火箭、廣播室、更衣室 ×2、水井 ×3、洗手間 ×3、焚化爐 ×5、百葉箱、福利社 ×2、茶室 ×2、販賣機、遊戲區、金像、金開羅君、銅像 ×4、長椅 ×4、開羅君像、飲水處 ×2、餐廳 ×2</td></tr>
-                        <tr><td>教室與專科</td><td>圖書室 ×2、多功能室 ×2、多媒體教室 ×2、天象館、家政室 ×2、教室 ×9、校長室、校門(左右用)、理科室、美術室 ×2、辦公室 ×2、進路室、開羅君房間、電腦室 ×2、音樂室</td></tr>
-                        <tr><td>運動與社團</td><td>彈跳床 ×2、操場 ×6、棒球場 ×2、游泳池 ×2、社團教室 ×2、籃球場 ×3、網球場 ×3、足球場 ×4、道場 ×2、體育館 ×2</td></tr>
-                        <tr><td>動植物農牧</td><td>小農場 ×3、飼育大象、飼育無尾熊、飼育熊貓、飼育長頸鹿 ×2、飼育鱷魚、飼育鼴鼠 ×2、飼鴨小屋 ×2、養兔小屋、養牛小屋 ×2、養豬小屋 ×2、養雞小屋</td></tr>
-                        <tr><td>環境地形</td><td>在意之樹、巨石 ×2、映山紅 ×2、樹林 ×13、櫻花樹 ×5、水塘 ×35、花壇 ×5、草地 ×86、走廊 ×162、道路 ×12</td></tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <h3>實際照著蓋的順序建議</h3>
-            <p>這張圖是<strong>最終目標</strong>，不是開局就能蓋出來的東西。多數設施要到一定的學校排名才解鎖，資金也要慢慢累積。建議分四階段推進：</p>
-            <ol>
-                <li><strong>先鋪路，而且要拆掉擋路的東西。</strong>照著圖把橫向大道與縱向街道的走廊鋪出來，街廓的框先立好。<strong>特別注意 X12 那條橫向大道</strong>：健康鎮原本在那條線上散落著小雞小屋與小農場，把大道卡成兩段。不拆的話，整張圖的南北向動線只剩中間一條草地——後期在那裡蓋任何一棟房子，北半邊幾十棟設施會同時變成走不到（我們第一版就踩了這個坑）。農牧設施之後在南區重建就好。</li>
-                <li><strong>先做便宜的景點。</strong>池畔區的「菜園」「力量」「運動」「燒水」用的都是前期就有的東西（草地、樹林、水井、飲水處、小農場、操場、籃球場、販賣機、焚化爐、家政室），先把這一區做起來吃加成。</li>
-                <li><strong>行政區與教學樓。</strong>校長室一解鎖就蓋在辦公室旁邊（圖上的位置），把「選舉」「學習」一次收掉。接著隨著學生人數成長，照年級把三棟教學樓的教室補上去——教室位置在圖上是固定的方塊，先把框留著，人多了再填，不要臨時找空地插。</li>
-                <li><strong>南區與後期景點。</strong>農牧園區、運動園區，以及最後才解鎖的宇宙火箭、天象館、開羅君系列、飼育大象／長頸鹿等，留到後期填。</li>
-            </ol>
-
-            <div class="callout warn"><span class="k">誠實說明</span>這張圖保證的是「<strong>在模擬器的規則下</strong>，29 個景點全部成立、沒有建築被包圍」。實際遊戲裡的解鎖條件、建造費用與土地取得進度不在模擬範圍內，請把它當成規劃藍圖而不是逐步施工單。
-            <br><br><strong>關於教室數量：</strong>圖上排的是每年級 3 間、共 9 間。如果你的遊戲每年級上限是 2 間，直接<strong>拆掉 3 間就好</strong>——教室不是任何一個人氣景點的材料，減少教室<strong>完全不影響那 29 個景點</strong>，空出來的格子可以留白或補綠地。同理，若辦公室能蓋超過 2 間，加蓋也不會破壞任何景點。<strong>校長室全校只有一間</strong>，位置很關鍵（要同時吃到「學習」和「選舉」），請照圖擺。</div>
-
-            <h2 id="east">冬郵小鎮完美佈局：29 個人氣景點全成立</h2>
-            <p>第二張是遊戲的第二個地區「<strong>冬郵小鎮</strong>」（ヒガシクメールタウン）。地圖是 <strong>26×26 格</strong>，比健康鎮多兩欄，可是實際能蓋的地反而更少——光水塘就吃掉 <strong>76 格</strong>，另外還有 161 格是高地。這張圖同樣<strong>把全部 29 個人氣景點一次湊齊</strong>：水塘一格不填、原始斜坡一格不動，而且<strong>沒有任何一棟建築是走不到的</strong>。</p>
-
-            <div class="mapwrap wide">
-                <img src="east-perfect.svg" width="612" height="612"
-                     alt="口袋學院物語2 冬郵小鎮完美佈局地圖：26×26 格校園全圖，北緣校門、棋盤式走廊路網、南半部新校區與 29 個人氣景點">
-            </div>
-            <p style="font-size:13px;color:var(--muted);margin-top:-6px">看法與上面那張相同：格子上的字是設施簡稱，<strong>虛線深色外框</strong>是高地，帶斜線的黃綠色是<strong>斜坡</strong>。邊緣數字是遊戲內座標（上方 Y、左側 X）。冬郵小鎮的校門開在<strong>地圖上緣</strong>的 Y8–Y7，跟健康鎮開在左側完全不同。</p>
-
-            <div class="statgrid">
-                <div><b>29 / 29</b><span>人氣景點成立</span></div>
-                <div><b>0</b><span>被包圍走不到的建築</span></div>
-                <div><b>133</b><span>建築棟數</span></div>
-                <div><b>9</b><span>教室（3 年級各 3 間）</span></div>
-                <div><b>2</b><span>校門（北緣＋南緣）</span></div>
-                <div><b>76</b><span>原封不動的水塘格</span></div>
-            </div>
-
-            <p><a class="btn" href="../sim/#m=MjZ4MjY7MTIuMi4xLDEuMS4yLDIzLjEuMSwwLjEuMSw2My4xLjEsNjIuMS4xLDEuMS4xLDAuMi4xLDMuMi4xLDMzLjIuMSwzLjIuMSwwLjIuMSw1Ny4xLjEsMC4xLjEsNDMuMS4xLDQ0LjEuMiwxLjEuMSw1Ni4xLjIsMS4xLjEsMC4yLjEsMS4xLjEsMC4xLjEsMTIuMi4xLDEuMS4yLDM1LjEuMiwzLjEuMSw2NS4xLjEsMS4xLjEsNy4yLjEsMy4yLjEsMzYuMi4xLDMxLjIuMSwzLjIuMSwwLjIuMSw1OS4xLjEsMy4xLjEsNDMuMS4xLDEuMS4xLDQ1LjEuMSw0LjEuMSwzLjEuMSw0LjEuMSwyNS4xLjEsMTMuMi4xLDYuMi4xLDMuMS4xLDM5LjEuMSwzNC4xLjIsMzUuMS4yLDMuMS4xLDM1LjEuMiw3LjIuMSwzLjIuMSwxNi4yLjIsMy4yLjEsMC4yLjEsNTkuMS4xLDMuMS4xLDQyLjEuMiw0NS4xLjEsNC4xLjEsMy4xLjEsNC4xLjEsMS4xLjEsMTMuMi4xLDYuMi4xLDMuMS4xLDQwLjEuMSwzNC4xLjIsNzAuMS4xLDcxLjEuMSwzLjEuMSwzNS4xLjIsNy4yLjEsMy4yLjEsMTYuMi4yLDMuMi4xLDAuMi4xLDI0LjEuMSwzLjEuMSw0Mi4xLjIsMzMuMS4xLDQuMS4xLDMuMS4xLDQuMS4xLDEuMS4xLDEzLjIuMSwyLjIuMSwzLjEuMSw1NC4xLjEsMy4xLjcsNy4yLjEsMy4yLjEsMjcuMi4xLDMuMi4xLDAuMi4yLDMuMS44LDQyLjEuMiwyLjIuMSwyNi4yLjEsMTYuMi4xLDY0LjEuMSw2NS4xLjEsNjYuMS4xLDQ4LjEuMSwzLjEuMSwzOC4xLjEsNTMuMS4xLDExLjEuMSwwLjIuMSwzLjIuMSwwLjIuMSwyLjEuMywzLjEuMSwyLjEuNCwzLjEuMSwyLjEuMSw0Mi4xLjIsMi4yLjEsNjcuMi4xLDE2LjIuNSwzLjEuMSw0NS4xLjEsMS4xLjIsMC4yLjEsMy4yLjIsMC4yLjIsMi4xLjEsNTguMS4xLDIuMS4xLDExLjEuMSw2LjEuMSwzLjEuNSwwLjIuMSw2Ny4yLjEsMTYuMi41LDMuMS4xLDQ1LjEuMSwxLjEuMiwwLjIuMSwzLjIuMSwxOS4yLjEsMy4yLjEsMC4yLjEsMi4xLjEsNTguMS4xLDIuMS4yLDE5LjEuMSwzLjEuNCwxLjEuMSw2Ny4yLjEsMTYuMi4yLDQ2LjEuMSw1Mi4xLjEsMTkuMS4xLDI1LjEuMSwzLjEuMSwzNi4xLjEsNjcuMS4xLDIwLjEuMSwwLjIuMSwzLjIuMSwyNC4yLjEsMy4yLjEsMC4yLjEsMi4xLjEsMy4xLjEsMi4xLjMsMy4xLjQsNjYuMS4xLDE2LjEuMSwxNi4yLjIsMy4xLjgsMC4yLjUsMy4xLjUsNDEuMS4yLDMuMS4yLDI0LjEuMSwxNi4xLjEsMTYuMi4yLDMwLjEuMSwzNC4xLjIsNTAuMS4xLDMuMS4xLDU4LjEuMSw0NC4xLjIsNDguMS4xLDMuMS4xLDc3LjEuMSw3OC4xLjEsMzcuMS4xLDIuMS4xLDMuMS4xLDIuMS4xLDIwLjEuMSw2LjEuMSw0MS4xLjIsMy4xLjIsMjcuMS4xLDE2LjEuMSwxNi4yLjIsMS4xLjEsMzQuMS4yLDQ3LjEuMSwzLjEuMSw1OC4xLjEsMS4xLjIsNTAuMS4xLDMuMS4xLDYzLjEuMSwxLjEuMiwyLjEuMSwzLjEuMSwyLjEuMSw0LjEuMiwzLjEuNSwxNi4xLjEsMTYuMi4xLDEuMi4xLDEuMS4zLDQ5LjEuMSwzLjEuMSwzMS4xLjEsMS4xLjIsMzIuMS4xLDMuMS4xLDU5LjEuMSwxLjEuMiwzMC4xLjEsMy4xLjEsMjEuMS4xLDEuMS4yLDMzLjEuMSwzLjEuMSwxNS4xLjEsMS4xLjEsMi4xLjEsMTYuMS4xLDE2LjIuMSwxLjIuMSw3My4xLjEsNjMuMS4xLDYwLjEuMSw2MS4xLjEsMTMuMi4yLDQ5LjEuMSwyMS4xLjEsMTkuMS4xLDMuMS4xLDU5LjEuMSwzMS4xLjEsNDYuMS4xLDQ3LjEuMSwzLjEuMSwzMC4xLjEsNTAuMS4xLDEuMS4yLDMuMS4xLDE5LjEuMSwyLjEuMiwxNi4xLjEsMTYuMi4xLDEuMi4xLDMuMS41LDEzLjIuMSwzLjEuMTcsMTYuMS4xLDE2LjIuMSwxLjIuMSw0MS4xLjIsMS4xLjEsMTMuMi4zLDEuMS4xLDQxLjEuMiwzLjEuMSwxMi4xLjIsMjAuMS4xLDIyLjEuMSwzLjEuMSwyOC4xLjEsMjkuMS4xLDUxLjEuMSw1Mi4xLjEsMy4xLjEsMjcuMS4xLDIuMS4yLDE2LjEuMSwxNi4yLjEsMS4yLjEsNDEuMS4yLDEuMS4yLDMuMS4xLDEuMS4yLDQxLjEuMiwzLjEuMSwxMi4xLjMsNi4xLjEsMy4xLjEsMzYuMS4xLDI0LjEuMSwxOS4xLjEsMS4xLjEsMy4xLjEsMzYuMS4xLDIuMS4yLDE2LjEuMSwxNi4yLjEsMS4yLjEsNDEuMS40LDMuMS4xLDQxLjEuNCwzLjEuMSw0MS4xLjQsMy4xLjEsMS4xLjQsMy4xLjEsMzEuMS4xLDYuMS4xLDE2LjEuMiwxNi4yLjEsMS4yLjEsNDEuMS40LDMuMS4xLDQxLjEuNCwzLjEuMSw0MS4xLjQsMy4xLjEsMS4xLjQsMy4xLjEsNi4xLjIsMTYuMS4yLDE2LjIuMSwxLjIuMSwxLjEuMyw3LjIuMiwxNi4yLjIsMy4xLjE1LDE2LjEuMiwxLjEuMSwxLjIuMSw2Ny4xLjEsNjguMS4xLDcwLjEuMSw3LjIuMiwxNi4yLjIsNjcuMS4xLDc0LjEuMSwzLjEuMSw1Ny4xLjEsNjIuMS4xLDEuMS4yLDMuMS4xLDYwLjEuMSw2NC4xLjEsNjYuMS4xLDY1LjEuMSwxNi4yLjUsMS4xLjEsMS4yLjEsMS4xLjMsMTYuMi40LDc1LjEuMSwyLjEuMSwzLjEuMSwyLjEuNCwzLjEuMSw2MS4xLjEsMjIuMS4xLDYzLjEuMSwxNi4yLjUsMTMuMS4xLDEuMS4xLDEuMi4xLDcxLjEuMSw2OS4xLjEsMS4xLjEsMTYuMi40LDEuMS4xLDIuMS4xLDMuMS4xLDEyLjEuMyw2Ny4xLjEsMy4xLjEsMS4xLjMsMTYuMi4yLDEzLjEuNCwxLjEuMSwxLjIuMSw3Mi4xLjEsNzMuMS4xLDEuMS4yLDMuMS4xLDc2LjEuMSw3Ny4xLjEsMS4xLjEsMi4xLjEsMy4xLjEsMTIuMS40LDMuMS4xLDEuMS4zLDE2LjIuMiwxMy4xLjIsMS4yLjEsMTIuMi4yLDEuMi4xLDMuMS4xOCwxNi4yLjIsMS4xLjEsMS4yLjIsMTIuMi4yLDEuMi4xLDEyLjIuMSwzNi4xLjEsMzEuMS4xLDEuMS4xLDAuMS4xLDEuMS4zLDU2LjEuMiwzNi4xLjEsMS4xLjMsMC4xLjEsMzEuMS4xLDEuMS4yLDE2LjIuMiwxLjEuMSwxLjIuMiwxMi4yLjIsMS4xLjE">🧩 在模擬器開啟冬郵小鎮完美佈局</a></p>
-
-            <div class="callout key"><span class="k">怎麼驗證的</span>跟健康鎮那張同一套流程：把模擬器的判定程式搬進腳本，逐格放置、每一步都檢查「景點數不能變少、被包圍的建築不能變多」，最後<strong>只拿上面那串分享碼重新解碼再驗一次</strong>——29 個景點全成立、0 棟建築被包圍、76 格水塘與 19 格原始斜坡全部保留、地圖上沒有任何玩家蓋不出來的假地形。</div>
-
-            <h3>冬郵小鎮跟健康鎮差在哪</h3>
-            <p>兩張圖的骨架邏輯一樣（棋盤路網＋4×4 街廓），但冬郵小鎮的地形會逼你改掉幾個習慣：</p>
-            <div class="table-wrap">
-                <table class="data">
-                    <thead><tr><th></th><th>健康鎮</th><th>冬郵小鎮</th></tr></thead>
-                    <tbody>
-                        <tr><td>地圖尺寸</td><td>26×24（座標 X2–X27 / Y2–Y25）</td><td>26×26（座標 X2–X27 / Y2–Y27）</td></tr>
-                        <tr><td>校門位置</td><td>左側（直式 1×2）</td><td><strong>上緣</strong>（橫式 2×1，Y8–Y7）</td></tr>
-                        <tr><td>水塘</td><td>34 格，集中一處</td><td><strong>76 格</strong>，散在四邊，還圍出一座孤島</td></tr>
-                        <tr><td>高地</td><td>南北兩塊，邊界自然生成斜坡</td><td>161 格，多數鋪著<strong>草地／竹林</strong>，一開始沒有斜坡</td></tr>
-                        <tr><td>既有地形雜物</td><td>樹林、花壇</td><td><strong>田埂路 77 格</strong>、竹林、櫻花樹</td></tr>
-                        <tr><td>可用平地</td><td>分布比較均勻</td><td>集中在<strong>南半部一大片空白</strong></td></tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <h3>設計原則：東部特有的幾個坑</h3>
-            <ul>
-                <li><strong>田埂路是「不能走」的。</strong>冬郵小鎮原本就鋪了 77 格<strong>田埂路</strong>，看起來像路，但在遊戲的動線判定裡它跟樹林一樣<strong>不可通行</strong>。原地形那間網球場、百葉箱與小農場之所以一開始就走不到，正是被田埂路包住。做法很簡單：<strong>要當幹道用的田埂路一律改鋪走廊</strong>，其餘留著當景觀。</li>
-                <li><strong>草地高地要用「擦」的開坡道。</strong>斜坡不是一種可以蓋的東西，它是<strong>高低差自動生成</strong>的——只有「空地」而且比隔壁高一階的格子才會變成斜坡。冬郵小鎮的高地上鋪滿草地與竹林，所以整片高地<strong>一開始一個坡道都沒有</strong>，學生根本上不去。解法是把高地邊界那一格<strong>擦成空地</strong>（遊戲裡就是用橡皮擦點一下），坡道就自己長出來。本圖只擦了 <strong>2 格</strong>（X2/Y5 與 X8/Y4）就把北丘與東北角一次打通，全圖斜坡從 19 格變成 23 格。</li>
-                <li><strong>東南角是一座進不去的湖心島。</strong>地圖右下角有一塊 <strong>39 格</strong>的陸地被水塘<strong>完整圍死</strong>，沒有任何一格跟外面相連——用泛洪演算法驗證過，不論怎麼蓋都走不到。原地形在島上有一間<strong>養豬小屋</strong>，那間房子在遊戲裡是永遠不會有學生走過去的。本圖的處理是<strong>把它拆掉</strong>（不然它會一直算成「被包圍的建築」），養豬小屋改在南區農牧園區重建，順便當「特盛」的材料。島本身留成湖心綠地，不放任何建築。</li>
-                <li><strong>校門在北緣，所以動線是由北往南。</strong>健康鎮從左側進場，冬郵小鎮從<strong>上方</strong>進場。原有的校舍、辦公室、教室全擠在右上角，主幹道要先從校門往下打通，再往南展開。本圖<strong>在南緣 Y19–Y18 加開第二座校門</strong>，南區的教學樓與農牧園區就不必繞回北邊。</li>
-                <li><strong>水塘照用不改。</strong>76 格水塘一格沒動——它們本來就是「水岸」的材料，而且填水塘沒有任何好處。</li>
-                <li><strong>棋盤路網照抄。</strong>橫向大道走 X6 / X11 / X16 / X21 / X26，縱向街道走 Y23 / Y18 / Y13 / Y8 / Y3，圍出來的街廓剛好 4×4＝一個景點判定窗口。這點跟健康鎮完全一樣，是可以直接沿用的骨架。</li>
-            </ul>
-
-            <h3>分區規劃</h3>
-            <p>冬郵小鎮的景點幾乎全部集中在<strong>北半部</strong>（X2–X14）——因為原有校舍與高地都在那裡，設施可以互相共用；<strong>南半部</strong>（X17–X27）那一大片空地則留給學校真正需要、但沒有景點效果的東西。</p>
-            <ul class="zone-list">
-                <li><span class="zt">北緣校門區（X2–X5）</span>校門正下方的行政與商店街，成立 9 個景點：運動、學習、選舉、購物、特盛、黃昏、力量、澀谷、開羅。校長室一樣緊貼辦公室，讓「學習」與「選舉」共用同一間。</li>
-                <li><span class="zt">北丘公園（X2–X11 / Y15–Y19）</span>地圖正中央偏北那塊高地。原本鋪滿田埂路與空地、一個坡道都沒有，整理後放了 <strong>10 棟</strong>小型設施（茶室、長椅、銅像、公告欄、洗手間、販賣機…），每一列最外側留成木棧步道接上坡道。</li>
-                <li><span class="zt">舊校舍區（X6–X13 / Y5–Y14）</span>遊戲一開始就給的辦公室、教室、網球場、廁所、彈跳床都在這裡，全部保留原位；周圍補上專科教室後成立藝術、菜園、清爽、水岸、宇宙、動作等景點。原本被田埂路圍死的網球場，改鋪走廊後就通了。</li>
-                <li><span class="zt">中央景點帶（X11–X14）</span>密度最高的一段，14 個景點擠在這裡：好友、怪談、家庭、時尚、熱情、埋伏、生物、燒水、吃醋、熱血、名門、青空、非洲、約會。設施可以被多個景點共用，越密集越省錢。</li>
-                <li><span class="zt">南半新校區（X17–X20）</span>三棟教學樓：3 年級棟（Y24–Y27）、1 年級棟（Y19–Y22）、2 年級棟（Y14–Y17），<strong>每棟 3 間教室、共 9 間</strong>；再往東是生活機能區（廣播室、遊戲區、進路室、多功能室）與南門廣場。</li>
-                <li><span class="zt">南區農牧與運動（X22–X27）</span>西半邊是農牧園區（小農場、養雞、養豬、養牛、養兔、各種飼育小屋），東半邊是運動園區（體育館、道場、游泳池、棒球場、彈跳床）。<strong>南緣加開的第二座校門</strong>就在這一區，學生不必繞整張地圖。</li>
-                <li><span class="zt">湖心島（X13–X27 / Y2–Y7）</span>39 格被水塘鎖死的孤島，全圖唯一放棄開發的地方，留成草地與竹林的湖心綠地。</li>
-            </ul>
-
-            <h3>29 個景點的成立位置（冬郵小鎮）</h3>
-            <p>座標是該景點 4×4 判定範圍的左上角，用遊戲內的顯示方式（X 由上而下、Y 由左而右）。在模擬器裡把滑鼠移到格子上就會顯示座標，可以直接對照。</p>
-            <div class="table-wrap">
-                <table class="data">
-                    <thead><tr><th>景點</th><th>座標</th><th>需要設施</th><th>屬性加成</th></tr></thead>
-                    <tbody>
-                        <tr><td>運動</td><td>X2 / Y17</td><td>操場＋籃球場＋販賣機</td><td>體育+3 頭腦+3 態度+2</td></tr>
-                        <tr><td>約會</td><td>X12 / Y24</td><td>網球場＋樹林／櫻花樹＋圖書室</td><td>文系+2 理系+3 人氣+2 態度+2</td></tr>
-                        <tr><td>好友</td><td>X11 / Y12</td><td>飲水處＋保健室＋茶室</td><td>文系+3 運動+2 人氣+2</td></tr>
-                        <tr><td>怪談</td><td>X10 / Y27</td><td>音樂室＋理科室＋焚化爐</td><td>理系+3 頭腦+3</td></tr>
-                        <tr><td>學習</td><td>X2 / Y13</td><td>校長室＋圖書室＋多媒體教室</td><td>文系+3 理系+3 態度+3</td></tr>
-                        <tr><td>藝術</td><td>X7 / Y27</td><td>美術室＋音樂室＋多功能室</td><td>理系+3 運動+3</td></tr>
-                        <tr><td>家庭</td><td>X12 / Y22</td><td>保健室＋家政室＋洗手間</td><td>文系+2 體育+2 人氣+3</td></tr>
-                        <tr><td>購物</td><td>X2 / Y27</td><td>福利社＋便利商店＋餐廳</td><td>體育+3 運動+3 態度+1</td></tr>
-                        <tr><td>特盛</td><td>X2 / Y27</td><td>養豬小屋＋養牛小屋＋餐廳</td><td>體育+5 頭腦+4</td></tr>
-                        <tr><td>菜園</td><td>X7 / Y23</td><td>草地＋小農場＋飲水處</td><td>理系+2 運動+2 人氣+2 態度+2</td></tr>
-                        <tr><td>黃昏</td><td>X2 / Y22</td><td>樹林／櫻花樹＋斜坡＋棒球場</td><td>文系+3 體育+3 人氣+3 態度+3</td></tr>
-                        <tr><td>力量</td><td>X2 / Y8</td><td>水井＋樹林／櫻花樹＋草地</td><td>文系+3 體育+3 頭腦+2 態度+2</td></tr>
-                        <tr><td>時尚</td><td>X10 / Y22</td><td>網球場＋美術室＋家政室</td><td>文系+3 理系+3 人氣+2 態度+2</td></tr>
-                        <tr><td>熱情</td><td>X11 / Y17</td><td>足球場＋籃球場＋焚化爐</td><td>理系+3 體育+3 人氣+2 態度+2</td></tr>
-                        <tr><td>埋伏</td><td>X12 / Y8</td><td>公告欄＋巨石＋洗手間</td><td>文系+3 體育+1 頭腦+2 人氣+2</td></tr>
-                        <tr><td>清爽</td><td>X7 / Y23</td><td>映山紅＋草地＋長椅</td><td>文系+3 理系+3 人氣+2 態度+2</td></tr>
-                        <tr><td>水岸</td><td>X7 / Y27</td><td>水塘＋洗手間＋水井</td><td>文系+2 理系+3 頭腦+2</td></tr>
-                        <tr><td>生物</td><td>X12 / Y27</td><td>理科室＋電腦室＋飼育鼴鼠</td><td>理系+3 頭腦+2 運動+2 人氣+2</td></tr>
-                        <tr><td>燒水</td><td>X12 / Y14</td><td>焚化爐＋家政室＋飲水處</td><td>文系+1 理系+1 人氣+1 態度+1</td></tr>
-                        <tr><td>選舉</td><td>X2 / Y13</td><td>校長室＋辦公室＋茶室</td><td>理系+2 體育+3 運動+2 人氣+2</td></tr>
-                        <tr><td>吃醋</td><td>X9 / Y27</td><td>焚化爐＋餐廳＋家政室</td><td>理系+3 體育+2 頭腦+2 態度+2</td></tr>
-                        <tr><td>澀谷</td><td>X2 / Y25</td><td>足球場＋社團教室＋便利商店</td><td>文系+3 體育+1 人氣+2</td></tr>
-                        <tr><td>熱血</td><td>X12 / Y27</td><td>足球場＋體育館＋游泳池</td><td>文系+2 理系+3 頭腦+3 運動+3</td></tr>
-                        <tr><td>動作</td><td>X4 / Y27</td><td>道場＋社團教室＋彈跳床</td><td>體育+3 頭腦+2 運動+2</td></tr>
-                        <tr><td>名門</td><td>X12 / Y22</td><td>銅像＋金像＋電腦室</td><td>文系+3 體育+3 人氣+3 態度+3</td></tr>
-                        <tr><td>青空</td><td>X12 / Y18</td><td>飼育長頸鹿＋銅像＋圖騰柱</td><td>文系+3 頭腦+2 人氣+2</td></tr>
-                        <tr><td>非洲</td><td>X9 / Y18</td><td>飼育長頸鹿＋飼育大象＋圖騰柱</td><td>文系+5 理系+3 態度+2</td></tr>
-                        <tr><td>宇宙</td><td>X5 / Y24</td><td>宇宙火箭＋天象館＋多媒體教室</td><td>理系+3 頭腦+2 人氣+2</td></tr>
-                        <tr><td>開羅</td><td>X2 / Y5</td><td>金開羅君＋開羅君像＋開羅君房間</td><td>文系+5 理系+5 人氣+3 態度+3</td></tr>
-                    </tbody>
-                </table>
-            </div>
-            <p>29 個景點全開的屬性加成合計跟健康鎮那張一樣：<strong>文系 +49、理系 +49、人氣 +37、體育 +35、態度 +32、頭腦 +29、運動 +19</strong>——加成綁在景點上，跟蓋在哪個城鎮無關。</p>
-
-            <h3>用到的設施清單（冬郵小鎮）</h3>
-            <p>沒有標數字的表示只蓋一棟。跟健康鎮那張相比，冬郵小鎮多用了一些洗手間與長椅（景點分得比較開），少用了操場（南區空間夠，不必重複蓋）。</p>
-            <div class="table-wrap">
-                <table class="data">
-                    <thead><tr><th>分類</th><th>設施</th></tr></thead>
-                    <tbody>
-                        <tr><td>生活與設施</td><td>便利商店 ×2、保健室 ×2、公告欄 ×3、圖騰柱、宇宙火箭、廣播室、更衣室 ×2、水井 ×2、洗手間 ×6、焚化爐 ×3、百葉箱、福利社、茶室 ×3、販賣機 ×4、遊戲區、金像、金開羅君、銅像 ×6、長椅 ×6、開羅君像、飲水處 ×3、餐廳 ×2</td></tr>
-                        <tr><td>教室與專科</td><td>圖書室 ×2、多功能室 ×2、多媒體教室 ×2、天象館、家政室 ×3、教室 ×9、校長室、校門(上下用) ×2、理科室 ×2、美術室 ×2、辦公室 ×2、進路室、開羅君房間、電腦室 ×2、音樂室 ×2</td></tr>
-                        <tr><td>運動與社團</td><td>彈跳床 ×3、操場 ×2、棒球場 ×2、游泳池 ×2、社團教室 ×3、籃球場 ×2、網球場 ×2、足球場 ×4、道場 ×2、體育館 ×2</td></tr>
-                        <tr><td>動植物農牧</td><td>小農場 ×7、飼育大象、飼育無尾熊、飼育熊貓、飼育長頸鹿 ×2、飼育鱷魚、飼育鼴鼠 ×2、飼鴨小屋、養兔小屋、養牛小屋 ×2、養豬小屋 ×2、養雞小屋</td></tr>
-                        <tr><td>環境地形</td><td>巨石、映山紅 ×2、樹林 ×8、櫻花樹 ×16、水塘 ×76、田埂路 ×38、竹林 ×21、花壇 ×8、草地 ×103、走廊 ×178、道路 ×8</td></tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <h3>實際照著蓋的順序建議</h3>
-            <ol>
-                <li><strong>先把校門往下的主幹道打通。</strong>從北緣校門沿 Y8 往下鋪走廊，接上 X6 與 X11 兩條橫向大道。<strong>擋路的田埂路直接鋪掉</strong>——它不能走，留著只會讓動線繞遠路。</li>
-                <li><strong>擦兩格開坡道。</strong>X2/Y5 與 X8/Y4 各擦掉一格高地地形，北丘與東北角就通了。這一步很便宜卻很關鍵：晚做的話，高地上蓋的東西全部都會變成走不到。</li>
-                <li><strong>先做便宜的景點。</strong>舊校舍周邊的「菜園」「清爽」「水岸」「力量」用的都是前期就有的東西（草地、櫻花樹、水井、飲水處、小農場、水塘），先把這一區做起來吃加成。</li>
-                <li><strong>行政區與教學樓。</strong>校長室一解鎖就蓋在辦公室旁邊，把「學習」「選舉」一次收掉；教室位置在南半部是固定的方塊，先把框留著，學生多了再填。</li>
-                <li><strong>南緣加開第二座校門，再開發南區。</strong>農牧園區、運動園區，以及最後才解鎖的宇宙火箭、天象館、開羅君系列留到後期。</li>
-                <li><strong>湖心島不要投資。</strong>右下角那塊地看起來很大，但學生永遠走不過去，蓋什麼都是浪費。</li>
-            </ol>
-
-            <div class="callout warn"><span class="k">誠實說明</span>這張圖保證的是「<strong>在模擬器的規則下</strong>，29 個景點全部成立、沒有建築被包圍」。地圖上還有 47 格「看起來能走、實際走不到」的地面，其中 <strong>26 格在湖心島上</strong>（被水塘鎖死，非戰之罪），另外 21 格是被建築圍起來的中庭綠地——中庭不影響任何景點，純粹是留白。
-            <br><br>冬郵小鎮的地形資料是依實機畫面整理的；若你在遊戲裡發現某一格對不上（特別是湖心島那一帶的水塘邊界），歡迎回報，我們會重跑一次產生器。<strong>教室數量</strong>與健康鎮那張同理：教室不是任何景點的材料，你的年級上限若是 2 間，直接拆掉 3 間也不影響那 29 個景點。</div>
+            <div class="callout key"><span class="k">這些圖怎麼驗證的</span>不是用眼睛喬出來的。我們把模擬器的判定程式（4×4 窗口景點判定、斜坡的高低差推導、從校門出發的可達性 BFS）搬到腳本裡，逐格放置、每一步都檢查「景點數不能變少、被包圍的建築不能變多」，最後<strong>只拿頁面上那串分享碼重新解碼再驗一次</strong>：29 個景點全成立、0 棟建築被包圍、地圖上沒有任何玩家蓋不出來的假地形。</div>
 
             <h2 id="basic">入門範例：先從小規模練手</h2>
             <p>完美佈局一次要顧 29 個景點，剛開始不用這麼複雜。下面三套只用少數設施，適合對照學習「怎麼把景點湊在一起」。</p>
@@ -339,6 +152,7 @@
                 <li>點「在模擬器開啟」→ 模擬器會載入該地圖，右側即時顯示成立的景點。</li>
                 <li>想改就直接在模擬器上拖曳增減；<a href="../sim/">模擬器</a>會提示「差一步」與建議位置，也會用紅框標出被包圍、走不到的建築。</li>
                 <li>做出自己的佈局後，模擬器的「分享」鈕會產生你自己的網址，可存起來或分享給別人。</li>
+                <li>只想查「這幾個設施能湊出什麼」，用<a href="../spot-check/">景點檢查器</a>比較快。</li>
             </ul>
             <p style="font-size:13px;color:var(--muted);margin-top:26px">範例地圖由本站產生並以模擬器邏輯驗證，僅供規劃參考。景點條件參考カイロパーク攻略 Wiki 等公開資料整理。若有更好的擺法歡迎指正。</p>
         </div>
@@ -346,9 +160,9 @@
         <section class="related">
             <h2>延伸閱讀</h2>
             <div class="db-cat-grid">
+                <a class="db-cat-card" href="health/"><span class="ic">🏫</span><span class="lb">健康鎮完美佈局</span><span class="n">26×24 · 29 景點全成立</span></a>
+                <a class="db-cat-card" href="east/"><span class="ic">🏞️</span><span class="lb">冬郵小鎮完美佈局</span><span class="n">26×26 · 29 景點全成立</span></a>
                 <a class="db-cat-card" href="../spot-check/"><span class="ic">🔎</span><span class="lb">景點檢查器</span><span class="n">勾設施查可成景點</span></a>
-                <a class="db-cat-card" href="../#combo"><span class="ic">🧩</span><span class="lb">29 種景點 combo 總表</span><span class="n">29 景點成立配方</span></a>
-                <a class="db-cat-card" href="../maps/"><span class="ic">🗾</span><span class="lb">五城鎮地圖</span><span class="n">五城鎮地形比較</span></a>
             </div>
             <p style="margin-top:14px"><a class="back-hub" href="../">← 口袋學院物語2 攻略總覽</a></p>
         </section>

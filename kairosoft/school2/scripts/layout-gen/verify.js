@@ -15,17 +15,17 @@ const E = require('./engine.js');
 const { items, SPOTS, gridRows, gridCols, town } = E;
 
 const CODE_FILE = { health: 'code.txt', east: 'code-east.txt' }[townKey];
-const PAGE = path.join(__dirname, '..', '..', 'layouts', 'index.html');
+// 每個城鎮一個子頁：layouts/<town.page>/index.html
+const PAGE = path.join(__dirname, '..', '..', 'layouts', town.page, 'index.html');
+const PAGE_REL = 'layouts/' + town.page + '/index.html';
 let source = CODE_FILE, arg = process.argv[3];
 if (arg === 'page') {
-    // 直接從佈局頁抓「在模擬器開啟…」那顆按鈕上的分享碼，確保頁面貼的就是驗過的那張
+    // 直接從該鎮的佈局頁抓「在模擬器開啟…」那顆按鈕上的分享碼，確保頁面貼的就是驗過的那張
     const html = fs.readFileSync(PAGE, 'utf8');
     const hits = [...html.matchAll(/sim\/#m=([A-Za-z0-9\-_]+)">🧩 在模擬器開啟([^<]*)</g)]
         .filter(m => m[2].includes('完美佈局'));
-    const eastName = require('./towns.js').TOWNS.east.name; // 鎮名以 towns.js 為準，改名不會掉
-    const hit = hits.find(m => townKey === 'east' ? m[2].includes(eastName) : !m[2].includes(eastName));
-    if (!hit) throw new Error('layouts/index.html 找不到 ' + townKey + ' 的完美佈局分享碼');
-    arg = hit[1]; source = 'layouts/index.html';
+    if (hits.length !== 1) throw new Error(PAGE_REL + ' 裡的完美佈局分享碼數量應為 1，實際 ' + hits.length);
+    arg = hits[0][1]; source = PAGE_REL;
 }
 const code = (arg || fs.readFileSync(path.join(__dirname, CODE_FILE), 'utf8')).trim();
 
@@ -79,14 +79,29 @@ const lostSlopes = baseSlopes.filter(([r, c]) => !E.isSlopeIn(g, r, c));
 check('原始地形的 ' + baseSlopes.length + ' 格斜坡未被蓋掉', lostSlopes.length === 0,
     lostSlopes.map(([r, c]) => 'X' + E.gameX(r) + '/Y' + E.gameY(c) + '=' + g[r][c].type).join('、'));
 
-/* 7) 水塘原封不動（不填不挖） */
-let pondBase = 0, pondKept = 0, pondAdded = 0;
+/* 7) 水塘：實機確認水塘可以被建設覆蓋破壞、變回平地，所以「破壞」是合法手段，
+      但必須節制且說得出所以然 —— 檢查破壞格數不超過該鎮的預算（towns.js 的
+      pond.maxCarve），而且不能無中生有多挖水塘。破壞的座標一律列出來。 */
+const maxCarve = (town.pond && town.pond.maxCarve) || 0;
+let pondBase = 0, pondAdded = 0;
+const destroyed = [];
 for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++) {
-    if (base[r][c].type === 'pond') { pondBase++; if (g[r][c].type === 'pond') pondKept++; }
-    else if (g[r][c].type === 'pond') pondAdded++;
+    if (base[r][c].type === 'pond') {
+        pondBase++;
+        if (g[r][c].type !== 'pond') destroyed.push('X' + E.gameX(r) + '/Y' + E.gameY(c) + '→' + items[g[r][c].type].name);
+    } else if (g[r][c].type === 'pond') pondAdded++;
 }
-check('水塘 ' + pondBase + ' 格原封不動', pondKept === pondBase && pondAdded === 0,
-    '保留 ' + pondKept + '／新增 ' + pondAdded);
+check('破壞的水塘 ' + destroyed.length + ' / 上限 ' + maxCarve + ' 格', destroyed.length <= maxCarve,
+    destroyed.join('、') || '（無）');
+check('沒有無中生有的新水塘', pondAdded === 0, pondAdded + ' 格');
+console.log('  INFO  水塘：原始 ' + pondBase + ' 格 → 保留 ' + (pondBase - destroyed.length) + ' 格' +
+    (destroyed.length ? '；鑿開水道 ' + destroyed.join('、') : ''));
+// 破壞後的格子高度必須跟原本的水塘一致（水沒了就是「那個高度的平地」，不會憑空長出落差）
+const badElevCarve = [];
+for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++)
+    if (base[r][c].type === 'pond' && g[r][c].type !== 'pond' && g[r][c].elevation !== base[r][c].elevation)
+        badElevCarve.push('X' + E.gameX(r) + '/Y' + E.gameY(c));
+check('鑿開的水道保持原高度', badElevCarve.length === 0, badElevCarve.join('、'));
 
 /* 8) 既有建築：列出被拆掉的（拆遷要能說得出理由） */
 const demolished = [];

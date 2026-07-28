@@ -26,20 +26,52 @@ out.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width=
 out.push(`<title>口袋學院物語2 ${town.name}完美佈局（29 個人氣景點全成立）</title>`);
 out.push(`<rect width="${W}" height="${H}" fill="#f8fafc"/>`);
 
-for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++) {
-    const cell = g[r][c];
+/* 多格建築要畫成「一棟」而不是 w×h 個方格 —— 分格畫的話，每格之間那條白色描邊
+   在瀏覽器非整數縮放下會出現接縫，一棟 2×2 的辦公室看起來像上下兩塊不同顏色。
+   這裡用跟模擬器 assignBlockIds() 同一套貪婪配對把同型同高的 w×h 區塊圈起來，
+   一棟只畫一個矩形、名稱只標一次、高地虛線框也以整棟為單位。 */
+function groupBlocks() {
+    const taken = Array.from({ length: gridRows }, () => Array(gridCols).fill(false));
+    const blocks = [];
+    for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++) {
+        if (taken[r][c]) continue;
+        const cell = g[r][c], it = items[cell.type];
+        const w = (it && it.w) || 1, h = (it && it.h) || 1;
+        if (w * h > 1 && r + h <= gridRows && c + w <= gridCols) {
+            let ok = true;
+            for (let dr = 0; dr < h && ok; dr++) for (let dc = 0; dc < w && ok; dc++) {
+                const o = g[r + dr][c + dc];
+                if (taken[r + dr][c + dc] || o.type !== cell.type || o.elevation !== cell.elevation) ok = false;
+            }
+            if (ok) {
+                for (let dr = 0; dr < h; dr++) for (let dc = 0; dc < w; dc++) taken[r + dr][c + dc] = true;
+                blocks.push({ r, c, w, h, cell });
+                continue;
+            }
+        }
+        taken[r][c] = true;
+        blocks.push({ r, c, w: 1, h: 1, cell });
+    }
+    return blocks;
+}
+
+for (const b of groupBlocks()) {
+    const cell = b.cell;
     const it = items[cell.type] || items.empty;
-    const x = PAD + c * S, y = PAD + r * S;
-    const slope = cell.type === 'empty' && E.isSlopeIn(g, r, c);
+    const x = PAD + b.c * S, y = PAD + b.r * S;
+    const bw = b.w * S, bh = b.h * S;
+    const multi = b.w * b.h > 1;
+    const slope = cell.type === 'empty' && E.isSlopeIn(g, b.r, b.c);
     let fill = it.color;
     if (cell.type === 'empty' && cell.elevation > 1) fill = slope ? '#bef264' : '#a3a3a3';
-    out.push(`<rect x="${x}" y="${y}" width="${S}" height="${S}" fill="${fill}" stroke="#ffffff" stroke-width="0.6"/>`);
-    // 高地：加一圈深色內框，讓高低差一眼看得出來
-    if (cell.elevation > 1) out.push(`<rect x="${x + 1}" y="${y + 1}" width="${S - 2}" height="${S - 2}" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>`);
-    if (slope) out.push(`<path d="M${x} ${y + S}L${x + S} ${y}" stroke="#65a30d" stroke-width="1.6"/>`);
+    out.push(`<rect x="${x}" y="${y}" width="${bw}" height="${bh}" fill="${fill}" stroke="#ffffff" stroke-width="0.6"/>`);
+    // 高地：整棟加一圈深色內框，讓高低差一眼看得出來
+    if (cell.elevation > 1) out.push(`<rect x="${x + 1}" y="${y + 1}" width="${bw - 2}" height="${bh - 2}" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>`);
+    if (slope) out.push(`<path d="M${x} ${y + bh}L${x + bw} ${y}" stroke="#65a30d" stroke-width="1.6"/>`);
     const sh = (it.short || '').trim();
     if (sh && cell.type !== 'empty' && cell.type !== 'grass') {
-        out.push(`<text x="${x + S / 2}" y="${y + S / 2 + 4.5}" font-size="12.5" font-weight="700" text-anchor="middle" fill="${it.textCol === 'white' ? '#ffffff' : '#1f2937'}">${esc(sh)}</text>`);
+        const fs2 = multi ? 14 : 12.5;
+        out.push(`<text x="${x + bw / 2}" y="${y + bh / 2 + fs2 * 0.36}" font-size="${fs2}" font-weight="700" text-anchor="middle" fill="${it.textCol === 'white' ? '#ffffff' : '#1f2937'}">${esc(sh)}</text>`);
     }
 }
 // 座標軸（遊戲座標：X = r+2 由上而下、Y = gridCols+1-c 由左而右遞減）
@@ -48,6 +80,36 @@ for (let c = 0; c < gridCols; c += 2) out.push(`<text x="${PAD + c * S + S / 2}"
 out.push('</svg>');
 fs.writeFileSync(path.join(OUT_DIR, town.svg), out.join('\n'));
 console.log('SVG：' + town.svg + '（' + W + '×' + H + '，' + Math.round(out.join('\n').length / 1024) + 'KB）');
+
+/* ---------- 縮圖 SVG（hub 的城鎮卡片用） ----------
+   完整版一張就有 ~700 個方塊 ＋ ~500 個字，兩張一起塞進 hub 的卡片會讓頁面卡住，
+   而且縮到 150px 高的時候字本來就看不清楚。縮圖只留色塊：不畫文字、不畫座標軸、
+   相鄰同色格再橫向合併成一條，檔案小一個數量級。 */
+const TS = 8, TPAD = 2;
+const TW = gridCols * TS + TPAD * 2, TH = gridRows * TS + TPAD * 2;
+const th = [];
+th.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${TW} ${TH}" width="${TW}" height="${TH}" role="img" aria-label="口袋學院物語2 ${town.name}完美佈局縮圖">`);
+th.push(`<title>口袋學院物語2 ${town.name}完美佈局縮圖</title>`);
+th.push(`<rect width="${TW}" height="${TH}" fill="#f8fafc"/>`);
+const colorAt = (r, c) => {
+    const cell = g[r][c], it = items[cell.type] || items.empty;
+    if (cell.type === 'empty' && cell.elevation > 1) return E.isSlopeIn(g, r, c) ? '#bef264' : '#a3a3a3';
+    return it.color;
+};
+for (let r = 0; r < gridRows; r++) {
+    let c = 0;
+    while (c < gridCols) {
+        const col = colorAt(r, c);
+        let n = 1;
+        while (c + n < gridCols && colorAt(r, c + n) === col) n++;
+        th.push(`<rect x="${TPAD + c * TS}" y="${TPAD + r * TS}" width="${n * TS}" height="${TS}" fill="${col}"/>`);
+        c += n;
+    }
+}
+th.push('</svg>');
+const thumbName = town.svg.replace('-perfect.svg', '-thumb.svg');
+fs.writeFileSync(path.join(OUT_DIR, thumbName), th.join('\n'));
+console.log('縮圖：' + thumbName + '（' + TW + '×' + TH + '，' + Math.round(th.join('\n').length / 1024) + 'KB）');
 
 /* ---------- 景點位置表 ---------- */
 const where = E.spotWindows(g);
