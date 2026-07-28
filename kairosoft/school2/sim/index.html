@@ -135,16 +135,25 @@
             background-image: repeating-linear-gradient(45deg, rgba(146, 64, 14, 0.35) 0 3px, transparent 3px 8px);
         }
 
-        /* 搜尋定位：聚光燈式——搜尋中整張地圖變灰變淡，只有符合的設施保持全彩＋脈動外框 */
-        body.searching .tile:not(.found) {
-            filter: grayscale(0.9) brightness(1.05);
-            opacity: 0.3;
+        /* 搜尋定位：聚光燈式——搜尋中在整張地圖上蓋「一層」半透明白幕（單一元素，
+           不對幾百個格子各自套 filter，避免合成層爆量卡頓），
+           命中的格子用 z-index 浮到幕之上，保持全彩＋脈動外框 */
+        .game-grid { position: relative; }
+        body.searching .game-grid::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(248, 250, 252, 0.78);
+            z-index: 9;
+            pointer-events: none;
         }
         .tile.found {
+            position: relative;
             outline: 3px solid #d946ef;
             outline-offset: -1px;
             z-index: 15;
-            animation: foundPulse 1.1s ease-in-out infinite;
+            /* 只閃 3 下就停:無限脈動會逼瀏覽器每個影格重繪整個區域,造成持續卡頓 */
+            animation: foundPulse 1.1s ease-in-out 3;
         }
         @keyframes foundPulse {
             0%, 100% { outline-color: #d946ef; }
@@ -182,6 +191,7 @@
         body.diamond .map-container {
             overflow: visible;
             max-height: none;
+            max-width: none; /* 放大時不截斷，讓外層 main 捲動可及整張圖 */
             background: transparent;
             box-shadow: none;
         }
@@ -311,6 +321,11 @@
                 <button id="rectBtn" title="矩形填滿模式（也可按住 Shift 拖曳）" class="text-xs font-bold bg-gray-100 text-gray-600 px-2.5 py-1.5 rounded hover:bg-gray-200 transition border border-gray-300">▭ 矩形</button>
                 <button id="clearBtn" class="text-xs font-bold bg-red-50 text-red-600 px-2.5 py-1.5 rounded hover:bg-red-100 transition border border-red-200">清空</button>
                 <button id="diamondBtn" title="切換菱形（等角）視角" class="text-xs font-bold bg-gray-100 text-gray-600 px-2.5 py-1.5 rounded hover:bg-gray-200 transition border border-gray-300">◆ 視角</button>
+                <div class="flex items-center gap-0.5 border border-gray-300 rounded bg-gray-100 px-1 py-1" title="縮放地圖（Ctrl+滾輪以游標為中心縮放；放大後用滾輪捲動或按住滑鼠中鍵拖曳平移）">
+                    <button id="zoomOutBtn" class="w-5 h-5 leading-none text-sm font-bold text-gray-600 hover:bg-gray-200 rounded">−</button>
+                    <button id="zoomResetBtn" class="text-[10px] font-bold text-gray-500 hover:bg-gray-200 rounded px-1" title="回到 100%">100%</button>
+                    <button id="zoomInBtn" class="w-5 h-5 leading-none text-sm font-bold text-gray-600 hover:bg-gray-200 rounded">＋</button>
+                </div>
                 <button id="suggestBtn" title="開關地圖上的建議標示（藍框／天藍框）" class="text-xs font-bold bg-gray-100 text-gray-600 px-2.5 py-1.5 rounded hover:bg-gray-200 transition border border-gray-300">💡 建議</button>
                 <button id="flowBtn" title="顯示從校門出發的步行距離（近綠遠紅，灰斜紋＝走不到）" class="text-xs font-bold bg-gray-100 text-gray-600 px-2.5 py-1.5 rounded hover:bg-gray-200 transition border border-gray-300">👣 動線</button>
                 <select id="presetSelect" class="text-xs font-bold bg-amber-50 text-amber-700 px-2 py-1.5 rounded border border-amber-200 outline-none cursor-pointer"></select>
@@ -759,6 +774,38 @@
             try { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); } catch (e) {}
         }
 
+        // ─── 地圖縮放/平移 ───
+        // zoomLevel=1 表示「剛好塞滿視窗」(fitGrid 的自動尺寸);放大後 map-container
+        // 以原生 overflow:auto 捲動平移(滾輪/捲軸/滑鼠中鍵拖曳)。倍率跨次記憶。
+        let zoomLevel = Math.min(3, Math.max(0.5, parseFloat(prefs.zoom) || 1));
+        // 實際會捲動的那層:正常視角是 map-container(overflow:auto);
+        // 斜視模式容器 overflow:visible,捲動的是外層 main
+        function mapScroller() {
+            return document.body.classList.contains('diamond') ? document.querySelector('main') : document.getElementById('mapContainer');
+        }
+        function setZoom(z, anchor) {
+            z = Math.min(3, Math.max(0.5, z));
+            const cont = mapScroller();
+            // 以錨點(預設容器中心)為中心縮放:記住錨點在內容中的比例,縮放後把捲動位置補回去
+            let ax = 0.5, ay = 0.5, px = 0, py = 0;
+            if (cont) {
+                const rect = cont.getBoundingClientRect();
+                px = anchor ? anchor.x - rect.left : rect.width / 2;
+                py = anchor ? anchor.y - rect.top : rect.height / 2;
+                ax = (cont.scrollLeft + px) / Math.max(1, cont.scrollWidth);
+                ay = (cont.scrollTop + py) / Math.max(1, cont.scrollHeight);
+            }
+            zoomLevel = z;
+            savePrefs({ zoom: +z.toFixed(2) });
+            fitGrid();
+            if (cont) {
+                cont.scrollLeft = ax * cont.scrollWidth - px;
+                cont.scrollTop = ay * cont.scrollHeight - py;
+            }
+            const label = document.getElementById('zoomResetBtn');
+            if (label) label.innerText = Math.round(zoomLevel * 100) + '%';
+        }
+
         // 體檢報告用的最近一次計算結果
         let lastSpotStats = { activeIds: new Set(), nearMap: new Map() };
         let lastBlockedCount = 0;
@@ -880,6 +927,7 @@
                 tile = Math.floor(Math.min(tileW, tileH));
             }
             tile = Math.max(10, Math.min(40, tile));
+            tile = Math.max(6, Math.min(120, Math.round(tile * zoomLevel)));  // 使用者縮放倍率(1=剛好塞滿)
             document.documentElement.style.setProperty('--tile', tile + 'px');
             document.documentElement.style.setProperty('--axis', axis + 'px');
 
@@ -2410,6 +2458,34 @@
         function setupEventListeners() {
             document.getElementById('undoBtn').addEventListener('click', undo);
             document.getElementById('redoBtn').addEventListener('click', redo);
+
+            // 縮放/平移
+            document.getElementById('zoomInBtn').addEventListener('click', () => setZoom(zoomLevel * 1.25));
+            document.getElementById('zoomOutBtn').addEventListener('click', () => setZoom(zoomLevel / 1.25));
+            document.getElementById('zoomResetBtn').addEventListener('click', () => setZoom(1));
+            document.getElementById('zoomResetBtn').innerText = Math.round(zoomLevel * 100) + '%';
+            // 掛在 main 上,正常視角(容器捲)與斜視(main 捲)的事件都冒泡得到
+            const mapMain = document.querySelector('main');
+            // Ctrl+滾輪:以游標為中心縮放;一般滾輪維持原生捲動(平移)
+            mapMain.addEventListener('wheel', (e) => {
+                if (!e.ctrlKey) return;
+                e.preventDefault();
+                setZoom(zoomLevel * (e.deltaY < 0 ? 1.15 : 1 / 1.15), { x: e.clientX, y: e.clientY });
+            }, { passive: false });
+            // 滑鼠中鍵拖曳平移(左鍵保留給畫圖)
+            let panState = null;
+            mapMain.addEventListener('mousedown', (e) => {
+                if (e.button !== 1) return;
+                e.preventDefault();  // 擋掉瀏覽器的中鍵自動捲動
+                const sc = mapScroller();
+                panState = { sc, x: e.clientX, y: e.clientY, sl: sc.scrollLeft, st: sc.scrollTop };
+            });
+            window.addEventListener('mousemove', (e) => {
+                if (!panState) return;
+                panState.sc.scrollLeft = panState.sl - (e.clientX - panState.x);
+                panState.sc.scrollTop = panState.st - (e.clientY - panState.y);
+            });
+            window.addEventListener('mouseup', () => { panState = null; });
 
             document.getElementById('paletteSearch').addEventListener('input', (e) => filterPalette(e.target.value));
             document.getElementById('paletteSearch').addEventListener('keydown', (e) => {
