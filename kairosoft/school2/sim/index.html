@@ -135,6 +135,18 @@
             background-image: repeating-linear-gradient(45deg, rgba(146, 64, 14, 0.35) 0 3px, transparent 3px 8px);
         }
 
+        /* 搜尋定位：地圖上符合搜尋字的設施（顏色來回脈動，蓋過景點黃框也看得到） */
+        .tile.found {
+            outline: 2px solid #d946ef;
+            outline-offset: -2px;
+            z-index: 15;
+            animation: foundPulse 1.1s ease-in-out infinite;
+        }
+        @keyframes foundPulse {
+            0%, 100% { outline-color: #d946ef; }
+            50% { outline-color: #fbbf24; }
+        }
+
         .palette-item {
             cursor: pointer;
             transition: all 0.2s;
@@ -356,6 +368,7 @@
                         <input id="paletteSearch" type="text" placeholder="🔍 搜尋建築名稱..." class="w-full text-xs border border-gray-300 rounded-lg pl-2.5 pr-7 py-1.5 outline-none focus:border-blue-400 bg-gray-50 focus:bg-white transition">
                         <button id="searchClearBtn" class="absolute right-1.5 top-1/2 -translate-y-1/2 w-4 h-4 flex items-center justify-center text-gray-400 hover:text-gray-700 text-xs font-bold" title="清除搜尋">✕</button>
                     </div>
+                    <div id="searchHits" class="text-[11px] font-bold text-fuchsia-700 mt-1" style="display:none"></div>
                     <div id="recentRow" class="flex gap-1 flex-wrap mt-1.5"></div>
                 </div>
                 <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-2.5">
@@ -1614,6 +1627,7 @@
             updateAccessWarnings();
             updateFlowOverlay();
             updateToolHint(currentTool, updateSuggestions());
+            if (searchTerm) highlightSearch(searchTerm);  // 地圖變動後重新套用搜尋定位
             scheduleAutosave();
         }
 
@@ -2244,6 +2258,42 @@
                 const any = [...cont.children].some(ch => ch.style.display !== 'none');
                 cont.parentElement.style.display = any ? '' : 'none';
             });
+            highlightSearch(q);
+        }
+
+        // 搜尋定位：把地圖上符合搜尋字的設施全部高亮，並在搜尋框下統計棟數
+        // （多格建築以 bid 算「棟」；水塘/草地等環境地形算「格」）。
+        // 地圖每次變動後由 checkSpots() 重新套用，清除搜尋即還原。
+        let searchTerm = '';
+        function highlightSearch(q) {
+            searchTerm = (q || '').trim().toLowerCase();
+            document.querySelectorAll('.tile.found').forEach(t => t.classList.remove('found'));
+            const hits = document.getElementById('searchHits');
+            if (!hits) return;
+            if (!searchTerm) { hits.style.display = 'none'; return; }
+            const matched = new Set(Object.keys(items).filter(id => {
+                const it = items[id];
+                return !it.hidden && id !== 'empty' && it.type !== 'tool' &&
+                    (it.name.toLowerCase().includes(searchTerm) || id.includes(searchTerm) || (it.short && it.short.includes(searchTerm)));
+            }));
+            const bids = {}, singles = {};
+            for (let r = 0; r < gridRows; r++) {
+                for (let c = 0; c < gridCols; c++) {
+                    const cell = gridData[r][c];
+                    if (!matched.has(cell.type)) continue;
+                    const el = document.querySelector(`.tile[data-r="${r}"][data-c="${c}"]`);
+                    if (el) el.classList.add('found');
+                    if (cell.bid) (bids[cell.type] = bids[cell.type] || new Set()).add(cell.bid);
+                    else singles[cell.type] = (singles[cell.type] || 0) + 1;
+                }
+            }
+            const parts = [];
+            matched.forEach(id => {
+                const n = (bids[id] ? bids[id].size : 0) + (singles[id] || 0);
+                if (n) parts.push(items[id].name + ' ×' + n);
+            });
+            hits.style.display = '';
+            hits.innerText = parts.length ? '📍 地圖上：' + parts.join('、') : '地圖上沒有符合的設施';
         }
 
         // 最近使用列（存進偏好，跨次記憶）
