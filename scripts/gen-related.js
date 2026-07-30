@@ -79,6 +79,11 @@ const RELATED = {
             { href: '../../maps/', desc: '五城鎮地形比較' },
             { href: '../../spot-check/', desc: '勾設施查可成景點' }
         ],
+        'layouts/hill': [
+            { href: '../east/', icon: '🏞️', label: '冬郵小鎮完美佈局', desc: '26×26 · 29 景點全成立' },
+            { href: '../../maps/', desc: '五城鎮地形比較' },
+            { href: '../../spot-check/', desc: '勾設施查可成景點' }
+        ],
         'spot-check': [
             { href: '../layouts/', desc: '完美佈局實例參考' },
             { href: '../#combo', icon: '🧩', label: '29 種景點 combo 總表', desc: '29 景點成立配方' },

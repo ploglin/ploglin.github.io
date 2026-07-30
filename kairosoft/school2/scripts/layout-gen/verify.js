@@ -14,7 +14,7 @@ require('./towns.js').select(townKey);
 const E = require('./engine.js');
 const { items, SPOTS, gridRows, gridCols, town } = E;
 
-const CODE_FILE = { health: 'code.txt', east: 'code-east.txt' }[townKey];
+const CODE_FILE = { health: 'code.txt', east: 'code-east.txt', hill: 'code-hill.txt', valley: 'code-valley.txt' }[townKey];
 // 每個城鎮一個子頁：layouts/<town.page>/index.html
 const PAGE = path.join(__dirname, '..', '..', 'layouts', town.page, 'index.html');
 const PAGE_REL = 'layouts/' + town.page + '/index.html';
