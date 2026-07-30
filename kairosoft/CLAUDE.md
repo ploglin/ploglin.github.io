@@ -51,7 +51,7 @@ kairosoft/<game>/            index.html = 內容豐富的攻略專頁(SEO 主力
   <script data-shell>Shell.mountBar();</script>
   ```
   `data-shell` 屬性不可省略——`school2/scripts/check.js` 靠「無屬性的 `<script>`」找主程式。
-- **快取**：改動 `shell.js` / `shell.css` 後，全站 `?v=N` 要一起加一號(目前 `?v=6`，含各頁對 `db.js` 的引用)。
+- **快取**：改動 `shell.js` / `shell.css` 後，全站 `?v=N` 要一起加一號(目前 `?v=7`，含各頁對 `db.js` 的引用)。
 
 ## 導覽分層原則
 

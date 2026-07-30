@@ -129,5 +129,69 @@ ok('分享編碼往返一致', roundtrip);
     ok('26×24 維持無前綴舊格式', /gridRows === 26 && gridCols === 24\) \? ''/.test(html));
 }
 
+// 8) 深色覆寫層（防回歸）
+//    模擬器的樣式是寫死的淺色 Tailwind utility，深色靠 <style> 尾端的覆寫層重映射。
+//    新增 UI 時很容易忘了把新的淺色 class 加進覆寫層 → 深色下會冒出一塊白。
+//    這裡把頁面實際用到的「淺色系」utility 全掃出來，逐一比對覆寫層有沒有映射到。
+{
+    const styleBlocks = [...html.matchAll(/<style>([\s\S]*?)<\/style>/g)].map(m => m[1]).join('\n');
+    const darkStart = styleBlocks.indexOf('深色模式覆寫層');
+    ok('深色覆寫層存在', darkStart >= 0);
+
+    if (darkStart >= 0) {
+        const darkCss = styleBlocks.slice(darkStart);
+
+        // 兩個 dark 選擇器區塊（系統偏好 / 手動 data-theme）內容必須一模一樣，
+        // 否則只有一種進入方式會變深色。比對時把根選擇器抹平再比。
+        const mediaBody = /@media \(prefers-color-scheme: dark\) \{([\s\S]*?)\n        \}/.exec(darkCss);
+        const attrBody = darkCss.slice(darkCss.indexOf(':root[data-theme="dark"] {'));
+        const flat = s => s.replace(/:root:not\(\[data-theme="light"\]\)|:root\[data-theme="dark"\]/g, 'ROOT')
+            .replace(/\s+/g, ' ').trim();
+        ok('深色兩套選擇器內容一致（系統偏好 vs 手動）',
+            !!mediaBody && flat(mediaBody[1]) === flat(attrBody));
+
+        // 覆寫層已映射的 class（含 hover:/focus: 變體）。CSS 內的 \: \/ 先還原成 : /
+        const mapped = new Set();
+        const CLS = /\.((?:hover|focus):)?((?:bg|border|text)-[a-z]+(?:-\d{2,3})?(?:\/\d{1,3})?)/g;
+        for (const m of darkCss.replace(/\\([:/])/g, '$1').replace(/:not\([^)]*\)/g, '').matchAll(CLS)) {
+            mapped.add((m[1] || '') + m[2]);
+        }
+
+        // 頁面實際用到的 class（靜態 HTML ＋ JS 產生的字串），排除 <style> 本身
+        const markup = html.replace(/<style>[\s\S]*?<\/style>/g, '');
+        const USED = /\b((?:hover|focus):)?((?:bg|border|text)-[a-z]+(?:-\d{2,3})?(?:\/\d{1,3})?)\b/g;
+
+        // 「淺色系」判定：白/黑/50/100/200（＋border 的 300、bg 的 800）與 400–900 的文字色
+        const inScope = cls => {
+            const m = /^(?:(?:hover|focus):)?(bg|border|text)-([a-z]+)(?:-(\d{2,3}))?(?:\/\d{1,3})?$/.exec(cls);
+            if (!m) return false;
+            const [, kind, name, shade] = m;
+            if (kind === 'bg') return name === 'white' || name === 'black' || ['50', '100', '200', '800'].includes(shade);
+            if (kind === 'border') return name === 'white' || ['50', '100', '200', '300'].includes(shade);
+            return +shade >= 400 && +shade <= 900;   // text
+        };
+
+        // 刻意不映射的例外（深色下維持原樣，各有理由）
+        const ALLOW = {
+            'border-white': '景點指示點的白圈，畫在地圖格子上＝地圖內容，不隨主題變',
+            'text-white': '實心彩色按鈕（儲存/讀取/刪除/切換開啟態）的字色，深淺色皆適用'
+        };
+
+        const missing = [...new Set([...markup.matchAll(USED)].map(m => (m[1] || '') + m[2]))]
+            .filter(inScope).filter(c => !mapped.has(c) && !ALLOW[c]).sort();
+        ok('淺色 utility 都有深色映射', !missing.length, missing.join(','));
+
+        // 覆寫層必須含這幾類關鍵規則（P0：hover 變體、開啟態排除、選中高亮、tooltip 箭頭）
+        const musts = [
+            ['hover 變體有深色版', /\.hover\\:bg-gray-200:hover/],
+            ['切換鈕開啟態不被蓋掉', /:not\(\.bg-indigo-600\)/],
+            ['選中的建築仍有高亮', /\.palette-item\.active/],
+            ['tooltip 箭頭跟著換色', /\.spot-tooltip::after/],
+            ['原生控件與捲軸用深色', /color-scheme: dark/]
+        ];
+        musts.forEach(([n, re]) => ok('深色覆寫層：' + n, re.test(darkCss)));
+    }
+}
+
 console.log(fails ? `\n共 ${fails} 項未通過` : '\n全部通過 ✔');
 process.exit(fails ? 1 : 0);

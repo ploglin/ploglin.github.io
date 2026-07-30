@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 深色模式防閃白：shell.js 在頁尾才載入，這裡先把記住的主題套上 -->
+    <script>try{var t=localStorage.getItem('kairo_theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-EL4J27F89B"></script>
     <script data-ga4>
@@ -308,6 +310,226 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* ==========================================================
+           深色模式覆寫層（與站台共用 data-theme 屬性與 kairo_theme 偏好）
+           結構與 assets/shell.css 同構：系統偏好（未手動指定淺色時）＋ 手動 data-theme="dark"，
+           兩個區塊內容完全相同，色板取自 shell.css 的綠調深色 token。
+           地圖格子顏色（items 色票）與 PNG 匯出刻意不在此範圍內。
+           增減映射時 scripts/check.js 的「深色覆寫層」檢查會核對是否有淺色 utility 漏網。
+           ========================================================== */
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) {
+                color-scheme: dark;
+                --sd-bg: #0e1613;
+                --sd-card: #16211c;
+                --sd-card-2: #131d18;
+                --sd-card-95: rgba(22,33,28,.95);
+                --sd-ink: #e8f0eb;
+                --sd-ink-soft: #b3c3ba;
+                --sd-muted: #82968c;
+                --sd-line: #23342b;
+                --sd-line-soft: #1c2a23;
+                --sd-line-strong: #2c4034;
+                --sd-axis-bg: #1a2620;
+                --sd-tip-bg: rgba(22,33,28,.98);
+                --sd-veil: rgba(6,10,8,.72);
+                --sd-toast: #334155;
+                --sd-toast-80: rgba(51,65,85,.92);
+                --sd-toast-line: #475569;
+                --sd-sb: #334155;
+                --sd-sb-hover: #475569;
+                --sd-amber-bg: #1e1a09;
+                --sd-amber-bg-2: #1e1708;
+                --sd-amber-chip: #422006;
+                --sd-amber-hover: #2b2410;
+                --sd-amber-line: #3c3416;
+                --sd-amber-line-2: #4d431c;
+                --sd-sky-bg: #0c1a24;
+                --sd-sky-line: #1d3a4d;
+                --sd-red-bg: #2a1113;
+                --sd-red-line: #4d1f22;
+                --sd-red-hover: #3a1619;
+                --sd-active-bg: #1b3355;
+                --sd-active-line: #60a5fa;
+            }
+            /* utility 重映射：底色 */
+            :root:not([data-theme="light"]) .bg-white { background-color:var(--sd-card) }
+            :root:not([data-theme="light"]) .bg-white\/95 { background-color:var(--sd-card-95) }
+            :root:not([data-theme="light"]) .bg-gray-50 { background-color:var(--sd-card-2) }
+            :root:not([data-theme="light"]) .bg-gray-100:not(.bg-indigo-600) { background-color:var(--sd-bg) }
+            /* bg-gray-200 只用在「平地/高地1/高地2」分段控制的軌道：軌道要比 bg-white 的
+               作用中鈕更暗，深色下才維持淺色版「作用中的那顆浮起來」的層次 */
+            :root:not([data-theme="light"]) .bg-gray-200 { background-color:var(--sd-bg) }
+            :root:not([data-theme="light"]) .bg-gray-800 { background-color:var(--sd-toast);border:1px solid var(--sd-toast-line) }
+            :root:not([data-theme="light"]) .bg-gray-800\/80 { background-color:var(--sd-toast-80);border:1px solid var(--sd-toast-line) }
+            :root:not([data-theme="light"]) .bg-black\/40 { background-color:rgba(0,0,0,.66) }
+            :root:not([data-theme="light"]) .bg-yellow-50 { background-color:var(--sd-amber-bg) }
+            :root:not([data-theme="light"]) .bg-yellow-100 { background-color:var(--sd-amber-chip) }
+            :root:not([data-theme="light"]) .bg-amber-50 { background-color:var(--sd-amber-bg-2) }
+            :root:not([data-theme="light"]) .bg-sky-50 { background-color:var(--sd-sky-bg) }
+            :root:not([data-theme="light"]) .bg-red-50 { background-color:var(--sd-red-bg) }
+            /* utility 重映射：邊框 */
+            :root:not([data-theme="light"]) .border-gray-100 { border-color:var(--sd-line-soft) }
+            :root:not([data-theme="light"]) .border-gray-200 { border-color:var(--sd-line) }
+            :root:not([data-theme="light"]) .border-gray-300 { border-color:var(--sd-line-strong) }
+            :root:not([data-theme="light"]) .border-yellow-200 { border-color:var(--sd-amber-line) }
+            :root:not([data-theme="light"]) .border-yellow-300 { border-color:var(--sd-amber-line-2) }
+            :root:not([data-theme="light"]) .border-amber-200 { border-color:var(--sd-amber-line-2) }
+            :root:not([data-theme="light"]) .border-sky-200 { border-color:var(--sd-sky-line) }
+            :root:not([data-theme="light"]) .border-red-200 { border-color:var(--sd-red-line) }
+            /* utility 重映射：文字（深底彩字整批上移色階，全部 ≥4.5:1） */
+            :root:not([data-theme="light"]) .text-gray-800:not(.text-white) { color:var(--sd-ink) }
+            :root:not([data-theme="light"]) .text-gray-700:not(.text-white) { color:var(--sd-ink) }
+            :root:not([data-theme="light"]) .text-gray-600:not(.text-white) { color:var(--sd-ink-soft) }
+            :root:not([data-theme="light"]) .text-gray-500:not(.text-white) { color:var(--sd-ink-soft) }
+            :root:not([data-theme="light"]) .text-gray-400:not(.text-white) { color:var(--sd-muted) }
+            :root:not([data-theme="light"]) .text-green-700 { color:#4ade80 }
+            :root:not([data-theme="light"]) .text-green-600 { color:#4ade80 }
+            :root:not([data-theme="light"]) .text-sky-700 { color:#38bdf8 }
+            :root:not([data-theme="light"]) .text-sky-600 { color:#38bdf8 }
+            :root:not([data-theme="light"]) .text-blue-600 { color:#60a5fa }
+            :root:not([data-theme="light"]) .text-yellow-800 { color:#fde047 }
+            :root:not([data-theme="light"]) .text-yellow-700 { color:#facc15 }
+            :root:not([data-theme="light"]) .text-amber-700 { color:#fbbf24 }
+            :root:not([data-theme="light"]) .text-fuchsia-700 { color:#e879f9 }
+            :root:not([data-theme="light"]) .text-purple-500 { color:#c084fc }
+            :root:not([data-theme="light"]) .text-red-600 { color:#fca5a5 }
+            /* hover / focus 變體：不補深色版會被上面的重映射蓋掉（特異度較高） */
+            :root:not([data-theme="light"]) .hover\:bg-gray-100:hover { background-color:var(--sd-line) }
+            :root:not([data-theme="light"]) .hover\:bg-gray-200:hover { background-color:var(--sd-line) }
+            :root:not([data-theme="light"]) .hover\:bg-yellow-100:hover { background-color:var(--sd-amber-hover) }
+            :root:not([data-theme="light"]) .hover\:bg-amber-100:hover { background-color:var(--sd-amber-hover) }
+            :root:not([data-theme="light"]) .hover\:bg-red-100:hover { background-color:var(--sd-red-hover) }
+            :root:not([data-theme="light"]) .hover\:text-gray-700:hover { color:var(--sd-ink) }
+            :root:not([data-theme="light"]) .hover\:text-gray-800:hover { color:var(--sd-ink) }
+            :root:not([data-theme="light"]) .hover\:text-sky-900:hover { color:#7dd3fc }
+            :root:not([data-theme="light"]) .focus\:bg-white:focus { background-color:var(--sd-card) }
+            :root:not([data-theme="light"]) .focus\:border-blue-400:focus { border-color:#60a5fa }
+            :root:not([data-theme="light"]) .focus\:border-green-400:focus { border-color:#4ade80 }
+            /* 狀態高亮：選中的建築（特異度要壓過 .bg-white 重映射） */
+            :root:not([data-theme="light"]) .palette-item.active { background-color:var(--sd-active-bg);border-color:var(--sd-active-line)!important }
+            /* 手寫 CSS 的深色版 */
+            :root:not([data-theme="light"]) { background-color:var(--sd-bg) }
+            :root:not([data-theme="light"]) body { background-color:var(--sd-bg);color:var(--sd-ink) }
+            :root:not([data-theme="light"]) .map-container { background-color:var(--sd-card) }
+            /* 菱形視角的畫布本來就要透明（旋轉後的方框不能露出來）；上一條特異度較高會蓋掉它 */
+            :root:not([data-theme="light"]) body.diamond .map-container { background-color:transparent }
+            :root:not([data-theme="light"]) .axis-label { color:var(--sd-ink-soft);background-color:var(--sd-axis-bg) }
+            :root:not([data-theme="light"]) .spot-tooltip { background-color:var(--sd-tip-bg);border-color:var(--sd-line-strong) }
+            :root:not([data-theme="light"]) .spot-tooltip::after { border-top-color:var(--sd-tip-bg) }
+            :root:not([data-theme="light"]) body.searching .game-grid::after { background:var(--sd-veil) }
+            :root:not([data-theme="light"]) ::-webkit-scrollbar-thumb { background:var(--sd-sb) }
+            :root:not([data-theme="light"]) ::-webkit-scrollbar-thumb:hover { background:var(--sd-sb-hover) }
+            @media (max-width: 768px) {
+                :root:not([data-theme="light"]) #appBody aside { border-top-color:var(--sd-line) }
+            }
+        }
+        :root[data-theme="dark"] {
+            color-scheme: dark;
+            --sd-bg: #0e1613;
+            --sd-card: #16211c;
+            --sd-card-2: #131d18;
+            --sd-card-95: rgba(22,33,28,.95);
+            --sd-ink: #e8f0eb;
+            --sd-ink-soft: #b3c3ba;
+            --sd-muted: #82968c;
+            --sd-line: #23342b;
+            --sd-line-soft: #1c2a23;
+            --sd-line-strong: #2c4034;
+            --sd-axis-bg: #1a2620;
+            --sd-tip-bg: rgba(22,33,28,.98);
+            --sd-veil: rgba(6,10,8,.72);
+            --sd-toast: #334155;
+            --sd-toast-80: rgba(51,65,85,.92);
+            --sd-toast-line: #475569;
+            --sd-sb: #334155;
+            --sd-sb-hover: #475569;
+            --sd-amber-bg: #1e1a09;
+            --sd-amber-bg-2: #1e1708;
+            --sd-amber-chip: #422006;
+            --sd-amber-hover: #2b2410;
+            --sd-amber-line: #3c3416;
+            --sd-amber-line-2: #4d431c;
+            --sd-sky-bg: #0c1a24;
+            --sd-sky-line: #1d3a4d;
+            --sd-red-bg: #2a1113;
+            --sd-red-line: #4d1f22;
+            --sd-red-hover: #3a1619;
+            --sd-active-bg: #1b3355;
+            --sd-active-line: #60a5fa;
+        }
+        /* utility 重映射：底色 */
+        :root[data-theme="dark"] .bg-white { background-color:var(--sd-card) }
+        :root[data-theme="dark"] .bg-white\/95 { background-color:var(--sd-card-95) }
+        :root[data-theme="dark"] .bg-gray-50 { background-color:var(--sd-card-2) }
+        :root[data-theme="dark"] .bg-gray-100:not(.bg-indigo-600) { background-color:var(--sd-bg) }
+        /* bg-gray-200 只用在「平地/高地1/高地2」分段控制的軌道：軌道要比 bg-white 的
+           作用中鈕更暗，深色下才維持淺色版「作用中的那顆浮起來」的層次 */
+        :root[data-theme="dark"] .bg-gray-200 { background-color:var(--sd-bg) }
+        :root[data-theme="dark"] .bg-gray-800 { background-color:var(--sd-toast);border:1px solid var(--sd-toast-line) }
+        :root[data-theme="dark"] .bg-gray-800\/80 { background-color:var(--sd-toast-80);border:1px solid var(--sd-toast-line) }
+        :root[data-theme="dark"] .bg-black\/40 { background-color:rgba(0,0,0,.66) }
+        :root[data-theme="dark"] .bg-yellow-50 { background-color:var(--sd-amber-bg) }
+        :root[data-theme="dark"] .bg-yellow-100 { background-color:var(--sd-amber-chip) }
+        :root[data-theme="dark"] .bg-amber-50 { background-color:var(--sd-amber-bg-2) }
+        :root[data-theme="dark"] .bg-sky-50 { background-color:var(--sd-sky-bg) }
+        :root[data-theme="dark"] .bg-red-50 { background-color:var(--sd-red-bg) }
+        /* utility 重映射：邊框 */
+        :root[data-theme="dark"] .border-gray-100 { border-color:var(--sd-line-soft) }
+        :root[data-theme="dark"] .border-gray-200 { border-color:var(--sd-line) }
+        :root[data-theme="dark"] .border-gray-300 { border-color:var(--sd-line-strong) }
+        :root[data-theme="dark"] .border-yellow-200 { border-color:var(--sd-amber-line) }
+        :root[data-theme="dark"] .border-yellow-300 { border-color:var(--sd-amber-line-2) }
+        :root[data-theme="dark"] .border-amber-200 { border-color:var(--sd-amber-line-2) }
+        :root[data-theme="dark"] .border-sky-200 { border-color:var(--sd-sky-line) }
+        :root[data-theme="dark"] .border-red-200 { border-color:var(--sd-red-line) }
+        /* utility 重映射：文字（深底彩字整批上移色階，全部 ≥4.5:1） */
+        :root[data-theme="dark"] .text-gray-800:not(.text-white) { color:var(--sd-ink) }
+        :root[data-theme="dark"] .text-gray-700:not(.text-white) { color:var(--sd-ink) }
+        :root[data-theme="dark"] .text-gray-600:not(.text-white) { color:var(--sd-ink-soft) }
+        :root[data-theme="dark"] .text-gray-500:not(.text-white) { color:var(--sd-ink-soft) }
+        :root[data-theme="dark"] .text-gray-400:not(.text-white) { color:var(--sd-muted) }
+        :root[data-theme="dark"] .text-green-700 { color:#4ade80 }
+        :root[data-theme="dark"] .text-green-600 { color:#4ade80 }
+        :root[data-theme="dark"] .text-sky-700 { color:#38bdf8 }
+        :root[data-theme="dark"] .text-sky-600 { color:#38bdf8 }
+        :root[data-theme="dark"] .text-blue-600 { color:#60a5fa }
+        :root[data-theme="dark"] .text-yellow-800 { color:#fde047 }
+        :root[data-theme="dark"] .text-yellow-700 { color:#facc15 }
+        :root[data-theme="dark"] .text-amber-700 { color:#fbbf24 }
+        :root[data-theme="dark"] .text-fuchsia-700 { color:#e879f9 }
+        :root[data-theme="dark"] .text-purple-500 { color:#c084fc }
+        :root[data-theme="dark"] .text-red-600 { color:#fca5a5 }
+        /* hover / focus 變體：不補深色版會被上面的重映射蓋掉（特異度較高） */
+        :root[data-theme="dark"] .hover\:bg-gray-100:hover { background-color:var(--sd-line) }
+        :root[data-theme="dark"] .hover\:bg-gray-200:hover { background-color:var(--sd-line) }
+        :root[data-theme="dark"] .hover\:bg-yellow-100:hover { background-color:var(--sd-amber-hover) }
+        :root[data-theme="dark"] .hover\:bg-amber-100:hover { background-color:var(--sd-amber-hover) }
+        :root[data-theme="dark"] .hover\:bg-red-100:hover { background-color:var(--sd-red-hover) }
+        :root[data-theme="dark"] .hover\:text-gray-700:hover { color:var(--sd-ink) }
+        :root[data-theme="dark"] .hover\:text-gray-800:hover { color:var(--sd-ink) }
+        :root[data-theme="dark"] .hover\:text-sky-900:hover { color:#7dd3fc }
+        :root[data-theme="dark"] .focus\:bg-white:focus { background-color:var(--sd-card) }
+        :root[data-theme="dark"] .focus\:border-blue-400:focus { border-color:#60a5fa }
+        :root[data-theme="dark"] .focus\:border-green-400:focus { border-color:#4ade80 }
+        /* 狀態高亮：選中的建築（特異度要壓過 .bg-white 重映射） */
+        :root[data-theme="dark"] .palette-item.active { background-color:var(--sd-active-bg);border-color:var(--sd-active-line)!important }
+        /* 手寫 CSS 的深色版 */
+        :root[data-theme="dark"] { background-color:var(--sd-bg) }
+        :root[data-theme="dark"] body { background-color:var(--sd-bg);color:var(--sd-ink) }
+        :root[data-theme="dark"] .map-container { background-color:var(--sd-card) }
+        /* 菱形視角的畫布本來就要透明（旋轉後的方框不能露出來）；上一條特異度較高會蓋掉它 */
+        :root[data-theme="dark"] body.diamond .map-container { background-color:transparent }
+        :root[data-theme="dark"] .axis-label { color:var(--sd-ink-soft);background-color:var(--sd-axis-bg) }
+        :root[data-theme="dark"] .spot-tooltip { background-color:var(--sd-tip-bg);border-color:var(--sd-line-strong) }
+        :root[data-theme="dark"] .spot-tooltip::after { border-top-color:var(--sd-tip-bg) }
+        :root[data-theme="dark"] body.searching .game-grid::after { background:var(--sd-veil) }
+        :root[data-theme="dark"] ::-webkit-scrollbar-thumb { background:var(--sd-sb) }
+        :root[data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background:var(--sd-sb-hover) }
+        @media (max-width: 768px) {
+            :root[data-theme="dark"] #appBody aside { border-top-color:var(--sd-line) }
+        }
     </style>
 </head>
 <body class="h-screen w-screen flex flex-col">
@@ -2711,7 +2933,7 @@
             });
         }
     </script>
-    <script src="../../../assets/shell.js?v=6"></script>
+    <script src="../../../assets/shell.js?v=7"></script>
     <script data-shell>Shell.mountBar();</script>
 </body>
 </html>

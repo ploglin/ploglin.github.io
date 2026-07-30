@@ -299,13 +299,17 @@
         var home = compact
             ? '<a class="gb-home" href="' + g.up + '../../index.html" title="回到' + SITE + '">🕹️</a>'
             : '';
+        // 深/淺色鈕只在精簡列出現：站台 header 已有一顆 #themeBtn，不能有兩個同 id
+        var theme = compact
+            ? '<button type="button" class="gb-theme" id="themeBtn" aria-label="切換深淺色">🌙</button>'
+            : '';
 
         el.innerHTML =
             '<div class="gb-inner">' + home +
             '<a class="gb-title" href="' + g.up + '">' +
             '<span class="gb-emoji">' + g.cfg.e + '</span>' +
             '<span class="gb-name"><b>' + g.cfg.t + '</b><i>' + (g.cfg.j || '') + '</i></span></a>' +
-            '<nav class="gb-nav">' + tabs + '</nav>' + more +
+            '<nav class="gb-nav">' + tabs + '</nav>' + more + theme +
             '</div>';
 
         // 「更多」下拉
@@ -354,7 +358,30 @@
         '.gb-mitem + .gb-mh{margin-top:4px;border-top:1px solid #dde5e0;padding-top:8px}' +
         '.gb-mitem{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;font-size:13px;font-weight:700;color:#4b5b53;white-space:nowrap}' +
         '.gb-mitem:hover{background:#e6f4ec;color:#0f5d38}' +
-        '@media(max-width:720px){.gb-name i{display:none}.gb-tab{padding:5px 9px;font-size:12.5px}}';
+        '.gb-theme{display:inline-grid;place-items:center;width:32px;height:32px;min-width:32px;flex-shrink:0;padding:0;margin-left:2px;border:1px solid #dde5e0;border-radius:8px;background:none;color:#4b5b53;font-family:inherit;font-size:15px;line-height:1;cursor:pointer}' +
+        '.gb-theme:hover{background:#fff}' +
+        '@media(max-width:720px){.gb-name i{display:none}.gb-tab{padding:5px 9px;font-size:12.5px}}' +
+        /* 深色：與 shell.css 同構的雙選擇器（系統偏好 ＋ 手動 data-theme="dark"），色板取自 shell.css 深色 token */
+        '@media(prefers-color-scheme:dark){' + barDarkCss(':root:not([data-theme="light"])') + '}' +
+        barDarkCss(':root[data-theme="dark"]');
+
+    // 精簡功能列的深色規則（兩處選擇器共用同一份，避免兩份色值走鐘）
+    function barDarkCss(r) {
+        return r + ' .game-bar{background:#16211c;border-bottom-color:#23342b}' +
+            r + ' .gb-title{color:#e8f0eb}' +
+            r + ' .gb-emoji{background:#0e1613;border-color:#23342b}' +
+            r + ' .gb-name i{color:#82968c}' +
+            r + ' .gb-tab{color:#b3c3ba}' +
+            r + ' .gb-tab:hover{background:#0e1613;color:#6bd39f}' +
+            r + ' .gb-tab.on{background:#0e1613;color:#6bd39f;border-color:#2f4c3c}' +
+            r + ' .gb-menu{background:#16211c;border-color:#23342b;box-shadow:0 10px 30px rgba(0,0,0,.5)}' +
+            r + ' .gb-mh{color:#82968c}' +
+            r + ' .gb-mitem{color:#b3c3ba}' +
+            r + ' .gb-mitem + .gb-mh{border-top-color:#23342b}' +
+            r + ' .gb-mitem:hover{background:#16281f;color:#6bd39f}' +
+            r + ' .gb-theme{border-color:#23342b;color:#e8f0eb}' +
+            r + ' .gb-theme:hover{background:#0e1613}';
+    }
 
     Shell.mountBar = function (opts) {
         opts = opts || {};
@@ -364,6 +391,10 @@
         st.textContent = BAR_CSS;
         document.head.appendChild(st);
         document.body.insertBefore(buildGameBar(g, true), document.body.firstChild);
+        // 深/淺色切換：與站台 header 同一顆 Shell.toggleTheme，切換即時生效並換 icon
+        var tb = document.getElementById('themeBtn');
+        if (tb) tb.addEventListener('click', Shell.toggleTheme);
+        updateThemeBtn();
         Shell.game = opts.game || { id: g.id, type: 'simulator' };
         // 版面高度變了，讓工具自己重算（模擬器用 resize 觸發 fitGrid）
         try { window.dispatchEvent(new Event('resize')); } catch (e) { }
