@@ -379,6 +379,9 @@ function fillPlateau(g, zones) {
                 if (E.activeSpots(g).size < before) g[r][c] = { type: cell.type, elevation: cell.elevation };
             }
         }
+        // 步道材質：公園類高地鋪草地（自然小徑，草地本身是菜園／力量／清爽的材料，
+        // 只會多景點不會少），設施類園區鋪走廊（校舍內廊道語意、連動「抹布」加速）。
+        const walkMat = z.walkMat || 'wood_path';
         const rowsOf = {};
         for (let r = z.rows[0]; r <= z.rows[1]; r++) for (let c = z.cols[0]; c <= z.cols[1]; c++) {
             const cell = g[r][c];
@@ -390,7 +393,7 @@ function fillPlateau(g, zones) {
             const r = Number(rk), cs = rowsOf[rk].sort((a, b) => a - b);
             const walk = new Set([cs[0], cs[cs.length - 1]]);
             cs.forEach(c => {
-                if (walk.has(c)) g[r][c] = { type: 'wood_path', elevation: g[r][c].elevation };
+                if (walk.has(c)) g[r][c] = { type: walkMat, elevation: g[r][c].elevation };
                 else slots.push([r, c]);
             });
         });
@@ -425,6 +428,115 @@ function tidyUnreachable(g) {
         if (E.activeSpots(g).size < before) restore(g, snap); else n++;
     }
     if (n) console.log('  斷頭路改鋪草地：' + n + ' 格');
+}
+
+/* ── 材質重鋪 pass（景點中立，在 report 之前跑）────────────────────────────────
+   遊戲的四種通行鋪面各有語意，全圖一律鋪走廊等於把資訊丟掉：
+     走廊 wood_path（木造廊下）＝校舍內廊道，道具「抹布」在此加速，
+                                「相機組／寫生」按走廊算打工收入 → 教學／生活／運動區
+     道路 asphalt（外通路）      ＝室外幹道，「滑板」在道路與草地加速 → 幹道脊椎、農牧／公園／湖心
+     水泥地 concrete（パネル廊下）＝硬鋪面；機制未確認，只當體育館／泳池／道場的門前廣場，不當通道
+     草地 grass（芝生）          ＝自然小徑，同時是菜園／力量／清爽的材料 → 分區內部填充與公園高地步道
+
+   四種鋪面同屬 E.PASSABLE、都不是任何景點的「負材料」，所以可達性／包圍／景點判定完全不變，
+   跑完會用 activeSpots / blockedBuildings 斷言（grass 化允許景點變多）。
+
+   opts = { zones: ZONES, spine: {av:[列], st:[欄]}, keep: [[r,c],…], defaultMat }
+     spine  ＝幹道脊椎（連接兩座校門的動線＋中軸），一律鋪道路。
+     keep   ＝鑿出來的水道橋，保持走廊（木橋意象；幹道規則的顯式例外）。
+     街道段的材質取自「鄰接街廓的 ZONES.mat」，兩側不同時取優先序 asphalt > wood_path。
+     高地步道（elevation > 1）不動，由 fillPlateau 的 walkMat 決定。 */
+const PAVE_ROAD = new Set(['wood_path', 'asphalt', 'concrete']);
+const PAVE_PRIORITY = ['asphalt', 'wood_path'];
+
+function paveMaterials(g, opts) {
+    opts = opts || {};
+    const ZONES = opts.zones || {};
+    const spine = opts.spine || {};
+    const spineAV = new Set(spine.av || []);
+    const spineST = new Set(spine.st || []);
+    const keep = new Set((opts.keep || []).map(([r, c]) => r + ',' + c));
+    const defaultMat = opts.defaultMat || 'wood_path';
+    const onSpine = (r, c) => spineAV.has(r) || spineST.has(c);
+
+    // 街道格鄰接哪些街廓（往外放一圈就是夾在中間的那條路）→ 取材質優先序
+    const zoneMatAt = (r, c) => {
+        const mats = new Set();
+        for (const [r0, r1] of D.ROW_BANDS) for (const [c0, c1] of D.COL_BANDS) {
+            if (r < r0 - 1 || r > r1 + 1 || c < c0 - 1 || c > c1 + 1) continue;
+            const m = (ZONES[r0 + ',' + c0] || {}).mat;
+            if (m) mats.add(m);
+        }
+        return PAVE_PRIORITY.find(m => mats.has(m)) || null;
+    };
+
+    const before = { spots: E.activeSpots(g), blocked: E.blockedBuildings(g).count };
+
+    for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++) {
+        const cell = g[r][c];
+        if (!PAVE_ROAD.has(cell.type) || cell.elevation !== 1) continue;
+        const mat = keep.has(r + ',' + c) ? 'wood_path'
+            : onSpine(r, c) ? 'asphalt'
+                : (zoneMatAt(r, c) || defaultMat);
+        g[r][c] = { type: mat, elevation: 1 };
+    }
+
+    /* 水泥門前廣場：體育館／泳池／道場的正門前 1–2 格路面／空地。
+       守衛照舊（景點不可少、包圍不可多），失敗就跳過；幹道脊椎與水道橋不動。 */
+    const PLAZA_HOST = new Set(['gym', 'pool', 'dojo']);
+    const reach = E.computeReachability(g);   // 鋪面互換不影響可達性，算一次就夠
+    let plazas = 0, plazaCells = 0;
+    for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++) {
+        if (!PLAZA_HOST.has(g[r][c].type)) continue;
+        const ev = g[r][c].elevation;
+        const cands = [];
+        for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+            const nr = r + dr, nc = c + dc;
+            if (nr < 0 || nr >= gridRows || nc < 0 || nc >= gridCols) continue;
+            const t = g[nr][nc].type;
+            if (g[nr][nc].elevation !== ev) continue;
+            if (!reach || reach[nr][nc] < 0) continue;                 // 走不到的口袋不鋪門前廣場
+            if (onSpine(nr, nc) || keep.has(nr + ',' + nc)) continue;
+            if (PAVE_ROAD.has(t)) cands.push([nr, nc, 0]);
+            else if (t === 'empty' && !E.isSlopeIn(g, nr, nc)) cands.push([nr, nc, 1]);  // 斜坡絕對不動
+        }
+        cands.sort((a, b) => a[2] - b[2]);       // 先用現成的路面，其次才是空地
+        let got = 0;
+        for (const [nr, nc] of cands) {
+            if (got >= 2) break;
+            if (g[nr][nc].type === 'concrete') { got++; continue; }
+            if (!guarded(g, { r: nr, c: nc, w: 1, h: 1 }, 'concrete')) continue;
+            got++; plazaCells++;
+        }
+        if (got) plazas++;
+    }
+
+    // 中立性斷言
+    const after = { spots: E.activeSpots(g), blocked: E.blockedBuildings(g).count };
+    const lost = [...before.spots].filter(id => !after.spots.has(id));
+    if (lost.length || after.blocked > before.blocked)
+        throw new Error('材質重鋪 pass 不中立：掉了景點 ' + lost.join('、') +
+            '；被包圍建築 ' + before.blocked + ' → ' + after.blocked);
+
+    const cnt = { wood_path: 0, asphalt: 0, concrete: 0, grass: 0 };
+    g.flat().forEach(x => { if (cnt[x.type] !== undefined) cnt[x.type]++; });
+    const total = cnt.wood_path + cnt.asphalt + cnt.concrete + cnt.grass;
+    console.log('  材質重鋪：走廊 ' + cnt.wood_path + '｜道路 ' + cnt.asphalt + '｜水泥地 ' + cnt.concrete +
+        '｜草地 ' + cnt.grass + '（合計 ' + total + ' 格，走廊占 ' +
+        (total ? Math.round(cnt.wood_path / total * 100) : 0) + '%）');
+    console.log('  水泥門前廣場：' + plazas + ' 處、共 ' + plazaCells + ' 格');
+    return cnt;
+}
+
+/* 把分區設定（名稱／階段／材質）寫成產物，供 gen-assets.js 產「階段 × 分區」對照表。
+   gen-assets 只吃分享碼，本來看不到 ZONES，所以由設定檔在產圖時一併輸出。 */
+function writeZones(ZONES, file) {
+    const out = {};
+    Object.keys(ZONES).forEach(k => {
+        const z = ZONES[k];
+        out[k] = { name: z.name || '', stage: z.stage || null, mat: z.mat || null };
+    });
+    fs.writeFileSync(file, JSON.stringify(out, null, 1));
 }
 
 /* 驗證＋輸出：全部走模擬器的真實邏輯 */
@@ -482,5 +594,6 @@ function report(g, title, codeFile) {
 
 module.exports = {
     DECOR, DECOR_EAST, CLEARABLE, spotOrder, guarded, fallback, fallbackAll,
-    fill, addGate, carveWaterChannel, openPlateaus, fillPlateau, tidyUnreachable, countReachable, report
+    fill, addGate, carveWaterChannel, openPlateaus, fillPlateau, tidyUnreachable, countReachable,
+    paveMaterials, writeZones, report
 };

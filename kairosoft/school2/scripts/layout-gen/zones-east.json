@@ -1,0 +1,182 @@
+{
+ "15,0": {
+  "name": "3年級棟",
+  "stage": 2,
+  "mat": "wood_path"
+ },
+ "15,5": {
+  "name": "1年級棟",
+  "stage": 2,
+  "mat": "wood_path"
+ },
+ "15,10": {
+  "name": "2年級棟",
+  "stage": 2,
+  "mat": "wood_path"
+ },
+ "15,15": {
+  "name": "生活機能",
+  "stage": 2,
+  "mat": "wood_path"
+ },
+ "15,20": {
+  "name": "南門廣場",
+  "stage": 2,
+  "mat": "wood_path"
+ },
+ "20,0": {
+  "name": "農牧園區",
+  "stage": 3,
+  "mat": "asphalt"
+ },
+ "20,5": {
+  "name": "農牧園區",
+  "stage": 3,
+  "mat": "asphalt"
+ },
+ "20,10": {
+  "name": "運動園區",
+  "stage": 3,
+  "mat": "wood_path"
+ },
+ "20,15": {
+  "name": "運動園區",
+  "stage": 3,
+  "mat": "wood_path"
+ },
+ "20,20": {
+  "name": "湖心動物島",
+  "stage": 4,
+  "mat": "asphalt"
+ },
+ "25,0": {
+  "name": "南緣步道",
+  "stage": 3,
+  "mat": "asphalt"
+ },
+ "25,5": {
+  "name": "南緣步道",
+  "stage": 3,
+  "mat": "asphalt"
+ },
+ "25,10": {
+  "name": "南緣步道",
+  "stage": 3,
+  "mat": "asphalt"
+ },
+ "25,15": {
+  "name": "南緣步道",
+  "stage": 3,
+  "mat": "asphalt"
+ },
+ "25,20": {
+  "name": "湖心動物島",
+  "stage": 4,
+  "mat": "asphalt"
+ },
+ "0,0": {
+  "name": "舊校舍帶",
+  "stage": 1,
+  "mat": "wood_path"
+ },
+ "0,5": {
+  "name": "舊校舍帶",
+  "stage": 1,
+  "mat": "wood_path"
+ },
+ "0,10": {
+  "name": "舊校舍帶",
+  "stage": 1,
+  "mat": "wood_path"
+ },
+ "0,15": {
+  "name": "舊校舍帶",
+  "stage": 1,
+  "mat": "wood_path"
+ },
+ "0,20": {
+  "name": "舊校舍帶",
+  "stage": 1,
+  "mat": "wood_path"
+ },
+ "0,25": {
+  "name": "舊校舍帶",
+  "stage": 1,
+  "mat": "wood_path"
+ },
+ "5,0": {
+  "name": "舊校舍帶",
+  "stage": null,
+  "mat": "wood_path"
+ },
+ "5,5": {
+  "name": "舊校舍帶",
+  "stage": null,
+  "mat": "wood_path"
+ },
+ "5,10": {
+  "name": "北丘公園",
+  "stage": null,
+  "mat": "asphalt"
+ },
+ "5,15": {
+  "name": "舊校舍帶",
+  "stage": null,
+  "mat": "wood_path"
+ },
+ "5,20": {
+  "name": "舊校舍帶",
+  "stage": null,
+  "mat": "wood_path"
+ },
+ "5,25": {
+  "name": "東緣高地",
+  "stage": null,
+  "mat": "asphalt"
+ },
+ "10,0": {
+  "name": "中北過渡帶",
+  "stage": null,
+  "mat": "wood_path"
+ },
+ "10,5": {
+  "name": "中北過渡帶",
+  "stage": null,
+  "mat": "wood_path"
+ },
+ "10,10": {
+  "name": "中北過渡帶",
+  "stage": null,
+  "mat": "wood_path"
+ },
+ "10,15": {
+  "name": "中北過渡帶",
+  "stage": null,
+  "mat": "wood_path"
+ },
+ "10,20": {
+  "name": "中北過渡帶",
+  "stage": null,
+  "mat": "wood_path"
+ },
+ "10,25": {
+  "name": "東緣高地",
+  "stage": null,
+  "mat": "asphalt"
+ },
+ "15,25": {
+  "name": "東緣高地",
+  "stage": null,
+  "mat": "asphalt"
+ },
+ "20,25": {
+  "name": "湖心高台",
+  "stage": null,
+  "mat": "asphalt"
+ },
+ "25,25": {
+  "name": "湖心高台",
+  "stage": null,
+  "mat": "asphalt"
+ }
+}
