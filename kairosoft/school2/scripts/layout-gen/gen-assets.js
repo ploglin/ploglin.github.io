@@ -10,7 +10,7 @@ const E = require('./engine.js');
 const S = require('./stages.js');
 const { items, SPOTS, gridRows, gridCols, town } = E;
 
-const CODE_FILE = { health: 'code.txt', east: 'code-east.txt', hill: 'code-hill.txt', valley: 'code-valley.txt' }[townKey];
+const CODE_FILE = { health: 'code.txt', east: 'code-east.txt', hill: 'code-hill.txt', valley: 'code-valley.txt', lake: 'code-lake.txt' }[townKey];
 const OUT_DIR = path.join(__dirname, '..', '..', 'layouts');
 
 const code = fs.readFileSync(path.join(__dirname, CODE_FILE), 'utf8').trim();

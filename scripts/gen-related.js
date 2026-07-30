@@ -79,6 +79,11 @@ const RELATED = {
             { href: '../../maps/', desc: '五城鎮地形比較' },
             { href: '../../spot-check/', desc: '勾設施查可成景點' }
         ],
+        'layouts/lake': [
+            { href: '../health/', icon: '🏫', label: '健康鎮完美佈局', desc: '26×24 · 29 景點全成立' },
+            { href: '../../maps/', desc: '五城鎮地形比較' },
+            { href: '../../spot-check/', desc: '勾設施查可成景點' }
+        ],
         'layouts/hill': [
             { href: '../east/', icon: '🏞️', label: '冬郵小鎮完美佈局', desc: '26×26 · 29 景點全成立' },
             { href: '../../maps/', desc: '五城鎮地形比較' },
