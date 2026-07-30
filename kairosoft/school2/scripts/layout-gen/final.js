@@ -69,7 +69,10 @@ B.addGate(g, 25, 13, 'gate_h');
        walkMat：公園類高地鋪草地當自然小徑，設施類園區鋪走廊 */
 B.fillPlateau(g, [
     { name: '北高地花園', rows: [0, 4], cols: [3, 10], fac: ['tea_room', 'bench', 'statue_br', 'board', 'toilet', 'vending'], green: 'sakura', walkMat: 'grass' },
-    { name: '東高地園區', rows: [10, 22], cols: [19, 23], fac: ['pool', 'gym', 'dojo', 'club', 'locker', 'water', 'toilet', 'bench', 'giraffe', 'elephant', 'rabbit', 'statue_br'], green: 'grass', walkMat: 'wood_path' }
+    // ※ fillPlateau 是逐格放置，多格設施會被跳過 → 游泳池／體育館改成 2×2 之後
+    //   不能再列在這裡（列了等於白佔一輪、步道外的格子只會被綠化掉）。
+    //   高地的運動性質改由 1×1 的操場／彈跳床代表，泳池與體育館留在南區運動園區。
+    { name: '東高地園區', rows: [10, 22], cols: [19, 23], fac: ['field', 'trampoline', 'dojo', 'club', 'locker', 'water', 'toilet', 'bench', 'giraffe', 'elephant', 'rabbit', 'statue_br'], green: 'grass', walkMat: 'wood_path' }
 ]);
 
 /* 4) 材質重鋪 pass（景點中立）：幹道脊椎鋪道路、其餘街道依鄰接街廓的 mat、

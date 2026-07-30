@@ -51,8 +51,11 @@ const badGuide = guide
 ok('發展建議的設施 id 全部存在', !badGuide.length, [...new Set(badGuide)].join(','));
 
 // 5) 內建地圖資料（預設圖、進度種子、各鎮地形）——每張圖各有預期尺寸
-const MAP_SIZES = { PRESET_DEFAULT_DATA: [26, 24], PROGRESS_SEED_DATA: [26, 24], PRESET_EAST_DATA: [26, 26] };
-for (const m of html.matchAll(/(PRESET_DEFAULT_DATA|PROGRESS_SEED_DATA|PRESET_EAST_DATA) = \`(\[\[[\s\S]*?\]\])\`/g)) {
+const MAP_SIZES = {
+    PRESET_DEFAULT_DATA: [26, 24], PROGRESS_SEED_DATA: [26, 24], PRESET_EAST_DATA: [26, 26],
+    PRESET_LAKE_DATA: [24, 24], PRESET_VALLEY_DATA: [26, 26], PRESET_HILL_DATA: [26, 26]
+};
+for (const m of html.matchAll(new RegExp('(' + Object.keys(MAP_SIZES).join('|') + ') = \\`(\\[\\[[\\s\\S]*?\\]\\])\\`', 'g'))) {
     const name = m[1];
     try {
         const g = JSON.parse(m[2]);

@@ -10,7 +10,7 @@ const E = require('./engine.js');
 const S = require('./stages.js');
 const { items, SPOTS, gridRows, gridCols, town } = E;
 
-const CODE_FILE = { health: 'code.txt', east: 'code-east.txt' }[townKey];
+const CODE_FILE = { health: 'code.txt', east: 'code-east.txt', hill: 'code-hill.txt', valley: 'code-valley.txt', lake: 'code-lake.txt' }[townKey];
 const OUT_DIR = path.join(__dirname, '..', '..', 'layouts');
 
 const code = fs.readFileSync(path.join(__dirname, CODE_FILE), 'utf8').trim();
@@ -174,7 +174,7 @@ fs.writeFileSync(path.join(__dirname, 'fac-table-' + townKey + '.html'), facRows
    跨階段景點的歸屬規則：階段取材料最晚者、位置取窗口左上所在分區，頁面表格兩者都標。 */
 const ZONE_FILE = path.join(__dirname, 'zones-' + townKey + '.json');
 const zones = fs.existsSync(ZONE_FILE) ? JSON.parse(fs.readFileSync(ZONE_FILE, 'utf8')) : {};
-if (!Object.keys(zones).length) console.log('！找不到 ' + path.basename(ZONE_FILE) + '，分區欄會全部標「既有校舍／其他」（先跑 node ' + (townKey === 'health' ? 'final.js' : 'east.js') + '）');
+if (!Object.keys(zones).length) console.log('！找不到 ' + path.basename(ZONE_FILE) + '，分區欄會全部標「既有校舍／其他」（先跑 node ' + (townKey === 'health' ? 'final.js' : townKey + '.js') + '）');
 const RB = town.roads.ROW_BANDS, CB = town.roads.COL_BANDS;
 const zoneAt = (r, c) => {
     const rb = RB.find(([a, b]) => r >= a && r <= b);

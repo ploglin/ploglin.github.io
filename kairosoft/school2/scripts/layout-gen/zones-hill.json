@@ -1,0 +1,182 @@
+{
+ "0,0": {
+  "name": "北西水岸區",
+  "stage": 1,
+  "mat": "asphalt"
+ },
+ "4,0": {
+  "name": "北西水岸區",
+  "stage": 1,
+  "mat": "asphalt"
+ },
+ "0,5": {
+  "name": "西北高地緣",
+  "stage": null,
+  "mat": "asphalt"
+ },
+ "4,5": {
+  "name": "西北高地緣",
+  "stage": null,
+  "mat": "asphalt"
+ },
+ "0,10": {
+  "name": "西機能帶",
+  "stage": null,
+  "mat": "wood_path"
+ },
+ "4,10": {
+  "name": "西機能帶",
+  "stage": null,
+  "mat": "wood_path"
+ },
+ "0,15": {
+  "name": "體育崖下",
+  "stage": 4,
+  "mat": "wood_path"
+ },
+ "4,15": {
+  "name": "體育崖下",
+  "stage": 4,
+  "mat": "wood_path"
+ },
+ "0,20": {
+  "name": "高台北園",
+  "stage": null,
+  "mat": "wood_path"
+ },
+ "0,25": {
+  "name": "高台北園",
+  "stage": null,
+  "mat": "wood_path"
+ },
+ "8,15": {
+  "name": "舊校舍高台",
+  "stage": 1,
+  "mat": "wood_path"
+ },
+ "8,20": {
+  "name": "行政高台",
+  "stage": 1,
+  "mat": "asphalt"
+ },
+ "4,20": {
+  "name": "東緣口袋",
+  "stage": null,
+  "mat": "wood_path"
+ },
+ "4,25": {
+  "name": "東緣口袋",
+  "stage": null,
+  "mat": "wood_path"
+ },
+ "8,0": {
+  "name": "教學區",
+  "stage": 2,
+  "mat": "wood_path"
+ },
+ "11,0": {
+  "name": "教學區",
+  "stage": 2,
+  "mat": "wood_path"
+ },
+ "8,5": {
+  "name": "生活館",
+  "stage": 2,
+  "mat": "wood_path"
+ },
+ "11,5": {
+  "name": "生活館",
+  "stage": 2,
+  "mat": "wood_path"
+ },
+ "8,10": {
+  "name": "專科館",
+  "stage": 3,
+  "mat": "wood_path"
+ },
+ "11,10": {
+  "name": "專科館",
+  "stage": 3,
+  "mat": "wood_path"
+ },
+ "11,15": {
+  "name": "崖下商店街",
+  "stage": 3,
+  "mat": "wood_path"
+ },
+ "11,20": {
+  "name": "崖下行政區",
+  "stage": 3,
+  "mat": "wood_path"
+ },
+ "8,25": {
+  "name": "東緣崖下",
+  "stage": null,
+  "mat": "wood_path"
+ },
+ "11,25": {
+  "name": "東緣崖下",
+  "stage": null,
+  "mat": "wood_path"
+ },
+ "16,0": {
+  "name": "農牧園區",
+  "stage": 1,
+  "mat": "asphalt"
+ },
+ "16,5": {
+  "name": "農牧園區",
+  "stage": null,
+  "mat": "asphalt"
+ },
+ "16,10": {
+  "name": "池畔綠帶",
+  "stage": 1,
+  "mat": "asphalt"
+ },
+ "16,15": {
+  "name": "山丘公園",
+  "stage": null,
+  "mat": "asphalt"
+ },
+ "16,20": {
+  "name": "運動園區",
+  "stage": 3,
+  "mat": "wood_path"
+ },
+ "16,25": {
+  "name": "東緣步道",
+  "stage": null,
+  "mat": "asphalt"
+ },
+ "22,0": {
+  "name": "農牧南區",
+  "stage": 3,
+  "mat": "asphalt"
+ },
+ "22,5": {
+  "name": "南門廣場",
+  "stage": null,
+  "mat": "asphalt"
+ },
+ "22,10": {
+  "name": "中央公園",
+  "stage": 2,
+  "mat": "asphalt"
+ },
+ "22,15": {
+  "name": "名門區",
+  "stage": 4,
+  "mat": "wood_path"
+ },
+ "22,20": {
+  "name": "開羅・動物園區",
+  "stage": 4,
+  "mat": "asphalt"
+ },
+ "22,25": {
+  "name": "東南步道",
+  "stage": 4,
+  "mat": "asphalt"
+ }
+}
