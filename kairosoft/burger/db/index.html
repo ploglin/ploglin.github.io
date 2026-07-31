@@ -15,16 +15,16 @@
   <meta property="og:description" content="漢堡店物語 繁體中文資料庫：九維風味屬性、杯品容器、副餐 combo 組合與食材風味數值，可搜尋與排序。">
   <meta property="og:locale" content="zh_TW">
   <meta name="twitter:card" content="summary">
-  <link rel="stylesheet" href="../../../assets/shell.css?v=7">
+  <link rel="stylesheet" href="../../../assets/shell.css?v=8">
 </head>
 <body>
   <main class="container-narrow article">
-    <div id="dbApp"></div>
+    <div id="dbApp" data-prerendered><!--prerender:start--><h1>漢堡店物語　資料庫</h1><p class="lead">分類查詢《漢堡店物語》的遊戲內資料，可搜尋、排序與自訂比較：風味屬性、杯品容器、副餐 combo、食材風味。</p><p>《漢堡店物語》要同時顧兩件事：把料理做好，以及把店開好。這個資料庫也按這兩條線拆表——風味屬性與食材風味對應「怎麼做出高人氣料理」，杯品容器與副餐 combo 對應「副餐要怎麼組」。四張表都是在研發與菜單畫面前面會反覆翻的對照表，不是背景設定。</p><p>新手先看風味屬性，弄清楚九個屬性裡真正決定人氣的是風味與香氣，辣、甜、苦、鹹、酸只影響風味走向與客群偏好，難度過高還會拖慢出餐。接著看杯品容器：四種容器的基礎愛心值差距不小，同一批食材放進不同容器就是不同副餐，先拿手上有的食材對照 combo 表掃一遍，通常能立刻多開好幾樣新品。</p><p>老手用它做菜單重整：先從食材風味表挑出風味與香氣最高的品項當漢堡主體，再用副餐 combo 表回推同一批食材還能疊出哪些高階副餐，讓進貨清單一份多用。副餐多數是同一基底一路往上疊的升級關係，看清「食材 B（可疊加）」欄的寫法就能少走冤路。食材數值會隨供應商相性變動，表上的值請當相對排序看。</p><div class="db-cat-grid"><a class="db-cat-card" href="flavor/"><span class="ic">📊</span><span class="lb">風味屬性</span><span class="n">13 筆</span></a><a class="db-cat-card" href="cups/"><span class="ic">🥤</span><span class="lb">杯品容器</span><span class="n">4 筆</span></a><a class="db-cat-card" href="combo/"><span class="ic">🍟</span><span class="lb">副餐 combo</span><span class="n">40 筆</span></a><a class="db-cat-card" href="ingredient/"><span class="ic">🥩</span><span class="lb">食材風味</span><span class="n">10 筆</span></a></div><!--prerender:end--></div>
   </main>
   <script src="./data.js"></script>
-  <script src="../../../assets/db.js?v=7"></script>
+  <script src="../../../assets/db.js?v=8"></script>
   <script>DB.mountIndex();</script>
-  <script src="../../../assets/shell.js?v=7"></script>
+  <script src="../../../assets/shell.js?v=8"></script>
   <script>Shell.mount({ page:'guide', game:{id:'burger', type:'database'}, breadcrumb:[{t:'漢堡店物語', href:'../'},{t:'資料庫'}] });</script>
 </body>
 </html>

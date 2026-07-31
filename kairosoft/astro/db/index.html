@@ -15,16 +15,16 @@
   <meta property="og:description" content="太空殖民地物語 繁體中文資料庫：建築設施、產品生產鏈、居民、武器裝備、戰鬥技能、星球探索與無底洞獎勵，可搜尋與排序。">
   <meta property="og:locale" content="zh_TW">
   <meta name="twitter:card" content="summary">
-  <link rel="stylesheet" href="../../../assets/shell.css?v=7">
+  <link rel="stylesheet" href="../../../assets/shell.css?v=8">
 </head>
 <body>
   <main class="container-narrow article">
-    <div id="dbApp"></div>
+    <div id="dbApp" data-prerendered><!--prerender:start--><h1>太空殖民地物語　資料庫</h1><p class="lead">分類查詢《太空殖民地物語》的遊戲內資料，可搜尋、排序與自訂比較：建築設施、產品與生產鏈、居民、武器與裝備、戰鬥技能、星球探索、無底洞獎勵。</p><p>《太空殖民地物語》其實是城市經營、生產鏈管理與隊伍戰鬥三種玩法接在一起，這個資料庫也照這三條線拆表：建築設施與產品生產鏈負責殖民地的收支，居民、武器與裝備、戰鬥技能負責遠征戰力，星球探索與無底洞獎勵則是把兩邊接起來的進度表。</p><p>新手先看建築設施，把房屋、道路、田地與礦場的費用與每月維護搞清楚，避免開局就被維護吃光現金——道路那一列尤其容易漏，沒有路居民不會自動上工。接著看產品與生產鏈，決定第一座工廠要做哪一條材料鏈。想開始遠征再往下看居民與武器裝備，用等級與 RP 兩欄判斷現在打得起哪顆星球。</p><p>老手多半拿它做兩件事：一是用生產鏈表往回推，算出要量產原子電腦或坦克這類高單價成品需要幾座礦場與加工廠，據此規劃廠區配置與出口商位置；二是用居民表的六大數值配隊，挑高 HP 高防的當前排、高攻擊配遠程武器的擺後排，再照無底洞樓層表決定要潛到第幾層拿哪件裝備。數值以實機可核對者為主，魅力與親密度這類浮動欄位僅供相對比較。</p><div class="db-cat-grid"><a class="db-cat-card" href="structures/"><span class="ic">🏗️</span><span class="lb">建築設施</span><span class="n">27 筆</span></a><a class="db-cat-card" href="products/"><span class="ic">📦</span><span class="lb">產品與生產鏈</span><span class="n">35 筆</span></a><a class="db-cat-card" href="residents/"><span class="ic">🧑‍🚀</span><span class="lb">居民</span><span class="n">45 筆</span></a><a class="db-cat-card" href="equipment/"><span class="ic">⚔️</span><span class="lb">武器與裝備</span><span class="n">31 筆</span></a><a class="db-cat-card" href="skills/"><span class="ic">✨</span><span class="lb">戰鬥技能</span><span class="n">8 筆</span></a><a class="db-cat-card" href="planets/"><span class="ic">🪐</span><span class="lb">星球探索</span><span class="n">6 筆</span></a><a class="db-cat-card" href="pit/"><span class="ic">🕳️</span><span class="lb">無底洞獎勵</span><span class="n">8 筆</span></a></div><!--prerender:end--></div>
   </main>
   <script src="./data.js"></script>
-  <script src="../../../assets/db.js?v=7"></script>
+  <script src="../../../assets/db.js?v=8"></script>
   <script>DB.mountIndex();</script>
-  <script src="../../../assets/shell.js?v=7"></script>
+  <script src="../../../assets/shell.js?v=8"></script>
   <script>Shell.mount({ page:'guide', game:{id:'astro', type:'database'}, breadcrumb:[{t:'太空殖民地物語', href:'../'},{t:'資料庫'}] });</script>
 </body>
 </html>

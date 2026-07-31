@@ -15,16 +15,16 @@
   <meta property="og:description" content="夢想小鎮 繁體中文資料庫：相鄰 combo 組合、建築索引與設施角色，含地價與商品價加成，可搜尋與排序。">
   <meta property="og:locale" content="zh_TW">
   <meta name="twitter:card" content="summary">
-  <link rel="stylesheet" href="../../../assets/shell.css?v=7">
+  <link rel="stylesheet" href="../../../assets/shell.css?v=8">
 </head>
 <body>
   <main class="container-narrow article">
-    <div id="dbApp"></div>
+    <div id="dbApp" data-prerendered><!--prerender:start--><h1>夢想小鎮　資料庫</h1><p class="lead">分類查詢《夢想小鎮》的遊戲內資料，可搜尋、排序與自訂比較：Combo 組合、建築索引、設施角色。</p><p>《夢想小鎮》的計分方式很直接：建築的基礎地價與商品價，乘上相鄰 combo 帶來的加成。這個資料庫就照這條算式拆表——Combo 組合列出三棟建築的配對與倍率，建築索引反查每棟建築牽涉幾組 combo，設施角色則說明教育、住宅、產券與商店各自負責什麼。</p><p>新手建議先看設施角色：本作有兩個容易踩雷的規則——新居民以「學生」身分入住，必須就近使用教育設施才能成年並提升能力，而賣商品的建築沒有臨路就不會營業。把學校、書店等教育設施蓋在住宅附近、商店沿路排好，城鎮才會正常成長，再談 combo 加成。</p><p>老手的用法是先查建築索引：「出現數」欄告訴你哪幾棟最泛用，Gold Trophy 一棟就牽涉 11 組 combo、Cinema 有 7 組，把它們放在多組 combo 交疊處，同一塊地就能吃到好幾層乘數。接著看 Combo 組合表分流目標——衝全球挑戰的血量看「地價」欄高者，衝利潤看「商品價」欄高者，兩者往往不是同一組。</p><div class="db-cat-grid"><a class="db-cat-card" href="combos/"><span class="ic">🔗</span><span class="lb">Combo 組合</span><span class="n">52 筆</span></a><a class="db-cat-card" href="buildings/"><span class="ic">🏙️</span><span class="lb">建築索引</span><span class="n">84 筆</span></a><a class="db-cat-card" href="facilities/"><span class="ic">🏢</span><span class="lb">設施角色</span><span class="n">6 筆</span></a></div><!--prerender:end--></div>
   </main>
   <script src="./data.js"></script>
-  <script src="../../../assets/db.js?v=7"></script>
+  <script src="../../../assets/db.js?v=8"></script>
   <script>DB.mountIndex();</script>
-  <script src="../../../assets/shell.js?v=7"></script>
+  <script src="../../../assets/shell.js?v=8"></script>
   <script>Shell.mount({ page:'guide', game:{id:'dream-town', type:'database'}, breadcrumb:[{t:'夢想小鎮', href:'../'},{t:'資料庫'}] });</script>
 </body>
 </html>

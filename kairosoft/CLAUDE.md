@@ -51,7 +51,7 @@ kairosoft/<game>/            index.html = 內容豐富的攻略專頁(SEO 主力
   <script data-shell>Shell.mountBar();</script>
   ```
   `data-shell` 屬性不可省略——`school2/scripts/check.js` 靠「無屬性的 `<script>`」找主程式。
-- **快取**：改動 `shell.js` / `shell.css` 後，全站 `?v=N` 要一起加一號(目前 `?v=7`，含各頁對 `db.js` 的引用)。
+- **快取**：改動 `shell.js` / `shell.css` / `db.js` / `home.js` 後，全站 `?v=N` 要一起加一號(目前 `?v=8`，含各頁對 `db.js`、首頁對 `games-index.js`／`home.js` 的引用)。改完 `grep -rn '?v=<舊號>'` 確認零殘留。
 
 ## 導覽分層原則
 
@@ -70,15 +70,25 @@ kairosoft/<game>/            index.html = 內容豐富的攻略專頁(SEO 主力
 
 - **`shell.js`**：`Shell.mount({page, game:{id,type}, breadcrumb:[{t,href}]})` 注入站台 header/footer/麵包屑；封裝 `Shell.track(event, params)`(自動帶 `game_id`/`game_type`)；並注入 GA4(`G-EL4J27F89B`)與 AdSense(`ca-pub-5891811504833462`) 載入器。頁面**不要自加 header/footer**。
 - **`shell.css`**：全站設計系統(token、卡片、`.article`/`.prose`/`.toc`/`.callout`/`.table-wrap`+`table.data`/`.ad-slot`、`.db-*` 資料庫樣式、淺/深色)。
-- **`db.js`**：`DB.mountCategory('<key>')` / `DB.mountIndex()`，讀 `window.GAME_DB`。
+- **`db.js`**：`DB.mountCategory('<key>')` / `DB.mountIndex()`，讀 `window.GAME_DB`。產 HTML 的部分是**純函式** `DB.categoryHtml(db, key)` / `DB.indexHtml(db)`(不碰 DOM)，`scripts/gen-static.js` 以 `require('assets/db.js')` 吃同一份 → 建置期預渲染與瀏覽器渲染保證同字串。掛載時若 `#dbApp` 已帶 `data-prerendered` 就不重建 innerHTML，只把搜尋／排序／比較的事件接到既有節點上。
 - **`games-index.js`**：`window.GAMES = [...]` 全站遊戲索引(Hub 首頁用)。新增遊戲要在此登記(id/slug/title/jp/en/emoji/status/type/tags/desc)。
+- **`home.js`**：Hub 首頁四個卡片區(精選／模擬器／攻略與資料表／全部)的區塊定義與卡片 HTML。純函式 `HOME.cardHtml` / `HOME.gridsHtml(GAMES)` 同樣被 `gen-static.js` require；瀏覽器端 `HOME.mount()`，容器已帶 `data-prerendered` 就只補點擊追蹤。首頁**不要**再把渲染邏輯寫成 inline script。
+
+### 預渲染(SEO／AdSense 必要)
+
+站台是純靜態 GitHub Pages，**內容不能只存在於瀏覽器端**——客戶端渲染的空殼頁會被 AdSense 判為 thin content。因此：
+
+- `node scripts/gen-static.js` 會把 111 個 `db/**/index.html` 的 `#dbApp` 與首頁四個 `#*Grid` 容器**烤成靜態 HTML**，蓋在 `<!--prerender:start--> … <!--prerender:end-->` 之間並在容器上加 `data-prerendered`。冪等，可反覆重跑。
+- **改動任一遊戲的 `db/data.js`、`assets/games-index.js`、`assets/db.js`、`assets/home.js`，或新增 db 分類頁／新遊戲後，必須重跑 `node scripts/gen-static.js`**，否則靜態內容會與資料脫節(瀏覽器也不會補救，因為已預渲染的容器不重建)。
+- 預渲染區段內的 HTML 是**產生物，不要手改**；要改內容就改 `db/data.js` 或 render 函式再重跑。
+- 例行順序：`gen-game-nav.js` → `gen-related.js` → `gen-static.js` → `gen-sitemap.js`。
 
 ## 頁面樣板規則
 
 - `<head>` **靜態手寫** SEO：`<title>`、description、keywords、`<link rel="canonical">`(正式網址 `https://ploglin.github.io/...`)、Open Graph、`Article`(攻略頁)或 `WebSite`/`ItemList` 的 JSON-LD。**這些不可靠 JS 注入**(社群爬蟲不執行 JS)。
 - 引入 `../../assets/shell.css`(依頁面深度調整層數)。
 - body 只寫 `<main class="container-narrow article">` 內容；結尾兩個 script：`shell.js` 與 `Shell.mount({...})`。
-- 資料庫分類頁另引入 `db.js` 與該遊戲 `db/data.js`。
+- 資料庫分類頁另引入 `db.js` 與該遊戲 `db/data.js`；body 的 `<div id="dbApp"></div>` 內容由 `node scripts/gen-static.js` 預渲染蓋章(見「預渲染」)，手寫時留空即可。
 - **H1 採前綴式**「遊戲名 ○○攻略」(例：`口袋學院物語2 老師育成攻略`)；子頁 H1 也帶遊戲名前綴，與麵包屑一致、利於 SEO。
 - **更新日期用 `.meta`**：`<p class="meta">最後更新：YYYY 年 M 月 · 繁體中文原創整理</p>`，緊接 lead 之後。
 - **頁尾埋延伸閱讀標記**：內容主體結束、`</main>` 之前放一組空的 `<!-- related:start --><!-- related:end -->`，由 `node scripts/gen-related.js` 蓋章；**不要**手寫該區塊或手寫返回列(見「導覽分層原則」)。
@@ -93,6 +103,8 @@ window.GAME_DB = {
 };
 ```
 rows 為純文字(多值用「／」或「・」分隔，勿放 HTML)。分類頁 assets 路徑為四層 `../../../../`，資料庫索引頁為三層 `../../../`，data.js 於索引為 `./data.js`、於分類頁為 `../data.js`。
+
+**改完 `data.js` 一定要重跑 `node scripts/gen-static.js`**(頁面上的表格是預渲染的靜態 HTML，不重跑就不會更新)。新增分類頁時，body 先寫空的 `<div id="dbApp"></div>`，跑一次 gen-static 就會被蓋上內容。`intro` 欄位是該分類頁唯一的原創敘述文字，直接影響頁面字數與 SEO，請寫足 1–3 句。
 
 ## 相關檔案
 - 範本遊戲：`kairosoft/school2/`(攻略專頁＝`index.html`、模擬器＝`sim/index.html`、資料庫＝`db/`)。`scripts/check.js` 驗證的是 `sim/index.html`。

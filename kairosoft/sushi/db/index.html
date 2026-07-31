@@ -15,16 +15,16 @@
   <meta property="og:description" content="海鮮壽司物語 繁體中文資料庫：壽司類型、相性評級 A-F、主料食材、配料、招牌菜與顧問技巧，可搜尋與排序。">
   <meta property="og:locale" content="zh_TW">
   <meta name="twitter:card" content="summary">
-  <link rel="stylesheet" href="../../../assets/shell.css?v=7">
+  <link rel="stylesheet" href="../../../assets/shell.css?v=8">
 </head>
 <body>
   <main class="container-narrow article">
-    <div id="dbApp"></div>
+    <div id="dbApp" data-prerendered><!--prerender:start--><h1>海鮮壽司物語　資料庫</h1><p class="lead">分類查詢《海鮮壽司物語》的遊戲內資料，可搜尋、排序與自訂比較：壽司類型、壽司相性 A-F、主料食材、配料、招牌菜、顧問與技巧。</p><p>《海鮮壽司物語》的品質分數來自「主料 × 配料」的相性累加，所以研發一貫壽司其實是在解一道配對題。這個資料庫分成六張表：壽司類型、壽司相性、主料食材、配料、招牌菜與顧問技巧，前四張是零件，後兩張是現成答案。</p><p>新手先看「壽司類型」搞懂握壽司、軍艦、卷物的配料上限差別——能放幾個配料直接決定湊高相性的彈性；接著翻「招牌菜」抄一組序盤搭配穩住現金流，再照「顧問與技巧」把顧問提案與店員培訓的順序走對。</p><p>老手用「主料食材」與「配料」自組：查食材的稀有度與解鎖條件排研究順序，再挑相性 A 的配料把每個配對都拉到最高。相性評級表說明了為什麼全遊戲只有一組四 A 完美 combo；打比賽時也不必追滿分，達到或超越第一名的分數就算贏。</p><div class="db-cat-grid"><a class="db-cat-card" href="types/"><span class="ic">🍣</span><span class="lb">壽司類型</span><span class="n">3 筆</span></a><a class="db-cat-card" href="compat/"><span class="ic">🍣</span><span class="lb">壽司相性 A-F</span><span class="n">5 筆</span></a><a class="db-cat-card" href="ingredients/"><span class="ic">🍣</span><span class="lb">主料食材</span><span class="n">12 筆</span></a><a class="db-cat-card" href="toppings/"><span class="ic">🍣</span><span class="lb">配料</span><span class="n">11 筆</span></a><a class="db-cat-card" href="recipes/"><span class="ic">🍣</span><span class="lb">招牌菜</span><span class="n">6 筆</span></a><a class="db-cat-card" href="tips/"><span class="ic">🍣</span><span class="lb">顧問與技巧</span><span class="n">8 筆</span></a></div><!--prerender:end--></div>
   </main>
   <script src="./data.js"></script>
-  <script src="../../../assets/db.js?v=7"></script>
+  <script src="../../../assets/db.js?v=8"></script>
   <script>DB.mountIndex();</script>
-  <script src="../../../assets/shell.js?v=7"></script>
+  <script src="../../../assets/shell.js?v=8"></script>
   <script>Shell.mount({ page:'guide', game:{id:'sushi', type:'database'}, breadcrumb:[{t:'海鮮壽司物語', href:'../'},{t:'資料庫'}] });</script>
 </body>
 </html>

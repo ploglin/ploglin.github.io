@@ -15,16 +15,16 @@
   <meta property="og:description" content="機場物語 繁體中文資料庫：設施相性 combo、負相性組合、餐廳菜單搭配與店鋪設施清單，可搜尋與排序。">
   <meta property="og:locale" content="zh_TW">
   <meta name="twitter:card" content="summary">
-  <link rel="stylesheet" href="../../../assets/shell.css?v=7">
+  <link rel="stylesheet" href="../../../assets/shell.css?v=8">
 </head>
 <body>
   <main class="container-narrow article">
-    <div id="dbApp"></div>
+    <div id="dbApp" data-prerendered><!--prerender:start--><h1>機場物語　資料庫</h1><p class="lead">分類查詢《機場物語》的遊戲內資料，可搜尋、排序與自訂比較：相性 combo、負相性、餐廳菜單、店鋪設施。</p><p>這個資料庫把《機場物語》裡影響人氣的幾件事拆成可查的表：設施之間的相性 combo、要刻意隔開的負相性、餐廳菜單的搭配組合，以及各店鋪的建造費、尺寸與解鎖條件。機場物語的收益結構其實很單純——旅客在航廈裡走動時被沿路的店鋪吸引才會消費，所以相性密度幾乎等於營收上限，佈局遠比單店的貴賤重要。</p><p>新手建議先查店鋪設施，弄清楚哪些店開局就能蓋、哪些要靠旅行團請求解鎖，再回頭看相性 combo 決定第一批店的位置。前期資金吃緊，與其硬蓋貴的設施，不如用 1×1 的便當店、藥妝店、書店互相湊出綠心，把有限的地板換成最多的加成。餐廳菜單則等旅行解鎖食譜後再回來對照。</p><p>老手拿這份資料做的是逆向規劃：先從相性表挑出重複出現的樞紐設施（自助餐廳、精品店、書店、電腦區、溫泉），排成一格多吃的骨架，再用負相性表確認神社、廁所、咖啡廳沒有貼在錯誤的鄰居旁邊。建造費與尺寸會隨版本微調，一律以遊戲內顯示為準。</p><div class="db-cat-grid"><a class="db-cat-card" href="combos/"><span class="ic">💚</span><span class="lb">相性 combo</span><span class="n">45 筆</span></a><a class="db-cat-card" href="avoid/"><span class="ic">⚠️</span><span class="lb">負相性</span><span class="n">6 筆</span></a><a class="db-cat-card" href="menus/"><span class="ic">🍱</span><span class="lb">餐廳菜單</span><span class="n">5 筆</span></a><a class="db-cat-card" href="facilities/"><span class="ic">🏬</span><span class="lb">店鋪設施</span><span class="n">20 筆</span></a></div><!--prerender:end--></div>
   </main>
   <script src="./data.js"></script>
-  <script src="../../../assets/db.js?v=7"></script>
+  <script src="../../../assets/db.js?v=8"></script>
   <script>DB.mountIndex();</script>
-  <script src="../../../assets/shell.js?v=7"></script>
+  <script src="../../../assets/shell.js?v=8"></script>
   <script>Shell.mount({ page:'guide', game:{id:'airport', type:'database'}, breadcrumb:[{t:'機場物語', href:'../'},{t:'資料庫'}] });</script>
 </body>
 </html>

@@ -15,16 +15,16 @@
   <meta property="og:description" content="動物園物語 繁體中文資料庫：棲地相性 combo、動物圖鑑、店鋪設施道具與核心機制，可搜尋與排序。">
   <meta property="og:locale" content="zh_TW">
   <meta name="twitter:card" content="summary">
-  <link rel="stylesheet" href="../../../assets/shell.css?v=7">
+  <link rel="stylesheet" href="../../../assets/shell.css?v=8">
 </head>
 <body>
   <main class="container-narrow article">
-    <div id="dbApp"></div>
+    <div id="dbApp" data-prerendered><!--prerender:start--><h1>動物園物語　資料庫</h1><p class="lead">分類查詢《動物園物語》的遊戲內資料，可搜尋、排序與自訂比較：棲地相性 Combo、動物圖鑑、店鋪・設施・道具、核心機制。</p><p>《動物園物語》的成長主軸不是猛蓋設施，而是「探險 → 馴服 → 繁殖 → 拿新物種獎章」的循環。這個資料庫依此分成四張表：核心機制、棲地相性 Combo、動物圖鑑與店鋪·設施·道具，分別對應循環怎麼跑、園區怎麼分區、動物配什麼食物、錢從哪裡來。</p><p>新手先讀「核心機制」——動物不能直接買、談判要在牠逃跑前把成功條讀滿、肉食動物得先把危險值降到 0 才養得起親密度，這幾條不懂會卡很久。接著看「動物圖鑑」查手上動物的棲地與偏好食物，照棲地把獸欄分區，別把不同環境的動物混在一起。</p><p>老手拿「棲地相性 Combo」規劃分區與植栽：同棲地動物集中、種上對應植栽，相性與照顧效率一起上來，部分棲地植栽還會產出補充飼料省飼料錢。收入端則看「店鋪·設施·道具」，店鋪要放到相容設施旁冒出綠心才算相性成立；道具用了永遠不扣值，可以放心強化。</p><div class="db-cat-grid"><a class="db-cat-card" href="combos/"><span class="ic">🌿</span><span class="lb">棲地相性 Combo</span><span class="n">7 筆</span></a><a class="db-cat-card" href="animals/"><span class="ic">🦓</span><span class="lb">動物圖鑑</span><span class="n">42 筆</span></a><a class="db-cat-card" href="build/"><span class="ic">🏪</span><span class="lb">店鋪・設施・道具</span><span class="n">13 筆</span></a><a class="db-cat-card" href="mechanics/"><span class="ic">🧭</span><span class="lb">核心機制</span><span class="n">10 筆</span></a></div><!--prerender:end--></div>
   </main>
   <script src="./data.js"></script>
-  <script src="../../../assets/db.js?v=7"></script>
+  <script src="../../../assets/db.js?v=8"></script>
   <script>DB.mountIndex();</script>
-  <script src="../../../assets/shell.js?v=7"></script>
+  <script src="../../../assets/shell.js?v=8"></script>
   <script>Shell.mount({ page:'guide', game:{id:'zoo', type:'database'}, breadcrumb:[{t:'動物園物語', href:'../'},{t:'資料庫'}] });</script>
 </body>
 </html>
