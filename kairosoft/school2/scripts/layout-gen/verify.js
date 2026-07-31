@@ -122,6 +122,52 @@ for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++) {
 }
 console.log('  INFO  拆除的既有建築：' + (demolished.join('、') || '（無）'));
 
+/* 8.5) 多格建築的 footprint 完整性
+      舊漏洞:景點判定只看「4×4 窗口裡出現哪些磚型」,棟數只看「格數 ÷ w×h」,
+      所以一座 2×2 被切成兩半、或兩座重疊共用一格,兩邊都驗不出來
+      (實機的湖岸泳池就是這樣溜過去的)。這裡逐個同型別連通塊檢查:
+      塊的外框長寬必須是 h／w 的整數倍,且塊內每一格都被填滿
+      —— 亦即這一塊剛好能被 h×w 的磚無縫鋪滿。 */
+const badFootprint = [];
+{
+    const seen2 = Array.from({ length: gridRows }, () => Array(gridCols).fill(false));
+    for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++) {
+        const t = g[r][c].type;
+        if (seen2[r][c] || !E.isBuildingType(t)) continue;
+        const w = items[t].w || 1, h = items[t].h || 1;
+        const stack = [[r, c]], cells = [];
+        seen2[r][c] = true;
+        while (stack.length) {
+            const [cr, cc] = stack.pop(); cells.push([cr, cc]);
+            for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+                const nr = cr + dr, nc = cc + dc;
+                if (nr < 0 || nr >= gridRows || nc < 0 || nc >= gridCols || seen2[nr][nc]) continue;
+                if (g[nr][nc].type === t) { seen2[nr][nc] = true; stack.push([nr, nc]); }
+            }
+        }
+        if (w === 1 && h === 1) continue;
+        /* 貪婪鋪磚:同型別相鄰的多座建築會連成一塊(例:三間 2×2 教室拼成 L 形 12 格,
+           那是合法的),所以不能只看外框是不是矩形 —— 要問「這塊能不能被 h×w 的磚
+           無縫鋪滿」。由左上往右下掃,遇到還沒鋪到的格就要求以它為左上角的整塊磚
+           完整存在;鋪不滿就是有缺角或重疊。 */
+        const own = new Set(cells.map(([cr, cc]) => cr + ',' + cc));
+        const used = new Set();
+        let ok = true;
+        for (const [cr, cc] of cells.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1])) {
+            if (used.has(cr + ',' + cc)) continue;
+            for (let dr = 0; dr < h && ok; dr++) for (let dc = 0; dc < w; dc++) {
+                const k = (cr + dr) + ',' + (cc + dc);
+                if (!own.has(k) || used.has(k)) { ok = false; break; }
+            }
+            if (!ok) break;
+            for (let dr = 0; dr < h; dr++) for (let dc = 0; dc < w; dc++) used.add((cr + dr) + ',' + (cc + dc));
+        }
+        if (!ok) badFootprint.push(items[t].name + '@X' + E.gameX(cells[0][0]) + '/Y' + E.gameY(cells[0][1]) +
+            '(' + cells.length + ' 格,鋪不滿 ' + h + '×' + w + ')');
+    }
+}
+check('多格建築都是完整的 ' + '(w×h 無缺角、無重疊)', badFootprint.length === 0, badFootprint.join('、'));
+
 /* 9) 統計 */
 const counts = {};
 g.flat().forEach(c => { if (c.type !== 'empty') counts[c.type] = (counts[c.type] || 0) + 1; });
