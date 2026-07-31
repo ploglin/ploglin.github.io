@@ -188,33 +188,28 @@ B.fillPlateau(g, [
     { name: '東南坡展望', rows: [19, 25], cols: [21, 25], fac: ['bench'], green: 'azalea', walkMat: 'grass' }
 ]);
 
-/* 6) 收尾：斷頭路改鋪草地。
-      ※ 溪谷不跑這一步：本鎮唯一走不到的鋪面就是舊校舍臺地上那 8 格**原生走廊口袋**
-        （X9–X11/Y9–Y12，被辦公室、多媒體與高差 2 的崖夾死，結構性無解），
-        把它改鋪草地並不會讓玩家多走到一格，只會把原生校舍的樣子改掉。留著照實說明。 */
-
-/* 6b) 走不到的口袋改種樹林：分區綠化是逐格鋪草地的，偶爾會在窄長的西溪帶留下
-       一格被建物圍住的草地 —— 看起來能走、其實走不到。改種樹林（不可通行）就誠實了。
-       守衛照舊：景點不可少、被包圍建築不可變多，過不了就留著草地。 */
-(function tidyPockets() {
-    const reach = E.computeReachability(g);
-    let n = 0;
-    for (let r = 0; r < E.gridRows; r++) for (let c = 0; c < E.gridCols; c++) {
-        if (g[r][c].elevation !== 1 || g[r][c].type !== 'grass' || reach[r][c] >= 0) continue;
-        const before = { spots: E.activeSpots(g).size, blocked: E.blockedBuildings(g).count };
-        g[r][c] = { type: 'woods', elevation: 1 };
-        if (E.activeSpots(g).size < before.spots || E.blockedBuildings(g).count > before.blocked)
-            g[r][c] = { type: 'grass', elevation: 1 };
-        else n++;
-    }
-    if (n) console.log('  走不到的草地口袋改種樹林：' + n + ' 格');
-})();
+/* 6) 收尾：斷頭路整理交給環化 pass（第 8 步）。
+      舊版曾有兩套小收尾，都已**收編進 builder.loopify()**、不再各自為政：
+      · tidyUnreachable()（斷頭路改草地）—— 溪谷本來就不跑：唯一走不到的鋪面是舊校舍
+        臺地上那 8 格**原生走廊口袋**（X9–X11/Y9–Y12，被辦公室、多媒體與高差 2 的崖夾死，
+        結構性無解），改鋪草地不會讓玩家多走到一格，只會把原生校舍的樣子改掉。
+      · tidyPockets()（走不到的草地改種樹林）—— 職責＝loopify 的階段 B（假動線口袋），
+        而且 loopify 先試「接回路網」才綠化、守衛還多了動線總分，嚴格更強。
+      原生的 15 格結構性死地（走廊口袋 8＋東緣草坡 7）由 towns.js 的 flow.exempt
+      整份豁免，環化 pass 一格都不會動，留著照實說明。 */
 
 /* 7) 材質重鋪 pass（景點中立）：幹道脊椎鋪道路、其餘街道依鄰接街廓的 mat、
       體育館／泳池／道場門前鋪水泥廣場 */
 B.paveMaterials(g, { zones: ZONES, spine: E.town.spine });
 
-/* 8) 坡道保留帶斷言（設計文件的 R2 風險）：綠化與鋪面都會把空地變成非空地，而斜坡是
+/* 8) 環化 pass（動線流暢優先於景點配置）：孤立通行格歸零、走不到的假動線口袋
+      接上路網或改綠化、2–4 格的設計性死路支線接回成環或整條收成綠地；
+      門前水泥廣場／幹道脊椎／校門門面／斜坡／flow.exempt（原生 15 格死地）一律豁免。
+      開關與參數在 towns.js 的 flow（只有已重排的鎮宣告）。 */
+if (E.town.flow && E.town.flow.loopify)
+    B.loopify(g, Object.assign({ zones: ZONES, spine: E.town.spine }, E.town.flow));
+
+/* 9) 坡道保留帶斷言（設計文件的 R2 風險）：綠化與鋪面都會把空地變成非空地，而斜坡是
       「空地 ＋ 高差 1」推導出來的 —— 鋪一格草地就能殺掉一整條坡道，builder 的守衛
       只保「景點不可少、建物不可被包圍」，不保「通行格連通」。所以這裡自己斷言三件事：
         ① 原始地形的每一格天然坡道都還是坡道（r13 X15 全寬坡、r15 X17 坡、西高地兩緣…）
@@ -247,6 +242,6 @@ B.paveMaterials(g, { zones: ZONES, spine: E.town.spine });
     if (un.length > 15) throw new Error('走不到的通行格 ' + un.length + ' 格（結構性死地只有 15 格）：' + un.join('、'));
 })();
 
-/* 9) 驗證＋分享碼＋預覽＋分區產物 */
+/* 10) 驗證＋分享碼＋預覽＋分區產物 */
 B.report(g, '溪谷小鎮完美佈局', 'code-valley.txt');
 B.writeZones(ZONES, 'zones-valley.json');
