@@ -1043,7 +1043,7 @@
             const c1 = Math.min(rectStart.c, rectEnd.c), c2 = Math.max(rectStart.c, rectEnd.c);
             for (let r = r1; r <= r2; r++) {
                 for (let c = c1; c <= c2; c++) {
-                    const el = document.querySelector(`.tile[data-r="${r}"][data-c="${c}"]`);
+                    const el = tileAt(r, c);
                     if (el) el.classList.add('rect-preview');
                 }
             }
@@ -1175,7 +1175,7 @@
             const cell = gridData[r][c];
             const item = items[cell.type] || items['empty'];
             const label = item.id === 'empty' ? (isSlope(r, c) ? '斜坡（自動）' : '空地') : item.name;
-            const tileEl = document.querySelector(`.tile[data-r="${r}"][data-c="${c}"]`);
+            const tileEl = tileAt(r, c);
             const warn = tileEl && tileEl.classList.contains('blocked') ? '　⚠ 被包圍，學生無法進入' : '';
             const elevName = cell.elevation === 3 ? '高地2層' : cell.elevation === 2 ? '高地1層' : '平地';
             document.getElementById('coordHint').innerText = `X:${r + 2}　Y:${gridCols + 1 - c}　${label}（${elevName}）${warn}`;
@@ -1188,7 +1188,7 @@
             if (fp.w === 1 && fp.h === 1) return;
             for (let dr = 0; dr < fp.h; dr++) {
                 for (let dc = 0; dc < fp.w; dc++) {
-                    const el = document.querySelector(`.tile[data-r="${r + dr}"][data-c="${c + dc}"]`);
+                    const el = tileAt(r + dr, c + dc);
                     if (el) el.classList.add('fp-preview');
                 }
             }
@@ -1256,7 +1256,7 @@
             for (let r = 0; r < gridRows; r++) {
                 for (let c = 0; c < gridCols; c++) {
                     if (suggest[r][c]) {
-                        const el = document.querySelector(`.tile[data-r="${r}"][data-c="${c}"]`);
+                        const el = tileAt(r, c);
                         if (el) { el.classList.add('suggest'); count++; }
                     }
                 }
@@ -1265,7 +1265,7 @@
                 for (let r = 0; r < gridRows; r++) {
                     for (let c = 0; c < gridCols; c++) {
                         if (suggest2[r][c]) {
-                            const el = document.querySelector(`.tile[data-r="${r}"][data-c="${c}"]`);
+                            const el = tileAt(r, c);
                             if (el) { el.classList.add('suggest2'); count2++; }
                         }
                     }
@@ -1400,9 +1400,16 @@
             return div;
         }
 
+        /* 格子元素快取：熱路徑（畫筆預覽、景點指示、包圍警示、搜尋定位）原本每格都跑一次
+           `document.querySelector('.tile[data-r=..][data-c=..]')`，屬性選擇器在 600+ 格的
+           迴圈裡是主要卡頓來源。renderGrid 時一次記下所有格子的 DOM 參照，之後 O(1) 取用。 */
+        let tileEls = [];
+        function tileAt(r, c) { const row = tileEls[r]; return row ? (row[c] || null) : null; }
+
         function renderGrid() {
             const gridEl = document.getElementById('gameGrid');
             gridEl.innerHTML = '';
+            tileEls = Array.from({ length: gridRows }, () => Array(gridCols).fill(null));
             // 行列數依目前地圖尺寸（CSS 類別裡的 24/26 只是預設值）
             gridEl.style.gridTemplateColumns = 'var(--axis) repeat(' + gridCols + ', var(--tile)) var(--axis)';
             gridEl.style.gridTemplateRows = 'var(--axis) repeat(' + gridRows + ', var(--tile)) var(--axis)';
@@ -1434,6 +1441,7 @@
                     const contentSpan = document.createElement('span');
                     contentSpan.className = 'content-span relative z-10 pointer-events-none drop-shadow-sm';
                     tile.appendChild(contentSpan);
+                    tileEls[r][c] = tile;
                     
                     tile.addEventListener('mousedown', (e) => {
                         if (e.button === 2) return; // 右鍵留給吸管
@@ -1495,6 +1503,7 @@
             document.addEventListener('mouseup', () => {
                 if (rectStart && rectEnd) commitRect();
                 isDrawing = false;
+                flushCheckSpots();  // 拖曳期間累積的重算，放手時結算一次
             });
             document.getElementById('gameGrid').addEventListener('contextmenu', e => e.preventDefault());
 
@@ -1540,10 +1549,12 @@
                 }
                 if (rectStart && rectEnd) commitRect();
                 isDrawing = false;
+                flushCheckSpots();
                 touchState = null;
             });
             document.getElementById('mapContainer').addEventListener('mouseleave', () => {
                 isDrawing = false;
+                flushCheckSpots();  // 拖出地圖外也要結算，不然統計會停在拖曳前的狀態
                 document.querySelectorAll('.tile.fp-preview').forEach(t => t.classList.remove('fp-preview'));
             });
         }
@@ -1622,7 +1633,7 @@
         function sameBlock(r, c, nr, nc) { return sameBlockIn(gridData, r, c, nr, nc); }
 
         function updateTileVisuals(r, c) {
-            const tileEl = document.querySelector(`.tile[data-r="${r}"][data-c="${c}"]`);
+            const tileEl = tileAt(r, c);
             if (!tileEl) return;
             const tileData = gridData[r][c];
             const toolId = tileData.type;
@@ -1658,7 +1669,7 @@
         }
 
         function updateSpotIndicators(r, c, coreSet, areaSet) {
-            const tileEl = document.querySelector(`.tile[data-r="${r}"][data-c="${c}"]`);
+            const tileEl = tileAt(r, c);
             if (!tileEl) return;
 
             tileEl.querySelectorAll('.spot-indicators, .spot-tooltip, .spot-area-ov').forEach(n => n.remove());
@@ -1777,7 +1788,7 @@
             for (let r = 0; r < gridRows; r++) {
                 for (let c = 0; c < gridCols; c++) {
                     if (!PASSABLE.has(gridData[r][c].type)) continue;
-                    const el = document.querySelector(`.tile[data-r="${r}"][data-c="${c}"]`);
+                    const el = tileAt(r, c);
                     if (!el) continue;
                     const ov = document.createElement('div');
                     ov.className = 'flow-ov absolute inset-0 pointer-events-none z-[2]';
@@ -1822,7 +1833,7 @@
                     if (!hasAccess) {
                         blockedCount++;
                         cells.forEach(([br, bc]) => {
-                            const el = document.querySelector(`.tile[data-r="${br}"][data-c="${bc}"]`);
+                            const el = tileAt(br, bc);
                             if (el) el.classList.add('blocked');
                         });
                     }
@@ -2433,7 +2444,7 @@
                         }
                     }
                 }
-                checkSpots();
+                scheduleCheckSpots();
                 updateCoordHint(r, c);
                 return;
             }
@@ -2457,8 +2468,24 @@
                     if (nr >= 0 && nr < gridRows && nc >= 0 && nc < gridCols) updateTileVisuals(nr, nc);
                 }
             }
-            checkSpots();
+            scheduleCheckSpots();
             updateCoordHint(r, c);
+        }
+
+        /* 拖曳作畫的順暢度：checkSpots() 要掃 (rows-3)×(cols-3) 個 4×4 窗口 × 29 個景點，
+           再跑可達性 BFS、景點指示、建議框——一次約 25 萬次運算。原本「每畫一格」就跑一次，
+           拖過 20 格就是 20 倍，這是主要的卡頓來源。改成：拖曳中只更新該格的視覺（很輕），
+           放手時再算一次總帳。單點放置照舊即時算，感受不變。 */
+        let heavyPending = false;
+        function scheduleCheckSpots() {
+            if (isDrawing) { heavyPending = true; return; }
+            heavyPending = false;
+            checkSpots();
+        }
+        function flushCheckSpots() {
+            if (!heavyPending) return;
+            heavyPending = false;
+            checkSpots();
         }
 
         // 城鎮預設圖：健康鎮開局時的原始地形
@@ -2557,20 +2584,20 @@
         //      （先前的 bug：打完字再點其中一項，地圖仍停在打字時的模糊集合）
         let searchTerm = '';
         let hlIds = null;   // 目前高亮的型別集合（null = 沒在高亮）
+        // 地圖定位一律「完全比對」：名稱／id／單字標籤完全相符才亮。
+        // 調色盤的篩選仍是模糊的（打「球場」列出四種球場方便找），但地圖不會跟著亂亮一片；
+        // 想定位其中某一種，點那一項即可（selectTool → highlightSelected）。
         function typesForTerm(term) {
-            const cand = Object.keys(items).filter(id => {
+            return Object.keys(items).filter(id => {
                 const it = items[id];
-                return !it.hidden && id !== 'empty' && it.type !== 'tool';
+                if (it.hidden || id === 'empty' || it.type === 'tool') return false;
+                return it.name.toLowerCase() === term || id === term || (it.short || '').toLowerCase() === term;
             });
-            const exact = cand.filter(id => items[id].name.toLowerCase() === term || id === term ||
-                (items[id].short || '').toLowerCase() === term);
-            if (exact.length) return exact;
-            return cand.filter(id => items[id].name.toLowerCase().includes(term) || id.includes(term));
         }
         function highlightSearch(q) {
             searchTerm = (q || '').trim().toLowerCase();
-            if (!searchTerm) { hlIds = null; applyHighlight(); return; }
-            hlIds = new Set(typesForTerm(searchTerm));
+            const ids = searchTerm ? typesForTerm(searchTerm) : [];
+            hlIds = ids.length ? new Set(ids) : null;
             applyHighlight();
         }
         // 點選設施：只定位這一種。地圖上沒有這種設施時不開聚光燈（沒東西可看就別壓暗全圖）
@@ -2586,14 +2613,20 @@
             document.querySelectorAll('.tile.found').forEach(t => t.classList.remove('found'));
             const hits = document.getElementById('searchHits');
             if (!hits) return;
-            if (!hlIds) { document.body.classList.remove('searching'); hits.style.display = 'none'; return; }
+            if (!hlIds) {
+                document.body.classList.remove('searching');
+                // 有打字但沒有完全相符時給提示，而不是靜靜地什麼都不做
+                if (searchTerm) { hits.style.display = ''; hits.innerText = '要在地圖上定位，請輸入完整設施名稱，或直接點下方的設施'; }
+                else hits.style.display = 'none';
+                return;
+            }
             const matched = hlIds;
             const bids = {}, singles = {};
             for (let r = 0; r < gridRows; r++) {
                 for (let c = 0; c < gridCols; c++) {
                     const cell = gridData[r][c];
                     if (!matched.has(cell.type)) continue;
-                    const el = document.querySelector(`.tile[data-r="${r}"][data-c="${c}"]`);
+                    const el = tileAt(r, c);
                     if (el) el.classList.add('found');
                     if (cell.bid) (bids[cell.type] = bids[cell.type] || new Set()).add(cell.bid);
                     else singles[cell.type] = (singles[cell.type] || 0) + 1;
@@ -2747,7 +2780,13 @@
             });
             window.addEventListener('mouseup', () => { panState = null; });
 
-            document.getElementById('paletteSearch').addEventListener('input', (e) => filterPalette(e.target.value));
+            // 打字去抖動：每個按鍵都掃全圖＋改 DOM 會頓，停手 120ms 再算（篩選調色盤本身很輕，立即做）
+            let searchTimer = null;
+            document.getElementById('paletteSearch').addEventListener('input', (e) => {
+                const v = e.target.value;
+                clearTimeout(searchTimer);
+                searchTimer = setTimeout(() => filterPalette(v), 120);
+            });
             document.getElementById('paletteSearch').addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') { e.target.value = ''; filterPalette(''); e.target.blur(); }
             });
