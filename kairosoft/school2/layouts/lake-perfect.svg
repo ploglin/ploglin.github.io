@@ -846,15 +846,12 @@
 <text x="295" y="387.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">社</text>
 <rect x="306" y="372" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="328" y="372" width="22" height="22" fill="#374151" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="350" y="372" width="22" height="22" fill="#0284c7" stroke="#ffffff" stroke-width="0.6"/>
-<text x="361" y="387.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">泳</text>
-<rect x="372" y="372" width="22" height="22" fill="#4ade80" stroke="#ffffff" stroke-width="0.6"/>
-<text x="383" y="387.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">樹</text>
-<rect x="394" y="372" width="22" height="22" fill="#4ade80" stroke="#ffffff" stroke-width="0.6"/>
-<text x="405" y="387.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">樹</text>
-<rect x="416" y="372" width="22" height="22" fill="#57534e" stroke="#ffffff" stroke-width="0.6"/>
-<text x="427" y="387.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">道</text>
-<rect x="438" y="372" width="22" height="22" fill="#9ca3af" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="350" y="372" width="44" height="44" fill="#0284c7" stroke="#ffffff" stroke-width="0.6"/>
+<text x="372" y="399.04" font-size="14" font-weight="700" text-anchor="middle" fill="#ffffff">泳</text>
+<rect x="394" y="372" width="22" height="22" fill="#2dd4bf" stroke="#ffffff" stroke-width="0.6"/>
+<text x="405" y="387.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">更</text>
+<rect x="416" y="372" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="438" y="372" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="460" y="372" width="44" height="44" fill="#818cf8" stroke="#ffffff" stroke-width="0.6"/>
 <text x="482" y="399.04" font-size="14" font-weight="700" text-anchor="middle" fill="#ffffff">辦</text>
 <rect x="526" y="372" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
@@ -878,13 +875,9 @@
 <rect x="284" y="394" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="306" y="394" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="328" y="394" width="22" height="22" fill="#374151" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="350" y="394" width="22" height="22" fill="#16a34a" stroke="#ffffff" stroke-width="0.6"/>
-<text x="361" y="409.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">足</text>
-<rect x="372" y="394" width="44" height="44" fill="#64748b" stroke="#ffffff" stroke-width="0.6"/>
-<text x="394" y="421.04" font-size="14" font-weight="700" text-anchor="middle" fill="#ffffff">體</text>
-<rect x="416" y="394" width="22" height="22" fill="#22d3ee" stroke="#ffffff" stroke-width="0.6"/>
-<text x="427" y="409.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">彈</text>
-<rect x="438" y="394" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="394" y="394" width="44" height="44" fill="#64748b" stroke="#ffffff" stroke-width="0.6"/>
+<text x="416" y="421.04" font-size="14" font-weight="700" text-anchor="middle" fill="#ffffff">體</text>
+<rect x="438" y="394" width="22" height="22" fill="#9ca3af" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="504" y="394" width="22" height="44" fill="#4f46e5" stroke="#ffffff" stroke-width="0.6"/>
 <text x="515" y="421.04" font-size="14" font-weight="700" text-anchor="middle" fill="#ffffff">長</text>
 <rect x="526" y="394" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
@@ -906,11 +899,11 @@
 <rect x="284" y="416" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="306" y="416" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="328" y="416" width="22" height="22" fill="#374151" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="350" y="416" width="22" height="22" fill="#78716c" stroke="#ffffff" stroke-width="0.6"/>
-<text x="361" y="431.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">社</text>
-<rect x="416" y="416" width="22" height="22" fill="#4ade80" stroke="#ffffff" stroke-width="0.6"/>
-<text x="427" y="431.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">樹</text>
-<rect x="438" y="416" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="350" y="416" width="22" height="22" fill="#16a34a" stroke="#ffffff" stroke-width="0.6"/>
+<text x="361" y="431.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">足</text>
+<rect x="372" y="416" width="22" height="22" fill="#78716c" stroke="#ffffff" stroke-width="0.6"/>
+<text x="383" y="431.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">社</text>
+<rect x="438" y="416" width="22" height="22" fill="#9ca3af" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="460" y="416" width="22" height="22" fill="#65a30d" stroke="#ffffff" stroke-width="0.6"/>
 <text x="471" y="431.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">茶</text>
 <rect x="482" y="416" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
@@ -1133,13 +1126,13 @@
 <text x="471" y="14" font-size="10" text-anchor="middle" fill="#94a3b8">5</text>
 <text x="515" y="14" font-size="10" text-anchor="middle" fill="#94a3b8">3</text>
 <rect x="20" y="562" width="14" height="14" fill="#d97706" stroke="#94a3b8" stroke-width="0.6"/>
-<text x="39" y="573" font-size="11" fill="#334155">走廊 29 格</text>
+<text x="39" y="573" font-size="11" fill="#334155">走廊 28 格</text>
 <rect x="152" y="562" width="14" height="14" fill="#374151" stroke="#94a3b8" stroke-width="0.6"/>
 <text x="171" y="573" font-size="11" fill="#334155">道路 66 格</text>
 <rect x="284" y="562" width="14" height="14" fill="#9ca3af" stroke="#94a3b8" stroke-width="0.6"/>
-<text x="303" y="573" font-size="11" fill="#334155">水泥地 3 格</text>
+<text x="303" y="573" font-size="11" fill="#334155">水泥地 4 格</text>
 <rect x="416" y="562" width="14" height="14" fill="#86efac" stroke="#94a3b8" stroke-width="0.6"/>
-<text x="435" y="573" font-size="11" fill="#334155">草地 84 格</text>
+<text x="435" y="573" font-size="11" fill="#334155">草地 85 格</text>
 <text x="20" y="593" font-size="10" fill="#64748b">四種鋪面中只有草地是景點材料；道路／走廊／水泥地對景點判定可互換。</text>
 <text x="20" y="607" font-size="10" fill="#64748b">本圖依道具加成（抹布→走廊、滑板→道路與草地）與美觀分配，預算緊可全鋪最便宜的。</text>
 </svg>
