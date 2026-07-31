@@ -74,7 +74,7 @@ zone(['6,0'], {
     name: '池畔公園', mat: 'grass', green: 'grass', decor: true, stage: 2,
     fac: ['well', 'toilet', 'bench', 'water', 'statue_br', 'farm', 'chicken', 'rabbit']
 });
-zone(['6,5'], { name: '池畔公園', mat: 'grass', green: 'grass', decor: true, stage: 2, fac: ['toilet', 'water'] });
+zone(['6,5'], { name: '池畔公園', mat: 'grass', green: 'grass', decor: true, stage: 2, fac: ['toilet'] });
 
 /* ── 草地：東緣帶 ─────────────────────────────────────────────────────────
    東岸農牧區（R1C4）：東北水塘（r6–7/c18–23）的南岸，8 格 e1。
@@ -84,7 +84,7 @@ zone(['6,5'], { name: '池畔公園', mat: 'grass', green: 'grass', decor: true,
    兩者與南邊的高地都是草地，東緣帶因此是一整條連續的草地分區。 */
 zone(['6,20'], {
     name: '東岸農牧區', mat: 'grass', green: 'grass', decor: true, stage: 4,
-    fac: ['giraffe', 'elephant', 'panda', 'koala', 'croc', 'duck']
+    fac: ['giraffe', 'elephant']
 });
 zone(['11,20', '16,20'], { name: '東高地園區', mat: 'grass', green: 'sakura', stage: 4, fac: [] });
 
@@ -97,38 +97,43 @@ zone(['11,20', '16,20'], { name: '東高地園區', mat: 'grass', green: 'sakura
      把 R4C1 還給校舍（見「南校舍」）之後，農牧區才真的只有農牧。 */
 zone(['21,0'], {
     name: '南農牧區', mat: 'grass', green: 'grass', decor: true, stage: 3,
-    fac: ['farm', 'chicken', 'pig', 'cow', 'rabbit', 'duck', 'mole', 'weather', 'well', 'toilet', 'bench', 'farm', 'chicken']
+    fac: ['farm', 'chicken', 'pig', 'cow', 'rabbit', 'duck', 'mole', 'weather', 'well', 'toilet', 'bench', 'farm']
 });
 
-/* ── 走廊：北教學棟（R0C2·R0C3·R0C4）──────────────────────────────────────
-   北緣 r1–4 × c10–23 是全圖最大片的連續空地（45 格），而中央帶被原生道路與既有
-   校舍占滿、排不出 2×2 的專科教室 —— 所以新校舍主體整條往北擴建成一棟長校舍。
-   ★ 這三個街廓是**分區成塊的關鍵**：一開始只給 C2·C3 兩格（把 C4 劃給農牧），
-     結果室內分區的 2×2 配額只有 17 個象限，而「藝術」「怪談」「生物」「時尚」
-     「購物」「吃醋」「澀谷」七個景點光是專科教室就要 15 座 2×2 同框，
-     排不進去的通通溢出到草地分區（實測 18 棟蓋錯區，連道場都跑進南農牧區）。
-     把 C4 還給教學棟之後多出 4 個象限，溢出量掉到剩下真正的跨語意景點。
-   ※ 6 間教室裡有 4 間 preplace 在這裡（見 1d），fac 只留剩下的專科教室配額。 */
-zone(['1,10'], { name: '北教學棟', mat: 'wood_path', green: 'flower', decor: true, stage: 2, fac: ['science', 'nurse', 'career'] });
-zone(['1,15'], { name: '北教學棟', mat: 'wood_path', green: 'flower', decor: true, stage: 2, fac: ['multi_room', 'broadcast', 'toilet'] });
-zone(['1,20'], { name: '北教學棟', mat: 'wood_path', green: 'flower', decor: true, stage: 3, fac: ['computer', 'home_ec', 'career', 'toilet'] });
+/* ── 走廊：北專科棟（R0C2·R0C3·R0C4）──────────────────────────────────────
+   北緣 r1–4 × c10–23 是全圖最大片的連續空地（45 格 ＝ 11 個 2×2 象限），而中央帶
+   被原生道路與既有校舍切碎、排不出兩三座 2×2 同框 —— 所以專科教室整條往北擴建成
+   一棟長校舍：音樂室／理科室／美術室／家政室／電腦室／多功能室都住在這裡。
+   ★ 這三個街廓是**分區成塊的關鍵**，兩次實測都指向同一件事：
+     ① 只給 C2·C3 兩格（C4 劃給農牧）→ 室內 2×2 配額只有 17 個象限，而「藝術」
+        「怪談」「生物」「時尚」「購物」「吃醋」「澀谷」七個景點光是專科教室就要
+        15 座 2×2 同框，排不進去的通通溢出到草地分區（18 棟蓋錯區，連道場都被擠進
+        南農牧區）。
+     ② C4 還給教學區、但把 6 間教室 preplace 在這裡 → 象限又被吃掉一半，仍有 9 棟
+        蓋錯區。教室改釘在中央帶（見 1d）之後才降到 4 棟，而且那 4 棟全是**跨語意
+        景點本身**造成的、幾何上改不掉。
+   ※ fac 只列 1×1 的行政小設施與一座電腦室：這一片的 2×2 象限是留給景點骨架的，
+     fac 的職責是「景點排完之後補剩餘空地」，不是願望清單。 */
+zone(['1,10'], { name: '北專科棟', mat: 'wood_path', green: 'flower', decor: true, stage: 2, fac: ['nurse', 'career'] });
+zone(['1,15'], { name: '北專科棟', mat: 'wood_path', green: 'flower', decor: true, stage: 2, fac: ['multi_room'] });
+zone(['1,20'], { name: '北專科棟', mat: 'wood_path', green: 'flower', decor: true, stage: 3, fac: ['computer'] });
 
 /* ── 走廊：舊操場帶（R1C2）＋中央教學棟（R1C3）──────────────────────────
    R1C2 有既有操場（r8–9/c10–11）與百葉箱（r9/c12）。**操場是運動設施卻長在
    校舍分區裡** —— 這是「既有校舍一棟不拆」的必然代價，照實記錄在頁面上
    （把它單獨切成水泥地分區會讓運動分區裂成兩塊，違反分區成塊的第一原則）。
    R1C3 是 14 格可用平地，夾在北教學棟與中央行政之間，收專科教室。 */
-zone(['6,10'], { name: '舊操場帶', mat: 'wood_path', green: 'flower', decor: true, stage: 1, fac: ['home_ec', 'shop', 'vending'] });
-zone(['6,15'], { name: '中央教學棟', mat: 'wood_path', green: 'flower', decor: true, stage: 3, fac: ['computer', 'art', 'career'] });
+zone(['6,10'], { name: '舊操場帶', mat: 'wood_path', green: 'flower', decor: true, stage: 1, fac: ['shop', 'vending'] });
+zone(['6,15'], { name: '中央教學棟', mat: 'wood_path', green: 'flower', decor: true, stage: 3, fac: ['career'] });
 
 /* ── 走廊：西教學棟（R2C0）＋中央校舍（R2C1·R2C2）＋中央生活（R3C1·R3C2）──
    這一片是健康鎮的**歷史核心**：既有教室、辦公室、福利社、公告欄、焚化爐、水井
    與一段原生道路網都在這裡。空地零星（多半只剩 r11–12 兩列與零散的原生草地／樹林），
    所以 decor:true 放寬到可覆蓋裝飾地形，fac 也只列得下少量 2×2。 */
 zone(['11,0'], { name: '西教學棟', mat: 'wood_path', green: 'flower', decor: true, stage: 2, fac: ['music', 'nurse', 'career'] });
-zone(['11,5'], { name: '中央校舍', mat: 'wood_path', green: 'flower', decor: true, stage: 1, fac: ['nurse', 'toilet', 'water'] });
-zone(['11,10'], { name: '中央校舍', mat: 'wood_path', green: 'flower', decor: true, stage: 2, fac: ['home_ec', 'broadcast', 'career'] });
-zone(['16,5'], { name: '中央生活', mat: 'wood_path', green: 'flower', decor: true, stage: 1, fac: ['tea_room', 'water', 'toilet', 'nurse'] });
+zone(['11,5'], { name: '中央校舍', mat: 'wood_path', green: 'flower', decor: true, stage: 1, fac: ['nurse', 'toilet'] });
+zone(['11,10'], { name: '中央校舍', mat: 'wood_path', green: 'flower', decor: true, stage: 2, fac: ['broadcast', 'career'] });
+zone(['16,5'], { name: '中央生活', mat: 'wood_path', green: 'flower', decor: true, stage: 1, fac: ['tea_room', 'water'] });
 zone(['16,10'], { name: '中央生活', mat: 'wood_path', green: 'flower', decor: true, stage: 3, fac: ['game_corner', 'vending', 'bench', 'career', 'toilet'] });
 
 /* ── 走廊：南校舍（R4C1）────────────────────────────────────────────────────
@@ -138,7 +143,9 @@ zone(['16,10'], { name: '中央生活', mat: 'wood_path', green: 'flower', decor
    接的是 c4／c9 兩條縱街與 r20 大道，走廊材質與正上方的中央生活連成一片。 */
 zone(['21,5'], {
     name: '南校舍', mat: 'wood_path', green: 'flower', decor: true, stage: 3,
-    fac: ['cafeteria', 'convenience', 'shop', 'game_corner', 'career', 'toilet']
+    /* fac 空著是**刻意的**：這個街廓 16 格會被「購物」「吃醋」的兩座 2×2 加上
+       福利社／焚化爐整組吃光，景點骨架排完就沒有剩餘空地要補了。 */
+    fac: []
 });
 
 /* ── 走廊：中央行政（R2C3）──────────────────────────────────────────────
@@ -146,7 +153,7 @@ zone(['21,5'], {
    所以「學習」（校長室＋圖書室＋多媒體）與「選舉」（校長室＋辦公室＋茶室）
    共 11 格的行政六件套整組 preplace 在這裡（見 1d）。
    fac 只留 1×1 的行政小設施，補 preplace 之後剩下的 5 格。 */
-zone(['11,15'], { name: '中央行政', mat: 'wood_path', green: 'flower', decor: true, stage: 2, fac: ['career', 'broadcast', 'nurse'] });
+zone(['11,15'], { name: '中央行政', mat: 'wood_path', green: 'flower', decor: true, stage: 2, fac: ['career'] });
 
 /* ── 道路：兩座校門的玄關 ─────────────────────────────────────────────────
    西門玄關（R3C0）＝既有校門 r15–16/c0 的門內廣場，本來就有一段**原生道路**
@@ -156,7 +163,7 @@ zone(['11,15'], { name: '中央行政', mat: 'wood_path', green: 'flower', decor
    「放哪都合理」的戶外小物，開羅君三件套也擺在這裡當校門地標。 */
 zone(['16,0'], {
     name: '西門玄關', mat: 'asphalt', green: 'flower', decor: true, stage: 1,
-    fac: ['board', 'bench', 'statue_br', 'vending', 'toilet', 'water', 'kairo_gold', 'kairo_statue', 'kairo_room', 'totem']
+    fac: ['board', 'bench', 'statue_br', 'vending', 'toilet', 'water', 'kairo_gold', 'kairo_statue']
 });
 
 /* ── 水泥地：南運動園區（R3C3·R4C3·R4C4）────────────────────────────────
@@ -173,10 +180,10 @@ zone(['16,0'], {
      南門的門面交還給 c14 縱脊（幹道脊椎本來就鋪道路，玄關語意一點都沒少）。
    六座 2×2（操場／棒球場／足球場／體育館／道場／游泳池）就吃 24 格，
    所以每個街廓最多列 4 項，1×1 的社團教室／彈跳床／更衣室補縫。 */
-zone(['16,15'], { name: '南運動園區', mat: 'concrete', green: 'flower', decor: true, stage: 3, fac: ['gym', 'pool', 'locker', 'club'] });
-zone(['21,10'], { name: '南運動園區', mat: 'concrete', green: 'flower', decor: true, stage: 2, fac: ['field', 'basketball', 'club', 'trampoline', 'vending'] });
-zone(['21,15'], { name: '南運動園區', mat: 'concrete', green: 'flower', decor: true, stage: 3, fac: ['dojo', 'baseball', 'club', 'locker'] });
-zone(['21,20'], { name: '南運動園區', mat: 'concrete', green: 'flower', decor: true, stage: 4, fac: ['basketball', 'tennis', 'locker', 'club'] });
+zone(['16,15'], { name: '南運動園區', mat: 'concrete', green: 'flower', decor: true, stage: 3, fac: ['locker'] });
+zone(['21,10'], { name: '南運動園區', mat: 'concrete', green: 'flower', decor: true, stage: 2, fac: ['basketball', 'club'] });
+zone(['21,15'], { name: '南運動園區', mat: 'concrete', green: 'flower', decor: true, stage: 3, fac: ['club', 'locker'] });
+zone(['21,20'], { name: '南運動園區', mat: 'concrete', green: 'flower', decor: true, stage: 4, fac: ['basketball', 'locker'] });
 
 /* ── 1d) preplace：不是景點材料的建築要先卡位 ────────────────────────────
    冬郵那一輪的教訓：**教室不是任何景點的材料**，景點骨架沒有理由蓋它，
