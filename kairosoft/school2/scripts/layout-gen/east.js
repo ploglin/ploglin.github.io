@@ -113,6 +113,12 @@ B.tidyUnreachable(g);
       體育館／泳池／道場門前鋪水泥廣場；鑿出來的水道橋保持走廊（木橋意象） */
 B.paveMaterials(g, { zones: ZONES, spine: E.town.spine, keep: carved });
 
-/* 8) 驗證＋分享碼＋預覽＋分區產物 */
+/* 8) 環化 pass（動線流暢優先於景點配置）：孤立通行格歸零、2–4 格的設計性死路支線
+      接回成環或整條收成綠地；門前水泥廣場／幹道脊椎／水道橋／校門門面／斜坡一律豁免。
+      開關與參數在 towns.js 的 flow（只有已重排的鎮宣告）。 */
+if (E.town.flow && E.town.flow.loopify)
+    B.loopify(g, Object.assign({ zones: ZONES, spine: E.town.spine, keep: carved }, E.town.flow));
+
+/* 9) 驗證＋分享碼＋預覽＋分區產物 */
 B.report(g, '冬郵小鎮完美佈局', 'code-east.txt');
 B.writeZones(ZONES, 'zones-east.json');

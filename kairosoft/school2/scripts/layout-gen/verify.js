@@ -127,17 +127,32 @@ const counts = {};
 g.flat().forEach(c => { if (c.type !== 'empty') counts[c.type] = (counts[c.type] || 0) + 1; });
 const facCount = Object.entries(counts).filter(([t]) => E.isBuildingType(t))
     .reduce((n, [t, v]) => n + v / ((items[t].w || 1) * (items[t].h || 1)), 0);
-const reach = E.computeReachability(g);
-let unreach = 0;
-for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++)
-    if (E.PASSABLE.has(g[r][c].type) && reach[r][c] < 0) unreach++;
 let plateauFac = 0;
 for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++)
     if (g[r][c].elevation > 1 && E.isBuildingType(g[r][c].type)) plateauFac += 1 / ((items[g[r][c].type].w || 1) * (items[g[r][c].type].h || 1));
 console.log('  INFO  建築 ' + Math.round(facCount) + ' 棟（其中高地上 ' + Math.round(plateauFac) + ' 棟）｜走廊 ' +
-    (counts.wood_path || 0) + ' 格｜校門 ' + gates.length + ' 格｜教室 ' + Math.round((counts.class || 0) / 4) + ' 間｜走不到的通行格 ' + unreach);
+    (counts.wood_path || 0) + ' 格｜校門 ' + gates.length + ' 格｜教室 ' + Math.round((counts.class || 0) / 4) + ' 間');
 
-/* 10) 29 個景點的成立位置（頁面表格用） */
+/* 10) 動線品質（新設計優先序：動線流暢 > 景點配置）
+      度數＝四鄰中 canStep 走得過去的通行格（校門算一度，門前那格才不會被當成死路）。
+      孤立通行格（度 0）視同缺陷 —— 看起來能走、其實哪裡都去不了。死路占比只出 INFO
+      不設門檻：各鎮地形差異太大（湖泊／斷崖天生就會長出長支線），一刀切會逼出爛決策。
+      「孤立通行格 = 0」是 PASS 檢查，但由 towns.js 的 flow.check 開關控制 ——
+      只有跑過 builder 環化 pass 的鎮才開，其餘四鎮先只看 INFO。 */
+const fm = E.flowMetrics(g);
+const at = ([r, c]) => 'X' + E.gameX(r) + '/Y' + E.gameY(c);
+console.log('  INFO  動線：通行格 ' + fm.passable + '｜死路端點 ' + fm.ends.length +
+    '｜死路支線 ' + fm.stubCells.size + '/' + fm.passable + ' 格（占 ' + fm.pct + '%）｜孤立通行格 ' +
+    fm.isolated.length + '｜走不到的通行格 ' + fm.unreach.length);
+console.log('  INFO  最長的死路支線：' + (fm.stubs.slice(-3).reverse()
+    .map(s => s.len + ' 格@' + at(s.cells[0])).join('、') || '（無）'));
+if (town.flow && town.flow.check)
+    check('孤立通行格 = 0', fm.isolated.length === 0, fm.isolated.map(at).join('、') || '（無）');
+else
+    console.log('  INFO  孤立通行格：' + (fm.isolated.map(at).join('、') || '（無）') +
+        '（本鎮尚未套用環化 pass，towns.js 未開 flow.check，只出 INFO）');
+
+/* 11) 29 個景點的成立位置（頁面表格用） */
 console.log('\n景點｜座標（4×4 判定範圍左上角）｜需要設施');
 SPOTS.forEach(s => {
     const w = where.get(s.id);

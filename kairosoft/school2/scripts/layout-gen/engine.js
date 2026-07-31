@@ -110,6 +110,74 @@ function blockedBuildings(g) {
     return { count: blocks.length, blocks };
 }
 
+/* ── 動線品質指標 ─────────────────────────────────────────────────────────────
+   verify.js 的 INFO／PASS 與 builder.js 的環化 pass 共用同一套定義，免得兩邊各算一套。
+
+     度數     = 四鄰中「canStep 走得過去」的通行格數。校門(gate/gate_h)雖然不在 PASSABLE，
+                但它就是進出口，算一度 —— 不然門前那一格會被誤判成死路端點。
+     孤立格   = 度 0 的通行格：看起來能走、其實哪裡都去不了，視同缺陷（一定走不到校門）。
+     假動線   = 從任一校門走不到的通行格（unreach）。孤立格是它的特例；2×2 的封閉中庭
+                每格度數都有 2、看起來是條路，其實整塊接不到校門，同樣是缺陷。
+     死路端點 = 度 1 的通行格。
+     死路支線 = 從每個端點沿「唯一路徑」走到第一個度 ≥ 3 的節點，路上經過的格；
+                多個端點共用同一段只算一次（stubCells 是集合）。
+     pct      = 死路支線格 / 通行格，動線流暢度的單一數字。
+
+   stubs 依長度遞增排序（環化 pass 先啃便宜的短枝）。 */
+const GATEWAY = new Set(['gate', 'gate_h']);
+
+function flowMetrics(g) {
+    const nbrs = (r, c) => {
+        const out = [];
+        for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+            const nr = r + dr, nc = c + dc;
+            if (nr < 0 || nr >= gridRows || nc < 0 || nc >= gridCols) continue;
+            const t = g[nr][nc].type;
+            const pass = PASSABLE.has(t);
+            if (!pass && !GATEWAY.has(t)) continue;
+            if (!canStep(g, r, c, nr, nc)) continue;
+            out.push([nr, nc, pass]);
+        }
+        return out;
+    };
+    const degree = Array.from({ length: gridRows }, () => Array(gridCols).fill(-1));
+    const reach = computeReachability(g);
+    const ends = [], isolated = [], unreach = [];
+    let passable = 0;
+    for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++) {
+        if (!PASSABLE.has(g[r][c].type)) continue;
+        passable++;
+        degree[r][c] = nbrs(r, c).length;
+        if (reach && reach[r][c] < 0) unreach.push([r, c]);
+    }
+    for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++) {
+        if (degree[r][c] === 0) isolated.push([r, c]);
+        else if (degree[r][c] === 1) ends.push([r, c]);
+    }
+    const stubCells = new Set(), stubs = [];
+    for (const [r0, c0] of ends) {
+        const cells = [];
+        let prev = null, cur = [r0, c0];
+        while (cells.length < gridRows * gridCols) {
+            cells.push(cur);
+            // 只沿通行格往前走（校門不是節點，只是度數來源）
+            const nx = nbrs(cur[0], cur[1])
+                .filter(([nr, nc, pass]) => pass && !(prev && nr === prev[0] && nc === prev[1]));
+            if (nx.length !== 1) break;               // 岔路或走到底
+            const [nr, nc] = nx[0];
+            if (degree[nr][nc] >= 3) break;           // 碰到路網節點就停
+            prev = cur; cur = [nr, nc];
+        }
+        cells.forEach(([r, c]) => stubCells.add(r + ',' + c));
+        stubs.push({ len: cells.length, cells });
+    }
+    stubs.sort((a, b) => a.len - b.len);
+    return {
+        passable, degree, reach, ends, isolated, unreach, stubCells, stubs,
+        pct: passable ? Math.round(stubCells.size / passable * 100) : 0
+    };
+}
+
 /* 與 sim 的 checkSpots 同邏輯：4×4 窗口，empty 且是斜坡者算 'slope' */
 function typesInWindow(g, wr, wc) {
     const s = new Set();
@@ -193,6 +261,6 @@ const gameY = c => gridCols + 1 - c;
 module.exports = {
     town, items, SPOTS, TYPE_KEYS, gridRows, gridCols, PASSABLE,
     isBuildingType, loadTerrain, loadHealth: loadTerrain, isSlopeIn, canStep, computeReachability,
-    blockedBuildings, typesInWindow, spotOk, activeSpots, spotWindows,
+    blockedBuildings, typesInWindow, spotOk, activeSpots, spotWindows, flowMetrics, GATEWAY,
     encodeMap, decodeMap, gameX, gameY
 };

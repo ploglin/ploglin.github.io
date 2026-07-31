@@ -1,6 +1,15 @@
 /* 城鎮設定表 — 完美佈局管線的唯一「哪個城鎮」開關。
    遊戲座標一律從 [2,2] 起算，格數 = 座標上限 − 1。
 
+   ★ flow ＝動線流暢的新設計優先序（動線 > 景點配置）的城鎮開關，只有**已重排過的鎮**才宣告：
+       loopify: true   → 設定檔會跑 builder.loopify()（環化 pass：孤立通行格歸零＋短死路收枝）
+       check:   true   → verify.js 把「孤立通行格 = 0」列為 PASS 檢查
+       maxStub: 4      → 幾格以內的死路支線可以整條收掉改綠化
+       green / plateauGreen → 收枝時改種什麼（街廓有宣告 green 且不可通行時優先用街廓的）
+       exempt: [[r,c]] → 額外「一格都不要動」的座標
+     沒宣告 flow 的鎮完全照舊：不跑環化 pass，verify 只出動線 INFO 不會 FAIL
+     （它們現有成品本來就有孤立格，等各自重排時再開）。
+
    ★ 用法：進入點腳本要在 require('./engine.js') **之前** 呼叫 select()，
      因為 engine / design2 會在載入當下把 gridRows / gridCols 解構成常數。
 
@@ -50,7 +59,11 @@ const TOWNS = {
         },
         /* 幹道脊椎：北門在 r0,c19-20、南門在 r25,c8-9 → 縱軸取 c19 與 c9、
            橫軸取正中的 r14 把兩條縱軸接起來（北門 → c19 南下 → r14 西行 → c9 南下 → 南門）。 */
-        spine: { av: [14], st: [9, 19] }
+        spine: { av: [14], st: [9, 19] },
+        /* 五鎮裡第一個套用「動線流暢優先」重排的鎮：跑環化 pass、孤立格納入 PASS 檢查。
+           東緣湖岸帶（X15/Y2 起）與湖心動物島（X24/Y3 起）那兩條長支線是湖泊地理
+           ＋「最少鑿湖」政策的天生代價，maxStub = 4 讓它們不會被收掉。 */
+        flow: { loopify: true, check: true, maxStub: 4, green: 'woods', plateauGreen: 'sakura' }
     },
     valley: {
         key: 'valley',

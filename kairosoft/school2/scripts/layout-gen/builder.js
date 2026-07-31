@@ -449,7 +449,11 @@ function tidyUnreachable(g) {
 const PAVE_ROAD = new Set(['wood_path', 'asphalt', 'concrete']);
 const PAVE_PRIORITY = ['asphalt', 'wood_path'];
 
-function paveMaterials(g, opts) {
+/* 「這一格該鋪什麼」的唯一規則，paveMaterials 與 loopify（環化 pass）共用 ——
+   環化 pass 新鋪出來的補環格必須跟旁邊的街道同材質，不然圖上會出現一格突兀的異色。
+   opts = { zones, spine, keep, defaultMat }。高地（elevation > 1）不吃街廓規則：
+   那是 fillPlateau 的步道，取鄰格現成步道的材質（多數決，湊不出來就草地）。 */
+function matResolver(opts) {
     opts = opts || {};
     const ZONES = opts.zones || {};
     const spine = opts.spine || {};
@@ -470,20 +474,44 @@ function paveMaterials(g, opts) {
         return PAVE_PRIORITY.find(m => mats.has(m)) || null;
     };
 
+    const matAt = (g, r, c) => {
+        if (keep.has(r + ',' + c)) return 'wood_path';
+        if (g[r][c].elevation > 1) {                       // 高地步道：跟鄰格的步道同材質
+            const tally = {};
+            for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+                const nr = r + dr, nc = c + dc;
+                if (nr < 0 || nr >= gridRows || nc < 0 || nc >= gridCols) continue;
+                const t = g[nr][nc].type;
+                if (PAVE_ROAD.has(t) || t === 'grass') tally[t] = (tally[t] || 0) + 1;
+            }
+            const best = Object.keys(tally).sort((a, b) => tally[b] - tally[a])[0];
+            return best || 'grass';
+        }
+        if (onSpine(r, c)) return 'asphalt';
+        return zoneMatAt(r, c) || defaultMat;
+    };
+    matAt.onSpine = onSpine;
+    matAt.keep = keep;
+    matAt.zones = ZONES;
+    return matAt;
+}
+
+function paveMaterials(g, opts) {
+    opts = opts || {};
+    const matAt = matResolver(opts);
+    const onSpine = matAt.onSpine, keep = matAt.keep;
+
     const before = { spots: E.activeSpots(g), blocked: E.blockedBuildings(g).count };
 
     for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++) {
         const cell = g[r][c];
         if (!PAVE_ROAD.has(cell.type) || cell.elevation !== 1) continue;
-        const mat = keep.has(r + ',' + c) ? 'wood_path'
-            : onSpine(r, c) ? 'asphalt'
-                : (zoneMatAt(r, c) || defaultMat);
-        g[r][c] = { type: mat, elevation: 1 };
+        g[r][c] = { type: matAt(g, r, c), elevation: 1 };
     }
 
     /* 水泥門前廣場：體育館／泳池／道場的正門前 1–2 格路面／空地。
-       守衛照舊（景點不可少、包圍不可多），失敗就跳過；幹道脊椎與水道橋不動。 */
-    const PLAZA_HOST = new Set(['gym', 'pool', 'dojo']);
+       守衛照舊（景點不可少、包圍不可多），失敗就跳過；幹道脊椎與水道橋不動。
+       PLAZA_HOST 是模組層常數 —— 環化 pass 要靠同一份名單豁免這些門面格。 */
     const reach = E.computeReachability(g);   // 鋪面互換不影響可達性，算一次就夠
     let plazas = 0, plazaCells = 0;
     for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++) {
@@ -526,6 +554,210 @@ function paveMaterials(g, opts) {
         (total ? Math.round(cnt.wood_path / total * 100) : 0) + '%）');
     console.log('  水泥門前廣場：' + plazas + ' 處、共 ' + plazaCells + ' 格');
     return cnt;
+}
+
+/* ── 環化 pass（動線流暢優先於景點配置；paveMaterials 之後、report 之前）──────────
+   前一版管線只保證「每棟走得到」，於是留下三種看起來能走、其實沒有動線價值的格子：
+     ① 孤立通行格（度 0）——街廓綠化把剩餘空地鋪成「草地」，草地卻是可通行的，
+        於是四面被建築圍住的那一格變成一塊誰也走不進去的假草皮。
+     ② 假動線口袋 —— 度數都 ≥ 2、看起來是條路，整塊卻接不到任何校門（例如 2×2 中庭）。
+     ③ 度 1 的死路端點與它後面 2–4 格的短枝 —— 門前廣場的枝椏、街廓草地口袋、
+        公園木道斷頭。玩家在遊戲裡走進去只能原路折返。
+   這個 pass 把①②歸零、③盡量收掉，兩種手段：
+
+     接回成環：把端點旁「不可通行的裝飾地形」（樹林／花壇／櫻花／竹林／田埂路／巨石…）
+               改鋪成通行鋪面，材質走 matResolver（幹道→道路、街廓→ZONES.mat、
+               高地步道→鄰格步道材質），讓端點多一條路、變成環。
+               只在「這一格接完真的度 ≥ 2」時才算接回，不然只是把死路挪一格。
+     收枝綠化：長度 ≤ maxStub 的短枝整條改種綠化（不可通行）；孤立格接不回去時也改綠化。
+               綠化材質取該街廓的 green（若本身不可通行），高地取櫻花，其餘取 opt.green。
+
+   豁免（一格都不動）：
+     · 門前水泥廣場 —— 體育館／泳池／道場旁的 concrete 是建築門面，天生是端點。
+     · 幹道脊椎（towns.js 的 spine）與鑿出來的水道橋（keep）—— 主動線與唯一通路。
+     · 校門旁的通行格 —— 那是進出口，收掉會把門封死。
+     · 斜坡 —— 蓋上去高地就上不去了（斜坡是高低差推導的）。
+     · 水塘／建築／校門本身，以及設定檔 exempt 列出的座標。
+
+   每一步都有守衛：景點一個都不能少、被包圍建築不能變多、動線總分必須真的變小
+   （cost = 孤立×100 + 走不到×20 + 死路支線格×3 + 死路端點）；跑完再斷言景點集合、
+   包圍數、水塘格數、斜坡集合全部沒變（所以 maxCarve 不可能被這個 pass 破壞）。 */
+const LOOP_PAVEABLE = new Set(['flower', 'azalea', 'sakura', 'woods', 'pine', 'rock', 'special_tree', 'bamboo', 'aze_path']);
+const PLAZA_HOST = new Set(['gym', 'pool', 'dojo']);
+
+function loopify(g, opt) {
+    opt = opt || {};
+    const maxStub = opt.maxStub || 4;
+    const greenDefault = opt.green || 'woods';
+    const plateauGreen = opt.plateauGreen || 'sakura';
+    const matAt = matResolver(opt);
+    const ZONES = opt.zones || {};
+    const key = (r, c) => r + ',' + c;
+
+    /* 豁免格 */
+    const exempt = new Set((opt.exempt || []).map(([r, c]) => key(r, c)));
+    matAt.keep.forEach(k => exempt.add(k));
+    for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++) {
+        if (matAt.onSpine(r, c) && g[r][c].elevation === 1) exempt.add(key(r, c));
+        if (E.isSlopeIn(g, r, c)) exempt.add(key(r, c));
+        for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+            const nr = r + dr, nc = c + dc;
+            if (nr < 0 || nr >= gridRows || nc < 0 || nc >= gridCols) continue;
+            const nt = g[nr][nc].type;
+            if (E.GATEWAY.has(nt)) exempt.add(key(r, c));                                  // 校門門面
+            if (g[r][c].type === 'concrete' && PLAZA_HOST.has(nt)) exempt.add(key(r, c));  // 門前廣場
+        }
+    }
+
+    /* 綠化材質：街廓宣告的 green（若本身不可通行）→ 高地櫻花 → 預設樹林 */
+    const greenAt = (r, c) => {
+        if (g[r][c].elevation > 1) return plateauGreen;
+        for (const [r0, r1] of D.ROW_BANDS) for (const [c0, c1] of D.COL_BANDS) {
+            if (r < r0 || r > r1 || c < c0 || c > c1) continue;
+            const gr = (ZONES[r0 + ',' + c0] || {}).green;
+            if (gr && !E.PASSABLE.has(gr)) return gr;
+        }
+        return greenDefault;
+    };
+
+    const ponds = () => g.flat().filter(x => x.type === 'pond' || x.type === 'lake').length;
+    const slopeSig = () => {
+        const out = [];
+        for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++) if (E.isSlopeIn(g, r, c)) out.push(key(r, c));
+        return out.join(' ');
+    };
+    const base = { spots: E.activeSpots(g), blocked: E.blockedBuildings(g).count, ponds: ponds(), slopes: slopeSig() };
+    /* 缺陷權重：孤立格 > 走不到的假動線格 > 死路支線格 > 死路端點。
+       每一步都必須讓這個總分變小，pass 才會採用 —— 所以不可能「為了收枝而多出兩個端點」。 */
+    const cost = m => m.isolated.length * 100 + m.unreach.length * 20 + m.stubCells.size * 3 + m.ends.length;
+    let cur = E.flowMetrics(g), curCost = cost(cur);
+    const before = {
+        ends: cur.ends.length, stub: cur.stubCells.size, iso: cur.isolated.length,
+        un: cur.unreach.length, pct: cur.pct
+    };
+    let paved = 0, cutStubs = 0, cutCells = 0, greened = 0, pockets = 0;
+
+    /* 試放一組 [[r,c,type],…]：景點不可少、包圍不可多、動線指標必須變好；
+       extra 是額外條件（例如「接回後這一格的度數要 ≥ 2」）。成功回傳新的 metrics。 */
+    const trial = (moves, extra) => {
+        if (moves.some(([r, c]) => exempt.has(key(r, c)))) return null;
+        const snap = snapshot(g, moves.map(([r, c]) => [r, c]));
+        moves.forEach(([r, c, t]) => { g[r][c] = { type: t, elevation: g[r][c].elevation }; });
+        const m = E.flowMetrics(g);
+        // 先看便宜的動線指標，過了才去算景點與包圍（activeSpots 是全圖 4×4 掃描，最貴）
+        const ok = cost(m) < curCost && (!extra || extra(m)) &&
+            [...base.spots].every(id => E.activeSpots(g).has(id)) &&
+            E.blockedBuildings(g).count <= base.blocked;
+        if (!ok) { restore(g, snap); return null; }
+        cur = m; curCost = cost(m);
+        return m;
+    };
+
+    /* 這一格旁邊可以改鋪成路的裝飾地形（同高度優先，斜坡與豁免格排除） */
+    const paveCands = (r, c) => {
+        const out = [];
+        for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+            const nr = r + dr, nc = c + dc;
+            if (nr < 0 || nr >= gridRows || nc < 0 || nc >= gridCols) continue;
+            if (exempt.has(key(nr, nc)) || !LOOP_PAVEABLE.has(g[nr][nc].type)) continue;
+            out.push([nr, nc, g[nr][nc].elevation === g[r][c].elevation ? 0 : 1]);
+        }
+        return out.sort((a, b) => a[2] - b[2]);
+    };
+
+    /* 階段 A：孤立通行格（度 0）。
+       先試「接回路網」——只認「接完這一格真的度 ≥ 2」的，不然只是把死路挪一格；
+       接不回去就把它自己改種綠化（那格從此不是通行格，缺陷本身消失）。 */
+    const fixIsolated = () => {
+        const stuck = new Set();
+        for (let guard = 0; guard < 200; guard++) {
+            const t = cur.isolated.find(([r, c]) => !stuck.has(key(r, c)));
+            if (!t) return stuck;
+            const [r, c] = t;
+            let done = false;
+            for (const [nr, nc] of paveCands(r, c))
+                if (trial([[nr, nc, matAt(g, nr, nc)]], m => m.degree[r][c] >= 2)) { paved++; done = true; break; }
+            if (!done && trial([[r, c, greenAt(r, c)]])) { greened++; done = true; }
+            if (!done) stuck.add(key(r, c));
+        }
+        return stuck;
+    };
+
+    /* 階段 B：假動線口袋（走不到，但度數 ≥ 2，所以既不是孤立格也不是死路端點）。
+       例：街廓中間被建築圈起來的 2×2 草皮中庭 —— 每格都有兩個鄰格、看起來是條路，
+       實際上從校門走不進去。先試著鋪一格裝飾把它接上路網（變成真的中庭），
+       接不上就一格一格改綠化。走不到的格子不可能是任何建築的門面，
+       所以綠化它不可能讓包圍數變多（守衛照樣跑）。
+       ※ 一定要排在階段 C 之前：拆一塊 2×2 口袋會留下 L 形短枝，
+         得讓階段 C 順手收掉，不然總體指標反而變差（實測死路支線 45 → 47 格）。 */
+    const fixPockets = () => {
+        const stuck = new Set();
+        for (let guard = 0; guard < 400; guard++) {
+            const t = cur.unreach.find(([r, c]) => !stuck.has(key(r, c)));
+            if (!t) return;
+            const [r, c] = t;
+            let done = false;
+            for (const [nr, nc] of paveCands(r, c))
+                if (trial([[nr, nc, matAt(g, nr, nc)]], m => m.reach && m.reach[r][c] >= 0)) { paved++; done = true; break; }
+            if (!done && trial([[r, c, greenAt(r, c)]])) { pockets++; done = true; }
+            if (!done) stuck.add(key(r, c));
+        }
+    };
+
+    /* 階段 C：死路支線。短枝先處理（便宜），每成功一次就重算指標、重新排序。
+       stuck 用「這一枝的座標串」當 key —— 枝形變了就會自動重試。 */
+    const sig = s => s.cells.map(([r, c]) => key(r, c)).join('|');
+    const fixStubs = () => {
+        const stuck = new Set();
+        for (let guard = 0; guard < 400; guard++) {
+            const stub = cur.stubs.find(s => !stuck.has(sig(s)));
+            if (!stub) return;
+            let done = false;
+            // ① 接回成環：沿著支線找可鋪的裝飾鄰格（從端點往內），讓這一枝多一個出口
+            for (const [r, c] of stub.cells) {
+                for (const [nr, nc] of paveCands(r, c))
+                    if (trial([[nr, nc, matAt(g, nr, nc)]])) { paved++; done = true; break; }
+                if (done) break;
+            }
+            // ② 收枝：短枝整條改綠化（包圍守衛會擋掉「這一枝是某棟建築唯一門面」的情形）
+            if (!done && stub.len <= maxStub && !stub.cells.some(([r, c]) => exempt.has(key(r, c)))
+                && trial(stub.cells.map(([r, c]) => [r, c, greenAt(r, c)]))) {
+                cutStubs++; cutCells += stub.len; done = true;
+            }
+            if (!done) stuck.add(sig(stub));
+        }
+    };
+
+    /* 三個階段依「缺陷嚴重度」排，整組重跑到收斂為止（sweeps）——
+       收掉一塊口袋常常會讓原本救不了的短枝變成可收；總分沒再變小就提早結束。 */
+    let stuckIso = new Set();
+    for (let sweep = 0; sweep < (opt.sweeps || 3); sweep++) {
+        const costAtSweep = curCost;
+        stuckIso = fixIsolated();
+        fixPockets();
+        fixStubs();
+        if (curCost === costAtSweep) break;
+    }
+
+    /* 中立性斷言：景點集合、包圍數、水塘格數、斜坡集合都不許變
+       （水塘與斜坡一格都沒動 → 這個 pass 不可能破壞 towns.js 的 maxCarve 或高地動線） */
+    const after = { spots: E.activeSpots(g), blocked: E.blockedBuildings(g).count };
+    const lost = [...base.spots].filter(id => !after.spots.has(id));
+    if (lost.length || after.blocked > base.blocked)
+        throw new Error('環化 pass 不中立：掉了景點 ' + lost.join('、') +
+            '；被包圍建築 ' + base.blocked + ' → ' + after.blocked);
+    if (ponds() !== base.ponds) throw new Error('環化 pass 動到水塘：' + base.ponds + ' → ' + ponds());
+    if (slopeSig() !== base.slopes) throw new Error('環化 pass 動到斜坡集合');
+
+    const m = cur;
+    console.log('  環化 pass：孤立通行格 ' + before.iso + ' → ' + m.isolated.length +
+        '｜走不到的通行格 ' + before.un + ' → ' + m.unreach.length +
+        '｜死路端點 ' + before.ends + ' → ' + m.ends.length +
+        '｜死路支線 ' + before.stub + ' → ' + m.stubCells.size + ' 格（' + before.pct + '% → ' + m.pct + '%）');
+    console.log('  手段：接回成環 ' + paved + ' 格｜收枝 ' + cutStubs + ' 枝共 ' + cutCells + ' 格｜' +
+        '孤立格改綠化 ' + greened + ' 格｜假動線口袋改綠化 ' + pockets + ' 格' +
+        (stuckIso.size ? '｜接不回也綠化不了的孤立格 ' + [...stuckIso].join('、') : ''));
+    return m;
 }
 
 /* 把分區設定（名稱／階段／材質）寫成產物，供 gen-assets.js 產「階段 × 分區」對照表。
@@ -595,5 +827,5 @@ function report(g, title, codeFile) {
 module.exports = {
     DECOR, DECOR_EAST, CLEARABLE, spotOrder, guarded, fallback, fallbackAll,
     fill, addGate, carveWaterChannel, openPlateaus, fillPlateau, tidyUnreachable, countReachable,
-    paveMaterials, writeZones, report
+    matResolver, paveMaterials, loopify, LOOP_PAVEABLE, PLAZA_HOST, writeZones, report
 };
