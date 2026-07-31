@@ -268,6 +268,13 @@ function landscapeDeadPockets(gg) {
       體育館／泳池／道場門前鋪水泥廣場 */
 B.paveMaterials(g, { zones: ZONES, spine: E.town.spine });
 
+/* 8b) 環化 pass（動線流暢優先於景點配置）：孤立通行格歸零、短死路支線接回成環或收枝。
+       湖岸的死路大半是湖泊半島地形天生的（鎖喉走廊、中央半島死巷、東岸步道），
+       towns.js 的 flow.exempt 把這些地形性死路整條釘住，pass 只收設計性的
+       街廓草地口袋與門前短枝。本鎮沒有鑿水道，所以不傳 keep。 */
+if (E.town.flow && E.town.flow.loopify)
+    B.loopify(g, Object.assign({ zones: ZONES, spine: E.town.spine }, E.town.flow));
+
 /* 9) 驗證＋分享碼＋預覽＋分區產物 */
 B.report(g, '湖岸小鎮完美佈局', 'code-lake.txt');
 B.writeZones(ZONES, 'zones-lake.json');
