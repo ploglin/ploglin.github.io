@@ -250,6 +250,15 @@ function landscapeDeadPockets(gg, withEmpty) {
       體育館／泳池／道場門前鋪水泥廣場 */
 B.paveMaterials(g, { zones: ZONES, spine: E.town.spine });
 
+/* 7b) 環化 pass（動線流暢優先於景點配置）：孤立通行格歸零、2–4 格的設計性死路支線
+      接回成環或整條收成綠地；門前水泥廣場／幹道脊椎／校門門面／斜坡一律豁免。
+      開關與參數在 towns.js 的 flow —— 本鎮另外點名豁免西北高地的 16 格原生草坡
+      （懸崖圍死的景觀窗，水岸／力量的窗內材料，一格都不准動）。
+      崖下行政區的 r13–14,c22 動線不必列：它是宇宙火箭／茶室的唯一門面，
+      「被包圍不可變多」的守衛天生擋住收枝。 */
+if (E.town.flow && E.town.flow.loopify)
+    B.loopify(g, Object.assign({ zones: ZONES, spine: E.town.spine }, E.town.flow));
+
 /* 8) 驗證＋分享碼＋預覽＋分區產物 */
 B.report(g, '百靈山丘完美佈局', 'code-hill.txt');
 B.writeZones(ZONES, 'zones-hill.json');
