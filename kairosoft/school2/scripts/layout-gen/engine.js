@@ -102,7 +102,10 @@ function blockedBuildings(g) {
                 if (nr < 0 || nr >= gridRows || nc < 0 || nc >= gridCols) continue;
                 const nt = g[nr][nc].type;
                 if (nt === type && !seen[nr][nc]) { seen[nr][nc] = true; stack.push([nr, nc]); }
-                else if (PASSABLE.has(nt) && (!reach || reach[nr][nc] >= 0)) hasAccess = true;
+                // 出入口要「可通行 ＋ 從校門走得到 ＋ 真的踏得進這一格」。
+                // 第三個條件原本漏掉：隔著 2 層懸崖的走廊雖然是可達的通行格，
+                // 學生仍然跨不過落差進不了門（湖心島曾因此出現「驗證通過、實機走不到」的建築）。
+                else if (PASSABLE.has(nt) && (!reach || reach[nr][nc] >= 0) && canStep(g, cr, cc, nr, nc)) hasAccess = true;
             }
         }
         if (!hasAccess) blocks.push({ type, cells });
