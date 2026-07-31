@@ -258,9 +258,50 @@ function decodeMap(code) {
 const gameX = r => r + 2;
 const gameY = c => gridCols + 1 - c;
 
+/* ── 分區語意（zone-first 架構的核心資料）────────────────────────────────────────
+   使用者的原則是「走廊連接室內設施、水泥地是戶外運動、草地是農牧、道路是對外」，
+   所以**鋪面本身就是分區語意**——不必再多一個欄位，`ZONES[].mat` 直接推出該區收什麼設施：
+
+     走廊 wood_path → indoor（室內：教室／專科／辦公／室內生活機能）
+     水泥地 concrete → sports（戶外運動設施）
+     草地 grass     → farm  （動植物農牧、公園自然面）
+     道路 asphalt   → open  （對外玄關：中性，什麼都收，不罰）
+
+   `itemKind()` 以 items 的分類為底，再手動修正幾項：
+     · 校門是 spec 但屬於玄關 → open
+     · 更衣室登記在 fac，實際是運動設施的一部分 → sports
+     · 紀念物／長椅／公告欄／販賣機／洗手間／飲水處／水井／茶室／焚化爐等**戶外小物**
+       → open（它們在任何分區出現都合理，不該被罰）
+   回傳 'open' 的設施是**語意中性**的，放哪都不算違規。 */
+const ZONE_KIND_BY_MAT = { wood_path: 'indoor', concrete: 'sports', grass: 'farm', asphalt: 'open' };
+const KIND_OVERRIDE = {
+    gate: 'open', gate_h: 'open', locker: 'sports',
+    // 戶外小物／紀念物：哪一區都合理
+    toilet: 'open', water: 'open', vending: 'open', well: 'open', weather: 'open',
+    board: 'open', incinerator: 'open', tea_room: 'open', bench: 'open',
+    statue_br: 'open', statue_gold: 'open', totem: 'open', rocket: 'open',
+    kairo_gold: 'open', kairo_statue: 'open', kairo_room: 'open'
+};
+const KIND_BY_CAT = { spec: 'indoor', fac: 'indoor', sports: 'sports', farm: 'farm' };
+function itemKind(t) {
+    if (KIND_OVERRIDE[t]) return KIND_OVERRIDE[t];
+    const it = items[t];
+    return (it && KIND_BY_CAT[it.type]) || 'open';
+}
+const zoneKind = mat => ZONE_KIND_BY_MAT[mat] || null;
+/* 這一棟蓋進這個分區算不算違規？中性設施與中性／未宣告分區一律不算。 */
+function zoneMismatch(t, mat) {
+    const zk = zoneKind(mat);
+    if (!zk) return false;
+    const ik = itemKind(t);
+    if (zk === 'open') return ik !== 'open';
+    return ik !== 'open' && ik !== zk;
+}
+
 module.exports = {
     town, items, SPOTS, TYPE_KEYS, gridRows, gridCols, PASSABLE,
     isBuildingType, loadTerrain, loadHealth: loadTerrain, isSlopeIn, canStep, computeReachability,
     blockedBuildings, typesInWindow, spotOk, activeSpots, spotWindows, flowMetrics, GATEWAY,
-    encodeMap, decodeMap, gameX, gameY
+    encodeMap, decodeMap, gameX, gameY,
+    itemKind, zoneKind, zoneMismatch, ZONE_KIND_BY_MAT
 };

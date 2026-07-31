@@ -113,6 +113,16 @@ function build(spotOrder, opts) {
        沒宣告的街廓＝不限階段。 */
     const ZONES = opts.zones || {};
     const parcelStage = ps.map(p => (ZONES[p.r0 + ',' + p.c0] || {}).stage || null);
+    /* ★ 分區優先（zone-first）：街廓的鋪面就是它的語意（走廊＝室內／水泥地＝運動／
+       草地＝農牧／道路＝中性玄關），見 engine.zoneMismatch。
+       zonePenalty ＝這一組計畫裡「蓋錯區」的棟數 —— 例如把辦公室排進農牧區、
+       把操場排進行政區。舊版排序的主鍵是「要動的格數最少」，於是景點骨架完全無視
+       分區語意，產出「農牧區裡有校長室與操場」這種圖，頁面上的分區名就變成謊話。
+       新原則是「先有好的分區，再去滿足最大可以建造出來的景點」，所以**分區完整性
+       升為主鍵**，格數退為次鍵、階段偏好第三 —— 代價是可能少幾個景點，這是刻意的。 */
+    const parcelMat = ps.map(p => (ZONES[p.r0 + ',' + p.c0] || {}).mat || null);
+    const zonePenalty = (pi, plan) =>
+        plan.reduce((n, x) => n + (E.zoneMismatch(x.t, parcelMat[pi]) ? 1 : 0), 0);
     /* 階段偏好的懲罰值 = |景點階段 − 街廓階段|；「不限階段」的街廓算 0（中立）。
        故意不給沒宣告階段的街廓懲罰 —— 若讓它們吃懲罰，13 個階段 3 的景點會全部湧進
        南半部那 4 個 stage 3 街廓，把 ZONES 要填的設施位擠光（實測 29→28、棟數 147→115）。
@@ -130,11 +140,13 @@ function build(spotOrder, opts) {
                 // 街廓左上角當 4×4 判定窗口的原點；貼邊的窄街廓要往內夾，才不會超出地圖
                 const have = typesInWindow(g, Math.min(p.r0, gridRows - 4), Math.min(p.c0, gridCols - 4));
                 const missing = spot.req.filter(gr => !(Array.isArray(gr) ? gr : [gr]).some(t => have.has(t)));
-                const better = cand => !best || cand.cells < best.cells ||
-                    (cand.cells === best.cells && cand.pen < best.pen);
+                // 排序鍵（字典序）：分區完整性 → 要動的格數 → 階段偏好
+                const better = cand => !best || cand.zpen < best.zpen ||
+                    (cand.zpen === best.zpen && (cand.cells < best.cells ||
+                        (cand.cells === best.cells && cand.pen < best.pen)));
                 if (!missing.length) {
-                    // 材料已經齊了（純共用既有設施）→ 階段硬規則不適用
-                    const cand = { pi, plan: [], cells: 0, pen: stagePenalty(pi, sStage) };
+                    // 材料已經齊了（純共用既有設施）→ 沒有新建築，分區與階段硬規則都不適用
+                    const cand = { pi, plan: [], cells: 0, zpen: 0, pen: stagePenalty(pi, sStage) };
                     if (better(cand)) best = cand;
                     return;
                 }
@@ -159,7 +171,10 @@ function build(spotOrder, opts) {
                     if (!done) { ok = false; break; }
                 }
                 if (!ok) return;
-                const cand = { pi, plan, cells: plan.reduce((n, x) => n + x.slot.w * x.slot.h, 0), pen: stagePenalty(pi, sStage) };
+                const cand = {
+                    pi, plan, cells: plan.reduce((n, x) => n + x.slot.w * x.slot.h, 0),
+                    zpen: zonePenalty(pi, plan), pen: stagePenalty(pi, sStage)
+                };
                 if (better(cand)) best = cand;
             });
             return best;
@@ -185,13 +200,16 @@ function build(spotOrder, opts) {
             log.push({ spot: spot.name, fail: true, reason: 'blocked' });
             continue;
         }
+        // 分區優先是主鍵，真的排不進對的區時會印出來（誠實記錄，頁面要交代）
+        if (best.zpen) console.log('！分區語意妥協：' + spot.name + ' 有 ' + best.zpen +
+            ' 棟蓋進語意不合的分區（' + (ZONES[ps[best.pi].r0 + ',' + ps[best.pi].c0] || {}).name + '）');
         for (const x of best.plan) {
             for (let dr = 0; dr < x.slot.h; dr++) for (let dc = 0; dc < x.slot.w; dc++)
                 freeSets[best.pi].delete((x.slot.r + dr) + ',' + (x.slot.c + dc));
             log.push({ spot: spot.name, t: x.t, at: [x.slot.r, x.slot.c] });
         }
     }
-    return { g, ps, freeSets, servedSets, log };
+    return { g, ps, freeSets, servedSets, log, zones: ZONES };
 }
 
 module.exports = { UNIQUE, hasType, build, layRoads, parcels, place, findSlot, sizeOf, typesInWindow, clone, ROW_BANDS, COL_BANDS, AV, ST };

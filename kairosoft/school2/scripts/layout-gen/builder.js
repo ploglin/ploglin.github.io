@@ -50,6 +50,18 @@ function guarded(g, slot, t) {
     return true;
 }
 
+/* 這一格落在哪個街廓 → 該街廓的鋪面語意收不收這種設施（分區優先，見 engine.zoneMismatch）。
+   res.zones 由 design2.build 帶出來；沒有 zones 的呼叫端一律回 false（＝完全照舊）。 */
+function zoneMismatchAt(res, r, c, t) {
+    const ZONES = (res && res.zones) || null;
+    if (!ZONES) return false;
+    for (const [r0, r1] of D.ROW_BANDS) for (const [c0, c1] of D.COL_BANDS) {
+        if (r < r0 || r > r1 || c < c0 || c > c1) continue;
+        return E.zoneMismatch(t, (ZONES[r0 + ',' + c0] || {}).mat);
+    }
+    return false;
+}
+
 /* 街廓排不下的景點（例如「選舉」要跟全校唯一的辦公室同框）→ 滑動 4×4 窗口補位。
    可覆蓋純裝飾地形，但不動道路、水塘與既有建築。
    會把所有可行的窗口依「要動的格數」排序逐一試，並套用同一組守衛
@@ -95,9 +107,14 @@ function fallback(g, res, spot, decor) {
             if (!done) { ok = false; break; }
         }
         if (!ok) continue;
-        plans.push({ cells: plan.reduce((n, x) => n + x.slot.w * x.slot.h, 0), plan });
+        plans.push({
+            cells: plan.reduce((n, x) => n + x.slot.w * x.slot.h, 0),
+            zpen: plan.reduce((n, x) => n + (zoneMismatchAt(res, x.slot.r, x.slot.c, x.t) ? 1 : 0), 0),
+            plan
+        });
     }
-    plans.sort((a, b) => a.cells - b.cells);
+    // 分區優先（跟 design2 同一把尺）：先看「蓋錯區」幾棟，再看要動的格數
+    plans.sort((a, b) => a.zpen - b.zpen || a.cells - b.cells);
 
     for (const cand of plans) {
         const all = cand.plan.flatMap(x => slotCells(x.slot));
@@ -111,6 +128,9 @@ function fallback(g, res, spot, decor) {
         }
         // 佔用到的格子從街廓 free 名單移除，避免後面填充覆蓋
         res.freeSets.forEach(set => all.forEach(([r, c]) => set.delete(r + ',' + c)));
+        if (cand.zpen) console.log('！分區語意妥協（4×4 補位）：' + spot.name + ' 有 ' + cand.zpen +
+            ' 棟蓋進語意不合的分區 → ' + cand.plan.filter(x => zoneMismatchAt(res, x.slot.r, x.slot.c, x.t))
+                .map(x => items[x.t].name + '@X' + E.gameX(x.slot.r) + '/Y' + E.gameY(x.slot.c)).join('、'));
         return true;
     }
     return false;
@@ -499,47 +519,117 @@ function tidyUnreachable(g) {
 }
 
 /* ── 材質重鋪 pass（景點中立，在 report 之前跑）────────────────────────────────
-   遊戲的四種通行鋪面各有語意，全圖一律鋪走廊等於把資訊丟掉：
-     走廊 wood_path（木造廊下）＝校舍內廊道，道具「抹布」在此加速，
-                                「相機組／寫生」按走廊算打工收入 → 教學／生活／運動區
-     道路 asphalt（外通路）      ＝室外幹道，「滑板」在道路與草地加速 → 幹道脊椎、農牧／公園／湖心
-     水泥地 concrete（パネル廊下）＝硬鋪面；機制未確認，只當體育館／泳池／道場的門前廣場，不當通道
-     草地 grass（芝生）          ＝自然小徑，同時是菜園／力量／清爽的材料 → 分區內部填充與公園高地步道
+   ★ 分區優先（zone-first）架構：**分區是第一公民，鋪面是分區的表達**。
+     先有語意清楚、成塊的分區，再讓每一條街道自動繼承所屬分區的材質；
+     不再「東一塊草地西一塊道路」地事後拼貼。
+
+   攻略資料（wikiwiki カイロパーク攻略）查到的機制證據，四種鋪面**解鎖階段各不相同**：
+     走廊 wood_path（木造廊下・2,000）  最初から      → 階段 1｜校舍內廊道
+     道路 asphalt  （外通路・5,000）    発展学園      → 階段 2｜對外通路
+     草地 grass    （芝生・7,500）      有望学園      → 階段 3｜自然小徑
+     水泥地 concrete（パネル廊下・4,000）マンモス校    → 階段 4｜硬鋪面
+   道具分類（決定性證據）：ぞうきん 加速「校舎内（木造廊下・パネル廊下）」、
+   スケボー 加速「校舎外（あぜ道・外通路・芝生）」→ 遊戲自己把鋪面分成室內／室外兩類。
+   另外道路／草地／水泥地各 +1 青春點（畢業結算 ×2000 分），走廊 0 但最便宜。
+   → 「分區 → 材質」同時也是**施工順序**：材質的解鎖階段對得上分區的開發階段。
 
    四種鋪面同屬 E.PASSABLE、都不是任何景點的「負材料」，所以可達性／包圍／景點判定完全不變，
    跑完會用 activeSpots / blockedBuildings 斷言（grass 化允許景點變多）。
 
    opts = { zones: ZONES, spine: {av:[列], st:[欄]}, keep: [[r,c],…], defaultMat }
-     spine  ＝幹道脊椎（連接兩座校門的動線＋中軸），一律鋪道路。
-     keep   ＝鑿出來的水道橋，保持走廊（木橋意象；幹道規則的顯式例外）。
-     街道段的材質取自「鄰接街廓的 ZONES.mat」，兩側不同時取優先序 asphalt > wood_path。
-     高地步道（elevation > 1）不動，由 fillPlateau 的 walkMat 決定。 */
+     spine  ＝幹道脊椎（連接兩座校門的對外動線），一律鋪道路，語意不受分區影響。
+     keep   ＝鑿出來的跨水木棧橋，保持走廊 —— 全圖唯一刻意脫離分區材質的例外
+              （四種鋪面裡只有木造廊下讀得出「棧道」意象，而它跨的是水面、不屬任何陸上分區）。
+     高地步道（elevation > 1）不動，由 fillPlateau 的 walkMat 決定。
+
+   ✗ 已汰除的舊規則（不是留著不用，是刪掉）：
+     · 舊「兩側 mat 優先序 道路 > 走廊」——只認兩種材質，水泥地與草地永遠選不到。
+     · 舊「水泥門前廣場 pass」——體育館／泳池／道場旁硬塞 1–2 格 concrete。水泥地既然
+       升級成運動區的正式通路材質，門前廣場就是多餘的補丁（連 loopify 的門面豁免一起移除）。 */
 const PAVE_ROAD = new Set(['wood_path', 'asphalt', 'concrete']);
-const PAVE_PRIORITY = ['asphalt', 'wood_path'];
+
+/* 鋪面的「公共性梯度」：越對外／越硬的鋪面越往界面走。**只在加權票數平手時**當 tie-break，
+   所以它決定不了大局 —— 大局由下面的「臨街面投票」決定。 */
+const MAT_PRECEDENCE = ['asphalt', 'concrete', 'grass', 'wood_path'];
 
 /* 「這一格該鋪什麼」的唯一規則，paveMaterials 與 loopify（環化 pass）共用 ——
    環化 pass 新鋪出來的補環格必須跟旁邊的街道同材質，不然圖上會出現一格突兀的異色。
-   opts = { zones, spine, keep, defaultMat }。高地（elevation > 1）不吃街廓規則：
-   那是 fillPlateau 的步道，取鄰格現成步道的材質（多數決，湊不出來就草地）。 */
+   opts = { zones, spine, keep, defaultMat }。
+
+   三條規則（依序）：
+     1) 幹道規則：落在 spine 的列／欄 → 道路。幹道是對外動線，穿過任何分區都還是道路。
+     2) 區內規則：格子落在某街廓內部 → 直接取該街廓的 mat
+        （街道格通常落在街廓之間，但環化補環與鑿水道會在街廓內部產生鋪面格）。
+     3) **臨街面規則**（本次改版的核心）：一條街的材質由「**誰的門開在這條街上**」決定 ——
+        使用者的原則是「走廊要連接的是教室、辦公室或其它室內設施」，那就不能靠街廓的
+        幾何相鄰去猜，要看**實際臨接這一格的建築屬於哪一區**。
+          · 四鄰每有一棟建築（校門也算建築）→ 它所在街廓的 mat 得 3 票（臨街面）
+          · 街廓幾何相鄰再補票：正交 2、斜角 1（沒有任何建築臨街的穿越型街道靠這個決定）
+          · 票數最高者勝；平手才用 MAT_PRECEDENCE 的公共性梯度
+        效果：門口全是教室的那條街自動變走廊、體育館旁的變水泥地、豬舍旁的變草地、
+        校門旁的變道路 —— 材質是分區的表達，而不是事後貼上去的標籤。
+
+   高地（elevation > 1）不吃街廓規則：那是 fillPlateau 的步道，取鄰格現成步道的材質
+   （多數決，湊不出來就草地）。 */
 function matResolver(opts) {
     opts = opts || {};
     const ZONES = opts.zones || {};
     const spine = opts.spine || {};
-    const spineAV = new Set(spine.av || []);
-    const spineST = new Set(spine.st || []);
+    /* spine 的每一筆可以是整條線（數字 `14`）或**一段**（`[14, 9, 19]` ＝ r14 的 c9–c19）。
+       段式宣告讓「對外幹道」名實相符：只有真正串起兩座校門的那條路線是道路，
+       延伸出去的部分交還給分區材質（否則一條貫穿全圖的線會把好幾個分區切開）。 */
+    const seg = arr => (arr || []).map(x => Array.isArray(x) ? x : [x, -Infinity, Infinity]);
+    const spineAV = seg(spine.av);      // [列, c 起, c 迄]
+    const spineST = seg(spine.st);      // [欄, r 起, r 迄]
     const keep = new Set((opts.keep || []).map(([r, c]) => r + ',' + c));
     const defaultMat = opts.defaultMat || 'wood_path';
-    const onSpine = (r, c) => spineAV.has(r) || spineST.has(c);
+    const onSpine = (r, c) => spineAV.some(([l, a, b]) => l === r && c >= a && c <= b) ||
+        spineST.some(([l, a, b]) => l === c && r >= a && r <= b);
+    const matOfParcel = (r0, c0) => (ZONES[r0 + ',' + c0] || {}).mat || null;
+    const bandOf = (v, bands) => bands.findIndex(([a, b]) => v >= a && v <= b);
+    let fellBack = 0;                       // 沒有任何相鄰街廓宣告 mat 的格數（設定檔漏宣告的訊號）
 
-    // 街道格鄰接哪些街廓（往外放一圈就是夾在中間的那條路）→ 取材質優先序
-    const zoneMatAt = (r, c) => {
-        const mats = new Set();
-        for (const [r0, r1] of D.ROW_BANDS) for (const [c0, c1] of D.COL_BANDS) {
-            if (r < r0 - 1 || r > r1 + 1 || c < c0 - 1 || c > c1 + 1) continue;
-            const m = (ZONES[r0 + ',' + c0] || {}).mat;
-            if (m) mats.add(m);
+    /* 這一格屬於哪個街廓的 mat（不在任何街廓帶內＝街道格，回傳 null） */
+    const matOfCell = (r, c) => {
+        const ri = bandOf(r, D.ROW_BANDS), ci = bandOf(c, D.COL_BANDS);
+        if (ri < 0 || ci < 0) return null;
+        return matOfParcel(D.ROW_BANDS[ri][0], D.COL_BANDS[ci][0]);
+    };
+
+    const zoneMatAt = (g, r, c) => {
+        // 規則 2：落在街廓內部 → 該街廓的 mat
+        const own = matOfCell(r, c);
+        if (own) return own;
+
+        const tally = {};
+        const vote = (m, w) => { if (m) tally[m] = (tally[m] || 0) + w; };
+
+        // 規則 3a：臨街面 —— 四鄰的建築（含校門）各投 3 票給它所屬分區的 mat
+        for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+            const nr = r + dr, nc = c + dc;
+            if (nr < 0 || nr >= gridRows || nc < 0 || nc >= gridCols) continue;
+            if (!E.isBuildingType(g[nr][nc].type)) continue;
+            vote(matOfCell(nr, nc), 3);
         }
-        return PAVE_PRIORITY.find(m => mats.has(m)) || null;
+        // 規則 3b：街廓幾何相鄰補票（正交 2、斜角 1）——沒有建築臨街的穿越型街道靠這個決定
+        for (const [r0, r1] of D.ROW_BANDS) for (const [c0, c1] of D.COL_BANDS) {
+            const m = matOfParcel(r0, c0);
+            if (!m) continue;
+            const dr = r < r0 ? r0 - r : (r > r1 ? r - r1 : 0);
+            const dc = c < c0 ? c0 - c : (c > c1 ? c - c1 : 0);
+            if (dr > 1 || dc > 1) continue;
+            vote(m, (dr === 0 || dc === 0) ? 2 : 1);
+        }
+
+        return tally;
+    };
+
+    /* 票數 → 材質（平手用公共性梯度） */
+    const pick = tally => {
+        const mats = Object.keys(tally);
+        if (!mats.length) return null;
+        const top = Math.max(...mats.map(m => tally[m]));
+        return MAT_PRECEDENCE.find(m => tally[m] === top) || mats[0];
     };
 
     const matAt = (g, r, c) => {
@@ -556,55 +646,92 @@ function matResolver(opts) {
             return best || 'grass';
         }
         if (onSpine(r, c)) return 'asphalt';
-        return zoneMatAt(r, c) || defaultMat;
+        const own = matOfCell(r, c);
+        if (own) return own;                          // 規則 2：落在街廓內部
+        const m = pick(zoneMatAt(g, r, c));
+        if (m) return m;
+        fellBack++;
+        return defaultMat;
     };
     matAt.onSpine = onSpine;
     matAt.keep = keep;
     matAt.zones = ZONES;
+    matAt.fallbacks = () => fellBack;
+    /* 整段街道一起投票用：回傳這一格的票數表（不含規則 1／2 的捷徑） */
+    matAt.tally = (g, r, c) => zoneMatAt(g, r, c);
+    matAt.pick = pick;
     return matAt;
 }
 
+/* 整段街道一起鋪：**一條街不該一格一色**。
+   逐格投票會讓同一條路變成「草草廊廊草草草」——正是「東一塊草地西一塊道路的亂拼」。
+   所以先把路面切成「街道段」（同一條大道／街道在兩個路口之間的那一截，
+   恰好等於 ROW_BANDS／COL_BANDS 的一個區間），整段票數加總後**整段鋪成同一種材質**。
+   路口留到最後，取四鄰已鋪好的街道段的多數決 —— 路口屬於在那裡交會的那幾條街。 */
 function paveMaterials(g, opts) {
     opts = opts || {};
     const matAt = matResolver(opts);
-    const onSpine = matAt.onSpine, keep = matAt.keep;
+    const keep = matAt.keep;
+    const defaultMat = opts.defaultMat || 'wood_path';
 
     const before = { spots: E.activeSpots(g), blocked: E.blockedBuildings(g).count };
 
-    for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++) {
-        const cell = g[r][c];
-        if (!PAVE_ROAD.has(cell.type) || cell.elevation !== 1) continue;
-        g[r][c] = { type: matAt(g, r, c), elevation: 1 };
-    }
+    const key = (r, c) => r + ',' + c;
+    const paveable = (r, c) => PAVE_ROAD.has(g[r][c].type) && g[r][c].elevation === 1 && !keep.has(key(r, c));
+    const done = new Set();
+    const paint = (cells, mat) => cells.forEach(([r, c]) => {
+        g[r][c] = { type: mat, elevation: 1 };
+        done.add(key(r, c));
+    });
 
-    /* 水泥門前廣場：體育館／泳池／道場的正門前 1–2 格路面／空地。
-       守衛照舊（景點不可少、包圍不可多），失敗就跳過；幹道脊椎與水道橋不動。
-       PLAZA_HOST 是模組層常數 —— 環化 pass 要靠同一份名單豁免這些門面格。 */
-    const reach = E.computeReachability(g);   // 鋪面互換不影響可達性，算一次就夠
-    let plazas = 0, plazaCells = 0;
-    for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++) {
-        if (!PLAZA_HOST.has(g[r][c].type)) continue;
-        const ev = g[r][c].elevation;
-        const cands = [];
+    /* 1) 街道段：整段一個材質 */
+    const segs = [];
+    D.AV.forEach(r => D.COL_BANDS.forEach(([c0, c1]) => {
+        const cells = [];
+        for (let c = c0; c <= c1; c++) if (paveable(r, c)) cells.push([r, c]);
+        if (cells.length) segs.push(cells);
+    }));
+    D.ST.forEach(c => D.ROW_BANDS.forEach(([r0, r1]) => {
+        const cells = [];
+        for (let r = r0; r <= r1; r++) if (paveable(r, c)) cells.push([r, c]);
+        if (cells.length) segs.push(cells);
+    }));
+    let segAsphalt = 0;
+    segs.forEach(cells => {
+        // 幹道脊椎可能只覆蓋這一段的一部分（段式 spine）→ 落在脊椎上的先鋪道路，其餘照分區投票
+        const on = cells.filter(([r, c]) => matAt.onSpine(r, c));
+        const off = cells.filter(([r, c]) => !matAt.onSpine(r, c));
+        if (on.length) { paint(on, 'asphalt'); segAsphalt++; }
+        if (!off.length) return;
+        const tally = {};
+        off.forEach(([r, c]) => {
+            const t = matAt.tally(g, r, c);
+            Object.keys(t).forEach(m => { tally[m] = (tally[m] || 0) + t[m]; });
+        });
+        paint(off, matAt.pick(tally) || defaultMat);
+    });
+
+    /* 2) 路口：四鄰已鋪好的街道段多數決（路口屬於在那裡交會的那幾條街） */
+    D.AV.forEach(r => D.ST.forEach(c => {
+        if (!paveable(r, c) || done.has(key(r, c))) return;
+        if (matAt.onSpine(r, c)) { paint([[r, c]], 'asphalt'); return; }
+        const tally = {};
         for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
             const nr = r + dr, nc = c + dc;
             if (nr < 0 || nr >= gridRows || nc < 0 || nc >= gridCols) continue;
-            const t = g[nr][nc].type;
-            if (g[nr][nc].elevation !== ev) continue;
-            if (!reach || reach[nr][nc] < 0) continue;                 // 走不到的口袋不鋪門前廣場
-            if (onSpine(nr, nc) || keep.has(nr + ',' + nc)) continue;
-            if (PAVE_ROAD.has(t)) cands.push([nr, nc, 0]);
-            else if (t === 'empty' && !E.isSlopeIn(g, nr, nc)) cands.push([nr, nc, 1]);  // 斜坡絕對不動
+            if (!done.has(key(nr, nc))) continue;
+            const m = g[nr][nc].type;
+            tally[m] = (tally[m] || 0) + 1;
         }
-        cands.sort((a, b) => a[2] - b[2]);       // 先用現成的路面，其次才是空地
-        let got = 0;
-        for (const [nr, nc] of cands) {
-            if (got >= 2) break;
-            if (g[nr][nc].type === 'concrete') { got++; continue; }
-            if (!guarded(g, { r: nr, c: nc, w: 1, h: 1 }, 'concrete')) continue;
-            got++; plazaCells++;
-        }
-        if (got) plazas++;
+        paint([[r, c]], matAt.pick(tally) || matAt(g, r, c));
+    }));
+
+    /* 3) 剩下的鋪面格（原生道路、環化 pass 補的格、街廓內部的路面）逐格解析。
+          keep（跨水木棧橋）一律走廊，由 matAt 自己處理。 */
+    for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++) {
+        const cell = g[r][c];
+        if (!PAVE_ROAD.has(cell.type) || cell.elevation !== 1 || done.has(key(r, c))) continue;
+        g[r][c] = { type: matAt(g, r, c), elevation: 1 };
     }
 
     // 中立性斷言
@@ -620,7 +747,11 @@ function paveMaterials(g, opts) {
     console.log('  材質重鋪：走廊 ' + cnt.wood_path + '｜道路 ' + cnt.asphalt + '｜水泥地 ' + cnt.concrete +
         '｜草地 ' + cnt.grass + '（合計 ' + total + ' 格，走廊占 ' +
         (total ? Math.round(cnt.wood_path / total * 100) : 0) + '%）');
-    console.log('  水泥門前廣場：' + plazas + ' 處、共 ' + plazaCells + ' 格');
+    console.log('  街道段：' + segs.length + ' 段整段同材質（其中幹道脊椎 ' + segAsphalt + ' 段）');
+    // 分區優先架構要求「每個街廓都宣告 mat」；有 fallback 就是設定檔漏了，要看得見。
+    if (matAt.fallbacks())
+        console.log('！材質 fallback ' + matAt.fallbacks() + ' 格：這些格子四周沒有任何街廓宣告 mat，' +
+            '請在設定檔補上分區（分區優先架構下不該有無主的街道）');
     return cnt;
 }
 
@@ -641,8 +772,7 @@ function paveMaterials(g, opts) {
                綠化材質取該街廓的 green（若本身不可通行），高地取櫻花，其餘取 opt.green。
 
    豁免（一格都不動）：
-     · 門前水泥廣場 —— 體育館／泳池／道場旁的 concrete 是建築門面，天生是端點。
-     · 幹道脊椎（towns.js 的 spine）與鑿出來的水道橋（keep）—— 主動線與唯一通路。
+     · 幹道脊椎（towns.js 的 spine）與鑿出來的跨水木棧橋（keep）—— 主動線與唯一通路。
      · 校門旁的通行格 —— 那是進出口，收掉會把門封死。
      · 斜坡 —— 蓋上去高地就上不去了（斜坡是高低差推導的）。
      · 水塘／建築／校門本身，以及設定檔 exempt 列出的座標。
@@ -651,7 +781,6 @@ function paveMaterials(g, opts) {
    （cost = 孤立×100 + 走不到×20 + 死路支線格×3 + 死路端點）；跑完再斷言景點集合、
    包圍數、水塘格數、斜坡集合全部沒變（所以 maxCarve 不可能被這個 pass 破壞）。 */
 const LOOP_PAVEABLE = new Set(['flower', 'azalea', 'sakura', 'woods', 'pine', 'rock', 'special_tree', 'bamboo', 'aze_path']);
-const PLAZA_HOST = new Set(['gym', 'pool', 'dojo']);
 
 function loopify(g, opt) {
     opt = opt || {};
@@ -671,9 +800,7 @@ function loopify(g, opt) {
         for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
             const nr = r + dr, nc = c + dc;
             if (nr < 0 || nr >= gridRows || nc < 0 || nc >= gridCols) continue;
-            const nt = g[nr][nc].type;
-            if (E.GATEWAY.has(nt)) exempt.add(key(r, c));                                  // 校門門面
-            if (g[r][c].type === 'concrete' && PLAZA_HOST.has(nt)) exempt.add(key(r, c));  // 門前廣場
+            if (E.GATEWAY.has(g[nr][nc].type)) exempt.add(key(r, c));                      // 校門門面
         }
     }
 
@@ -896,5 +1023,5 @@ module.exports = {
     DECOR, DECOR_EAST, CLEARABLE, spotOrder, guarded, fallback, fallbackAll,
     fill, addGate, carveWaterChannel, openPlateaus, breakTerrain, BREAKABLE, FLOW_COST,
     fillPlateau, tidyUnreachable, countReachable,
-    matResolver, paveMaterials, loopify, LOOP_PAVEABLE, PLAZA_HOST, writeZones, report
+    matResolver, paveMaterials, loopify, LOOP_PAVEABLE, MAT_PRECEDENCE, writeZones, report
 };

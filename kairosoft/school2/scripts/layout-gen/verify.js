@@ -56,11 +56,20 @@ check('沒有玩家蓋不出來的假地形', badTypes.size === 0, [...badTypes]
 const badElev = g.flat().filter(c => !(c.elevation >= 1 && c.elevation <= 3)).length;
 check('高度都在 1–3', badElev === 0, badElev + ' 格');
 
-/* 4) 人氣景點：29 種全成立 */
+/* 4) 人氣景點：達到該鎮宣告的目標值。
+      ★ 分區優先（zone-first）架構下，29/29 從**硬指標降級為「良好分區前提下的最大可成立數」**：
+        景點窗口只有 4×4＝16 格，而操場／棒球場／足球場／體育館／道場／游泳池／各專科教室
+        全是 2×2，硬湊三座 2×2 同框只能靠打散分區、亂鋪材質換來。
+        所以各鎮在 towns.js 宣告 spots.target（未宣告＝29，四鎮照舊），
+        未成立的景點一律列出來，頁面要誠實交代放棄了哪些、為什麼。 */
 const active = E.activeSpots(g);
 const where = E.spotWindows(g);
-check('人氣景點 ' + active.size + ' / ' + SPOTS.length + ' 成立', active.size === SPOTS.length,
-    SPOTS.filter(s => !active.has(s.id)).map(s => s.name).join('、'));
+const spotTarget = (town.spots && town.spots.target) || SPOTS.length;
+check('人氣景點 ' + active.size + ' / ' + SPOTS.length + ' 成立（本鎮宣告目標 ' + spotTarget + '）',
+    active.size >= spotTarget, SPOTS.filter(s => !active.has(s.id)).map(s => s.name).join('、'));
+if (active.size < SPOTS.length)
+    console.log('  INFO  放棄的景點：' + SPOTS.filter(s => !active.has(s.id)).map(s => s.name).join('、') +
+        '（分區優先：不為湊景點破壞分區或亂鋪材質）');
 
 /* 5) 動線：沒有走不到的建築 */
 const blocked = E.blockedBuildings(g);
