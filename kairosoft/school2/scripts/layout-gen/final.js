@@ -1,90 +1,263 @@
 /* 健康鎮完美佈局 — 設定檔。實際流程都在 builder.js（城鎮無關）。
-   執行：node final.js  → 產生 code.txt（26×24，分享碼無尺寸前綴）＋ zones-health.json */
+   執行：node final.js  → 產生 code.txt（26×24，分享碼無尺寸前綴）＋ zones-health.json
+
+   ★ 2026-07 依「分區優先（zone-first）」架構重寫（冬郵小鎮先例，見 README）。
+     舊版的目標是湊滿 29 景點、鋪面事後補上，於是產出「農牧園區裡站著校長室與操場」、
+     一條街東一塊草地西一塊道路的圖；而設施尺寸大修正（操場／棒球場／足球場／道場／
+     電腦室／理科室／音樂室／美術室／家政室／多功能室全是 2×2，天象館橫 2 格）之後，
+     舊設定檔的 ZONES[].fac 全面超額，運動園區那兩個街廓每輪印一整排「無處可放」。
+
+   健康鎮的地形特徵與對應決策：
+   - 校門在「西緣中段」(gate @ r15–16,c0)，動線由西往東展開；南門自開在 r25,c13–14。
+   - 全圖只有兩座校門，幹道脊椎＝「西門 → r15 東行到 c14 → c14 南下到南門」，改**段式**宣告。
+   - 中央有一座 25 格的大水塘（r5–9,c4–10）＋東北一座 12 格（r6–7,c18–23），
+     水塘都在動線內側、鑿了也沒有收益 → pond.maxCarve = 0，一格不動。
+   - 兩塊高地：北高地（r0–4,c3–10，32 格斜坡的來源之一）與東高地（r10–22,c19–23）。
+     原始 32 格斜坡一格不可動，兩塊高地都用 B.fillPlateau 開發成園區。
+   - 既有校舍全部集中在中央帶（r8–19,c5–13）：操場 r8–9/c10–11、教室 r13–14/c10–11、
+     辦公室 r16–17/c6–7、福利社 r17/c10、公告欄 r17/c11、焚化爐 r19/c6、水井 r11/c5、
+     百葉箱 r9/c12，另有一段原生道路網（r13–20,c1–12）。全部原地保留，
+     只有卡在幹道上的小農場（r9–10/c14）與養雞小屋（r10/c12）被路面覆蓋，在農牧區重建。 */
 require('./towns.js').select('health');
 const E = require('./engine.js');
 const D = require('./design2.js');
 const B = require('./builder.js');
 
-/* 1) 分區設定：key = 街廓左上角 'r0,c0'
-      教室：三個年級各 3 間，共 9 間（含健康鎮原本就有的那間舊校舍）。
-      辦公室：原有 1 間 ＋ 新建 1 間 = 2 間。
+/* ── 1) 分區設定（zone-first）────────────────────────────────────────────────
+   key = 街廓左上角 'r0,c0'。街廓格線是 towns.js 的 ROW_BANDS × COL_BANDS：
+     R0=[1,4] R1=[6,9] R2=[11,14] R3=[16,19] R4=[21,24]
+     C0=[0,3] C1=[5,8] C2=[10,13] C3=[15,18] C4=[20,23]
 
-      stage = 該街廓的解鎖階段（1 農村 → 4 名門）。design2 挑街廓時會偏好
-              「景點階段與街廓階段相近」的組合，並禁止階段 3 以上的景點把新材料
-              蓋進 stage 1 的開局核心區（無處可放時放寬並 log）。
-      mat   = 鄰接街道的鋪面（builder.paveMaterials 用）：
-              教學／生活／舊校舍／運動＝走廊 wood_path，農牧／公園／湖心＝道路 asphalt。
-      健康鎮的分區本來就大致符合階段邏輯（校門廣場→年級棟→運動農牧→高地園區），
-      所以這一版只補 stage / mat，分區內容不動。 */
-const ZONES = {
-    '16,0': { name: '校門廣場', fac: ['board', 'bench', 'statue_br'], green: 'flower', stage: 1, mat: 'wood_path' },
-    '11,10': { name: '3年級棟', fac: ['class', 'class'], green: 'flower', decor: true, stage: 2, mat: 'wood_path' },   // ＋原有舊校舍 1 間 = 3 間
-    '11,15': { name: '1年級棟', fac: ['class', 'class', 'class', 'office'], green: 'flower', decor: true, stage: 2, mat: 'wood_path' },
-    '16,15': { name: '2年級棟', fac: ['class', 'class', 'class', 'toilet', 'water', 'locker', 'vending'], green: 'flower', decor: true, stage: 2, mat: 'wood_path' },
-    '16,10': { name: '生活機能', fac: ['broadcast', 'game_corner', 'bench', 'career', 'multi_room'], green: 'grass', stage: 2, mat: 'wood_path' },
-    '21,0': { name: '農牧園區', fac: ['farm', 'chicken', 'pig', 'cow', 'rabbit', 'duck'], green: 'grass', stage: 3, mat: 'asphalt' },
-    '21,5': { name: '農牧園區', fac: ['farm', 'mole', 'panda', 'koala', 'croc', 'duck'], green: 'grass', stage: 3, mat: 'asphalt' },
-    '21,10': { name: '運動園區', fac: ['field', 'baseball', 'soccer', 'tennis', 'basketball', 'pool'], green: 'grass', stage: 3, mat: 'wood_path' },
-    '21,15': { name: '運動園區', fac: ['gym', 'dojo', 'trampoline', 'club', 'field', 'locker'], green: 'grass', stage: 3, mat: 'wood_path' },
-    '21,20': { name: '展望綠地', fac: ['bench', 'statue_br'], green: 'sakura', stage: 4, mat: 'asphalt' },
-    '11,20': { name: '展望綠地', fac: [], green: 'sakura', stage: 4, mat: 'asphalt' }
-};
+   ★ **分區是第一公民**：先按地形劃出語意清楚、成塊的分區，再讓 builder.paveMaterials
+     的「臨街面投票」把每條街整段鋪成對應材質。禁止同語意街廓被別語意夾成兩塊。
 
-/* 1b) 其餘街廓（北緣舊校舍、池畔、中央舊校舍、東高地）只補「名字 ＋ 鄰接街道材質」：
-      fac 空、green 與 B.fill 的預設 'grass' 相同 → 對填充完全中立，
-      也刻意**不宣告 stage** → design2 的階段偏好與硬規則對它們完全不動作（保住 29/29）。
-      名字是「階段 × 分區」對照表要用的（不然大半景點只能標「既有校舍／其他」）。 */
-Object.assign(ZONES, {
-    '1,0': { name: '北緣舊校舍', fac: [], green: 'grass', mat: 'wood_path' },
-    '1,5': { name: '北高地花園', fac: [], green: 'grass', mat: 'asphalt' },
-    '1,10': { name: '北緣舊校舍', fac: [], green: 'grass', mat: 'wood_path' },
-    '1,15': { name: '北緣舊校舍', fac: [], green: 'grass', mat: 'wood_path' },
-    '1,20': { name: '北緣舊校舍', fac: [], green: 'grass', mat: 'wood_path' },
-    '6,0': { name: '池畔帶', fac: [], green: 'grass', mat: 'wood_path' },
-    '6,5': { name: '池畔帶', fac: [], green: 'grass', mat: 'wood_path' },
-    '6,10': { name: '池畔帶', fac: [], green: 'grass', mat: 'wood_path' },
-    '6,15': { name: '池畔帶', fac: [], green: 'grass', mat: 'wood_path' },
-    '6,20': { name: '池畔帶', fac: [], green: 'grass', mat: 'wood_path' },
-    '11,0': { name: '舊校舍帶', fac: [], green: 'grass', mat: 'wood_path' },
-    '11,5': { name: '舊校舍帶', fac: [], green: 'grass', mat: 'wood_path' },
-    '16,5': { name: '舊校舍帶', fac: [], green: 'grass', mat: 'wood_path' },   // 校長室＋既有辦公室
-    '16,20': { name: '東高地園區', fac: [], green: 'grass', mat: 'wood_path' }
+   mat  = 該分區的鋪面語意（四種鋪面的解鎖階段剛好對得上分區的開發階段）：
+            走廊 wood_path（階段 1・校舍內）＝教室／專科／行政／生活機能等**室內**設施
+            道路 asphalt  （階段 2・對外）  ＝兩座校門的玄關 ＋ 串起兩門的幹道脊椎
+            草地 grass    （階段 3・自然）  ＝農牧／公園／水岸／高地園區
+            水泥地 concrete（階段 4・硬鋪面）＝戶外運動園區（**本鎮唯一的運動分區**）
+   stage = 解鎖階段（1 農村 → 4 名門），design2 用它做街廓的階段偏好與硬規則。
+   fac   = **右尺寸化**：一個 4×4 街廓 = 16 格 = 只放得下 4 座 2×2（對齊四象限）
+           或 16 座 1×1。fac 是「景點骨架排完之後拿剩餘空地補的東西」，不是願望清單。
+
+   分區配置圖（5×5 街廓；材質 w=走廊 a=道路 g=草地 c=水泥地）：
+              C0(c0–3)     C1(c5–8)    C2(c10–13)  C3(c15–18)  C4(c20–23)
+     R0(r1–4)  北高地花園 g 北高地花園 g 北專科棟 w  北專科棟 w  北專科棟 w
+     R1(r6–9)  池畔公園   g 池畔公園   g 舊操場帶 w  中央教學棟 w 東岸農牧區 g
+     R2(r11–14) 西教學棟  w 中央校舍   w 中央校舍 w  中央行政 w  東高地園區 g
+     R3(r16–19) 西門玄關  a 中央生活   w 中央生活 w  南運動園區 c 東高地園區 g
+     R4(r21–24) 南農牧區  g 南校舍     w 南運動園區 c 南運動園區 c 南運動園區 c
+
+   四種鋪面各自成塊（這是本次重寫的驗收條件）：
+     走廊  R0C2·R0C3·R0C4·R1C2·R1C3·R2C0·R2C1·R2C2·R2C3·R3C1·R3C2·R4C1
+           —— 12 個街廓連成**一整片**校舍區（北緣長校舍 → 中央歷史核心 → 南校舍）
+     水泥地 R3C3·R4C2·R4C3·R4C4 —— 4 個街廓連成一整片南運動園區
+     草地  西北公園帶（R0C0·R0C1·R1C0·R1C1）／東緣帶（R1C4·R2C4·R3C4）／
+           西南農牧（R4C0）—— 三塊，每一塊內部都相連
+     道路  R3C0 西門玄關 ＋ 幹道脊椎（r15 c0–14 → c14 r15–24）。
+           **南門沒有另外的玄關街廓**：c14 縱脊的南端就直接是南門的門面，
+           道路名實相符地只管「對外」這一件事。 */
+const ZONES = {};
+const zone = (keys, z) => keys.forEach(k => { ZONES[k] = Object.assign({}, z); });
+
+/* ── 草地：西北公園帶 ─────────────────────────────────────────────────────
+   北高地花園（R0C0·R0C1）：R0C1 整格是 e2 北高地（parcels 取不到 e1 空地，
+   會被略過，交給 B.fillPlateau），R0C0 只有 c0–c2 共 12 格 e1 —— 高地入口的花園。
+   池畔公園（R1C0·R1C1）：緊貼中央大水塘的西岸。R1C1 幾乎整格是池水（只剩 3 格），
+   所以設施都列在 R1C0；水井＋洗手間擺在池畔，同時是「水岸」的材料。 */
+zone(['1,0'], {
+    name: '北高地花園', mat: 'grass', green: 'sakura', decor: true,
+    fac: ['bench', 'statue_br']
+});
+zone(['1,5'], { name: '北高地花園', mat: 'grass', green: 'sakura', fac: [] });
+zone(['6,0'], {
+    name: '池畔公園', mat: 'grass', green: 'grass', decor: true, stage: 2,
+    fac: ['well', 'toilet', 'bench', 'water', 'statue_br', 'farm', 'chicken', 'rabbit']
+});
+zone(['6,5'], { name: '池畔公園', mat: 'grass', green: 'grass', decor: true, stage: 2, fac: ['toilet', 'water'] });
+
+/* ── 草地：東緣帶 ─────────────────────────────────────────────────────────
+   東岸農牧區（R1C4）：東北水塘（r6–7/c18–23）的南岸，8 格 e1。
+   稀有動物（熊貓／無尾熊／鱷魚／長頸鹿／大象）都不是「青空」「非洲」以外的
+   關鍵材料，擺在離校門最遠的東緣＝後期開發的動物角。
+   東高地園區（R2C4·R3C4）：e2 東高地，B.fillPlateau 另外處理，這裡只宣告語意。
+   兩者與南邊的高地都是草地，東緣帶因此是一整條連續的草地分區。 */
+zone(['6,20'], {
+    name: '東岸農牧區', mat: 'grass', green: 'grass', decor: true, stage: 4,
+    fac: ['giraffe', 'elephant', 'panda', 'koala', 'croc', 'duck']
+});
+zone(['11,20', '16,20'], { name: '東高地園區', mat: 'grass', green: 'sakura', stage: 4, fac: [] });
+
+/* ── 草地：西南農牧（R4C0）────────────────────────────────────────────────
+   南緣最西的一塊 16 格平地，全部給 1×1 農牧；西門玄關（R3C0）就在正上方
+   → 「出校門往南就是農場」的動線敘事。
+   ★ 一開始 R4C1 也劃給農牧（兩格 32 格），結果它變成室內分區的**溢出倉庫** ——
+     「購物」（福利社＋便利商店＋餐廳）、「怪談」（音樂室＋理科室）、「吃醋」
+     整組都被擠到這裡，8 棟室內設施站在農牧區裡，分區名就成了謊話。
+     把 R4C1 還給校舍（見「南校舍」）之後，農牧區才真的只有農牧。 */
+zone(['21,0'], {
+    name: '南農牧區', mat: 'grass', green: 'grass', decor: true, stage: 3,
+    fac: ['farm', 'chicken', 'pig', 'cow', 'rabbit', 'duck', 'mole', 'weather', 'well', 'toilet', 'bench', 'farm', 'chicken']
 });
 
-/* 2) 景點骨架（大型／稀有設施先卡位）
-      全校唯一的校長室：蓋在既有辦公室（r16-17,c6-7）左側，讓「選舉」「學習」都能用同一間 */
-const res = D.build(B.spotOrder(), { preplace: [{ t: 'principal', r: 16, c: 5 }], zones: ZONES });
+/* ── 走廊：北教學棟（R0C2·R0C3·R0C4）──────────────────────────────────────
+   北緣 r1–4 × c10–23 是全圖最大片的連續空地（45 格），而中央帶被原生道路與既有
+   校舍占滿、排不出 2×2 的專科教室 —— 所以新校舍主體整條往北擴建成一棟長校舍。
+   ★ 這三個街廓是**分區成塊的關鍵**：一開始只給 C2·C3 兩格（把 C4 劃給農牧），
+     結果室內分區的 2×2 配額只有 17 個象限，而「藝術」「怪談」「生物」「時尚」
+     「購物」「吃醋」「澀谷」七個景點光是專科教室就要 15 座 2×2 同框，
+     排不進去的通通溢出到草地分區（實測 18 棟蓋錯區，連道場都跑進南農牧區）。
+     把 C4 還給教學棟之後多出 4 個象限，溢出量掉到剩下真正的跨語意景點。
+   ※ 6 間教室裡有 4 間 preplace 在這裡（見 1d），fac 只留剩下的專科教室配額。 */
+zone(['1,10'], { name: '北教學棟', mat: 'wood_path', green: 'flower', decor: true, stage: 2, fac: ['science', 'nurse', 'career'] });
+zone(['1,15'], { name: '北教學棟', mat: 'wood_path', green: 'flower', decor: true, stage: 2, fac: ['multi_room', 'broadcast', 'toilet'] });
+zone(['1,20'], { name: '北教學棟', mat: 'wood_path', green: 'flower', decor: true, stage: 3, fac: ['computer', 'home_ec', 'career', 'toilet'] });
+
+/* ── 走廊：舊操場帶（R1C2）＋中央教學棟（R1C3）──────────────────────────
+   R1C2 有既有操場（r8–9/c10–11）與百葉箱（r9/c12）。**操場是運動設施卻長在
+   校舍分區裡** —— 這是「既有校舍一棟不拆」的必然代價，照實記錄在頁面上
+   （把它單獨切成水泥地分區會讓運動分區裂成兩塊，違反分區成塊的第一原則）。
+   R1C3 是 14 格可用平地，夾在北教學棟與中央行政之間，收專科教室。 */
+zone(['6,10'], { name: '舊操場帶', mat: 'wood_path', green: 'flower', decor: true, stage: 1, fac: ['home_ec', 'shop', 'vending'] });
+zone(['6,15'], { name: '中央教學棟', mat: 'wood_path', green: 'flower', decor: true, stage: 3, fac: ['computer', 'art', 'career'] });
+
+/* ── 走廊：西教學棟（R2C0）＋中央校舍（R2C1·R2C2）＋中央生活（R3C1·R3C2）──
+   這一片是健康鎮的**歷史核心**：既有教室、辦公室、福利社、公告欄、焚化爐、水井
+   與一段原生道路網都在這裡。空地零星（多半只剩 r11–12 兩列與零散的原生草地／樹林），
+   所以 decor:true 放寬到可覆蓋裝飾地形，fac 也只列得下少量 2×2。 */
+zone(['11,0'], { name: '西教學棟', mat: 'wood_path', green: 'flower', decor: true, stage: 2, fac: ['music', 'nurse', 'career'] });
+zone(['11,5'], { name: '中央校舍', mat: 'wood_path', green: 'flower', decor: true, stage: 1, fac: ['nurse', 'toilet', 'water'] });
+zone(['11,10'], { name: '中央校舍', mat: 'wood_path', green: 'flower', decor: true, stage: 2, fac: ['home_ec', 'broadcast', 'career'] });
+zone(['16,5'], { name: '中央生活', mat: 'wood_path', green: 'flower', decor: true, stage: 1, fac: ['tea_room', 'water', 'toilet', 'nurse'] });
+zone(['16,10'], { name: '中央生活', mat: 'wood_path', green: 'flower', decor: true, stage: 3, fac: ['game_corner', 'vending', 'bench', 'career', 'toilet'] });
+
+/* ── 走廊：南校舍（R4C1）────────────────────────────────────────────────────
+   中央生活（R3C1）正下方的 16 格全空平地，是**中央帶唯一還排得下 2×2 的擴充地**。
+   「購物」（福利社＋便利商店＋餐廳，9 格）與「吃醋」（餐廳＋家政室＋焚化爐）
+   都需要兩座 2×2 同框，中央帶那幾個街廓被原生道路切碎後排不出來，所以往南擴一格。
+   接的是 c4／c9 兩條縱街與 r20 大道，走廊材質與正上方的中央生活連成一片。 */
+zone(['21,5'], {
+    name: '南校舍', mat: 'wood_path', green: 'flower', decor: true, stage: 3,
+    fac: ['cafeteria', 'convenience', 'shop', 'game_corner', 'career', 'toilet']
+});
+
+/* ── 走廊：中央行政（R2C3）──────────────────────────────────────────────
+   全圖唯一 16 格全空、又貼著兩條幹道（c14 縱脊與 r15 大道）的街廓，
+   所以「學習」（校長室＋圖書室＋多媒體）與「選舉」（校長室＋辦公室＋茶室）
+   共 11 格的行政六件套整組 preplace 在這裡（見 1d）。
+   fac 只留 1×1 的行政小設施，補 preplace 之後剩下的 5 格。 */
+zone(['11,15'], { name: '中央行政', mat: 'wood_path', green: 'flower', decor: true, stage: 2, fac: ['career', 'broadcast', 'nurse'] });
+
+/* ── 道路：兩座校門的玄關 ─────────────────────────────────────────────────
+   西門玄關（R3C0）＝既有校門 r15–16/c0 的門內廣場，本來就有一段**原生道路**
+   （r15–16/c1–3）—— 地圖自己就告訴我們「玄關該鋪道路」。stage 1 的開局核心。
+   南門玄關（R4C2）＝南門 r25/c13–14 的門內廣場，幹道脊椎 c14 直接接到門口。
+   道路分區的語意是 open（中性）：只收紀念物／長椅／公告欄／販賣機／洗手間之類
+   「放哪都合理」的戶外小物，開羅君三件套也擺在這裡當校門地標。 */
+zone(['16,0'], {
+    name: '西門玄關', mat: 'asphalt', green: 'flower', decor: true, stage: 1,
+    fac: ['board', 'bench', 'statue_br', 'vending', 'toilet', 'water', 'kairo_gold', 'kairo_statue', 'kairo_room', 'totem']
+});
+
+/* ── 水泥地：南運動園區（R3C3·R4C3·R4C4）────────────────────────────────
+   **本鎮唯一的運動分區**，也是「水泥地 > 0」的唯一來源 —— 門前廣場 pass 已隨
+   分區優先架構移除，不宣告 concrete 分區就一格水泥地都沒有。
+   四個街廓（R3C3·R4C2·R4C3·R4C4）連成一片 56 格：前三格各 16 格全空，
+   R4C4 的 e1 部分 8 格（r23–24/c20–23）貼著東高地南端的斜坡群。
+   ★ R4C4 那 8 格是「黃昏」的唯一解：它要「樹木＋斜坡＋棒球場」同框，而全圖的
+     斜坡只長在兩塊高地邊緣 —— 其餘罩得到斜坡的 4×4 窗口全部落在草地分區裡，
+     只有這一塊能讓棒球場**不蓋錯區**就湊到斜坡。
+   ★ R4C2 本來劃成「南門玄關」（道路），結果運動分區被它從中切成兩塊，而且剩下的
+     三格（40 格）排不下六座 2×2 ＋各種球場：道場被擠去農牧區、水泥地只剩 14 格。
+     改成運動之後四格連成一整片，水泥地 14 → 23 格、蓋錯區 12 → 9 棟；
+     南門的門面交還給 c14 縱脊（幹道脊椎本來就鋪道路，玄關語意一點都沒少）。
+   六座 2×2（操場／棒球場／足球場／體育館／道場／游泳池）就吃 24 格，
+   所以每個街廓最多列 4 項，1×1 的社團教室／彈跳床／更衣室補縫。 */
+zone(['16,15'], { name: '南運動園區', mat: 'concrete', green: 'flower', decor: true, stage: 3, fac: ['gym', 'pool', 'locker', 'club'] });
+zone(['21,10'], { name: '南運動園區', mat: 'concrete', green: 'flower', decor: true, stage: 2, fac: ['field', 'basketball', 'club', 'trampoline', 'vending'] });
+zone(['21,15'], { name: '南運動園區', mat: 'concrete', green: 'flower', decor: true, stage: 3, fac: ['dojo', 'baseball', 'club', 'locker'] });
+zone(['21,20'], { name: '南運動園區', mat: 'concrete', green: 'flower', decor: true, stage: 4, fac: ['basketball', 'tennis', 'locker', 'club'] });
+
+/* ── 1d) preplace：不是景點材料的建築要先卡位 ────────────────────────────
+   冬郵那一輪的教訓：**教室不是任何景點的材料**，景點骨架沒有理由蓋它，
+   輪到分區填充時位置又已經被景點材料吃光 —— 實測整張圖只會剩下原生那 1 間。
+   一間教室的學校既不合理、也擋住學生容納上限，所以 6 間（每年級 2 間）手放。
+   preplace 跑在 layRoads／prepare 之後、parcels 之前，所以這些格子不會被切成
+   街廓 slot，景點骨架會自動繞開；每一棟都貼著街廓外緣的街道，不會被圍死。 */
+const PREPLACE = [
+    /* 6 間教室全部釘在**中央帶的既有校舍周圍**（既有那間在 r13–14/c10–11），
+       圍著 r10 大道排成一列年級棟；每一棟的北面都直接貼 r10 大道，不會被圍死。
+       ★ 刻意不放在北專科棟：北緣 r1–4 那 11 個 2×2 象限是全圖唯一排得下
+         「藝術」（美術室＋音樂室＋多功能室）「怪談」（音樂室＋理科室）「購物」
+         （福利社＋便利商店＋餐廳）這種**三座 2×2 同框**的地方，教室佔進去的話
+         這些景點就會被擠到草地分區（實測會多出 6 棟蓋錯區的室內設施）。 */
+    { t: 'class', r: 11, c: 0 }, { t: 'class', r: 11, c: 2 },     // 西教學棟 2 間（X13–X14 / Y25–Y22）
+    { t: 'class', r: 11, c: 7 },                                  // 中央校舍 1 間（X13–X14 / Y18–Y17）
+    { t: 'class', r: 11, c: 10 }, { t: 'class', r: 11, c: 12 },    // 中央校舍 2 間，接上既有教室成一棟長校舍
+    { t: 'class', r: 6, c: 12 },                                  // 舊操場帶 1 間（X8–X9 / Y13–Y12），操場旁
+    /* 中央行政（X13–X16 / Y10–Y7）＝**兩個景點共用一個 4×4 窗口 (11,15)**：
+         學習 ＝ 校長室(1×2) ＋ 圖書室(2×1) ＋ 多媒體教室(1×2)
+         選舉 ＝ 校長室(1×2) ＋ 辦公室(2×2) ＋ 茶室(1×1)
+       校長室全校唯一，兩個景點都要它 —— 所以整組 6 棟一起釘在同一個窗口，
+       一間校長室同時餵兩個景點（全圖最省的一組）。
+       排法：c15 校長室、c16 多媒體（各 1×2 直立並排）、圖書室(2×1) 橫躺在 r13、
+             c17–18 辦公室(2×2)，茶室補在 r14/c17。共 11 格全落在窗口 (11,15) 內，
+             且每一棟都貼得到 c14 縱脊、r10 大道或 r15 大道，不會被圍死。
+       ※ 茶室刻意放 r14/c17 而不是 r13/c17：後者四鄰全是自家建築，
+         等綠化把 r13/c18 種成花壇就會被圍死。 */
+    { t: 'principal', r: 11, c: 15 }, { t: 'av_room', r: 11, c: 16 }, { t: 'library', r: 13, c: 15 },
+    { t: 'office', r: 11, c: 17 }, { t: 'tea_room', r: 14, c: 17 }
+];
+
+/* ── 2) 景點骨架（鋪路 → 教室與行政卡位 → 街廓填景點）────────────────────
+   排序鍵是字典序「分區完整性 → 要動的格數 → 階段偏好」，所以景點材料會先往
+   語意相符的分區走；真的排不進去時會印「！分區語意妥協」，照實記錄。 */
+const res = D.build(B.spotOrder(), { zones: ZONES, preplace: PREPLACE });
 const g = res.g;
 
-/* 2b) 街廓排不下的景點 → 滑動 4×4 窗口補位 */
+/* 2b) 街廓排不下的景點 → 滑動 4×4 窗口補位（可跨街廓，補「怪談」「熱情」這種
+      材料分屬兩個街廓的組合） */
 B.fallbackAll(g, res);
 
-/* 3) 分區填充 */
+/* 3) 第二座校門：gate_h 是「上下用」的 2×1 版本，開在南緣 r25/c13–14，
+      正好接上 c14 縱脊的南端。**先加門再填充**，讓後面的綠化守衛保護門口動線。 */
+B.addGate(g, 25, 13, 'gate_h', res);
+
+/* 4) 分區填充 */
 B.fill(g, res, ZONES, 'grass');
 
-/* 3d) 第二座校門：gate_h 是「上下用」的 2×1 版本，開在南側邊界接上 Y11 街道 */
-B.addGate(g, 25, 13, 'gate_h');
-
-/* 3e) 高地開發（每列最外側留步道接坡道，中間才蓋設施）
-       walkMat：公園類高地鋪草地當自然小徑，設施類園區鋪走廊 */
+/* 5) 高地開發（每列最外側留步道接坡道，中間才蓋設施）
+      ※ fillPlateau 是**逐格放置**，多格設施會被 sizeOf 判掉並跳過 →
+        fac 只能列 1×1。舊設定檔在這裡列了 field／dojo（尺寸修正後都是 2×2），
+        每輪白佔一個位置、那格只會被綠化掉（東高地曾因此從 16 棟掉到 12 棟）。
+      walkMat：公園性質的高地鋪草地當自然小徑，運動台鋪水泥地。 */
 B.fillPlateau(g, [
-    { name: '北高地花園', rows: [0, 4], cols: [3, 10], fac: ['tea_room', 'bench', 'statue_br', 'board', 'toilet', 'vending'], green: 'sakura', walkMat: 'grass' },
-    // ※ fillPlateau 是逐格放置，多格設施會被跳過 → 游泳池／體育館改成 2×2 之後
-    //   不能再列在這裡（列了等於白佔一輪、步道外的格子只會被綠化掉）。
-    //   高地的運動性質改由 1×1 的操場／彈跳床代表，泳池與體育館留在南區運動園區。
-    { name: '東高地園區', rows: [10, 22], cols: [19, 23], fac: ['field', 'trampoline', 'dojo', 'club', 'locker', 'water', 'toilet', 'bench', 'giraffe', 'elephant', 'rabbit', 'statue_br'], green: 'grass', walkMat: 'wood_path' }
+    { name: '北高地花園', rows: [0, 4], cols: [3, 10], fac: ['tea_room', 'bench', 'statue_br', 'board', 'toilet', 'vending', 'water', 'weather'], green: 'sakura', walkMat: 'grass' },
+    { name: '東高地園區', rows: [10, 20], cols: [19, 23], fac: ['bench', 'statue_br', 'board', 'toilet', 'vending', 'water', 'tea_room', 'giraffe', 'elephant', 'rabbit', 'panda', 'koala', 'duck', 'farm'], green: 'sakura', walkMat: 'grass' },
+    /* 東高地最南端（r21–22）落在南運動園區的街廓裡，所以步道鋪水泥地、
+       放 1×1 的運動小設施 —— 高地上的「運動台」，材質與腳下的運動園區一致。 */
+    { name: '南高地運動台', rows: [21, 22], cols: [19, 23], fac: ['club', 'trampoline', 'locker'], green: 'sakura', walkMat: 'concrete' }
 ]);
 
-/* 4) 材質重鋪 pass（景點中立）：幹道脊椎鋪道路、其餘街道依鄰接街廓的 mat、
-      體育館／泳池／道場門前鋪水泥廣場 */
+/* 6) 收尾：走不到的斷頭路改鋪草地 */
+B.tidyUnreachable(g);
+
+/* 7) 材質重鋪 pass（景點中立）：幹道脊椎整段鋪道路、其餘街道段依「誰的門開在
+      這條街上」投票取所屬分區的 mat，整段同材質（逐格投票會讓一條路變成
+      「草草廊廊草草草」，正是要避免的亂拼）。 */
 B.paveMaterials(g, { zones: ZONES, spine: E.town.spine });
 
-/* 4b) 環化 pass（動線流暢優先於景點配置）：孤立通行格歸零、2–4 格的設計性死路支線
-      接回成環或整條收成綠地；門前水泥廣場／幹道脊椎／校門門面／斜坡一律豁免。
-      開關與參數在 towns.js 的 flow（只有已重排的鎮宣告）。 */
-if (E.town.flow && E.town.flow.loopify)
-    B.loopify(g, Object.assign({ zones: ZONES, spine: E.town.spine }, E.town.flow));
+const loop = () => {
+    if (E.town.flow && E.town.flow.loopify)
+        B.loopify(g, Object.assign({ zones: ZONES, spine: E.town.spine }, E.town.flow));
+};
 
-/* 5) 驗證＋分享碼＋預覽＋分區產物 */
+/* 8) 環化 pass（動線流暢優先於景點配置）：孤立通行格歸零、走不到的假動線口袋
+      接回或綠化、短死路支線接回成環或整條收成綠地；幹道脊椎／校門門面／斜坡豁免。 */
+loop();
+/* 8b) 再跑一輪（收斂用） */
+loop();
+
+/* 9) 驗證＋分享碼＋預覽＋分區產物 */
 B.report(g, '健康鎮完美佈局', 'code.txt');
 B.writeZones(ZONES, 'zones-health.json');

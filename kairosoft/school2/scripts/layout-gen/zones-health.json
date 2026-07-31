@@ -1,127 +1,127 @@
 {
- "16,0": {
-  "name": "校門廣場",
-  "stage": 1,
-  "mat": "wood_path"
- },
- "11,10": {
-  "name": "3年級棟",
-  "stage": 2,
-  "mat": "wood_path"
- },
- "11,15": {
-  "name": "1年級棟",
-  "stage": 2,
-  "mat": "wood_path"
- },
- "16,15": {
-  "name": "2年級棟",
-  "stage": 2,
-  "mat": "wood_path"
- },
- "16,10": {
-  "name": "生活機能",
-  "stage": 2,
-  "mat": "wood_path"
- },
- "21,0": {
-  "name": "農牧園區",
-  "stage": 3,
-  "mat": "asphalt"
- },
- "21,5": {
-  "name": "農牧園區",
-  "stage": 3,
-  "mat": "asphalt"
- },
- "21,10": {
-  "name": "運動園區",
-  "stage": 3,
-  "mat": "wood_path"
- },
- "21,15": {
-  "name": "運動園區",
-  "stage": 3,
-  "mat": "wood_path"
- },
- "21,20": {
-  "name": "展望綠地",
-  "stage": 4,
-  "mat": "asphalt"
- },
- "11,20": {
-  "name": "展望綠地",
-  "stage": 4,
-  "mat": "asphalt"
- },
  "1,0": {
-  "name": "北緣舊校舍",
+  "name": "北高地花園",
   "stage": null,
-  "mat": "wood_path"
+  "mat": "grass"
  },
  "1,5": {
   "name": "北高地花園",
   "stage": null,
-  "mat": "asphalt"
- },
- "1,10": {
-  "name": "北緣舊校舍",
-  "stage": null,
-  "mat": "wood_path"
- },
- "1,15": {
-  "name": "北緣舊校舍",
-  "stage": null,
-  "mat": "wood_path"
- },
- "1,20": {
-  "name": "北緣舊校舍",
-  "stage": null,
-  "mat": "wood_path"
+  "mat": "grass"
  },
  "6,0": {
-  "name": "池畔帶",
-  "stage": null,
-  "mat": "wood_path"
+  "name": "池畔公園",
+  "stage": 2,
+  "mat": "grass"
  },
  "6,5": {
-  "name": "池畔帶",
-  "stage": null,
-  "mat": "wood_path"
- },
- "6,10": {
-  "name": "池畔帶",
-  "stage": null,
-  "mat": "wood_path"
- },
- "6,15": {
-  "name": "池畔帶",
-  "stage": null,
-  "mat": "wood_path"
+  "name": "池畔公園",
+  "stage": 2,
+  "mat": "grass"
  },
  "6,20": {
-  "name": "池畔帶",
-  "stage": null,
-  "mat": "wood_path"
+  "name": "東岸農牧區",
+  "stage": 4,
+  "mat": "grass"
  },
- "11,0": {
-  "name": "舊校舍帶",
-  "stage": null,
-  "mat": "wood_path"
- },
- "11,5": {
-  "name": "舊校舍帶",
-  "stage": null,
-  "mat": "wood_path"
- },
- "16,5": {
-  "name": "舊校舍帶",
-  "stage": null,
-  "mat": "wood_path"
+ "11,20": {
+  "name": "東高地園區",
+  "stage": 4,
+  "mat": "grass"
  },
  "16,20": {
   "name": "東高地園區",
-  "stage": null,
+  "stage": 4,
+  "mat": "grass"
+ },
+ "21,0": {
+  "name": "南農牧區",
+  "stage": 3,
+  "mat": "grass"
+ },
+ "1,10": {
+  "name": "北教學棟",
+  "stage": 2,
   "mat": "wood_path"
+ },
+ "1,15": {
+  "name": "北教學棟",
+  "stage": 2,
+  "mat": "wood_path"
+ },
+ "1,20": {
+  "name": "北教學棟",
+  "stage": 3,
+  "mat": "wood_path"
+ },
+ "6,10": {
+  "name": "舊操場帶",
+  "stage": 1,
+  "mat": "wood_path"
+ },
+ "6,15": {
+  "name": "中央教學棟",
+  "stage": 3,
+  "mat": "wood_path"
+ },
+ "11,0": {
+  "name": "西教學棟",
+  "stage": 2,
+  "mat": "wood_path"
+ },
+ "11,5": {
+  "name": "中央校舍",
+  "stage": 1,
+  "mat": "wood_path"
+ },
+ "11,10": {
+  "name": "中央校舍",
+  "stage": 2,
+  "mat": "wood_path"
+ },
+ "16,5": {
+  "name": "中央生活",
+  "stage": 1,
+  "mat": "wood_path"
+ },
+ "16,10": {
+  "name": "中央生活",
+  "stage": 3,
+  "mat": "wood_path"
+ },
+ "21,5": {
+  "name": "南校舍",
+  "stage": 3,
+  "mat": "wood_path"
+ },
+ "11,15": {
+  "name": "中央行政",
+  "stage": 2,
+  "mat": "wood_path"
+ },
+ "16,0": {
+  "name": "西門玄關",
+  "stage": 1,
+  "mat": "asphalt"
+ },
+ "16,15": {
+  "name": "南運動園區",
+  "stage": 3,
+  "mat": "concrete"
+ },
+ "21,10": {
+  "name": "南運動園區",
+  "stage": 2,
+  "mat": "concrete"
+ },
+ "21,15": {
+  "name": "南運動園區",
+  "stage": 3,
+  "mat": "concrete"
+ },
+ "21,20": {
+  "name": "南運動園區",
+  "stage": 4,
+  "mat": "concrete"
  }
 }

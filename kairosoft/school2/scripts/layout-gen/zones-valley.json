@@ -1,21 +1,16 @@
 {
- "0,10": {
-  "name": "北高地舊教室",
-  "stage": 1,
-  "mat": "wood_path"
- },
- "0,15": {
-  "name": "舊校舍臺地肩",
-  "stage": 1,
-  "mat": "wood_path"
- },
  "0,20": {
-  "name": "校門口櫻並木",
+  "name": "校門玄關",
   "stage": 1,
   "mat": "asphalt"
  },
- "5,10": {
-  "name": "舊校舍臺地下",
+ "0,25": {
+  "name": "東緣廊帶",
+  "stage": 1,
+  "mat": "asphalt"
+ },
+ "0,15": {
+  "name": "舊校舍臺地肩",
   "stage": 1,
   "mat": "wood_path"
  },
@@ -24,159 +19,164 @@
   "stage": 1,
   "mat": "wood_path"
  },
+ "0,10": {
+  "name": "北高地舊教室",
+  "stage": 1,
+  "mat": "wood_path"
+ },
  "5,20": {
-  "name": "東峽谷",
+  "name": "東峽谷外道",
   "stage": 1,
   "mat": "asphalt"
  },
- "10,5": {
-  "name": "北池畔公園",
+ "0,0": {
+  "name": "西溪北源",
   "stage": null,
-  "mat": "asphalt"
+  "mat": "grass"
  },
- "10,10": {
-  "name": "谷底生活街",
-  "stage": 2,
-  "mat": "wood_path"
+ "5,0": {
+  "name": "西溪農牧",
+  "stage": null,
+  "mat": "grass"
  },
- "10,15": {
-  "name": "谷底商店街",
-  "stage": 3,
-  "mat": "wood_path"
+ "10,0": {
+  "name": "西溪牧場",
+  "stage": null,
+  "mat": "grass"
  },
- "10,20": {
-  "name": "農牧園區",
-  "stage": 2,
-  "mat": "asphalt"
- },
- "15,10": {
-  "name": "理科名門棟",
-  "stage": 3,
-  "mat": "wood_path"
- },
- "15,15": {
-  "name": "教學藝術核心",
-  "stage": 3,
-  "mat": "wood_path"
- },
- "15,20": {
-  "name": "教室生活東翼",
-  "stage": 2,
-  "mat": "wood_path"
+ "15,0": {
+  "name": "西溪綠道",
+  "stage": null,
+  "mat": "grass"
  },
  "20,0": {
   "name": "西南動物園",
   "stage": 4,
-  "mat": "asphalt"
- },
- "20,5": {
-  "name": "南坡公園",
-  "stage": 2,
-  "mat": "asphalt"
- },
- "20,10": {
-  "name": "運動園區西",
-  "stage": 3,
-  "mat": "wood_path"
- },
- "20,15": {
-  "name": "運動園區東",
-  "stage": 3,
-  "mat": "wood_path"
- },
- "20,20": {
-  "name": "開羅廣場",
-  "stage": 4,
-  "mat": "asphalt"
- },
- "0,0": {
-  "name": "西溪北口",
-  "stage": null,
-  "mat": "asphalt"
- },
- "5,0": {
-  "name": "西溪運動場",
-  "stage": null,
-  "mat": "asphalt"
- },
- "10,0": {
-  "name": "西溪商店街",
-  "stage": null,
-  "mat": "asphalt"
- },
- "15,0": {
-  "name": "西溪社團帶",
-  "stage": null,
-  "mat": "asphalt"
- },
- "0,5": {
-  "name": "北支谷",
-  "stage": null,
-  "mat": "asphalt"
- },
- "5,5": {
-  "name": "北支谷藝術棟",
-  "stage": null,
-  "mat": "asphalt"
+  "mat": "grass"
  },
  "25,0": {
   "name": "南緣步道",
   "stage": null,
-  "mat": "asphalt"
+  "mat": "grass"
+ },
+ "0,5": {
+  "name": "北緣台地花園",
+  "stage": 2,
+  "mat": "grass"
+ },
+ "5,5": {
+  "name": "北支谷專科棟",
+  "stage": 2,
+  "mat": "wood_path"
+ },
+ "5,10": {
+  "name": "谷底北口",
+  "stage": 2,
+  "mat": "wood_path"
+ },
+ "5,25": {
+  "name": "東緣草坡",
+  "stage": null,
+  "mat": "grass"
+ },
+ "10,5": {
+  "name": "北池畔公園",
+  "stage": 2,
+  "mat": "grass"
+ },
+ "10,10": {
+  "name": "谷底教學棟",
+  "stage": 2,
+  "mat": "wood_path"
+ },
+ "10,15": {
+  "name": "谷底生活街",
+  "stage": 3,
+  "mat": "wood_path"
+ },
+ "10,20": {
+  "name": "谷底商店街",
+  "stage": 3,
+  "mat": "wood_path"
+ },
+ "10,25": {
+  "name": "東緣草坡",
+  "stage": null,
+  "mat": "grass"
+ },
+ "15,5": {
+  "name": "西高地運動臺",
+  "stage": 3,
+  "mat": "concrete"
+ },
+ "15,10": {
+  "name": "南運動園區北",
+  "stage": 3,
+  "mat": "concrete"
+ },
+ "20,5": {
+  "name": "南運動園區西",
+  "stage": 3,
+  "mat": "concrete"
+ },
+ "20,10": {
+  "name": "南運動園區東",
+  "stage": 4,
+  "mat": "concrete"
+ },
+ "15,15": {
+  "name": "南教學核心",
+  "stage": 3,
+  "mat": "wood_path"
+ },
+ "15,20": {
+  "name": "南教學東翼",
+  "stage": 3,
+  "mat": "wood_path"
+ },
+ "20,15": {
+  "name": "南池水岸",
+  "stage": 3,
+  "mat": "grass"
+ },
+ "20,20": {
+  "name": "開羅廣場",
+  "stage": 4,
+  "mat": "grass"
+ },
+ "20,25": {
+  "name": "東南丘",
+  "stage": 4,
+  "mat": "grass"
+ },
+ "15,25": {
+  "name": "東緣坡",
+  "stage": null,
+  "mat": "grass"
  },
  "25,5": {
   "name": "南緣步道",
   "stage": null,
-  "mat": "asphalt"
+  "mat": "grass"
  },
  "25,10": {
   "name": "南緣步道",
   "stage": null,
-  "mat": "asphalt"
+  "mat": "grass"
  },
  "25,15": {
-  "name": "南門廣場",
-  "stage": null,
+  "name": "南門玄關",
+  "stage": 3,
   "mat": "asphalt"
  },
  "25,20": {
   "name": "南緣步道",
   "stage": null,
-  "mat": "asphalt"
+  "mat": "grass"
  },
  "25,25": {
   "name": "星空台",
   "stage": 4,
-  "mat": "asphalt"
- },
- "0,25": {
-  "name": "東緣廊帶",
-  "stage": null,
-  "mat": "asphalt"
- },
- "5,25": {
-  "name": "東緣草坡",
-  "stage": null,
-  "mat": "asphalt"
- },
- "10,25": {
-  "name": "東緣草坡",
-  "stage": null,
-  "mat": "asphalt"
- },
- "15,5": {
-  "name": "西高地黃昏園",
-  "stage": 3,
-  "mat": "asphalt"
- },
- "15,25": {
-  "name": "東緣坡",
-  "stage": null,
-  "mat": "asphalt"
- },
- "20,25": {
-  "name": "星空台",
-  "stage": 4,
-  "mat": "asphalt"
+  "mat": "grass"
  }
 }

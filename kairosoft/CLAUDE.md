@@ -1,6 +1,6 @@
 # 開羅攻略站 — 平台建置規範
 
-本檔是「開羅攻略站」(Kairosoft 開羅遊戲繁體中文攻略站，部署於 `ploglin.github.io`) 的建置標準。**每款遊戲的深度與內容都要對齊 `kairosoft/school2/` 這款範本**。撰寫或擴充任何遊戲頁面時，遵循本規範；派給子 agent 的工作也應引用本規範。
+本檔是「開羅攻略站」(Kairosoft 開羅遊戲繁體中文攻略站，正式網域 `https://ploglin.cc`，由 GitHub Pages 部署，repo 名仍為 ploglin.github.io) 的建置標準。**每款遊戲的深度與內容都要對齊 `kairosoft/school2/` 這款範本**。撰寫或擴充任何遊戲頁面時，遵循本規範；派給子 agent 的工作也應引用本規範。
 
 ## 目標定位
 
@@ -85,7 +85,7 @@ kairosoft/<game>/            index.html = 內容豐富的攻略專頁(SEO 主力
 
 ## 頁面樣板規則
 
-- `<head>` **靜態手寫** SEO：`<title>`、description、keywords、`<link rel="canonical">`(正式網址 `https://ploglin.github.io/...`)、Open Graph、`Article`(攻略頁)或 `WebSite`/`ItemList` 的 JSON-LD。**這些不可靠 JS 注入**(社群爬蟲不執行 JS)。
+- `<head>` **靜態手寫** SEO：`<title>`、description、keywords、`<link rel="canonical">`(正式網址 `https://ploglin.cc/...`)、Open Graph、`Article`(攻略頁)或 `WebSite`/`ItemList` 的 JSON-LD。**這些不可靠 JS 注入**(社群爬蟲不執行 JS)。
 - 引入 `../../assets/shell.css`(依頁面深度調整層數)。
 - body 只寫 `<main class="container-narrow article">` 內容；結尾兩個 script：`shell.js` 與 `Shell.mount({...})`。
 - 資料庫分類頁另引入 `db.js` 與該遊戲 `db/data.js`；body 的 `<div id="dbApp"></div>` 內容由 `node scripts/gen-static.js` 預渲染蓋章(見「預渲染」)，手寫時留空即可。

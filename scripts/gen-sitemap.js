@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
-const BASE = 'https://ploglin.github.io/';
+const BASE = 'https://ploglin.cc/';
 const SKIP_DIRS = new Set(['.git', '.idea', 'node_modules', 'assets', 'scripts', 'scratchpad', '.github']);
 
 const urls = [];
