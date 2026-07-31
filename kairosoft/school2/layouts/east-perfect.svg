@@ -80,8 +80,9 @@
 <rect x="460" y="42" width="22" height="22" fill="#374151" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="482" y="42" width="22" height="22" fill="#d6d3d1" stroke="#ffffff" stroke-width="0.6"/>
 <text x="493" y="57.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">椅</text>
-<rect x="504" y="42" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="504" y="42" width="22" height="22" fill="#f9a8d4" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="505" y="43" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<text x="515" y="57.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">櫻</text>
 <rect x="526" y="42" width="22" height="22" fill="#fbcfe8" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="527" y="43" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <text x="537" y="57.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">花</text>
@@ -173,9 +174,9 @@
 <rect x="504" y="86" width="22" height="22" fill="#f9a8d4" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="505" y="87" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <text x="515" y="101.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">櫻</text>
-<rect x="526" y="86" width="22" height="22" fill="#ca8a04" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="526" y="86" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="527" y="87" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
-<text x="537" y="101.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">田</text>
+<path d="M526 108L548 86" stroke="#65a30d" stroke-width="1.6"/>
 <rect x="548" y="86" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="570" y="86" width="22" height="22" fill="#92400e" stroke="#ffffff" stroke-width="0.6"/>
 <text x="581" y="101.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">圖</text>
@@ -212,9 +213,9 @@
 <rect x="460" y="108" width="22" height="22" fill="#d97706" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="482" y="108" width="44" height="44" fill="#818cf8" stroke="#ffffff" stroke-width="0.6"/>
 <text x="504" y="135.04" font-size="14" font-weight="700" text-anchor="middle" fill="#ffffff">辦</text>
-<rect x="526" y="108" width="22" height="22" fill="#ca8a04" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="526" y="108" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="527" y="109" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
-<text x="537" y="123.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">田</text>
+<path d="M526 130L548 108" stroke="#65a30d" stroke-width="1.6"/>
 <rect x="548" y="108" width="22" height="22" fill="#ffffff" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="549" y="109" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <text x="559" y="123.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">百</text>
@@ -259,9 +260,8 @@
 <rect x="438" y="130" width="22" height="22" fill="#374151" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="460" y="130" width="22" height="22" fill="#f472b6" stroke="#ffffff" stroke-width="0.6"/>
 <text x="471" y="145.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">保</text>
-<rect x="526" y="130" width="22" height="22" fill="#ca8a04" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="526" y="130" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="527" y="131" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
-<text x="537" y="145.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">田</text>
 <rect x="548" y="130" width="22" height="22" fill="#b45309" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="549" y="131" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <text x="559" y="145.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">農</text>
@@ -1018,8 +1018,8 @@
 <rect x="438" y="570" width="22" height="22" fill="#60a5fa" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="439" y="571" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <text x="449" y="585.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">池</text>
-<rect x="460" y="570" width="22" height="22" fill="#fbbf24" stroke="#ffffff" stroke-width="0.6"/>
-<text x="471" y="585.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">鹿</text>
+<rect x="460" y="570" width="22" height="22" fill="#f9a8d4" stroke="#ffffff" stroke-width="0.6"/>
+<text x="471" y="585.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">櫻</text>
 <rect x="482" y="570" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="483" y="571" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <rect x="504" y="570" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>

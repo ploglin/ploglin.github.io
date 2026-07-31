@@ -207,6 +207,14 @@ const res = D.build(B.spotOrder(), {
         });
         // 東南湖心區：再鑿最少量的水塘接上 X21 大道，島上原生養豬小屋因此走得到
         carved = carved.concat(B.carveWaterChannel(g, { maxCarve: E.town.pond.channel, minGain: 8 }));
+        /* openPlateaus 的階段 2（救援被包圍的既有建築）會自己處理**原生百葉箱 X6/Y3**：
+           它在 e2 高地上，四鄰是小農場（建築）、水塘、一格低一階的草地（差一階又不是
+           斜坡，跨不過去）與不可通行的田埂路 —— 所以它本來就走不到。
+           ※ 這一棟長年被 blockedBuildings 的盲點遮住（舊版只檢查「鄰格可通行且從校門
+             走得到」，沒檢查「從那格踏不踏得進來」）。engine 補上 canStep 之後，
+             openPlateaus 才「看見」它是被包圍的，於是自動把 X5/Y4、X6/Y4 兩格田埂路
+             擦成空地 → 兩格斜坡 → 百葉箱接上動線。**不必手動鋪參道。**
+           這正是「把可達性判定修對，救援邏輯就自己會動」的例子。 */
         B.openPlateaus(g);
     }
 });

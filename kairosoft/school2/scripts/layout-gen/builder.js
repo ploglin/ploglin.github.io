@@ -96,7 +96,8 @@ function fallback(g, res, spot, decor) {
                             if (nr < 0 || nr >= gridRows || nc < 0 || nc >= gridCols) continue;
                             if (nr >= r && nr < r + h && nc >= c && nc < c + w) continue;
                             if (used.has(nr + ',' + nc)) continue;
-                            if (E.PASSABLE.has(g[nr][nc].type)) served = true;
+                            // 可通行 ＋ 真的踏得進來（canStep 吃落差，與 blockedBuildings 同一條件）
+                            if (E.PASSABLE.has(g[nr][nc].type) && E.canStep(g, br, bc, nr, nc)) served = true;
                         }
                     if (!served) continue;
                     for (const [br, bc] of slotCells({ r, c, w, h })) used.add(br + ',' + bc);
@@ -155,14 +156,16 @@ function fill(g, res, ZONES, defaultGreen, decor) {
         const reach = E.computeReachability(g);
         const usable = (r, c) => free.has(r + ',' + c) ||
             (z.decor && g[r][c].elevation === 1 && decor.has(g[r][c].type));
-        // 整棟至少一格臨接「街廓外、走得到的通行地形」
+        /* 整棟至少一格臨接「街廓外、走得到、而且真的踏得進來」的通行地形。
+           canStep 這一項原本漏掉 → 隔著一階落差也算出入口，蓋下去就是假的可達。 */
         const servedAt = (r, c, w, h) => {
             for (const [br, bc] of slotCells({ r, c, w, h }))
                 for (const [ar, ac] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
                     const nr = br + ar, nc = bc + ac;
                     if (nr < 0 || nr >= gridRows || nc < 0 || nc >= gridCols) continue;
                     if (nr >= r && nr < r + h && nc >= c && nc < c + w) continue;
-                    if (E.PASSABLE.has(g[nr][nc].type) && reach && reach[nr][nc] >= 0) return true;
+                    if (E.PASSABLE.has(g[nr][nc].type) && reach && reach[nr][nc] >= 0
+                        && E.canStep(g, br, bc, nr, nc)) return true;
                 }
             return false;
         };

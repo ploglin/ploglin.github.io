@@ -44,13 +44,20 @@ function parcels(g) {
         const slots = [], green = [];
         for (let r = r0; r <= r1; r++) for (let c = c0; c <= c1; c++) {
             if (g[r][c].type !== 'empty' || g[r][c].elevation !== 1) continue;
-            // 與「街廓外的、已連到校門的可通行格」相鄰 → 可蓋建築
+            /* 與「街廓外的、已連到校門的可通行格」相鄰 → 可蓋建築。
+               ★ 三個條件都要:可通行 ＋ 從校門走得到 ＋ **真的踏得進來**(canStep 吃落差)。
+               第三個條件原本漏掉,於是隔著一階落差的草地也被當成出入口,
+               在那種位置切出 slot、蓋下去就是「驗證通過、實機走不到」的建築
+               (冬郵湖心島的長頸鹿就是這樣被放進一格死口袋的)。
+               engine.blockedBuildings() 已補同一條件,這裡要跟它一致,否則
+               「排得下」與「走得到」兩套標準會打架。 */
             let served = false;
             for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
                 const nr = r + dr, nc = c + dc;
                 if (nr < 0 || nr >= gridRows || nc < 0 || nc >= gridCols) continue;
                 if (nr >= r0 && nr <= r1 && nc >= c0 && nc <= c1) continue; // 街廓內不算
-                if (E.PASSABLE.has(g[nr][nc].type) && reach && reach[nr][nc] >= 0) served = true;
+                if (E.PASSABLE.has(g[nr][nc].type) && reach && reach[nr][nc] >= 0
+                    && E.canStep(g, r, c, nr, nc)) served = true;
             }
             (served ? slots : green).push([r, c]);
         }
