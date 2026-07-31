@@ -40,17 +40,7 @@
   "mat": "grass"
  },
  "10,0": {
-  "name": "西溪牧場",
-  "stage": null,
-  "mat": "grass"
- },
- "15,0": {
-  "name": "西溪綠道",
-  "stage": null,
-  "mat": "grass"
- },
- "20,0": {
-  "name": "西南動物園",
+  "name": "西溪動物園",
   "stage": 4,
   "mat": "grass"
  },
@@ -104,6 +94,11 @@
   "stage": null,
   "mat": "grass"
  },
+ "15,0": {
+  "name": "西溪運動場",
+  "stage": 3,
+  "mat": "concrete"
+ },
  "15,5": {
   "name": "西高地運動臺",
   "stage": 3,
@@ -114,14 +109,14 @@
   "stage": 3,
   "mat": "concrete"
  },
- "20,5": {
+ "20,0": {
   "name": "南運動園區西",
-  "stage": 3,
+  "stage": 4,
   "mat": "concrete"
  },
- "20,10": {
+ "20,5": {
   "name": "南運動園區東",
-  "stage": 4,
+  "stage": 3,
   "mat": "concrete"
  },
  "15,15": {
@@ -134,10 +129,15 @@
   "stage": 3,
   "mat": "wood_path"
  },
- "20,15": {
-  "name": "南池水岸",
+ "20,10": {
+  "name": "南校舍南棟",
   "stage": 3,
-  "mat": "grass"
+  "mat": "wood_path"
+ },
+ "20,15": {
+  "name": "南池畔校舍",
+  "stage": 3,
+  "mat": "wood_path"
  },
  "20,20": {
   "name": "開羅廣場",
