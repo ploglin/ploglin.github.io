@@ -25,8 +25,10 @@ const TOWNS = {
         preset: 'PRESET_DEFAULT_DATA',      // sim/index.html 內的變數名
         svg: 'health-perfect.svg',
         page: 'health',                     // layouts/<page>/ 子頁目錄名
-        // 水塘可以被建設覆蓋破壞（實機確認）。maxCarve = 本鎮允許破壞的水塘格數上限，
-        // verify.js 會檢查「實際破壞數 ≤ maxCarve 且沒有無中生有的新水塘」。
+        /* 水塘可以被建設覆蓋破壞（實機確認）。maxCarve = 本鎮允許破壞的水塘格數**總**上限，
+           verify.js 會檢查「實際破壞數 ≤ maxCarve 且沒有無中生有的新水塘」。
+           另有選用的 channel 欄位 = 分給 carveWaterChannel（接進走不到的陸地）的子預算，
+           差額留給 breakTerrain（破壞地形補動線環）；只有冬郵兩種都用到。 */
         pond: { maxCarve: 0 },              // 健康鎮的水塘都在動線內側，不必動
         // 棋盤路網：橫向大道(列) / 縱向街道(欄) / 街廓帶
         roads: {
@@ -49,8 +51,13 @@ const TOWNS = {
         preset: 'PRESET_EAST_DATA',
         svg: 'east-perfect.svg',
         page: 'east',
-        // 東南湖心區被水塘圍住，鑿 2 格水道就能把 39 格陸地（含原生養豬小屋）接上動線
-        pond: { maxCarve: 2 },
+        /* 冬郵是全圖 76 格水塘的鎮，破壞水塘分兩筆帳：
+             channel  = carveWaterChannel 的預算 ＝「把走不到的陸地接上動線」。
+                        東南湖心區被水塘圍死，鑿 2 格水道就打通 39 格陸地（含原生養豬小屋）。
+             maxCarve = verify.js 驗的**總**破壞上限 ＝ channel(2) ＋ 動線補環(2)。
+                        後 2 格是東緣湖岸北橋（X15/Y4＋X15/Y3），把東緣 10 格盲腸接成環，
+                        由 east.js 的 breakTerrain 手挑清單執行（見那裡的理由）。 */
+        pond: { maxCarve: 4, channel: 2 },
         // 冬郵小鎮的校門在「上緣」(gate_h @ r0,c19-20)，所以路網要讓
         // 縱向街道穿過 c19/c20 才接得到校門；水塘與高地由 layRoads 自行避開。
         roads: {

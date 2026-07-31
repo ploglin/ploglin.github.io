@@ -361,6 +361,74 @@ function openPlateaus(g, opt) {
     return opened;
 }
 
+/* ── 破壞地形換動線（水塘／原生植栽）─────────────────────────────────────────────
+   carveWaterChannel 的目標是「把走不到的陸地接上動線」，所以它只認**可達面積增加**；
+   要把已經走得到、但只有單一出入口的盲腸接成環，它一格都不會鑿（收益 0）。
+   這支就是補那一塊：明列座標、明說換到什麼，逐組驗收。
+
+   實機依據：水塘可以被建設覆蓋破壞後變回平地（已確認）；樹木／草地用橡皮擦清掉
+   是遊戲的基本操作。兩者都是玩家真金白銀的錢與操作，所以**不自動搜尋、只吃手挑清單**，
+   每一組都要在設定檔裡寫明理由。
+
+   groups = [{ why:'一句話理由', cells:[[r, c, 'path'|'empty'], …] }]
+     'path'  → 破壞後鋪通行鋪面（實際材質由後面的 paveMaterials／keep 決定；
+               列進 keep 的一律走廊＝木橋意象）。
+     'empty' → 破壞後留空地。若該格在高地、且四鄰剛好有低一階的格子，遊戲會自動把它
+               判成「斜坡」（isSlope 是從高低差推導的、不是存的）→ 多一個上坡口。
+               這跟 openPlateaus 打通北丘公園用的是同一招，不新增也不改任何 elevation。
+
+   守衛（逐組）：景點一個都不能少、被包圍建築不能變多、動線總分必須真的變好
+   （cost 與 loopify 同一把尺：孤立×100 + 走不到×20 + 死路支線格×3 + 死路端點）。
+   整組跑完斷言 elevation 一格未動、原本推導出來的斜坡一格未少。
+   回傳實際動到的座標（'path' 的那些適合併進 keep）。 */
+const BREAKABLE = new Set(['pond', 'lake', ...CLEARABLE]);
+const FLOW_COST = m => m.isolated.length * 100 + m.unreach.length * 20 + m.stubCells.size * 3 + m.ends.length;
+
+function breakTerrain(g, groups, opt) {
+    opt = opt || {};
+    const pathMat = opt.pathMat || 'wood_path';
+    const at = (r, c) => 'X' + E.gameX(r) + '/Y' + E.gameY(c);
+    const elevSig = () => g.flat().map(x => x.elevation).join('');
+    const slopeSig = () => {
+        const out = [];
+        for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++) if (E.isSlopeIn(g, r, c)) out.push(r + ',' + c);
+        return out;
+    };
+    const elev0 = elevSig(), slopes0 = slopeSig();
+    const paths = [], all = [];
+
+    (groups || []).forEach(gp => {
+        const cells = gp.cells;
+        const bad = cells.filter(([r, c]) => !BREAKABLE.has(g[r][c].type));
+        if (bad.length) {
+            console.log('！破壞地形跳過（不是水塘／植栽）：' + gp.why + ' @ ' +
+                bad.map(([r, c]) => at(r, c) + '=' + g[r][c].type).join('、'));
+            return;
+        }
+        const label = cells.map(([r, c, f]) => at(r, c) + ' ' + items[g[r][c].type].name +
+            '→' + (f === 'empty' ? (g[r][c].elevation > 1 ? '空地(斜坡)' : '空地') : items[pathMat].name)).join('、');
+        const snap = snapshot(g, cells.map(([r, c]) => [r, c]));
+        const before = { spots: E.activeSpots(g), blocked: E.blockedBuildings(g).count, cost: FLOW_COST(E.flowMetrics(g)) };
+        cells.forEach(([r, c, f]) => { g[r][c] = { type: f === 'empty' ? 'empty' : pathMat, elevation: g[r][c].elevation }; });
+        const after = { spots: E.activeSpots(g), blocked: E.blockedBuildings(g).count, cost: FLOW_COST(E.flowMetrics(g)) };
+        const lost = [...before.spots].filter(id => !after.spots.has(id));
+        if (lost.length || after.blocked > before.blocked || after.cost >= before.cost) {
+            restore(g, snap);
+            console.log('！破壞地形被守衛退回：' + gp.why + '（掉景點 ' + lost.length +
+                '｜包圍 ' + before.blocked + '→' + after.blocked + '｜動線總分 ' + before.cost + '→' + after.cost + '）');
+            return;
+        }
+        cells.forEach(([r, c, f]) => { all.push([r, c]); if (f !== 'empty') paths.push([r, c]); });
+        console.log('  破壞地形：' + gp.why + '｜' + label + '（動線總分 ' + before.cost + ' → ' + after.cost + '）');
+    });
+
+    if (elevSig() !== elev0) throw new Error('破壞地形動到 elevation');
+    const now = new Set(slopeSig());
+    const lostSlope = slopes0.filter(k => !now.has(k));
+    if (lostSlope.length) throw new Error('破壞地形弄掉了斜坡：' + lostSlope.join('、'));
+    return { cells: all, paths };
+}
+
 /* 高地開發：高地一樣可以蓋建築，只有「斜坡」不行（斜坡是高低差自動生成的
    地形，一旦蓋東西上去就不再是斜坡、也就上不去了）。
    作法：每一列高地的最外側留作步道（接上斜坡坡道），中間才蓋設施。
@@ -826,6 +894,7 @@ function report(g, title, codeFile) {
 
 module.exports = {
     DECOR, DECOR_EAST, CLEARABLE, spotOrder, guarded, fallback, fallbackAll,
-    fill, addGate, carveWaterChannel, openPlateaus, fillPlateau, tidyUnreachable, countReachable,
+    fill, addGate, carveWaterChannel, openPlateaus, breakTerrain, BREAKABLE, FLOW_COST,
+    fillPlateau, tidyUnreachable, countReachable,
     matResolver, paveMaterials, loopify, LOOP_PAVEABLE, PLAZA_HOST, writeZones, report
 };
