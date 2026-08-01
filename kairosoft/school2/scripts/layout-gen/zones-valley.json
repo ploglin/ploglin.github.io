@@ -50,9 +50,9 @@
   "mat": "grass"
  },
  "0,5": {
-  "name": "北緣台地花園",
+  "name": "北台地教學棟",
   "stage": 2,
-  "mat": "grass"
+  "mat": "wood_path"
  },
  "5,5": {
   "name": "北支谷專科棟",

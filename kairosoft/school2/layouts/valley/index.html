@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>口袋學院物語2 溪谷小鎮完美佈局｜三層地形分區規劃＋144 棟建築與分享碼</title>
-    <meta name="description" content="口袋學院物語2（名門ポケット学院2）溪谷小鎮（26×26）完美佈局，改用「分區優先」重做：先按谷底／台地／高地三層地形劃出 32 個語意分區，再讓走廊（校舍內）、道路（對外）、水泥地（戶外運動）、草地（農牧自然）四種鋪面各自對應分區，最後才求景點數——結果是 144 棟建築、29 個人氣景點全成立、0 棟走不到、0 格孤立路面、0 格走不到的路面。溪谷開局從校門只走得到 18 格、6 棟原生校舍全被斷崖困住，本頁完整說明「橡皮擦 6 格解鎖全圖」的核心解法（含三棟「驗證通過、實機走不到」的修正）、櫻並木與兩座水塘一格不動、X15／X16／X17 三列坡道保留帶。附景點座標表、設施清單、階段 × 分區對照表與一鍵載入模擬器的分享碼。">
+    <title>口袋學院物語2 溪谷小鎮完美佈局｜三層地形分區規劃＋141 棟建築與分享碼</title>
+    <meta name="description" content="口袋學院物語2（名門ポケット学院2）溪谷小鎮（26×26）完美佈局，改用「分區優先」重做：先按谷底／台地／高地三層地形劃出 32 個語意分區，再讓走廊（校舍內）、道路（對外）、水泥地（戶外運動）、草地（農牧自然）四種鋪面各自對應分區，最後才求景點數——結果是 141 棟建築（含滿編的 9 間教室與 2 間辦公室）、29 個人氣景點全成立、0 棟走不到、0 格孤立路面、0 格走不到的路面。溪谷開局從校門只走得到 18 格、6 棟原生校舍全被斷崖困住，本頁完整說明「橡皮擦 6 格解鎖全圖」的核心解法（含三棟「驗證通過、實機走不到」的修正）、櫻並木與兩座水塘一格不動、X15／X16／X17 三列坡道保留帶。附景點座標表、設施清單、階段 × 分區對照表與一鍵載入模擬器的分享碼。">
     <meta name="keywords" content="口袋學院物語2,溪谷小鎮,完美佈局,分區優先,人氣景點,29景點,佈局範例,三層地形,斜坡,坡道,斷崖,橡皮擦,可達性,鋪面,水泥地,解鎖階段,模擬器,名門ポケット学院2,開羅遊戲">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://ploglin.cc/kairosoft/school2/layouts/valley/">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏫</text></svg>">
     <meta property="og:type" content="article">
     <meta property="og:title" content="口袋學院物語2 溪谷小鎮完美佈局｜三層地形的分區規劃">
-    <meta property="og:description" content="26×26 的三層溪谷地形，開局只走得到 18 格；橡皮擦 6 格解鎖全圖之後，用分區優先的原則排出 144 棟建築、29 個人氣景點全成立、0 棟走不到，經程式逐格驗證。">
+    <meta property="og:description" content="26×26 的三層溪谷地形，開局只走得到 18 格；橡皮擦 6 格解鎖全圖之後，用分區優先的原則排出 141 棟建築、9 間教室 2 間辦公室滿編、29 個人氣景點全成立、0 棟走不到，經程式逐格驗證。">
     <meta property="og:locale" content="zh_TW">
     <meta property="og:url" content="https://ploglin.cc/kairosoft/school2/layouts/valley/">
     <meta property="og:image" content="https://ploglin.cc/kairosoft/school2/layouts/valley-perfect.svg">
@@ -21,7 +21,7 @@
         "@context": "https://schema.org",
         "@type": "Article",
         "headline": "口袋學院物語2 溪谷小鎮完美佈局：三層地形的分區優先規劃",
-        "description": "一張 26×26 的溪谷小鎮地圖，用分區優先的原則排出 32 個語意分區、144 棟建築，29 個人氣景點全部成立、0 棟走不到。溪谷是唯一的三層地形，開局從校門只走得到 18 格、6 棟原生校舍全被斷崖困住；本頁說明用橡皮擦擦 6 格解鎖全圖的解法、三列坡道保留帶與兩座水塘全保留的理由，全部經程式逐格驗證。",
+        "description": "一張 26×26 的溪谷小鎮地圖，用分區優先的原則排出 32 個語意分區、141 棟建築，9 間教室與 2 間辦公室滿編，29 個人氣景點全部成立、0 棟走不到。溪谷是唯一的三層地形，開局從校門只走得到 18 格、6 棟原生校舍全被斷崖困住；本頁說明用橡皮擦擦 6 格解鎖全圖的解法、三列坡道保留帶與兩座水塘全保留的理由，全部經程式逐格驗證。",
         "inLanguage": "zh-Hant",
         "image": "https://ploglin.cc/kairosoft/school2/layouts/valley-perfect.svg",
         "about": { "@type": "VideoGame", "name": "口袋學院物語2", "alternateName": "名門ポケット学院2" },
@@ -60,7 +60,7 @@
 <body>
     <main class="container-narrow article">
         <h1>口袋學院物語2 溪谷小鎮完美佈局</h1>
-        <p class="lead">第四張地圖「<strong>溪谷小鎮</strong>」（26×26）的完美佈局。這一版<strong>整張重做</strong>，跟進冬郵小鎮換成<strong>分區優先</strong>的規劃法：先按<strong>谷底／台地／高地三層地形</strong>劃出語意清楚、成塊的 <strong>32 個分區</strong>，再讓<strong>四種鋪面各自對應分區語意</strong>——走廊連接室內設施、水泥地是戶外運動場面、草地通往農牧與水岸、道路只管對外動線，<strong>最後才求景點數</strong>。結果是 <strong>144 棟建築</strong>、<strong>29 個人氣景點</strong>全部成立、<strong>0 棟走不到</strong>、<strong>0 格孤立路面</strong>、<strong>0 格走不到的路面</strong>，而且<strong>原生地物幾乎零破壞</strong>（16 格水塘全留、櫻並木 4 棵全留、既有校舍一棟沒拆、136 格天然坡道逐格保留）。溪谷開局從校門<strong>只走得到 18 格</strong>、6 棟原生校舍全被斷崖困住——解法是<strong>用橡皮擦擦 6 格</strong>。可以點下面的按鈕直接載入<a href="../../sim/">佈局模擬器</a>。</p>
+        <p class="lead">第四張地圖「<strong>溪谷小鎮</strong>」（26×26）的完美佈局。這一版<strong>整張重做</strong>，跟進冬郵小鎮換成<strong>分區優先</strong>的規劃法：先按<strong>谷底／台地／高地三層地形</strong>劃出語意清楚、成塊的 <strong>32 個分區</strong>，再讓<strong>四種鋪面各自對應分區語意</strong>——走廊連接室內設施、水泥地是戶外運動場面、草地通往農牧與水岸、道路只管對外動線，<strong>最後才求景點數</strong>。結果是 <strong>141 棟建築</strong>（含<strong>滿編的 9 間教室與 2 間辦公室</strong>）、<strong>29 個人氣景點</strong>全部成立、<strong>0 棟走不到</strong>、<strong>0 格孤立路面</strong>、<strong>0 格走不到的路面</strong>，而且<strong>原生地物幾乎零破壞</strong>（16 格水塘全留、櫻並木 4 棵全留、既有校舍一棟沒拆、136 格天然坡道逐格保留）。溪谷開局從校門<strong>只走得到 18 格</strong>、6 棟原生校舍全被斷崖困住——解法是<strong>用橡皮擦擦 6 格</strong>。可以點下面的按鈕直接載入<a href="../../sim/">佈局模擬器</a>。</p>
         <p class="meta">最後更新：2026 年 8 月 · 地圖經程式逐格驗證</p>
 
         <nav class="town-pills" aria-label="切換城鎮完美佈局">
@@ -80,7 +80,8 @@
 
             <div class="statgrid">
                 <div><b>29 / 29</b><span>人氣景點成立（結果，不是目標）</span></div>
-                <div><b>144</b><span>建築棟數（台地與高地上 42）</span></div>
+                <div><b>141</b><span>建築棟數（台地與高地上 39）</span></div>
+                <div><b>9 / 2</b><span>教室／辦公室（滿編上限）</span></div>
                 <div><b>32</b><span>語意分區（36 個街廓）</span></div>
                 <div><b>0</b><span>走不到的建築</span></div>
                 <div><b>0</b><span>孤立通行格（假路面）</span></div>
@@ -90,10 +91,10 @@
                 <div><b>0</b><span>拆掉的既有建築</span></div>
                 <div><b>142</b><span>斜坡格（原生 136＋擦出 6）</span></div>
                 <div><b>2</b><span>校門（北門原生＋南門自開）</span></div>
-                <div><b>181</b><span>鋪面格數：草地 70／道路 41／走廊 37／水泥地 33</span></div>
+                <div><b>170</b><span>鋪面格數：草地 50／走廊 46／道路 41／水泥地 33</span></div>
             </div>
 
-            <p><a class="btn" href="../../sim/#m=MjZ4MjY7Ny4xLjEsMjUuMS4xLDI2LjEuMSwwLjIuMSwxLjIuMSwzMy4yLjEsNTEuMi4xLDI5LjIuMSwyNy4yLjEsMTkuMi4xLDEuMi4xLDAuMy4xLDQxLjMuMiwxMy4zLjEsMjguMy4xLDMuMy4xLDAuMy4xLDAuMi4zLDU2LjMuMiwwLjIuMyw2Ny4xLjEsMS4xLjIsMC4yLjEsMS4yLjEsMjQuMi4xLDAuMi4zLDIwLjIuMSwxLjIuMSwwLjMuMSw0MS4zLjQsMy4zLjEsMC4zLjEsNTguMi4xLDAuMi4xLDEzLjMuMSw0LjMuMiwxMy4zLjEsMC4yLjIsNjIuMS4yLDY5LjEuMSwwLjIuMSwxLjIuMSwyMi4yLjEsMzYuMi4xLDMxLjIuMSwwLjIuMiwxLjIuMSwwLjMuMSwzLjMuMSwyOS4zLjEsNDEuMy4yLDMuMy4xLDAuMy4xLDU4LjIuMSwwLjIuMiwwLjMuMiw0LjIuMSwyNy4yLjEsNC4yLjEsNjIuMS4yLDcyLjEuMSwwLjIuMSwxLjIuMSwyOC4yLjEsMS4yLjEsMC4yLjEsMzYuMS4xLDEuMS4xLDAuMi4xLDAuMy40LDIuMy4xLDAuMy4xLDAuMi4zLDEzLjMuMSw0LjMuMiw0LjIuMSwyNC4yLjEsNC4yLjEsMS4xLjMsMC4yLjEsMS4yLjIsMC4yLjEsMS4xLjMsMC4yLjUsMi4zLjEsNDMuMi4xLDQ0LjIuMiwwLjIuMSwxMy4zLjEsNC4zLjIsNC4yLjEsMzYuMi4xLDQuMi4xLDMwLjEuMSwzNC4xLjIsMC4yLjEsMS4yLjIsMC4yLjEsMTEuMS4xLDM2LjEuMSwzLjEuMSw1OC4xLjEsMC4yLjQsMi4zLjEsNDMuMi4xLDMzLjIuMSwwLjIuMiw3LjEuMSw0LjMuMiwwLjIuMSw0LjIuMiw3LjEuMSwzNC4xLjIsMC4yLjEsMS4yLjIsMC4yLjEsMS4xLjIsMy4xLjEsNTguMS4xLDcuMS4xLDY4LjMuMSwxLjMuMiwyLjMuMywwLjMuMSwyLjMuMiw0LjMuMiw0LjEuMSwwLjIuMSwxMy4zLjEsNTAuMS4yLDcwLjEuMSwwLjIuMSwxLjIuMSwzMS4yLjEsMS4yLjEsMC4zLjEsMS4zLjcsNDIuMy4yLDMuMy4yLDQ1LjMuMSw0LjEuMSw0LjMuMiw0LjEuMSwwLjIuMSwxMy4zLjEsNTAuMS4yLDIwLjEuMSwwLjIuMSwxLjIuMSwyNy4yLjEsMS4yLjEsMS4zLjMsNDQuMS4yLDI1LjEuMSwyMS4xLjEsMy4xLjEsNDIuMy4yLDMuMy4yLDQ1LjMuMSw0LjEuMSw0LjMuMiw0LjEuMSwwLjIuMSwxMy4zLjEsMS4xLjMsMC4yLjEsMS4yLjEsMjAuMi4xLDEuMi4xLDE2LjMuMywzLjEuNSwxMy4zLjIsMy4zLjIsMjcuMy4xLDMuMS40LDAuMi4xLDAuMy4xLDcwLjEuMSw3MS4xLjEsNzcuMS4xLDAuMi4xLDEuMi4xLDIyLjIuMSwxLjIuMSwxNi4zLjMsNjMuMS4yLDU5LjEuMSwzMC4xLjEsMy4xLjEsNDcuMS4yLDQ5LjEuMiwzLjEuMSw0Ni4xLjIsNDcuMS4yLDAuMi4xLDEuMy4xLDc4LjEuMSwxLjEuMiwwLjIuMSwxLjIuMiwwLjIuMSwyNS4xLjEsMTkuMS4xLDEuMS4xLDYzLjEuMiw1OS4xLjEsMjAuMS4xLDMuMS4xLDQ3LjEuMiw0OS4xLjIsMy4xLjEsNDYuMS4yLDQ3LjEuMiwwLjIuMSwxLjMuMSwzNC4xLjIsMzcuMS4xLDAuMi4xLDEuMi4yLDAuMi4xLDE1LjEuMSwyNy4xLjEsMS4xLjEsMjEuMS4xLDUxLjEuMSwyOC4xLjEsMzMuMS4xLDMuMS4xLDczLjEuMSwyMS4xLjEsMjAuMS4xLDE5LjEuMSwzLjEuMSwzMC4xLjEsMjMuMS4xLDI0LjEuMSwzMC4xLjEsMC4yLjEsMS4zLjEsMzQuMS4yLDMxLjEuMSwwLjIuMSwxLjIuMSwzNi4yLjEsMS4yLjEsMC4yLjE4LDEyLjMuMSw1LjEuMywwLjIuMSwwLjMuNiwwLjIuMiwxMi4zLjEsMC4yLjEwLDAuMy4xLDc2LjMuMSwxMi4zLjEsNjMuMS4yLDY1LjEuMSwwLjIuMSwwLjMuMSw2Mi4zLjIsNS4zLjIsMC4zLjEsMC4yLjE2LDYzLjEuMiw2NS4xLjEsMC4yLjEsMC4zLjEsNjIuMy4yLDUuMy4yLDAuMy4xLDAuMi4yLDY0LjEuMiw1LjEuMSwyMy4xLjEsNTEuMS4xLDM1LjEuMiw0LjEuMSwzMS4xLjEsMjkuMS4xLDI0LjEuMSwzMi4xLjEsMC4yLjIsMzUuMS4yLDY2LjEuMSwwLjIuMSwwLjMuMSw1LjMuMSw2NS4zLjEsNjYuMy4xLDUuMy4xLDAuMy4xLDAuMi4yLDY0LjEuMiw1LjEuMSwzNC4xLjIsMzUuMS4yLDQuMS4xLDQ5LjEuMiw0MS4xLjIsMC4yLjIsMzUuMS4yLDIyLjEuMSwwLjIuMSwwLjMuMSw1LjMuMSwxMy4zLjEsMjIuMy4xLDUuMy4xLDAuMy4xLDAuMi4yLDY1LjEuMSw2Ni4xLjEsNS4xLjEsMzQuMS4yLDI4LjEuMSwxLjEuMSw0LjEuMSw0OS4xLjIsNDEuMS4yLDAuMi4yLDUuMS4zLDAuMi4xLDAuMy4xLDUuMy4xLDIwLjMuMSwxOS4zLjEsMC4zLjEsNS4yLjEsMC4yLjIsNy4xLjIsMTYuMy40LDMuMS4xLDQuMS4xLDMuMS4zLDAuMi4zLDYzLjEuMiwyMi4xLjEsMC4yLjEsMC4zLjYsMC4yLjIsNDguMS4yLDE2LjMuNCw1OC4xLjEsNC4xLjEsNTQuMS4xLDM5LjEuMSwwLjIuNCw2My4xLjIsNjUuMS4xLDAuMi43LDQ2LjEuMiw0OC4xLjIsMTYuMy4yLDExLjEuMiw1OC4xLjEsNC4xLjEsNDAuMS4xLDAuMi4xLDEuMi4xLDAuMy4zLDYwLjEuMiw2MS4xLjIsNS4xLjEsNTcuMS4yLDU5LjEuMSwyNC4xLjEsNS4xLjEsNDYuMS4yLDUyLjEuMiw3LjEuMSw0OC4xLjIsNTAuMS4yLDQuMS4xLDM2LjEuMSwwLjIuMSwxLjIuMSwwLjMuMSw1My4zLjIsNjAuMS4yLDYxLjEuMiw1LjEuMSw1Ny4xLjIsNTkuMS4xLDY1LjEuMSw1LjEuMSwyMS4xLjEsMTkuMS4xLDUyLjEuMiw3LjEuMSw0OC4xLjIsNTAuMS4yLDQuMS4xLDEuMS4xLDAuMi4xLDQ1LjIuMSwwLjMuMyw1LjEuMTAsMy4xLjUsNC4xLjYsMC4yLjEsNDUuMi4xLDM4LjIuMSwwLjIuMiw3Ny4xLjEsNzguMS4xLDM3LjEuMSwzMS4xLjEsMC4xLjEsMS4xLjEsNjcuMS4xLDIwLjEuMSwzNi4xLjEsNy4xLjEsMzYuMS4xLDI0LjEuMSwxLjEuMiwwLjEuMSwyMS4xLjEsMTkuMS4xLDI3LjEuMSw1Ni4xLjIsMzYuMS4xLDAuMi4xLDEuMi4xLDAuMi4xLDAuMS4xLDEuMS4x">🧩 在模擬器開啟溪谷小鎮完美佈局</a></p>
+            <p><a class="btn" href="../../sim/#m=MjZ4MjY7Ny4xLjEsMjUuMS4xLDI2LjEuMSwwLjIuMSw0MS4yLjYsMy4yLjEsMC4zLjEsNDEuMy4yLDEzLjMuMSwyOC4zLjEsMy4zLjEsMC4zLjEsMC4yLjMsNTYuMy4yLDAuMi4zLDY3LjEuMSwxLjEuMiwwLjIuMSw0MS4yLjYsMy4yLjEsMC4zLjEsNDEuMy40LDMuMy4xLDAuMy4xLDU4LjIuMSwwLjIuMSwxMy4zLjEsNC4zLjIsMTMuMy4xLDAuMi4yLDYyLjEuMiw2OS4xLjEsMC4yLjEsNDEuMi4yLDMuMi4xLDM2LjIuMSwwLjIuMiwzLjIuMSwwLjMuMSwzLjMuMSwyOS4zLjEsNDEuMy4yLDMuMy4xLDAuMy4xLDU4LjIuMSwwLjIuMiwwLjMuMiw0LjIuMSwyNy4yLjEsNC4yLjEsNjIuMS4yLDcyLjEuMSwwLjIuMSw0MS4yLjIsMy4yLjEsMC4yLjEsMzYuMS4xLDMuMS4xLDAuMi4xLDAuMy40LDIuMy4xLDAuMy4xLDAuMi4zLDEzLjMuMSw0LjMuMiw0LjIuMSwyNC4yLjEsNC4yLjEsMS4xLjMsMC4yLjEsNDEuMi4yLDAuMi4xLDMuMS4zLDAuMi4zLDQxLjIuMiwyLjMuMSw0My4yLjEsNDQuMi4yLDAuMi4xLDEzLjMuMSw0LjMuMiw0LjIuMSwzNi4yLjEsNC4yLjEsMzAuMS4xLDM0LjEuMiwwLjIuMSw0MS4yLjIsMC4yLjEsMTEuMS4xLDM2LjEuMSwzLjEuMSw1OC4xLjEsMC4yLjIsNDEuMi4yLDIuMy4xLDQzLjIuMSwzMy4yLjEsMC4yLjIsNy4xLjEsNC4zLjIsMC4yLjEsNC4yLjIsNy4xLjEsMzQuMS4yLDAuMi4xLDEuMi4yLDAuMi4xLDEuMS4yLDMuMS4xLDU4LjEuMSw3LjEuMSw2OC4zLjEsNDIuMy4yLDIuMy4zLDAuMy4xLDIuMy4yLDQuMy4yLDQuMS4xLDAuMi4xLDEzLjMuMSw1MC4xLjIsNzAuMS4xLDAuMi4xLDEuMi4xLDMxLjIuMSwxLjIuMSwwLjMuMSwxLjMuNSw0Mi4zLjQsMy4zLjIsNDUuMy4xLDQuMS4xLDQuMy4yLDQuMS4xLDAuMi4xLDEzLjMuMSw1MC4xLjIsMjAuMS4xLDAuMi4xLDEuMi4xLDI3LjIuMSwxLjIuMSwxLjMuMyw0NC4xLjIsMjUuMS4xLDIxLjEuMSwzLjEuMSw0Mi4zLjIsMy4zLjIsNDUuMy4xLDQuMS4xLDQuMy4yLDQuMS4xLDAuMi4xLDEzLjMuMSwxLjEuMywwLjIuMSwxLjIuMSwyMC4yLjEsMS4yLjEsMTYuMy4zLDMuMS41LDEzLjMuMiwzLjMuMiwyNy4zLjEsMy4xLjQsMC4yLjEsMC4zLjEsNzAuMS4xLDcxLjEuMSw3Ny4xLjEsMC4yLjEsMS4yLjEsMjIuMi4xLDEuMi4xLDE2LjMuMyw2My4xLjIsNTkuMS4xLDMwLjEuMSwzLjEuMSw0Ny4xLjIsNDkuMS4yLDMuMS4xLDQ2LjEuMiw0Ny4xLjIsMC4yLjEsMS4zLjEsNzguMS4xLDEuMS4yLDAuMi4xLDEuMi4yLDAuMi4xLDI1LjEuMSwxOS4xLjEsMS4xLjEsNjMuMS4yLDU5LjEuMSwyMC4xLjEsMy4xLjEsNDcuMS4yLDQ5LjEuMiwzLjEuMSw0Ni4xLjIsNDcuMS4yLDAuMi4xLDEuMy4xLDM0LjEuMiwzNy4xLjEsMC4yLjEsMS4yLjIsMC4yLjEsMTUuMS4xLDI3LjEuMSwxLjEuMSwyMS4xLjEsNTEuMS4xLDI4LjEuMSwzMy4xLjEsMy4xLjEsNzMuMS4xLDIxLjEuMSwyMC4xLjEsMTkuMS4xLDMuMS4xLDMwLjEuMSwyMy4xLjEsMjQuMS4xLDMwLjEuMSwwLjIuMSwxLjMuMSwzNC4xLjIsMzEuMS4xLDAuMi4xLDEuMi4xLDM2LjIuMSwxLjIuMSwwLjIuMTgsMTIuMy4xLDUuMS4zLDAuMi4xLDAuMy42LDAuMi4yLDEyLjMuMSwwLjIuMTAsMC4zLjEsNzYuMy4xLDEyLjMuMSw2My4xLjIsNjUuMS4xLDAuMi4xLDAuMy4xLDYyLjMuMiw1LjMuMiwwLjMuMSwwLjIuMTYsNjMuMS4yLDY1LjEuMSwwLjIuMSwwLjMuMSw2Mi4zLjIsNS4zLjIsMC4zLjEsMC4yLjIsNjQuMS4yLDUuMS4xLDIzLjEuMSw1MS4xLjEsMzUuMS4yLDQuMS4xLDMxLjEuMSwyOS4xLjEsMjQuMS4xLDMyLjEuMSwwLjIuMiwzNS4xLjIsNjYuMS4xLDAuMi4xLDAuMy4xLDUuMy4xLDY1LjMuMSw2Ni4zLjEsNS4zLjEsMC4zLjEsMC4yLjIsNjQuMS4yLDUuMS4xLDM0LjEuMiwzNS4xLjIsNC4xLjEsNDkuMS4yLDQxLjEuMiwwLjIuMiwzNS4xLjIsMjIuMS4xLDAuMi4xLDAuMy4xLDUuMy4xLDEzLjMuMSwyMi4zLjEsNS4zLjEsMC4zLjEsMC4yLjIsNjUuMS4xLDY2LjEuMSw1LjEuMSwzNC4xLjIsMjguMS4xLDEuMS4xLDQuMS4xLDQ5LjEuMiw0MS4xLjIsMC4yLjIsNS4xLjMsMC4yLjEsMC4zLjEsNS4zLjEsMjAuMy4xLDE5LjMuMSwwLjMuMSw1LjIuMSwwLjIuMiw3LjEuMiwxNi4zLjQsMy4xLjEsNC4xLjEsMy4xLjMsMC4yLjMsNjMuMS4yLDIyLjEuMSwwLjIuMSwwLjMuNiwwLjIuMiw0OC4xLjIsMTYuMy40LDU4LjEuMSw0LjEuMSw1NC4xLjEsMzkuMS4xLDAuMi40LDYzLjEuMiw2NS4xLjEsMC4yLjcsNDYuMS4yLDQ4LjEuMiwxNi4zLjIsMTEuMS4yLDU4LjEuMSw0LjEuMSw0MC4xLjEsMC4yLjEsMS4yLjEsMC4zLjMsNjAuMS4yLDYxLjEuMiw1LjEuMSw1Ny4xLjIsNTkuMS4xLDI0LjEuMSw1LjEuMSw0Ni4xLjIsNTIuMS4yLDcuMS4xLDQ4LjEuMiw1MC4xLjIsNC4xLjEsMzYuMS4xLDAuMi4xLDEuMi4xLDAuMy4xLDUzLjMuMiw2MC4xLjIsNjEuMS4yLDUuMS4xLDU3LjEuMiw1OS4xLjEsNjUuMS4xLDUuMS4xLDIxLjEuMSwxOS4xLjEsNTIuMS4yLDcuMS4xLDQ4LjEuMiw1MC4xLjIsNC4xLjEsMS4xLjEsMC4yLjEsNDUuMi4xLDAuMy4zLDUuMS4xMCwzLjEuNSw0LjEuNiwwLjIuMSw0NS4yLjEsMzguMi4xLDAuMi4yLDc3LjEuMSw3OC4xLjEsMzcuMS4xLDMxLjEuMSwwLjEuMSwxLjEuMSw2Ny4xLjEsMjAuMS4xLDM2LjEuMSw3LjEuMSwzNi4xLjEsMjQuMS4xLDEuMS4yLDAuMS4xLDIxLjEuMSwxOS4xLjEsMjcuMS4xLDU2LjEuMiwzNi4xLjEsMC4yLjEsMS4yLjEsMC4yLjEsMC4xLjEsMS4xLjE">🧩 在模擬器開啟溪谷小鎮完美佈局</a></p>
 
             <nav class="toc" aria-label="本頁目錄">
                 <div class="t">本篇目錄</div>
@@ -102,6 +103,7 @@
                     <li><a href="#terrain">溪谷小鎮的地形：唯一的三層地圖</a></li>
                     <li><a href="#erase">核心謎題：開局只走得到 18 格，橡皮擦 6 格全通</a></li>
                     <li><a href="#ramps">坡道保留帶與「原生地物零破壞」</a></li>
+                    <li><a href="#school">校舍規模：先釘 9 間教室與 2 間辦公室</a></li>
                     <li><a href="#zones">分區規劃：32 個分區、四種鋪面</a></li>
                     <li><a href="#paving">四種鋪面：解鎖階段就是分區順序</a></li>
                     <li><a href="#flow">動線：0 假路面、0 走不到的路面</a></li>
@@ -189,6 +191,25 @@
                 </table>
             </div>
 
+            <h2 id="school">校舍規模：先釘 9 間教室與 2 間辦公室，再排景點</h2>
+            <p>遊戲裡 <strong>1～3 年級各開得了 3 個班＝教室固定 9 間</strong>，<strong>辦公室上限 2 間</strong>。這兩種建築<strong>不是任何人氣景點的材料</strong>——正因如此，只要規劃順序是「先排景點、剩下的格子再說」，它們一定被擠光：舊版的溪谷整張圖<strong>只剩原生那 1 間教室與 1 間辦公室</strong>，等於一間學校只招得到三分之一的學生。所以現在把它們升成硬指標，寫進驗證器，而且<strong>規劃順序倒過來：先把 9×4 ＋ 2×4 ＝ 44 格釘死，再去排景點</strong>。</p>
+            <div class="callout warn"><span class="k">溪谷是五鎮裡最緊的一次補位</span>這張圖原本只有 3 間教室 1 間辦公室，要補的是 <strong>6 間教室（24 格）＋ 1 間辦公室（4 格）＝ 28 格 2×2 用地</strong>。而溪谷的谷底 e1 只有 3 列深，一個 4×4 判定窗口塞得下三座 2×2 的街廓<strong>全圖只有兩個</strong>——在谷底釘七座 2×2，等於直接砍掉七個景點窗口。</div>
+            <p>解法是<strong>把教室全部搬上台地</strong>。街廓（也就是自動排版能放景點的地方）<strong>只從谷底的 e1 空地切出來</strong>，台地與高地根本不在候選清單裡；換句話說，<strong>釘在台地上的教室一格景點容量都不吃</strong>，代價只是少了幾棟原本在台地步道旁的 1×1 小設施。於是九間教室這樣配：</p>
+            <div class="table-wrap">
+                <table class="data">
+                    <thead><tr><th>位置</th><th>高度</th><th>間數</th><th>說明</th></tr></thead>
+                    <tbody>
+                        <tr><td>北高地舊教室</td><td>高地</td><td>2</td><td>原生教室 X3–X4/Y12–Y13 ＋ 新建 X2–X3/Y14–Y15（原生教室的西鄰）</td></tr>
+                        <tr><td>北台地教學棟</td><td>台地</td><td>4</td><td>X2–X3 一排三連棟（Y22–Y23／Y20–Y21／Y18–Y19）＋ X4–X5/Y22–Y23</td></tr>
+                        <tr><td>台地南翼</td><td>台地</td><td>1</td><td>X6–X7/Y22–Y23，西中台地帶北端，與上面那片同一道坡道走廊</td></tr>
+                        <tr><td>舊校舍臺地肩西廂</td><td>台地</td><td>1</td><td>X6–X7/Y13–Y14，谷底↔舊校舍高地之間的換乘平台</td></tr>
+                        <tr><td>南教學東翼</td><td>谷底</td><td>1</td><td>X19–X20/Y4–Y5，南校區唯一一間（谷底也要有教室可上課）</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>七間集中在北半部那一大片<strong>教學台地</strong>（高地 2 間＋台地 5 間），中間只隔一道 Y16 的坡道，走廊步道一路連通——<strong>成塊，不是散落</strong>，而且<strong>沒有任何一間掉進農牧或運動分區</strong>。第二間辦公室則釘在 <strong>X8–X9/Y13–Y14</strong>，正好貼著原生辦公室（X9–X10/Y11–Y12）的西側，兩間並排成一整塊職員室，還落在「選舉」的判定窗口內。</p>
+            <div class="callout key"><span class="k">代價：北緣台地的十一件小設施</span>換來的是 5 間教室，付出的是原本鋪在北緣台地上的茶室、進路室、遊戲區、公告欄、洗手間、販賣機、飲水處、更衣室、廣播室等 1×1 設施——它們在谷底與南校區都還有同型別的替代，所以景點一個都沒少。<strong>總棟數 144 → 141（少 3 棟），教室 3 → 9、辦公室 1 → 2，29 個景點原封不動。</strong>辦公室那一座則只吃掉舊校舍草坪東端 4 格草地，草坪剩下的 X9/Y15–Y19 與 X10/Y18–Y20 仍是「力量」「菜園」用得到的原生草地，也是擦格坡道上來後唯一那條草坪走廊。</div>
+
             <h2 id="zones">分區規劃：32 個分區、四種鋪面</h2>
             <p>全圖切成 <strong>6×6 ＝ 36 個 4×4 街廓</strong>，每個街廓都宣告名字與鋪面（不留無主的街道），相鄰且同語意的合成一個分區，共 <strong>32 個</strong>。下面<strong>按鋪面分成四組</strong>來講——在這一版裡<strong>鋪面就是語意</strong>，「為什麼鋪這個」只要在每組開頭講一次就夠。</p>
             <div class="table-wrap">
@@ -215,7 +236,7 @@
                         <tr><td>西溪北源</td><td>X2–X5 / Y27–Y24</td><td>草地</td><td>—</td></tr>
                         <tr><td>西溪農牧</td><td>X7–X10 / Y27–Y24</td><td>草地</td><td>—</td></tr>
                         <tr><td>西溪動物園</td><td>X12–X15 / Y27–Y24</td><td>草地</td><td>4</td></tr>
-                        <tr><td>北緣台地花園</td><td>X2–X5 / Y22–Y19（台地）</td><td>草地</td><td>2</td></tr>
+                        <tr><td>北台地教學棟</td><td>X2–X5 / Y22–Y19（台地）</td><td>走廊</td><td>2</td></tr>
                         <tr><td>北池畔公園</td><td>X12–X15 / Y22–Y19</td><td>草地</td><td>2</td></tr>
                         <tr><td>東緣草坡</td><td>X7–X15 / Y2（高地）</td><td>草地</td><td>—</td></tr>
                         <tr><td>東緣坡</td><td>X17–X20 / Y2（台地）</td><td>草地</td><td>—</td></tr>
@@ -231,13 +252,19 @@
                 </table>
             </div>
 
-            <h3>走廊區：校舍內動線（12 個街廓、37 格走廊）</h3>
-            <p>走廊（木造廊下）在遊戲裡屬「<strong>校舍內</strong>」，所以凡是<strong>室內設施</strong>——教室、辦公室、專科教室、圖書室、保健室、餐廳、福利社——全部收進走廊分區。溪谷這 12 個街廓<strong>連成一整片</strong>，從最北的舊校舍臺地一路往南經過谷底新市街、跨過坡道帶接到南校區；四種鋪面裡走廊也是<strong>唯一開局就能鋪、而且最便宜</strong>的一種，正好對得上校舍是最早蓋的。</p>
+            <h3>走廊區：校舍內動線（13 個街廓、46 格走廊）</h3>
+            <p>走廊（木造廊下）在遊戲裡屬「<strong>校舍內</strong>」，所以凡是<strong>室內設施</strong>——教室、辦公室、專科教室、圖書室、保健室、餐廳、福利社——全部收進走廊分區。溪谷這 13 個街廓<strong>連成一整片</strong>，從最北的舊校舍臺地一路往南經過谷底新市街、跨過坡道帶接到南校區；四種鋪面裡走廊也是<strong>唯一開局就能鋪、而且最便宜</strong>的一種，正好對得上校舍是最早蓋的。</p>
             <div class="zone">
                 <h4>舊校舍臺地（3 街廓）</h4>
                 <p class="zmeta"><span><i style="background:#d97706"></i>走廊</span><span>X2–X10 / Y17–Y9</span><span>階段 1</span></p>
                 <p>遊戲一開始就給的<strong>教室、辦公室、多媒體教室、公告欄、養雞小屋</strong>全在這一帶（台地與高地），一棟不拆。台地上切不出街廓，所以三個景點的舞台是<strong>手動卡位</strong>的：<strong>校長室 X6–X7/Y11、圖書室 X6/Y10–Y9、茶室 X7/Y10、網球場 X3–X4/Y9</strong>，讓「學習」（校長室＋圖書室＋原生多媒體）、「選舉」（校長室＋原生辦公室＋茶室）與「約會」（網球場＋原生櫻花＋圖書室）三個景點<strong>共用同一片臺地肩</strong>，一間校長室餵兩個景點、兩棟原生校舍再各餵一個——全圖最省的一組。</p>
                 <p class="note">排法是算過的：門前坡道落在 X4/Y7，門內第一條路是 X4/Y6 → X4/Y7 → X5/Y8 → X5/Y9 → X5/Y10 這條台地步道。<strong>網球場刻意放 Y9 那一欄而不是 Y8</strong>——放 Y8 會把剛擦出來的坡道當場堵死，整個臺地肩要繞 50 幾步才進得去。</p>
+            </div>
+            <div class="zone">
+                <h4>北台地教學棟（含台地南翼）</h4>
+                <p class="zmeta"><span><i style="background:#d97706"></i>走廊</span><span>X2–X7 / Y23–Y17（台地）</span><span>階段 2</span></p>
+                <p>這一版新增的分區，也是<strong>九間教室的主場</strong>。北緣那片 e2 台地共 22 格、每列都靠著西緣 Y24 那道天然坡道，是<strong>全圖唯一排得下四座 2×2 的連續空地</strong>——X2–X3 那兩列一口氣放下<strong>三連棟教室</strong>（Y23–Y22／Y21–Y20／Y19–Y18），X4–X5 再放一棟，往南跨過坡道走廊接到 X6–X7 的<strong>台地南翼</strong>還有第五棟。剩下的 Y17 一縱列與 Y21–Y20 幾格全部留成走廊步道，往北接 Y16 的高地坡道通到<strong>北高地舊教室</strong>（原生教室＋新建一棟），七間教室因此<strong>連成一整片教學台地</strong>。</p>
+                <p class="note">舊版這裡叫「北緣台地花園」，鋪草地、擺十一件 1×1 小設施。改成教學棟是<strong>先釘校舍規模、再排景點</strong>的直接後果（見上面的〈<a href="#school">校舍規模</a>〉）：小設施退場換來四間教室，只有長椅與銅像留下來餵「清爽」。</p>
             </div>
             <div class="zone">
                 <h4>北支谷專科棟</h4>
@@ -252,7 +279,7 @@
             <div class="zone">
                 <h4>南校區（4 街廓）</h4>
                 <p class="zmeta"><span><i style="background:#d97706"></i>走廊</span><span>X17–X25 / Y17–Y4</span><span>階段 3</span></p>
-                <p>坡道帶以南的新校舍：<strong>南教學核心</strong>（美術室）、<strong>南教學東翼</strong>（多功能室＋一間教室）、<strong>南校舍南棟</strong>、<strong>南池畔校舍</strong>。其中<strong>南校舍南棟（X22–X25/Y17–Y14）是全圖唯二有 4 列可用的街廓</strong>，所以「藝術」那三座 2×2（美術室＋音樂室＋多功能室）就排在這裡。</p>
+                <p>坡道帶以南的新校舍：<strong>南教學核心</strong>（美術室）、<strong>南教學東翼</strong>（多功能室＋南校區唯一那間教室）、<strong>南校舍南棟</strong>、<strong>南池畔校舍</strong>。其中<strong>南校舍南棟（X22–X25/Y17–Y14）是全圖唯二有 4 列可用的街廓</strong>，所以「藝術」那三座 2×2（美術室＋音樂室＋多功能室）就排在這裡。</p>
                 <p class="note"><strong>南池畔校舍的街廓正中間就是原生南池</strong>（10 格）。池面在高地、四周是谷底，鑿了沒有收益，所以留著當校舍旁的池塘，池畔擺水井與洗手間，「水岸」與「清爽」順手成立。這是把地形當設計、而不是把地形當障礙。</p>
             </div>
 
@@ -271,7 +298,7 @@
                 <p class="note">西溪綠廊<strong>南段交給運動園區</strong>是刻意的取捨：綠廊北段（X2–X15）留給農牧與動物園。原本整條都劃成草地，結果自動排版把美術室、音樂室、餐廳、便利商店一路塞進農牧區——因為走廊分區當時給不出足夠的 2×2 象限，「農牧園區」的名字就變成謊話。把南段換成運動、把 4 列街廓還給教學區之後，蓋錯區的棟數從 <strong>19 棟降到 11 棟</strong>。</p>
             </div>
 
-            <h3>草地區：農牧與自然面（15 個街廓、70 格草地）</h3>
+            <h3>草地區：農牧與自然面（14 個街廓、50 格草地）</h3>
             <p>草地（芝生）是有望學園才解鎖的鋪面，語意是<strong>自然小徑</strong>——農牧、公園、水岸、稀有飼育、台地步道都走草地。溪谷的草地分成<strong>三條地形帶</strong>（各自成塊，但地理上本來就分開，不是碎片）：<strong>西溪綠廊北段</strong>、<strong>南緣步道</strong>、以及<strong>東緣崖坡 → 開羅廣場 → 東南丘</strong>那一條。</p>
             <div class="zone">
                 <h4>西溪綠廊北段（西溪北源／西溪農牧／西溪動物園，3 街廓）</h4>
@@ -280,9 +307,9 @@
                 <p class="note">熊貓、無尾熊、鱷魚<strong>都不是任何景點的材料</strong>，擺在綠廊最深處＝後期開發，對景點零風險。</p>
             </div>
             <div class="zone">
-                <h4>北緣台地花園／北池畔公園</h4>
-                <p class="zmeta"><span><i style="background:#84cc16"></i>草地</span><span>X2–X5 / Y22–Y19（台地）、X12–X15 / Y22–Y19</span><span>階段 2</span></p>
-                <p>北緣台地花園是西側台地的北半（茶室、進路室、遊戲區、長椅…全是 1×1，草地小徑穿過去），「清爽」在這裡。北池畔公園則是<strong>原生北池 6 格</strong>的南岸：水井與洗手間手動釘在池畔，一個窗口同時框住池水與兩件設施，「水岸」零成本成立。</p>
+                <h4>北池畔公園</h4>
+                <p class="zmeta"><span><i style="background:#84cc16"></i>草地</span><span>X12–X15 / Y22–Y19</span><span>階段 2</span></p>
+                <p><strong>原生北池 6 格</strong>的南岸：水井與洗手間手動釘在池畔，一個窗口同時框住池水與兩件設施，「水岸」零成本成立。（西側台地的北半原本也是草地公園，這一版整片改成<a href="#zones">北台地教學棟</a>，「清爽」改由台地南翼剩下的長椅與草地成立。）</p>
                 <p class="note">水塘在編輯器裡是可畫的環境磚，放手讓自動排版去湊「水岸」，它會<strong>自己蓋一座新水塘</strong>——那在實機蓋不出來，驗證的「沒有無中生有的新水塘」也會直接失敗。所以水岸的兩件設施一定要手放在<strong>現成</strong>池畔。</p>
             </div>
             <div class="zone">
@@ -337,18 +364,19 @@
                 <table class="data">
                     <thead><tr><th>指標</th><th>舊版（湊景點優先）</th><th>本版（分區優先）</th></tr></thead>
                     <tbody>
-                        <tr><td>通行格</td><td>423</td><td>381</td></tr>
+                        <tr><td>通行格</td><td>423</td><td>363</td></tr>
                         <tr><td>孤立通行格</td><td>0</td><td><strong>0</strong></td></tr>
                         <tr><td>走不到的通行格</td><td>15（整份豁免、頁面長期解釋）</td><td><strong>0</strong></td></tr>
-                        <tr><td>死路端點</td><td>24</td><td><strong>17</strong></td></tr>
-                        <tr><td>死路支線</td><td>56 格（13%）</td><td>48 格（13%）</td></tr>
-                        <tr><td>景點／走不到的建築／棟數</td><td>29・<strong>7 棟</strong>・129</td><td>29・<strong>0 棟</strong>・<strong>144</strong></td></tr>
+                        <tr><td>死路端點</td><td>24</td><td><strong>21</strong></td></tr>
+                        <tr><td>死路支線</td><td>56 格（13%）</td><td>52 格（14%）</td></tr>
+                        <tr><td>景點／走不到的建築／棟數</td><td>29・<strong>7 棟</strong>・129</td><td>29・<strong>0 棟</strong>・<strong>141</strong></td></tr>
+                        <tr><td>教室／辦公室</td><td>1 間・1 間</td><td><strong>9 間</strong>・<strong>2 間</strong></td></tr>
                         <tr><td>橡皮擦／破壞水塘／砍原生樹</td><td>3・0・0</td><td>6・<strong>0</strong>・<strong>0</strong></td></tr>
                     </tbody>
                 </table>
             </div>
             <p>最大的差別是那 <strong>15 格「走不到的通行格」被消滅了</strong>，而且不是靠拆掉它們，是靠<strong>兩格橡皮擦真的把它們接上路網</strong>（見<a href="#erase">核心謎題</a>）。舊版把那 15 格列進「一格都不准動」的豁免清單，頁面得反覆解釋「那是原生結構性死地」——現在清單是空的，因為沒有格子需要豁免。</p>
-            <p>剩下的 48 格死路支線裡，大宗是<strong>建築的唯一門面</strong>——那是動線的目的地，不是缺陷（144 棟房子有 144 個門口，門口本來就是路的終點）。另外幾條是地形決定的：<strong>東峽谷</strong>是一格寬的裂谷（最長那條 5 格）、<strong>東緣草坡</strong>是懸在崖上的 7 格景觀步道、<strong>西溪綠廊</strong>與<strong>南緣步道</strong>都是 3 格寬或 1 格深的長條。這些補環補不掉，橋接上去只會長出更多門面短枝，所以本圖<strong>沒有為了指標去破壞任何原生地形</strong>。</p>
+            <p>剩下的 52 格死路支線裡，大宗是<strong>建築的唯一門面</strong>——那是動線的目的地，不是缺陷（141 棟房子有 141 個門口，門口本來就是路的終點）。另外幾條是地形決定的：<strong>東峽谷</strong>是一格寬的裂谷（最長那條 5 格）、<strong>東緣草坡</strong>是懸在崖上的 7 格景觀步道、<strong>西溪綠廊</strong>與<strong>南緣步道</strong>都是 3 格寬或 1 格深的長條。這些補環補不掉，橋接上去只會長出更多門面短枝，所以本圖<strong>沒有為了指標去破壞任何原生地形</strong>。</p>
 
             <h2 id="build">階段推進與施工順序</h2>
             <p>遊戲的學校排名分階段解鎖設施（<strong>農村學園 → 發展學園 → 有望學園 → 超大型校 → 名門學園</strong>）。29 個景點的階段分佈是 <strong>1 階 6 個、2 階 5 個、3 階 12 個、4 階 6 個</strong>。溪谷的擴張方向很特別：<strong>不是由校門往外長，而是「先下谷底，再翻過坡道帶往南攤開」</strong>。</p>
@@ -377,7 +405,7 @@
                         <tr><td>1・開局（農村學園）</td><td>選舉</td><td>舊校舍核心（X7 / Y12）</td><td>校長室：一開始就有（全校唯一）（推定）</td></tr>
                         <tr><td>2・發展學園</td><td>約會</td><td>北支谷專科棟（X7 / Y19）</td><td>網球場：發展學園＋運動 40</td></tr>
                         <tr><td>2・發展學園</td><td>家庭</td><td>南池畔校舍（X24 / Y12）</td><td>家政室：頭腦 80</td></tr>
-                        <tr><td>2・發展學園</td><td>清爽</td><td>北緣台地花園（X4 / Y22）</td><td>長椅：升上發展學園</td></tr>
+                        <tr><td>2・發展學園</td><td>清爽</td><td>北台地教學棟（X5 / Y22）</td><td>長椅：升上發展學園</td></tr>
                         <tr><td>2・發展學園</td><td>運動</td><td>南運動園區東（X22 / Y22）</td><td>操場：發展學園＋運動 50</td></tr>
                         <tr><td>2・發展學園</td><td>燒水</td><td>西溪農牧（X7 / Y27）</td><td>家政室：頭腦 80</td></tr>
                         <tr><td>3・有望學園</td><td>生物</td><td>谷底生活街（X12 / Y12）</td><td>理科室：有望學園＋頭腦 90</td></tr>
@@ -425,11 +453,11 @@
                         <tr><td>時尚</td><td>X21 / Y12</td><td>網球場＋美術室＋家政室</td><td>文系+3 理系+3 人氣+2 態度+2</td></tr>
                         <tr><td>熱情</td><td>X9 / Y17</td><td>足球場＋籃球場＋焚化爐</td><td>理系+3 體育+3 人氣+2 態度+2</td></tr>
                         <tr><td>埋伏</td><td>X11 / Y22</td><td>公告欄＋巨石＋洗手間</td><td>文系+3 體育+1 頭腦+2 人氣+2</td></tr>
-                        <tr><td>清爽</td><td>X4 / Y23</td><td>映山紅＋草地＋長椅</td><td>文系+3 理系+3 人氣+2 態度+2</td></tr>
+                        <tr><td>清爽</td><td>X5 / Y22</td><td>映山紅＋草地＋長椅</td><td>文系+3 理系+3 人氣+2 態度+2</td></tr>
                         <tr><td>水岸</td><td>X10 / Y22</td><td>水塘＋洗手間＋水井</td><td>文系+2 理系+3 頭腦+2</td></tr>
                         <tr><td>生物</td><td>X11 / Y13</td><td>理科室＋電腦室＋飼育鼴鼠</td><td>理系+3 頭腦+2 運動+2 人氣+2</td></tr>
                         <tr><td>燒水</td><td>X7 / Y27</td><td>焚化爐＋家政室＋飲水處</td><td>文系+1 理系+1 人氣+1 態度+1</td></tr>
-                        <tr><td>選舉</td><td>X6 / Y13</td><td>校長室＋辦公室＋茶室</td><td>理系+2 體育+3 運動+2 人氣+2</td></tr>
+                        <tr><td>選舉</td><td>X5 / Y13</td><td>校長室＋辦公室＋茶室</td><td>理系+2 體育+3 運動+2 人氣+2</td></tr>
                         <tr><td>吃醋</td><td>X6 / Y27</td><td>焚化爐＋餐廳＋家政室</td><td>理系+3 體育+2 頭腦+2 態度+2</td></tr>
                         <tr><td>澀谷</td><td>X16 / Y27</td><td>足球場＋社團教室＋便利商店</td><td>文系+3 體育+1 人氣+2</td></tr>
                         <tr><td>熱血</td><td>X21 / Y27</td><td>足球場＋體育館＋游泳池</td><td>文系+2 理系+3 頭腦+3 運動+3</td></tr>
@@ -445,16 +473,16 @@
             <p>屬性加成合計：<strong>文系 +49、理系 +49、人氣 +37、體育 +35、態度 +32、頭腦 +29、運動 +19</strong>（同一景點只計一次）。</p>
 
             <h2 id="facilities">用到的設施清單</h2>
-            <p>沒有標數字的表示只蓋一棟。<strong>144 棟</strong>裡有 <strong>42 棟在台地或高地上</strong>、6 棟是原生保留的既有建築（<strong>一棟都沒拆</strong>）。最後一列的<strong>草地／走廊／道路／水泥地</strong>就是<a href="#paving">鋪面</a>那一節的格數。</p>
+            <p>沒有標數字的表示只蓋一棟。<strong>141 棟</strong>裡有 <strong>39 棟在台地或高地上</strong>、6 棟是原生保留的既有建築（<strong>一棟都沒拆</strong>）。最後一列的<strong>草地／走廊／道路／水泥地</strong>就是<a href="#paving">鋪面</a>那一節的格數。</p>
             <div class="table-wrap">
                 <table class="data">
                     <thead><tr><th>分類</th><th>設施</th></tr></thead>
                     <tbody>
-                        <tr><td>生活與設施</td><td>便利商店 ×2、保健室 ×5、公告欄 ×6、圖騰柱 ×2、宇宙火箭、廣播室 ×4、更衣室 ×5、水井 ×3、洗手間 ×6、焚化爐 ×4、百葉箱、福利社 ×2、茶室 ×3、販賣機 ×6、遊戲區 ×3、金像、金開羅君、銅像 ×5、長椅 ×9、開羅君像、飲水處 ×7、餐廳 ×3</td></tr>
-                        <tr><td>教室與專科</td><td>圖書室 ×2、多功能室、多媒體教室 ×2、天象館、家政室 ×2、教室 ×3、校長室、校門(上下用) ×2、理科室 ×2、美術室 ×2、辦公室、進路室 ×3、開羅君房間、電腦室 ×2、音樂室 ×2</td></tr>
+                        <tr><td>生活與設施</td><td>便利商店 ×2、保健室 ×5、公告欄 ×5、圖騰柱 ×2、宇宙火箭、廣播室 ×3、更衣室 ×4、水井 ×3、洗手間 ×5、焚化爐 ×4、百葉箱、福利社 ×2、茶室 ×2、販賣機 ×5、遊戲區 ×2、金像、金開羅君、銅像 ×4、長椅 ×9、開羅君像、飲水處 ×6、餐廳 ×3</td></tr>
+                        <tr><td>教室與專科</td><td>圖書室 ×2、多功能室、多媒體教室 ×2、天象館、家政室 ×2、教室 ×9、校長室、校門(上下用) ×2、理科室 ×2、美術室 ×2、辦公室 ×2、進路室 ×2、開羅君房間、電腦室 ×2、音樂室 ×2</td></tr>
                         <tr><td>運動與社團</td><td>彈跳床 ×3、操場、棒球場 ×2、游泳池、社團教室 ×6、籃球場 ×2、網球場 ×3、足球場 ×3、道場、體育館</td></tr>
                         <tr><td>動植物農牧</td><td>小農場 ×2、飼育大象 ×2、飼育長頸鹿 ×2、飼育鱷魚、飼育鼴鼠、飼鴨小屋、養兔小屋、養牛小屋、養豬小屋 ×2、養雞小屋</td></tr>
-                        <tr><td>環境地形</td><td>巨石、映山紅 ×3、樹林 ×9、櫻花樹 ×11、水塘 ×16、水泥地 ×33、田埂路 ×8、竹林 ×3、草地 ×70、走廊 ×37、道路 ×41</td></tr>
+                        <tr><td>環境地形</td><td>巨石、映山紅 ×3、樹林 ×9、櫻花樹 ×11、水塘 ×16、水泥地 ×33、田埂路 ×8、竹林 ×3、草地 ×50、走廊 ×46、道路 ×41</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -463,12 +491,12 @@
             <p>這張圖保證的是「<strong>在模擬器的規則下</strong>，29 個景點全部成立、沒有建築走不到」。實際遊戲裡的解鎖條件、建造費用與土地取得進度不在模擬範圍內，請把它當成規劃藍圖而不是逐步施工單。</p>
             <h3>設施尺寸大修正：舊圖在遊戲裡根本蓋不出來</h3>
             <p>使用者實機回報後，我們一次修正了十一項設施的尺寸——<strong>操場、棒球場、足球場、道場、電腦室、理科室、音樂室、美術室、家政室、多功能室全部是 2×2</strong>（天象館是橫 2 格），舊資料把它們當 1×1。這件事讓舊版的圖<strong>整張作廢</strong>：舊頁面寫「150 棟」，用修正後的尺寸重算只有 <strong>129 棟</strong>。同時也補上了一項驗證——<strong>多格建築的 footprint 完整性</strong>（不能有缺角、不能兩棟重疊共用一格）；舊的驗證只看「窗口裡出現哪些磚型」與「格數 ÷ 面積」，這兩種錯都抓不到，而<strong>舊的溪谷分享碼有 27 座建築鋪不滿自己的 footprint</strong>——那些「操場」「足球場」在實機上根本蓋不出來。</p>
-            <h3>棟數的來歷：129 → 144</h3>
-            <p>救回來的是分區優先：把每個分區的設施清單<strong>按 2×2 的現實重新配額</strong>（一個 4×4 街廓 = 16 格 = 只放得下 4 座 2×2），把教室與台地上的大型設施改成<strong>手動卡位</strong>，再把西溪綠廊南段從草地還給運動園區，棟數才長到 <strong>144 棟</strong>。29 個景點與 0 棟走不到在整個過程中都沒有變。</p>
+            <h3>棟數的來歷：129 → 144 → 141</h3>
+            <p>救回來的是分區優先：把每個分區的設施清單<strong>按 2×2 的現實重新配額</strong>（一個 4×4 街廓 = 16 格 = 只放得下 4 座 2×2），把教室與台地上的大型設施改成<strong>手動卡位</strong>，再把西溪綠廊南段從草地還給運動園區，棟數才長到 <strong>144 棟</strong>。29 個景點與 0 棟走不到在整個過程中都沒有變。後來補上<strong>校舍規模的硬指標</strong>（教室 9 間、辦公室 2 間），北緣台地上十一件 1×1 小設施讓位給五座 2×2 教室，棟數回落到 <strong>141 棟</strong> —— 少 3 棟、多 8 間教室與 1 間辦公室，划算。</p>
             <h3>修掉七棟「驗證通過、實機走不到」的建築</h3>
             <p>可達性判定原本漏了第三個條件（出入口要「可通行 ＋ 走得到 ＋ <strong>踏得進去</strong>」）。補上之後，<strong>舊的溪谷分享碼立刻現出 7 棟真的走不到的建築</strong>——不是新破壞，是原本被漏洞遮住的實際缺陷：多功能室 X8/Y19、原生多媒體教室 X9/Y8、飲水處 X10/Y17、保健室 X10/Y16、茶室 X10/Y15、原生公告欄 X11/Y8、原生飼育鱷魚 X16/Y3。它們全都貼著台地邊，鄰接的走廊在懸崖上方，學生跨不過落差。</p>
             <p>這一版是<strong>正面解決</strong>的，不是把它們挪走：三棟原生建築（多媒體教室、公告欄、飼育鱷魚）靠<strong>兩格橡皮擦</strong>長出坡道，真的走得到了（見<a href="#erase">核心謎題</a>）；另外四棟是舊圖把新建築排在崖邊造成的，重排時「排得下」與「走得到」用的是<strong>同一把尺</strong>（兩邊都吃落差），所以產生器根本不會再把房子放進那種位置。</p>
-            <h3>分區語意的妥協：144 棟裡有 11 棟蓋錯區</h3>
+            <h3>分區語意的妥協：141 棟裡有 11 棟蓋錯區</h3>
             <p>分區完整性是排版的<strong>第一優先</strong>（比「要動的格數最少」還前面），但仍有 <strong>11 棟</strong>建築落在語意不合的分區裡（初版是 19 棟）。原因是幾何上的硬限制：</p>
             <ul>
                 <li><strong>4×4 景點窗口不看分區邊界。</strong>一個景點的三件材料常常跨語意——「熱情」＝足球場＋籃球場（運動）＋焚化爐、「時尚」＝網球場（運動）＋美術室＋家政室（室內）、「生物」＝理科室＋電腦室（室內）＋飼育鼴鼠（農牧）——窗口只有 16 格，想同框就得擠進同一個街廓。</li>
@@ -478,7 +506,7 @@
             <h3>兩座棒球場與其他重複建築</h3>
             <p>圖上有<strong>兩座棒球場</strong>：一座在西高地運動臺（手放，「黃昏」的舞台），一座在谷底。原因是產生器的街廓清單<strong>只含有谷底空地的街廓</strong>，而西高地整片是高地、切不出街廓——它看不到高台那個窗口，所以會另外再蓋一座。這是共用機具的既有行為（本次沒有為溪谷去改共用程式），而結果剛好對得上敘事：高台那座是景觀，谷底那座是實際使用的球場。同理，美術室、音樂室、理科室、電腦室、家政室、餐廳、足球場、網球場也各有 2–3 座，理由見<a href="#spots">景點那一節</a>。<strong>覺得多餘的話直接拆掉，只要別拆到景點表上那個座標的窗口裡的那一座。</strong></p>
             <h3>怎麼驗證的</h3>
-            <p>把模擬器的判定程式搬進腳本，逐格放置、每一步都檢查「景點數不能變少、走不到的建築不能變多」，最後<strong>只拿上面那串分享碼重新解碼再驗一次</strong>：29 個景點全成立、<strong>0 棟建築走不到</strong>、<strong>136 格原始斜坡全部保留</strong>、<strong>16 格水塘一格沒鑿</strong>、沒有無中生有的新水塘、每一格高度都跟原地形一致、多格建築沒有缺角或重疊、地圖上沒有任何玩家蓋不出來的假地形、<strong>孤立通行格 0</strong>、<strong>走不到的通行格 0</strong>。四種鋪面與環化 pass 都是<strong>景點中立</strong>的手續，跑完會斷言「景點一個都沒少、走不到的建築沒變多、水塘與斜坡一格都沒動」，不然直接讓程式報錯。另外本鎮的設定檔自己多跑一段<a href="#ramps">坡道保留帶斷言</a>。</p>
+            <p>把模擬器的判定程式搬進腳本，逐格放置、每一步都檢查「景點數不能變少、走不到的建築不能變多」，最後<strong>只拿上面那串分享碼重新解碼再驗一次</strong>：29 個景點全成立、<strong>教室 9 間</strong>、<strong>辦公室 2 間</strong>、<strong>0 棟建築走不到</strong>、<strong>136 格原始斜坡全部保留</strong>、<strong>16 格水塘一格沒鑿</strong>、沒有無中生有的新水塘、每一格高度都跟原地形一致、多格建築沒有缺角或重疊、地圖上沒有任何玩家蓋不出來的假地形、<strong>孤立通行格 0</strong>、<strong>走不到的通行格 0</strong>。四種鋪面與環化 pass 都是<strong>景點中立</strong>的手續，跑完會斷言「景點一個都沒少、走不到的建築沒變多、水塘與斜坡一格都沒動」，不然直接讓程式報錯。另外本鎮的設定檔自己多跑一段<a href="#ramps">坡道保留帶斷言</a>。</p>
             <h3>其他</h3>
             <p>溪谷小鎮的地形資料是依實機畫面整理的；若你在遊戲裡發現某一格對不上（特別是舊校舍臺地那一帶的高度界線，還有東南丘的坡格範圍），歡迎回報，我們會重跑一次產生器。<strong>教室數量</strong>：教室不是任何景點的材料，本圖只蓋 3 間（含原生 1 間）純粹是因為谷底的 2×2 象限太珍貴；你的年級上限若需要更多，把西溪綠廊的農牧小屋換成教室即可，那 29 個景點不受影響。</p>
         </div>
