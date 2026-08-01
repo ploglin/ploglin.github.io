@@ -71,6 +71,20 @@ if (active.size < SPOTS.length)
     console.log('  INFO  放棄的景點：' + SPOTS.filter(s => !active.has(s.id)).map(s => s.name).join('、') +
         '（分區優先：不為湊景點破壞分區或亂鋪材質）');
 
+/* 4.5) 校舍規模：每張圖都要能容納「滿編」的學校。
+       遊戲裡 1～3 年級各可開 3 個班 ＝ **教室固定 9 間**；辦公室上限 **2 間**。
+       兩者都不是景點材料，正因如此最容易在排景點時被擠光（湖岸曾只剩 1 間教室），
+       所以列為硬指標：規劃時先把 9×4 ＋ 2×4 ＝ 44 格釘好，再去排景點。 */
+const roomCount = t => {
+    const it = items[t], unit = (it.w || 1) * (it.h || 1);
+    let n = 0;
+    g.forEach(row => row.forEach(c => { if (c.type === t) n++; }));
+    return n / unit;
+};
+const classN = roomCount('class'), officeN = roomCount('office');
+check('教室 9 間（1–3 年級各 3 班）', classN === 9, classN + ' 間');
+check('辦公室 2 間（遊戲上限）', officeN === 2, officeN + ' 間');
+
 /* 5) 動線：沒有走不到的建築 */
 const blocked = E.blockedBuildings(g);
 check('被包圍（走不到）的建築 = 0', blocked.count === 0,
