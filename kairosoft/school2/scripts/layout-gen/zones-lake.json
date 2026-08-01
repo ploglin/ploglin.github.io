@@ -1,127 +1,127 @@
 {
  "0,0": {
-  "name": "北高地公園",
-  "stage": null,
-  "mat": "asphalt"
+  "name": "高原運動公園（西）",
+  "stage": 3,
+  "mat": "concrete"
  },
  "0,5": {
-  "name": "北高地公園",
-  "stage": null,
-  "mat": "asphalt"
+  "name": "高原運動公園（東）",
+  "stage": 3,
+  "mat": "concrete"
  },
  "0,10": {
-  "name": "北高地公園",
-  "stage": null,
-  "mat": "asphalt"
+  "name": "高原動物園",
+  "stage": 4,
+  "mat": "grass"
  },
  "0,15": {
-  "name": "北高地展望台",
+  "name": "高原展望台",
   "stage": null,
-  "mat": "asphalt"
+  "mat": "grass"
  },
  "0,20": {
   "name": "東北湖岸",
   "stage": null,
-  "mat": "asphalt"
- },
- "5,0": {
-  "name": "北岸運動帶",
-  "stage": 2,
-  "mat": "asphalt"
- },
- "5,5": {
-  "name": "北岸運動帶",
-  "stage": 2,
-  "mat": "asphalt"
- },
- "5,10": {
-  "name": "北岸運動帶",
-  "stage": 2,
-  "mat": "asphalt"
- },
- "5,15": {
-  "name": "北岸運動帶",
-  "stage": 2,
-  "mat": "asphalt"
+  "mat": "grass"
  },
  "5,20": {
   "name": "東北湖岸",
   "stage": null,
-  "mat": "asphalt"
+  "mat": "grass"
+ },
+ "5,0": {
+  "name": "北岸農牧帶",
+  "stage": 2,
+  "mat": "grass"
+ },
+ "5,5": {
+  "name": "北岸農牧帶",
+  "stage": 2,
+  "mat": "grass"
+ },
+ "5,10": {
+  "name": "北岸農牧帶",
+  "stage": 2,
+  "mat": "grass"
+ },
+ "5,15": {
+  "name": "北岸農牧帶",
+  "stage": 3,
+  "mat": "grass"
  },
  "10,0": {
   "name": "西大湖",
   "stage": null,
-  "mat": "asphalt"
+  "mat": "grass"
  },
  "10,5": {
-  "name": "中央理科半島",
-  "stage": 3,
-  "mat": "wood_path"
+  "name": "中央半島農牧",
+  "stage": 2,
+  "mat": "grass"
  },
  "10,10": {
-  "name": "中央理科半島",
+  "name": "中央半島水岸",
   "stage": 3,
-  "mat": "wood_path"
+  "mat": "grass"
  },
  "10,15": {
   "name": "山中湖水岸",
   "stage": 1,
-  "mat": "asphalt"
+  "mat": "grass"
  },
  "10,20": {
   "name": "東岸步道",
   "stage": 1,
-  "mat": "asphalt"
+  "mat": "grass"
  },
  "15,0": {
-  "name": "校門廣場",
+  "name": "西門玄關",
   "stage": 1,
   "mat": "asphalt"
  },
  "15,5": {
-  "name": "西舊校舍・生活棟",
+  "name": "舊校舍・保健棟",
   "stage": 1,
   "mat": "wood_path"
  },
  "15,10": {
-  "name": "東校舍運動區",
-  "stage": 3,
+  "name": "舊校舍・教室棟",
+  "stage": 2,
   "mat": "wood_path"
  },
  "15,15": {
-  "name": "泳池體育館區",
+  "name": "泳池運動區",
   "stage": 4,
-  "mat": "wood_path"
+  "mat": "concrete"
  },
  "15,20": {
   "name": "東行政學術翼",
-  "stage": null,
+  "stage": 3,
   "mat": "wood_path"
  },
  "20,0": {
   "name": "西南湖岸",
   "stage": null,
-  "mat": "asphalt"
+  "mat": "grass"
  },
  "20,5": {
   "name": "南農牧帶",
   "stage": 1,
-  "mat": "asphalt"
+  "mat": "grass"
  },
  "20,10": {
   "name": "南商業街",
   "stage": 3,
-  "mat": "asphalt"
+  "mat": "wood_path"
  },
  "20,15": {
-  "name": "稀有動物角",
-  "stage": 4,
-  "mat": "asphalt"
+  "name": "南專科棟",
+  "stage": 3,
+  "mat": "wood_path"
  },
  "20,20": {
   "name": "東南高台（開羅台）",
   "stage": 4,
-  "mat": "asphalt"
+  "mat": "grass"
  }
 }

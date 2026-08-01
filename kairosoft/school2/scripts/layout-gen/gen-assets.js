@@ -146,7 +146,11 @@ const where = E.spotWindows(g);
 const rows = SPOTS.map(s => {
     const w = where.get(s.id);
     const req = s.req.map(gr => (Array.isArray(gr) ? gr : [gr]).map(t => items[t].name).join('／')).join('＋');
-    return `                        <tr><td>${s.name}</td><td>X${E.gameX(w[0])} / Y${E.gameY(w[1])}</td><td>${req}</td><td>${s.bonus || ''}</td></tr>`;
+    /* ★ 分區優先架構下景點數不再一定是 29（towns.js 的 spots.target），未成立的景點
+       `spotWindows()` 查不到窗口 —— 舊版直接 `w[0]` 會 TypeError（湖岸 23/29 時踩到）。
+       未成立的照實標「—（放棄）」，頁面上的表格因此仍然是完整的 29 列。 */
+    const at = w ? `X${E.gameX(w[0])} / Y${E.gameY(w[1])}` : '—（放棄）';
+    return `                        <tr><td>${s.name}</td><td>${at}</td><td>${req}</td><td>${s.bonus || ''}</td></tr>`;
 }).join('\n');
 fs.writeFileSync(path.join(__dirname, 'spots-table-' + townKey + '.html'), rows);
 
