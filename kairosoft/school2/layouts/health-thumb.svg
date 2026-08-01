@@ -120,8 +120,7 @@
 <rect x="146" y="66" width="8" height="8" fill="#c026d3"/>
 <rect x="154" y="66" width="8" height="8" fill="#86efac"/>
 <rect x="162" y="66" width="16" height="8" fill="#fbbf24"/>
-<rect x="178" y="66" width="8" height="8" fill="#9ca3af"/>
-<rect x="186" y="66" width="8" height="8" fill="#86efac"/>
+<rect x="178" y="66" width="16" height="8" fill="#86efac"/>
 <rect x="2" y="74" width="8" height="8" fill="#b45309"/>
 <rect x="10" y="74" width="8" height="8" fill="#fde047"/>
 <rect x="18" y="74" width="8" height="8" fill="#fcd34d"/>

@@ -309,8 +309,7 @@
 <text x="471" y="211.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">鹿</text>
 <rect x="482" y="196" width="22" height="22" fill="#fbbf24" stroke="#ffffff" stroke-width="0.6"/>
 <text x="493" y="211.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">鹿</text>
-<rect x="504" y="196" width="22" height="22" fill="#9ca3af" stroke="#ffffff" stroke-width="0.6"/>
-<text x="515" y="211.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">象</text>
+<rect x="504" y="196" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="526" y="196" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="20" y="218" width="22" height="22" fill="#b45309" stroke="#ffffff" stroke-width="0.6"/>
 <text x="31" y="233.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">農</text>
@@ -894,7 +893,7 @@
 <rect x="284" y="606" width="14" height="14" fill="#9ca3af" stroke="#94a3b8" stroke-width="0.6"/>
 <text x="303" y="617" font-size="11" fill="#334155">水泥地 23 格</text>
 <rect x="416" y="606" width="14" height="14" fill="#86efac" stroke="#94a3b8" stroke-width="0.6"/>
-<text x="435" y="617" font-size="11" fill="#334155">草地 68 格</text>
+<text x="435" y="617" font-size="11" fill="#334155">草地 69 格</text>
 <text x="20" y="637" font-size="10" fill="#64748b">四種鋪面中只有草地是景點材料；道路／走廊／水泥地對景點判定可互換。</text>
 <text x="20" y="651" font-size="10" fill="#64748b">本圖依道具加成（抹布→走廊、滑板→道路與草地）與美觀分配，預算緊可全鋪最便宜的。</text>
 </svg>
