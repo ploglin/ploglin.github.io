@@ -72,7 +72,7 @@ zone(['1,0'], {
 zone(['1,5'], { name: '北高地花園', mat: 'grass', green: 'sakura', fac: [] });
 zone(['6,0'], {
     name: '池畔公園', mat: 'grass', green: 'grass', decor: true, stage: 2,
-    fac: ['well', 'toilet', 'bench', 'water', 'statue_br', 'farm', 'chicken', 'rabbit']
+    fac: ['well', 'toilet', 'bench', 'water', 'statue_br', 'farm', 'chicken']
 });
 zone(['6,5'], { name: '池畔公園', mat: 'grass', green: 'grass', decor: true, stage: 2, fac: ['toilet'] });
 
@@ -231,7 +231,30 @@ const PREPLACE = [
 /* ── 2) 景點骨架（鋪路 → 教室與行政卡位 → 街廓填景點）────────────────────
    排序鍵是字典序「分區完整性 → 要動的格數 → 階段偏好」，所以景點材料會先往
    語意相符的分區走；真的排不進去時會印「！分區語意妥協」，照實記錄。 */
-const res = D.build(B.spotOrder(), { zones: ZONES, preplace: PREPLACE });
+const res = D.build(B.spotOrder(), {
+    zones: ZONES, preplace: PREPLACE,
+    /* ★ 保住 3 棟卡在路網格線上的原生農舍（本鎮唯一的「地形整理」動作）。
+       `design2.PAVEABLE` 為了讓幹道接得起來，把小雞／小農場／田地／百葉箱也列成
+       「可被道路覆蓋」——健康鎮剛好有 3 棟正好壓在格線上，於是 layRoads 一鋪就拆掉：
+         小農場 X11/Y11（r9,c14）與 小農場 X12/Y11（r10,c14）壓在 ST c14 上
+         養雞小屋 X12/Y13（r10,c12）壓在 AV r10 上
+       `prepare()` 跑在 layRoads **之後**、parcels 之前，所以在這裡把 3 格寫回原本的
+       型別，就等於「這 3 格不鋪路」。實測三棟全部保得住、而且棟數還多 2 棟
+       （163 → 165：3 棟原生回來、1 隻放不下的養兔小屋讓出位置）。
+
+       代價寫在頁面上：c14 縱街被截成 r1–8／r11–24 兩段、AV r10 也被 c12 截開，
+       於是**死路支線從 15% 升到 20%**。那 13 格多出來的支線幾乎都是這 3 棟的門面
+       ——門面是動線的目的地不是缺陷，而路網並沒有斷（0 走不到、0 孤立格：
+       北半部改由 c19 縱街與 r5 大道接回）。
+       「既有校舍原則上保留」是本站的原則，拆遷只留給「怎麼蓋都走不到」的建築，
+       所以這裡選擇保留，不選 15% 那個數字。 */
+    prepare(g) {
+        [[9, 14, 'farm'], [10, 14, 'farm'], [10, 12, 'chicken']].forEach(([r, c, t]) => {
+            if (g[r][c].type === t) throw new Error('原生農舍沒有被鋪掉，這段可以移除：' + r + ',' + c);
+            g[r][c] = { type: t, elevation: 1 };
+        });
+    }
+});
 const g = res.g;
 
 /* 2b) 街廓排不下的景點 → 滑動 4×4 窗口補位（可跨街廓，補「怪談」「熱情」這種
