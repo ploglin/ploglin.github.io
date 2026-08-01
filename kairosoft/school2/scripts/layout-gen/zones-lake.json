@@ -10,14 +10,14 @@
   "mat": "concrete"
  },
  "0,10": {
-  "name": "高原動物園",
+  "name": "高原教學棟",
   "stage": 4,
-  "mat": "grass"
+  "mat": "wood_path"
  },
  "0,15": {
-  "name": "高原展望台",
+  "name": "高原觀星棟",
   "stage": null,
-  "mat": "grass"
+  "mat": "wood_path"
  },
  "0,20": {
   "name": "東北湖岸",
@@ -35,12 +35,12 @@
   "mat": "grass"
  },
  "5,5": {
-  "name": "北岸農牧帶",
+  "name": "北岸教學棟",
   "stage": 2,
-  "mat": "grass"
+  "mat": "wood_path"
  },
  "5,10": {
-  "name": "北岸農牧帶",
+  "name": "北岸動物園",
   "stage": 2,
   "mat": "grass"
  },
