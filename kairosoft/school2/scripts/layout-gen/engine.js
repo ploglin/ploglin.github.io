@@ -84,31 +84,55 @@ function computeReachability(g) {
 }
 
 /* 回傳 { count, blocks:[{type,cells}] } — 被包圍（無法從校門走到）的建築 */
+/* 被包圍（走不到）的建築。
+   兩個曾經漏掉、都會讓「0 棟被包圍」變成量錯而不是設計成果的細節：
+
+   ㈠ 出入口要「可通行 ＋ 從校門走得到 ＋ **真的踏得進這一格**」。第三個條件原本沒驗，
+      於是隔著 2 層懸崖的走廊也被當成門面 —— 學生跨不過落差，實機進不去。
+   ㈡ **每一棟各自要有門**。原本把同型別相鄰的格子全部 flood fill 成「一棟」，
+      所以兩間並排的 2×2 教室只要其中一間有門就一起過關，另一間其實沒有出入口。
+      這裡改成先把同型別區塊按 w×h 切回「一棟一棟」（與 verify 的 footprint 檢查同一把尺），
+      再逐棟判定。切不齊的情況交給 footprint 檢查報錯，這裡按剩餘格盡力切。 */
 function blockedBuildings(g) {
     const reach = computeReachability(g);
     const seen = Array.from({ length: gridRows }, () => Array(gridCols).fill(false));
     const blocks = [];
+    const hasDoor = cells => cells.some(([cr, cc]) =>
+        [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dr, dc]) => {
+            const nr = cr + dr, nc = cc + dc;
+            if (nr < 0 || nr >= gridRows || nc < 0 || nc >= gridCols) return false;
+            const nt = g[nr][nc].type;
+            if (nt === g[cr][cc].type) return false;
+            return PASSABLE.has(nt) && (!reach || reach[nr][nc] >= 0) && canStep(g, cr, cc, nr, nc);
+        }));
     for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++) {
         if (seen[r][c] || !isBuildingType(g[r][c].type)) continue;
         const type = g[r][c].type;
-        const cells = [], stack = [[r, c]];
+        const region = [], stack = [[r, c]];
         seen[r][c] = true;
-        let hasAccess = false;
         while (stack.length) {
             const [cr, cc] = stack.pop();
-            cells.push([cr, cc]);
+            region.push([cr, cc]);
             for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
                 const nr = cr + dr, nc = cc + dc;
-                if (nr < 0 || nr >= gridRows || nc < 0 || nc >= gridCols) continue;
-                const nt = g[nr][nc].type;
-                if (nt === type && !seen[nr][nc]) { seen[nr][nc] = true; stack.push([nr, nc]); }
-                // 出入口要「可通行 ＋ 從校門走得到 ＋ 真的踏得進這一格」。
-                // 第三個條件原本漏掉：隔著 2 層懸崖的走廊雖然是可達的通行格，
-                // 學生仍然跨不過落差進不了門（湖心島曾因此出現「驗證通過、實機走不到」的建築）。
-                else if (PASSABLE.has(nt) && (!reach || reach[nr][nc] >= 0) && canStep(g, cr, cc, nr, nc)) hasAccess = true;
+                if (nr < 0 || nr >= gridRows || nc < 0 || nc >= gridCols || seen[nr][nc]) continue;
+                if (g[nr][nc].type === type) { seen[nr][nc] = true; stack.push([nr, nc]); }
             }
         }
-        if (!hasAccess) blocks.push({ type, cells });
+        // 把區塊切成一棟一棟（w×h），逐棟看有沒有門
+        const w = (items[type] && items[type].w) || 1, h = (items[type] && items[type].h) || 1;
+        const own = new Set(region.map(([cr, cc]) => cr + ',' + cc));
+        const used = new Set();
+        for (const [cr, cc] of region.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1])) {
+            if (used.has(cr + ',' + cc)) continue;
+            const unit = [];
+            for (let dr = 0; dr < h; dr++) for (let dc = 0; dc < w; dc++) {
+                const k = (cr + dr) + ',' + (cc + dc);
+                if (own.has(k) && !used.has(k)) unit.push([cr + dr, cc + dc]);
+            }
+            unit.forEach(([ur, uc]) => used.add(ur + ',' + uc));
+            if (unit.length && !hasDoor(unit)) blocks.push({ type, cells: unit });
+        }
     }
     return { count: blocks.length, blocks };
 }
