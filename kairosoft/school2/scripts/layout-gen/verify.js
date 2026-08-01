@@ -112,22 +112,39 @@ for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++)
         badElevCarve.push('X' + E.gameX(r) + '/Y' + E.gameY(c));
 check('鑿開的水道保持原高度', badElevCarve.length === 0, badElevCarve.join('、'));
 
-/* 8) 既有建築：列出被拆掉的（拆遷要能說得出理由） */
+/* 8) 既有建築：列出被拆掉的（拆遷要能說得出理由）
+      ★ 同型別相鄰要逐棟切開再比對。原本把相鄰同型別 flood fill 成一整塊，
+        只要塊裡還有一格是那個型別就算「沒拆」—— 兩間並排的原生豬舍拆掉一間
+        會完全不被報告，頁面上的「拆除 N 棟」因此可能少算（冬郵踩過）。 */
 const demolished = [];
 const seen = Array.from({ length: gridRows }, () => Array(gridCols).fill(false));
 for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++) {
     if (seen[r][c] || !E.isBuildingType(base[r][c].type)) continue;
-    const t = base[r][c].type, stack = [[r, c]], cells = [];
+    const t = base[r][c].type, stack = [[r, c]], region = [];
     seen[r][c] = true;
     while (stack.length) {
-        const [cr, cc] = stack.pop(); cells.push([cr, cc]);
+        const [cr, cc] = stack.pop(); region.push([cr, cc]);
         for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
             const nr = cr + dr, nc = cc + dc;
             if (nr < 0 || nr >= gridRows || nc < 0 || nc >= gridCols || seen[nr][nc]) continue;
             if (base[nr][nc].type === t) { seen[nr][nc] = true; stack.push([nr, nc]); }
         }
     }
-    if (!cells.some(([cr, cc]) => g[cr][cc].type === t)) demolished.push(items[t].name + '@X' + E.gameX(cells[0][0]) + '/Y' + E.gameY(cells[0][1]));
+    // 按 w×h 切回一棟一棟，逐棟看那一棟是不是整棟消失了
+    const w = items[t].w || 1, h = items[t].h || 1;
+    const own = new Set(region.map(([cr, cc]) => cr + ',' + cc));
+    const used = new Set();
+    for (const [cr, cc] of region.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1])) {
+        if (used.has(cr + ',' + cc)) continue;
+        const unit = [];
+        for (let dr = 0; dr < h; dr++) for (let dc = 0; dc < w; dc++) {
+            const k = (cr + dr) + ',' + (cc + dc);
+            if (own.has(k) && !used.has(k)) unit.push([cr + dr, cc + dc]);
+        }
+        unit.forEach(([ur, uc]) => used.add(ur + ',' + uc));
+        if (unit.length && !unit.some(([ur, uc]) => g[ur][uc].type === t))
+            demolished.push(items[t].name + '@X' + E.gameX(unit[0][0]) + '/Y' + E.gameY(unit[0][1]));
+    }
 }
 console.log('  INFO  拆除的既有建築：' + (demolished.join('、') || '（無）'));
 
