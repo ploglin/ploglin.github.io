@@ -64,9 +64,14 @@
             flex-shrink: 0; /* main 是直向 flex:放大後高度超過視窗時不能被壓縮,否則上緣捲不到 */
             overflow: auto;
             overscroll-behavior: contain; /* 雙指平移到邊界時不連鎖成整頁捲動/下拉重整 */
-            border-radius: 8px;
+            border-radius: 2px;
             background-color: #ffffff;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            /* 8bit：全頁唯一的 Tier 1 階梯陰影（畫布本體、貼在平底上、不是浮層）。
+               幾何與顏色分兩條宣告：--px-edge 走 color-mix，若不支援只掉 border-color
+               （退回 #9ca3af，即 .game-grid 現有框線色），2px 的框本身不會消失。 */
+            border: 2px solid #9ca3af;
+            border-color: var(--px-edge);
+            box-shadow: 3px 3px 0 0 var(--px-drop);
             width: fit-content;
             max-width: 100%;
             max-height: calc(100vh - 80px);
@@ -114,12 +119,15 @@
             cursor: crosshair;
         }
 
+        /* 8bit：地圖格是「內容」→ 方角、無陰影。原本的 `0 0 10px` 光暈刪掉不替代：
+           放大 1.15 倍 ＋ opacity 已經足夠指出「游標在這一格」，而任何硬陰影疊在
+           scale 過的格子上會讀成同一格的重影，並且與 .elevation-2/3 的褐色內陰影同語系
+           （在高地區塊會被誤讀成地形），菱形視角下還會是全畫面唯一斜投影的東西。 */
         .tile:hover {
             opacity: 0.9;
             transform: scale(1.15);
             z-index: 30;
-            box-shadow: 0 0 10px rgba(0,0,0,0.3);
-            border-radius: 4px;
+            border-radius: 0;
         }
 
         .elevation-2 {
@@ -186,7 +194,7 @@
             min-width: 18px; height: 18px;
             padding: 0 3px;
             border: 1px solid #fff;
-            border-radius: 4px;
+            border-radius: 2px;
             background: #86198f;
             color: #fff;
             font-size: 11px;
@@ -219,9 +227,12 @@
             cursor: pointer;
             transition: all 0.2s;
         }
+        /* 8bit：選中態是這面板上「該浮起來的那一個」（其餘 78 張卡改描邊盒，見 §8bit 形狀層）。
+           translateY 改成 none：4 欄網格裡讓一張卡上下錯位會看起來像沒對齊，
+           「浮起」改由 3px 階梯陰影表達 —— 那條 box-shadow 在 §8bit 形狀層 §5，
+           不能寫在這裡（本規則是 (0,2,0)，會被同分且排在後面的 `:root .shadow-sm` 蓋成 none）。 */
         .palette-item.active {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transform: none;
             border-color: #3b82f6 !important;
             border-width: 2px;
             background-color: #eff6ff;
@@ -308,7 +319,7 @@
             position: absolute;
             inset: 1px;
             border: 2px dotted #0ea5e9;
-            border-radius: 4px;
+            border-radius: 0;
             background: rgba(14, 165, 233, 0.12);
             pointer-events: none;
             z-index: 5;
@@ -320,7 +331,7 @@
             position: absolute;
             inset: 1px;
             border: 2px dashed #2563eb;
-            border-radius: 4px;
+            border-radius: 0;
             background: rgba(59, 130, 246, 0.18);
             pointer-events: none;
             z-index: 5;
@@ -338,7 +349,7 @@
             transform: translateX(-50%);
             background-color: rgba(255, 255, 255, 0.98);
             border: 1px solid #e5e7eb;
-            border-radius: 8px;
+            border-radius: 2px;
             padding: 8px 12px;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
             z-index: 50;
@@ -376,7 +387,7 @@
             width: 268px;
             max-height: min(70vh, 460px);
             overflow-y: auto;
-            border-radius: 10px;
+            border-radius: 2px;
             padding: 6px;
             box-shadow: 0 14px 28px -8px rgba(0, 0, 0, .3);
             z-index: 55;
@@ -388,7 +399,7 @@
             width: 100%;
             text-align: left;
             padding: 7px 8px;
-            border-radius: 7px;
+            border-radius: 2px;
             font-size: 12px;
             line-height: 1.35;
         }
@@ -399,7 +410,7 @@
         /* 景點進度條：常駐摘要的「一眼」編碼（數字負責精確）。
            軌道用已映射的 bg-gray-200；填色是介面 chrome（不是地圖內容），
            所以兩套深色區塊都補了 .prog-fill 的深色版。 */
-        .prog { height: 4px; border-radius: 2px; overflow: hidden; }
+        .prog { height: 4px; border-radius: 0; overflow: hidden; }
         .prog-fill { display: block; height: 100%; transition: width .25s ease; background: #16a34a; }
 
         /* 「差一項」晶片：常駐摘要裡的主要行動 → 做成真的可點晶片，
@@ -471,12 +482,141 @@
         #diffBtn.diff-on {
             background: #eef2ff;
             border: 1px solid #c7d2fe;
-            border-radius: 5px;
+            border-radius: 2px;
             padding: 3px 6px;
         }
         @media (pointer: coarse) {
             #originBtn, #diffBtn { min-height: 44px; }
         }
+
+        /* ==========================================================
+           8bit 形狀層（與 28 個攻略頁對齊）
+           攻略頁走 assets/pixel.css（token）＋ assets/guide.css（元件換皮）；
+           sim 不載 shell.css 也不引入 pixel.css，所以在這裡把**同一套形狀語言**
+           落地。切法沿用 pixel.css 的「HUD 化，不是貼皮」：只動框（圓角／邊寬／
+           陰影），不動任何色相、字級、行高，更不動地圖格顏色（那是 items[].color，
+           與 db/data.js 逐列比對）。
+
+           ── --px-edge / --px-drop 為什麼在這裡自己宣告 ──────────────────
+           pixel.css 的定義是 color-mix(in srgb, var(--ink) 70%/55%, var(--card))，
+           而 --ink / --card 來自 shell.css —— sim 不載它 → 那兩個 token 在 sim 會是
+           guaranteed-invalid。所以這裡沿用**同一條 70%／55% 公式**，只把色來源換成
+           sim 自己既有的字面：淺色用 body 的 #333 與 .map-container 的 #fff，
+           深色用 --sd-ink / --sd-card（見檔尾深色覆寫層，兩套各一份）。
+           → 站上仍然只有兩份色票（shell.css 的深色重寫、sim 的 --sd-*），沒有第三份。
+
+           ── 為什麼幾乎每條都掛 :root 前綴 ────────────────────────────────
+           Tailwind Play CDN 產生的 <style> 是**執行時 append 到 head**，實測排在本頁
+           <style> 之後（本頁 34.5KB → Tailwind 15.4KB → shell.js 的 BAR_CSS 4.3KB）。
+           同特異度時後者勝 → 覆寫 Tailwind utility 必須靠特異度，不能靠順序。
+           `:root .rounded` = (0,2,0) > `.rounded` = (0,1,0)。
+
+           ── 刻意不動（每條都有理由，不要自作主張加回來）──────────────────
+           1. `.game-bar` 與 `.gb-*` 全部維持圓角。那條列是 Shell.mountBar() 注入的
+              **全站外殼**，使用者正是點它的「模擬器」分頁進來的；同一顆鈕在放手後換形狀
+              是導覽最不該有的不一致。pixel.css:118–120 已明文把 site-header/game-bar/
+              footer/.pagenav 劃在界外，sim 不是例外、只是同一款遊戲的另一頁。
+              8bit 要不要吃掉外殼，是 29 款一起改 BAR_CSS 的一次決定。
+           2. `.axis-label` 一個字不動，**不換像素字型**。Silkscreen 的像素格 =
+              font-size ÷ 8，只有 8/16/24px 是整數；`--axis` 在 fitGrid() 裡寫死 22
+              → 字級恆為 9.9px，實測（3 倍 nearest-neighbour 放大）有次像素彩邊、
+              6 讀成 5；改 10/11px 同樣不是 8 的倍數，16px 則「26」的 advance 24px
+              溢出 22px 格寬。加上菱形視角有 rotate(45deg) scaleY(2)（像素字非等比
+              縮放必爛）、exportImage() 的 canvas 是 bold 10px sans-serif（螢幕改了
+              PNG 不會跟著改）。這是全站精度要求最高的讀值，不拿它換風格。
+           3. `.found-num` 的 `0 1px 2px`（HUD 徽章，18px 見方、疊在任意格色上，
+              分離靠白描邊＋這層極小陰影）、`.elevation-2/-3` 的 inset blur（那是**地形**，
+              屬地圖內容）、以及 updateTileVisuals() 寫的 inline boxShadow（合併建築
+              填格縫用的，是地圖內容）—— 三者都不可動。**不要**用 `.tile{box-shadow}`
+              這種選擇器一併掃掉第三項。
+           4. `.pop` / `#loadPop` / `#hdrExtra` / `.spot-tooltip` 的模糊陰影**留著**。
+              它們是蓋在一張 26×24 彩色地圖上的浮層；零模糊位移塊是給「貼在平底上的
+              盒子」用的，放在浮層上邊界會跟底下內容糊在一起（同 guide.css §13h 對
+              .pagenav-menu 的裁決）。這些元素只降圓角，不動陰影。
+           5. `.rounded-full` 不全域改：6 處裡有 4 處是畫在地圖格上的景點指示圓點與
+              速查表圖例點 —— 那是資料標記/圖例，8px 的圓點方化會與方形格線混在一起。
+              只有兩個 HUD 膠囊改方角，而且必須用 **id** 選擇器（showToast() 會整串
+              重寫 className，class 覆寫會被沖掉）。
+           ========================================================== */
+
+        /* 邊色與階梯陰影色：公式同 pixel.css §2，色來源換成 sim 自己的 */
+        :root {
+            --px-edge: color-mix(in srgb, #333 70%, #fff);
+            --px-drop: color-mix(in srgb, #333 55%, #fff);
+        }
+
+        /* 1. 直角：Tailwind 的三個 radius utility ＋ 兩個 HUD 膠囊 */
+        :root .rounded,
+        :root .rounded-lg,
+        :root .rounded-xl { border-radius: 2px; }
+        #coordHint, #sysMsgToast { border-radius: 2px; }
+
+        /* 2. 陰影：全部齊平，只留 .map-container 與 .palette-item.active 兩個 Tier 1
+              階梯陰影（guide.css 定的 3px）。
+              `.shadow-sm` 在原始碼是 12 處，但實際套到 DOM 上約 110 個節點
+              （78 張建築卡 ＋ 每格景點指示圓點 ＋ 最近用晶片 ＋ 頁首 ＋ 分段控制作用中鈕
+              ＋ #introTip）→ 給偏移陰影會變成 78 個「L 形括號」，讀起來像沒對齊。
+              分段控制的「作用中」線索不靠陰影也還在：軌道是 bg-gray-200、鈕是 bg-white
+              （深色下兩者也各自映射過，見檔尾註解）。
+              滿版的頁首不給偏移陰影：x 位移會直接跑出視窗，只剩下緣一條，
+              與 2px border-bottom 疊成「2px 深＋1px 淺」的三像素雙線。 */
+        :root .shadow-sm,
+        :root .shadow-lg,
+        :root .shadow-2xl { box-shadow: none; }
+        /* 建築色票方塊：內斜面改成經典像素的「上亮下暗」。用 alpha 而非 token，
+           因為它要疊在 78 種 items[].color 上（alpha 不算新增色票）。 */
+        :root .shadow-inner {
+            box-shadow: inset 0 2px 0 0 rgba(255, 255, 255, .18), inset 0 -2px 0 0 rgba(0, 0, 0, .25);
+        }
+
+        /* 3. 結構性邊界升 2px 硬邊（貼在平底上的表面，不是浮層）。
+              aside 的 `shadow-[-5px_0_15px_rgba(0,0,0,0.02)]` 一併移除：alpha 0.02
+              本來就幾乎看不見，分隔交給硬邊。 */
+        :root header { border-bottom-width: 2px; }
+        #appBody aside { box-shadow: none; border-left-width: 2px; }
+        /* 模態框：分離交給 2px 硬邊，不給階梯陰影 —— pixel.css 的對比數學是對 --card
+           算的，不是對 bg-black/40 遮幕算的（實測淺色 --px-edge 對遮幕只有 1.59:1，
+           深色卻有 8.9:1，同一條宣告在兩個主題下一個看不見、一個太搶）。 */
+        #reportModal > div,
+        #askModal > div { border: 2px solid #9ca3af; border-color: var(--px-edge); }
+        /* #toolHint 失去 shadow-lg 之後，靠硬邊與底下的地圖分離（它是白底浮卡，
+           不像 #coordHint/#sysMsgToast 是深底白字的高對比膠囊） */
+        #toolHint { border-width: 2px; }
+
+        /* 4. 按下下沉一格（pixel.css §5c 的手感，用選擇器落地——sim 的鈕大半是 JS
+              產生的字串，套不到 .px-press class）。steps(2, end) 讓位移「跳」而不是
+              「滑」：8bit 沒有次像素補間，而且比 ease 便宜。
+              刻意**不**套到 .tile：連續塗畫時每格都下沉會與筆刷打架。 */
+        :root header button,
+        :root #hdrExtra button,
+        :root .pop-row,
+        :root #appBody aside button {
+            transition: transform .08s steps(2, end), box-shadow .08s steps(2, end);
+        }
+        :root header button:active,
+        :root #hdrExtra button:active,
+        :root .pop-row:active,
+        :root #appBody aside button:active { transform: translate(1px, 1px); }
+        /* 位移是「動」（會誘發不適），陰影深淺是「狀態」（是資訊）→ 只關位移 */
+        @media (prefers-reduced-motion: reduce) {
+            :root header button:active,
+            :root #hdrExtra button:active,
+            :root .pop-row:active,
+            :root #appBody aside button:active { transform: none; }
+        }
+
+        /* 5. 建築面板：78 張卡改「描邊盒」而不是「浮起卡」。
+              原本唯一把 bg-white 的卡與同樣 bg-white 的 aside 分開的東西就是 shadow-sm
+              （所以面板看起來霧霧的）→ 改用它已經有的 border 位置，把 border-transparent
+              換成實線。8bit HUD 是描邊盒，不是浮起卡。
+              `var(--sd-line, #e5e7eb)` 一條宣告兼顧兩個主題：淺色時 --sd-line 未定義
+              → 退到 gray-200（與 .recent-chip 的邊同色）；深色時取 --sd-line。
+              78 個容器用最輕的邊（guide.css:807–810：一頁 8–15 個以上的容器要用軟邊，
+              全上滿硬邊會變成黑格網）。
+              選中態的 3px 階梯陰影必須寫在這裡：`.palette-item.active` 是 (0,2,0)，
+              與上面的 `:root .shadow-sm` 同分而且排在前面，會被蓋成 none。 */
+        :root .palette-item { border-color: var(--sd-line, #e5e7eb); }
+        :root .palette-item.active { box-shadow: 3px 3px 0 0 var(--px-drop); }
 
         /* 窄螢幕（手機/直式平板）：地圖在上、建築面板在下 */
         @media (max-width: 768px) {
@@ -485,7 +625,7 @@
                 width: 100%;
                 max-height: 42vh;
                 border-left: none;
-                border-top: 1px solid #e5e7eb;
+                border-top: 2px solid #e5e7eb;
             }
             /* 浮動資訊卡在手機沒有位置（會與 coordHint 撞同一條線）→
                同一份內容搬進建築面板的標題列（見 #thToggle / #thBody），不是刪掉。 */
@@ -513,7 +653,7 @@
                 padding: 10px;
                 background: #ffffff;
                 border: 1px solid #e5e7eb;
-                border-radius: 10px;
+                border-radius: 2px;
                 box-shadow: 0 14px 28px -8px rgba(0, 0, 0, .3);
                 z-index: 55;
             }
@@ -533,7 +673,7 @@
 
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 0; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
         /* ==========================================================
@@ -577,6 +717,12 @@
                 --sd-red-hover: #3a1619;
                 --sd-active-bg: #1b3355;
                 --sd-active-line: #60a5fa;
+                /* 8bit 邊色／階梯陰影色：公式同 pixel.css §2 的 70%／55%，色來源換成 sim
+                   自己的 --sd-ink / --sd-card。深色的「陰影」因此是偏亮的位移塊
+                   （offset outline）而不是暗塊 —— --sd-card 對 --sd-bg 只有 1.11:1，
+                   往下壓到純黑也看不見，變暗的投影在這套深色票裡物理上不存在。 */
+                --px-edge: color-mix(in srgb, var(--sd-ink) 70%, var(--sd-card));
+                --px-drop: color-mix(in srgb, var(--sd-ink) 55%, var(--sd-card));
             }
             /* utility 重映射：底色 */
             :root:not([data-theme="light"]) .bg-white { background-color:var(--sd-card) }
@@ -696,6 +842,12 @@
             --sd-red-hover: #3a1619;
             --sd-active-bg: #1b3355;
             --sd-active-line: #60a5fa;
+            /* 8bit 邊色／階梯陰影色：公式同 pixel.css §2 的 70%／55%，色來源換成 sim
+               自己的 --sd-ink / --sd-card。深色的「陰影」因此是偏亮的位移塊
+               （offset outline）而不是暗塊 —— --sd-card 對 --sd-bg 只有 1.11:1，
+               往下壓到純黑也看不見，變暗的投影在這套深色票裡物理上不存在。 */
+            --px-edge: color-mix(in srgb, var(--sd-ink) 70%, var(--sd-card));
+            --px-drop: color-mix(in srgb, var(--sd-ink) 55%, var(--sd-card));
         }
         /* utility 重映射：底色 */
         :root[data-theme="dark"] .bg-white { background-color:var(--sd-card) }

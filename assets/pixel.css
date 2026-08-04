@@ -99,8 +99,20 @@
    HUD 的另一個慣用語：偏移的實色描邊塊（offset outline）。它是可見的，
    而「可見」才是驗收條件。
 
-   兩行同名宣告＝color-mix 不支援時的 fallback：舊瀏覽器丟掉第二行、留第一行。
-   fallback 也只用既有 token（--ink-soft / --muted），不引入任何色值字面。
+   ── 兩行同名宣告**不是** fallback（BV3 審查訂正，別再依賴它）────────────
+   原本這裡寫「舊瀏覽器丟掉第二行、留第一行」—— 那是錯的。自訂屬性的值以
+   `<declaration-value>` 解析，任何 token 串都合法 → `color-mix(...)` 不會在解析期
+   被丟掉，第二行永遠勝出。不支援 color-mix 時它是在**代換期**（用到 var() 的那個
+   真屬性上）才失效，而失效的後果是整條 shorthand invalid-at-computed-value-time：
+   `border: 2px solid var(--px-edge)` → `border-style: none`（框整條消失，不是變色），
+   `box-shadow: … var(--px-drop)` → `none`。
+   要真的有保險，必須在**消費端**把幾何與顏色拆成兩條宣告：
+       border: 2px solid <既有字面>;   /* 幾何 ＋ 保底色 */
+       border-color: var(--px-edge);   /* 只有這一條會失效 */
+   （sim/index.html 的 §8bit 形狀層對 .map-container 與兩個模態框就是這樣寫的。）
+   實務衝擊有限——shell.css:92/146/192 早就讓全站以 color-mix 為基線——但**結構性
+   邊界**（框、分隔線）不要只靠單條 shorthand 押上去。
+   下面兩行保留只是無害的歷史遺跡（值都取既有 token，不引入色值字面）。
 --------------------------------------------------------------------------- */
 :root {
     --px-edge: var(--ink-soft);
