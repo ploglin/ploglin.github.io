@@ -61,6 +61,7 @@
             position: relative;
             flex-shrink: 0; /* main 是直向 flex:放大後高度超過視窗時不能被壓縮,否則上緣捲不到 */
             overflow: auto;
+            overscroll-behavior: contain; /* 雙指平移到邊界時不連鎖成整頁捲動/下拉重整 */
             border-radius: 8px;
             background-color: #ffffff;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
@@ -261,6 +262,22 @@
         }
         body.diamond .spot-tooltip {
             transform: translateX(-50%) rotate(45deg) scaleY(2);
+        }
+
+        /* 觸控裝置：縮放列是放大後「一定找得到」的逃生口，命中區要滿 44px（視覺方塊維持小） */
+        @media (pointer: coarse) {
+            #zoomOutBtn, #zoomInBtn, #zoomResetBtn {
+                position: relative;
+                min-width: 28px;
+                min-height: 28px;
+            }
+            #zoomOutBtn::after, #zoomInBtn::after, #zoomResetBtn::after {
+                content: '';
+                position: absolute;
+                top: 50%; left: 50%;
+                width: 44px; height: 44px;
+                transform: translate(-50%, -50%);
+            }
         }
 
         /* 矩形工具預覽：靛藍框 */
@@ -597,7 +614,7 @@
                 <button id="rectBtn" title="矩形填滿模式（也可按住 Shift 拖曳）" class="text-xs font-bold bg-gray-100 text-gray-600 px-2.5 py-1.5 rounded hover:bg-gray-200 transition border border-gray-300">▭ 矩形</button>
                 <button id="clearBtn" class="text-xs font-bold bg-red-50 text-red-600 px-2.5 py-1.5 rounded hover:bg-red-100 transition border border-red-200">清空</button>
                 <button id="diamondBtn" title="切換菱形（等角）視角" class="text-xs font-bold bg-gray-100 text-gray-600 px-2.5 py-1.5 rounded hover:bg-gray-200 transition border border-gray-300">◆ 視角</button>
-                <div class="flex items-center gap-0.5 border border-gray-300 rounded bg-gray-100 px-1 py-1" title="縮放地圖（Ctrl+滾輪以游標為中心縮放；放大後用滾輪捲動或按住滑鼠中鍵拖曳平移）">
+                <div class="flex items-center gap-0.5 border border-gray-300 rounded bg-gray-100 px-1 py-1" title="縮放地圖 50%–300%（Ctrl+滾輪以游標為中心縮放；放大後用滾輪捲動或按住滑鼠中鍵拖曳平移。觸控：雙指拖曳平移、捏合縮放）">
                     <button id="zoomOutBtn" class="w-5 h-5 leading-none text-sm font-bold text-gray-600 hover:bg-gray-200 rounded">−</button>
                     <button id="zoomResetBtn" class="text-[10px] font-bold text-gray-500 hover:bg-gray-200 rounded px-1" title="回到 100%">100%</button>
                     <button id="zoomInBtn" class="w-5 h-5 leading-none text-sm font-bold text-gray-600 hover:bg-gray-200 rounded">＋</button>
@@ -921,6 +938,9 @@
         // 觸控狀態：單點=畫一格、拖曳=連續畫、長按不動=吸管
         let touchState = null;
         let longPressTimer = null;
+        // 雙指手勢狀態（拖曳=平移、捏合=縮放）；suppressTouchDraw 在手指全部離開前禁止再進入繪製
+        let gesture = null;
+        let suppressTouchDraw = false;
         
         // Grid Dimensions
         // 地圖尺寸依城鎮而異（玩家實機確認；遊戲座標一律從 [2,2] 起算，格數＝座標上限−1）：
@@ -1059,7 +1079,8 @@
         function mapScroller() {
             return document.body.classList.contains('diamond') ? document.querySelector('main') : document.getElementById('mapContainer');
         }
-        function setZoom(z, anchor) {
+        // transient=true：手勢進行中的即時縮放，不寫 localStorage（捏合每帧同步寫入會頓）
+        function setZoom(z, anchor, transient) {
             z = Math.min(3, Math.max(0.5, z));
             const cont = mapScroller();
             // 以錨點(預設容器中心)為中心縮放:記住錨點在內容中的比例,縮放後把捲動位置補回去
@@ -1072,7 +1093,7 @@
                 ay = (cont.scrollTop + py) / Math.max(1, cont.scrollHeight);
             }
             zoomLevel = z;
-            savePrefs({ zoom: +z.toFixed(2) });
+            if (!transient) savePrefs({ zoom: +z.toFixed(2) });
             fitGrid();
             if (cont) {
                 cont.scrollLeft = ax * cont.scrollWidth - px;
@@ -1080,6 +1101,12 @@
             }
             const label = document.getElementById('zoomResetBtn');
             if (label) label.innerText = Math.round(zoomLevel * 100) + '%';
+            // 觸控裝置：不知道能雙指平移的人會陷在放大後的視野裡，第一次放大時提示一次
+            if (!transient && zoomLevel > 1 && !prefs.panHint &&
+                window.matchMedia && matchMedia('(pointer: coarse)').matches) {
+                savePrefs({ panHint: 1 });
+                showSysMsg('雙指拖曳可平移地圖、捏合可縮放');
+            }
         }
 
         // 體檢報告用的最近一次計算結果
@@ -1105,6 +1132,8 @@
         function commitRect() {
             const r1 = Math.min(rectStart.r, rectEnd.r), r2 = Math.max(rectStart.r, rectEnd.r);
             const c1 = Math.min(rectStart.c, rectEnd.c), c2 = Math.max(rectStart.c, rectEnd.c);
+            // 與 applyTool 同一個理由：矩形填滿只蓋到多格建築的一部分也會留下殘格
+            const razed = razeUnder(r1, c1, c2 - c1 + 1, r2 - r1 + 1);
             for (let r = r1; r <= r2; r++) {
                 for (let c = c1; c <= c2; c++) {
                     gridData[r][c] = { type: currentTool, elevation: currentElevation };
@@ -1115,6 +1144,17 @@
                 for (let c = Math.max(0, c1 - 1); c <= Math.min(gridCols - 1, c2 + 1); c++) {
                     updateTileVisuals(r, c);
                 }
+            }
+            if (razed) {
+                for (const [rr, cc] of razed.cells) {
+                    for (let dr = -1; dr <= 1; dr++) {
+                        for (let dc = -1; dc <= 1; dc++) {
+                            const nr = rr + dr, nc = cc + dc;
+                            if (nr >= 0 && nr < gridRows && nc >= 0 && nc < gridCols) updateTileVisuals(nr, nc);
+                        }
+                    }
+                }
+                showSysMsg(`已拆除 ${razed.label}`);
             }
             rectStart = rectEnd = null;
             document.querySelectorAll('.tile.rect-preview').forEach(t => t.classList.remove('rect-preview'));
@@ -1364,7 +1404,13 @@
                 const shared = decodeMap(shareMatch[1]);
                 if (shared) {
                     restored = importGridData(shared);
-                    if (restored) showSysMsg('已載入分享的地圖');
+                    if (restored) {
+                        showSysMsg('已載入分享的地圖');
+                        // 成功載入後就把 #m= 清掉：hash 的優先序高於 autosave，留著它
+                        // 會讓使用者接下來的編輯在下一次重新整理時被分享碼整份蓋掉（無警告、無 undo）。
+                        // 解碼失敗時刻意不清，讓使用者還看得到自己貼的碼。
+                        try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
+                    }
                 }
             }
             if (!restored) {
@@ -1527,8 +1573,10 @@
                         if (isDrawing) applyTool(r, c);
                     });
                     tile.addEventListener('touchstart', (e) => {
+                        // 兩指同時落下時這裡會先跑一次 → 交給 #mapContainer 的手勢處理
+                        if (e.touches.length > 1 || suppressTouchDraw) return;
                         e.preventDefault();
-                        touchState = { r, c, lastR: r, lastC: c, painted: false, longFired: false };
+                        touchState = { r, c, lastR: r, lastC: c, painted: false, longFired: false, cells: 0, t0: Date.now() };
                         updateCoordHint(r, c);
                         clearTimeout(longPressTimer);
                         longPressTimer = setTimeout(() => {
@@ -1567,6 +1615,8 @@
 
             // 觸控：移動中依手指位置找格子（touchmove 不會觸發各格的 mouseenter）
             gridEl.addEventListener('touchmove', (e) => {
+                // 雙指＝平移/縮放，第一指不能繼續畫（守衛只放在 touchstart 攔不住已開始的筆劃）
+                if (e.touches.length > 1 || suppressTouchDraw) return;
                 if (!touchState || touchState.longFired) return;
                 e.preventDefault();
                 const touch = e.touches[0];
@@ -1590,23 +1640,34 @@
                     }
                     isDrawing = (fp.w === 1 && fp.h === 1);
                     applyTool(touchState.r, touchState.c);
+                    touchState.cells++;
                 }
                 if (rectStart) { rectEnd = { r: nr, c: nc }; previewRect(); }
-                else if (isDrawing) applyTool(nr, nc);
+                else if (isDrawing) { applyTool(nr, nc); touchState.cells++; }
                 updateCoordHint(nr, nc);
                 touchState.lastR = nr; touchState.lastC = nc;
             }, { passive: false });
 
-            gridEl.addEventListener('touchend', () => {
+            gridEl.addEventListener('touchend', (e) => {
                 clearTimeout(longPressTimer);
                 if (!touchState) return;
-                if (!touchState.painted && !touchState.longFired) {
+                // 雙指手勢中止過這一筆 → 不補畫（否則縮放完會多一格）
+                if (!suppressTouchDraw && !touchState.painted && !touchState.longFired) {
                     // 單點 = 畫一格／放一棟
                     pushHistory();
                     applyTool(touchState.r, touchState.c);
                 }
                 if (rectStart && rectEnd) commitRect();
                 isDrawing = false;
+                flushCheckSpots();
+                touchState = null;
+            });
+            // 來電／通知／手掌誤觸會發 touchcancel：不補畫那一格，但一定要把狀態收乾淨
+            gridEl.addEventListener('touchcancel', () => {
+                clearTimeout(longPressTimer);
+                isDrawing = false;
+                rectStart = rectEnd = null;
+                document.querySelectorAll('.tile.rect-preview').forEach(t => t.classList.remove('rect-preview'));
                 flushCheckSpots();
                 touchState = null;
             });
@@ -2503,6 +2564,35 @@
             return true;
         }
 
+        /* 放置前清掉 footprint 底下的既有建築。
+           只處理帶 bid 的多格建築：直接覆蓋多格建築會留下保有舊 type 的「殘格」，
+           checkSpots() 分不出殘格與完整建築，景點數會靜默算錯（24/29 可能建立在半棟餐廳上）。
+           1×1 的格子被整格覆蓋不會產生殘格，無需拆除也不必提示（否則拖曳畫地形會一路跳 toast）。
+           回傳 null 表示什麼都沒拆；否則 { cells, label } 供重繪與提示使用。
+           pushHistory() 已在筆劃開始時記錄，誤拆可 Ctrl+Z 還原。 */
+        function razeUnder(r, c, w, h) {
+            const cells = [], counts = new Map();
+            for (let dr = 0; dr < h; dr++) {
+                for (let dc = 0; dc < w; dc++) {
+                    const cell = gridData[r + dr][c + dc];
+                    if (cell.type === 'empty' || cell.bid === undefined) continue;
+                    const bid = cell.bid;
+                    const nm = (items[cell.type] && items[cell.type].name) || cell.type;
+                    counts.set(nm, (counts.get(nm) || 0) + 1);
+                    for (let rr = 0; rr < gridRows; rr++) {
+                        for (let cc = 0; cc < gridCols; cc++) {
+                            if (gridData[rr][cc].bid !== bid) continue;
+                            gridData[rr][cc] = { type: 'empty', elevation: gridData[rr][cc].elevation };
+                            cells.push([rr, cc]);
+                        }
+                    }
+                }
+            }
+            if (!cells.length) return null;
+            const label = [...counts.entries()].map(([nm, n]) => n > 1 ? `${nm}×${n}` : nm).join('、');
+            return { cells, label };
+        }
+
         function applyTool(r, c) {
             if (!window._paintedOnce) { window._paintedOnce = true; track('first_paint'); }
             // 清除模式點到多格建築 → 整棟拆除
@@ -2525,6 +2615,9 @@
                 showSysMsg(`超出地圖範圍，${items[currentTool].name} 需要 ${fp.w}×${fp.h} 的空間`, true);
                 return;
             }
+            // 乾淨覆蓋：壓到既有多格建築時整棟拆除，絕不留下殘格
+            // （殘格會保留舊 type，checkSpots() 仍把半棟建築當有效材料 → 景點數會算錯）
+            const razed = razeUnder(r, c, fp.w, fp.h);
             const bid = fp.w * fp.h > 1 ? ++blockIdCounter : undefined;
             for (let dr = 0; dr < fp.h; dr++) {
                 for (let dc = 0; dc < fp.w; dc++) {
@@ -2539,6 +2632,18 @@
                     const nr = r + dr, nc = c + dc;
                     if (nr >= 0 && nr < gridRows && nc >= 0 && nc < gridCols) updateTileVisuals(nr, nc);
                 }
+            }
+            // 被拆掉那幾棟的其餘格子可能落在 footprint 之外，同樣要連周圍一圈重繪
+            if (razed) {
+                for (const [rr, cc] of razed.cells) {
+                    for (let dr = -1; dr <= 1; dr++) {
+                        for (let dc = -1; dc <= 1; dc++) {
+                            const nr = rr + dr, nc = cc + dc;
+                            if (nr >= 0 && nr < gridRows && nc >= 0 && nc < gridCols) updateTileVisuals(nr, nc);
+                        }
+                    }
+                }
+                showSysMsg(`已拆除 ${razed.label} 以放置 ${items[currentTool].name}`);
             }
             scheduleCheckSpots();
             updateCoordHint(r, c);
@@ -2912,6 +3017,130 @@
             return true;
         }
 
+        /* ─── 觸控手勢：雙指拖曳＝平移、捏合＝縮放 ───
+           手機沒有滑鼠中鍵（唯一的平移機制），放大後就再也看不到地圖其他部分，
+           唯一逃生口是把倍率按回 100% —— 這是個單向陷阱。
+           單指行為完全不變（繪製／長按吸管），導覽一律退到雙指，與 Freeform／Notes 標記模式同慣例。
+           監聽掛在 #mapContainer 而不是 #gameGrid：第一指可能落在座標軸標籤（沒有 touch 監聽）上，
+           掛在格線上會讓那條入場路徑整個失效。 */
+        const PINCH_ON = 0.08;  // 捏合啟動門檻：手指微抖不該讓倍率跳動
+        const PAN_ON = 10;      // 平移啟動門檻（px）
+
+        function twoFinger(e) {
+            const a = e.touches[0], b = e.touches[1];
+            return {
+                dist: Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY),
+                x: (a.clientX + b.clientX) / 2,
+                y: (a.clientY + b.clientY) / 2
+            };
+        }
+
+        // 平移：先餵目前的捲動層，它吃不下的餘量（已到邊界）再餵外層 main。
+        // .map-container 與 main 都是 overflow:auto，只推一層會重演「放大後上緣捲不到」。
+        function panMap(dx, dy) {
+            const seen = new Set();
+            for (const el of [mapScroller(), document.querySelector('main')]) {
+                if (!el || seen.has(el)) continue;
+                seen.add(el);
+                if (dx) { const b = el.scrollLeft; el.scrollLeft = b + dx; dx -= el.scrollLeft - b; }
+                if (dy) { const b = el.scrollTop; el.scrollTop = b + dy; dy -= el.scrollTop - b; }
+            }
+        }
+
+        /* 第二指落下時中止進行中的單指筆劃，否則縮放過程會畫出一條線。
+           剛起筆（≤1 格或按下不到 250ms）就把那一步整個撤回——意圖顯然是縮放而不是畫圖；
+           但若已經連刷了一長條就保留該筆、只停止繪製（無腦還原會吃掉真實工作）。 */
+        function abortTouchStroke() {
+            clearTimeout(longPressTimer);
+            let restored = false;
+            if (touchState && touchState.painted) {
+                const brief = touchState.cells <= 1 || (Date.now() - touchState.t0) < 250;
+                if (brief && undoStack.length) {
+                    restoreSnapshot(undoStack.pop());  // 不動 redoStack：等於這一筆沒發生過
+                    updateHistoryButtons();
+                    restored = true;
+                }
+            }
+            isDrawing = false;
+            rectStart = rectEnd = null;
+            document.querySelectorAll('.tile.rect-preview').forEach(t => t.classList.remove('rect-preview'));
+            document.querySelectorAll('.tile.fp-preview').forEach(t => t.classList.remove('fp-preview'));
+            touchState = null;
+            if (restored) heavyPending = false; else flushCheckSpots();
+        }
+
+        function setupTouchGestures() {
+            const box = document.getElementById('mapContainer');
+            if (!box) return;
+            let raf = 0, pending = null;
+            function flushZoom() {
+                raf = 0;
+                if (!pending) return;
+                const p = pending; pending = null;
+                // transient：手勢中不寫 localStorage（每帧同步寫入會頓）；rAF 節流避免每個
+                // touchmove 都跑一次 fitGrid（整張網格重排）
+                setZoom(p.z, { x: p.x, y: p.y }, true);
+            }
+
+            box.addEventListener('touchstart', (e) => {
+                if (e.touches.length < 2) return;
+                e.preventDefault();
+                abortTouchStroke();
+                suppressTouchDraw = true;  // 手指全部離開前不再進入繪製
+                const g = twoFinger(e);
+                gesture = { d0: g.dist, x: g.x, y: g.y, z0: zoomLevel, panning: false, zooming: false, moved: 0 };
+            }, { passive: false });
+
+            box.addEventListener('touchmove', (e) => {
+                if (!gesture || e.touches.length < 2) return;
+                e.preventDefault();
+                const g = twoFinger(e);
+                // 平移用「這一帧相對上一帧」的增量：縮放會在同一手勢中改寫 scrollLeft/Top，
+                // 用「起始捲動位置＋總位移」計算會讓平移與縮放互相打架。
+                const dx = g.x - gesture.x, dy = g.y - gesture.y;
+                gesture.moved += Math.abs(dx) + Math.abs(dy);
+                if (!gesture.panning && gesture.moved > PAN_ON) gesture.panning = true;
+                if (gesture.panning) panMap(-dx, -dy);
+                gesture.x = g.x; gesture.y = g.y;
+                const ratio = g.dist / Math.max(1, gesture.d0);
+                if (!gesture.zooming && Math.abs(ratio - 1) > PINCH_ON) {
+                    gesture.zooming = true;      // 啟動當下重設基準，避免門檻造成的跳動
+                    gesture.d0 = g.dist;
+                    gesture.z0 = zoomLevel;
+                }
+                if (gesture.zooming) {
+                    let z = gesture.z0 * (g.dist / Math.max(1, gesture.d0));
+                    if (Math.abs(z - 1) < 0.05) z = 1;  // 100% 附近的磁吸凹點，讓人找得回原尺寸
+                    pending = { z, x: g.x, y: g.y };     // 錨點＝兩指中點
+                    if (!raf) raf = requestAnimationFrame(flushZoom);
+                }
+            }, { passive: false });
+
+            function endGesture(e) {
+                if (!gesture) return;
+                if (e.touches.length >= 2) {  // 三指變兩指：重設基準後續行
+                    const g = twoFinger(e);
+                    gesture.d0 = g.dist; gesture.x = g.x; gesture.y = g.y; gesture.z0 = zoomLevel;
+                    return;
+                }
+                if (raf) { cancelAnimationFrame(raf); flushZoom(); }
+                gesture = null;
+                savePrefs({ zoom: +zoomLevel.toFixed(2) });  // 手勢結束才寫回倍率
+            }
+            box.addEventListener('touchend', (e) => {
+                endGesture(e);
+                // 只剩一指時不立刻退回繪製；要等手指全部離開（避免縮放尾聲多畫一格）
+                if (e.touches.length === 0) suppressTouchDraw = false;
+            });
+            box.addEventListener('touchcancel', (e) => {
+                endGesture(e);
+                if (e.touches.length === 0) suppressTouchDraw = false;
+            });
+            // iOS Safari 的私有手勢事件會繞過 touch-action，觸發整頁的視覺縮放
+            box.addEventListener('gesturestart', e => e.preventDefault());
+            box.addEventListener('gesturechange', e => e.preventDefault());
+        }
+
         function setupEventListeners() {
             document.getElementById('undoBtn').addEventListener('click', undo);
             document.getElementById('redoBtn').addEventListener('click', redo);
@@ -2943,6 +3172,7 @@
                 panState.sc.scrollTop = panState.st - (e.clientY - panState.y);
             });
             window.addEventListener('mouseup', () => { panState = null; });
+            setupTouchGestures();  // 觸控：雙指拖曳平移、捏合縮放（手機沒有中鍵）
 
             // 打字去抖動：每個按鍵都掃全圖＋改 DOM 會頓，停手 120ms 再算（篩選調色盤本身很輕，立即做）
             let searchTimer = null;
