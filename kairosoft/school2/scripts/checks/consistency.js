@@ -10,7 +10,7 @@ const path = require('path');
 // 每項檢查的嚴重度。B0 一律 warn；確認穩定後逐項改 'fail'。
 const LEVEL = {
     spots: 'warn', facilities: 'warn', presets: 'warn',
-    typekeys: 'warn', sharecodes: 'warn', devguide: 'warn', wordcount: 'warn'
+    typekeys: 'warn', sharecodes: 'warn', sitetable: 'warn', devguide: 'warn', wordcount: 'warn'
 };
 
 const TOWN_SIZES = { '26x24': '健康鎮', '24x24': '湖岸小鎮', '26x26': '冬郵／溪谷／百靈' };
@@ -179,6 +179,7 @@ module.exports = function consistencyChecks(ctx) {
     }
 
     /* ================= 5) 站上分享碼：decode → 驗證 → 重新 encode 必須字串相同 ================= */
+    let siteCodes = [];   // 5b 的來源徽章對照表要用同一份掃描結果
     {
         const found = [];
         (function walk(dir) {
@@ -235,6 +236,60 @@ module.exports = function consistencyChecks(ctx) {
         check('sharecodes', `站上分享碼 decode→encode 往返一致（找到 ${found.length} 組）`,
             bad.length || !found.length, bad.length ? bad : (found.length ? '全部往返一致' : '一組都沒找到（regex 失效？）'));
         if (rows.length) ctx.info('分享碼清單', rows);
+        siteCodes = found;
+    }
+
+    /* ========== 5b) sim 內嵌的 SITE_LAYOUTS 對照表 ↔ 站上實際的分享碼 ==========
+       模擬器的「來源徽章」要說得出「這是哪一頁的哪一張」，但 sim 是純前端、讀不到別的檔，
+       所以只能內嵌一張「分享碼指紋 → 名稱」的對照表（指紋＝碼長.前 12 字.後 8 字；
+       完整碼 8 組共 17KB，不值得內嵌）。
+       這張表沒有守衛就會**靜默腐爛**：任何一次重算完美佈局都會換掉分享碼 → 指紋對不上 →
+       徽章從「站上範例 · 完美佈局：健康鎮」默默降級成「分享碼」，而沒有人會發現。
+       所以這裡斷言三件事：㈠ 每組站上分享碼都在表裡（且只有一筆）；㈡ 表裡沒有多餘的
+       僵屍項目；㈢ 每一筆的 page 是真的那一頁，name 真的出現在那一頁上（名稱寫錯 →
+       徽章會冒名，而冒名比沒有名字更糟）。 */
+    {
+        const fp = code => String(code).length + '.' + String(code).slice(0, 12) + String(code).slice(-8);
+        const bad = [], rows = [];
+        let table = null;
+        const m = /const SITE_LAYOUTS = (\{[\s\S]*?\n        \});/.exec(html);
+        if (!m) bad.push('sim 內找不到 SITE_LAYOUTS（改名了？那來源徽章已經認不出站上的分享碼）');
+        else {
+            try { table = new Function('return ' + m[1])(); }
+            catch (e) { bad.push('SITE_LAYOUTS 解析失敗：' + e.message); }
+        }
+        if (table) {
+            const seen = new Set();
+            for (const { page, code } of siteCodes) {
+                const key = fp(code);
+                const e = table[key];
+                if (!e) {
+                    bad.push(`${page}: 分享碼不在 SITE_LAYOUTS（指紋 ${key}）—— 徽章只會說「分享碼」，說不出是哪一張`);
+                    continue;
+                }
+                if (seen.has(key)) { bad.push(`指紋 ${key} 對到兩組站上分享碼（碼撞了？）`); continue; }
+                seen.add(key);
+                if (e.page !== page) bad.push(`${key}: 表裡寫 page="${e.page}"，實際在 ${page}`);
+                const file = path.join(S2, page.split('/').join(path.sep));
+                if (!fs.existsSync(file)) bad.push(`${key}: page="${e.page}" 這個檔不存在`);
+                else {
+                    const txt = fs.readFileSync(file, 'utf8')
+                        .replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+                    if (!txt.includes(e.name)) {
+                        bad.push(`${key}: name="${e.name}" 在 ${page} 上找不到 —— 徽章會冒名`);
+                    }
+                }
+                rows.push(`${e.name} ← ${page}（${e.kind || 'site'}${e.town ? '／' + e.town : ''}）`);
+            }
+            for (const key of Object.keys(table)) {
+                if (!seen.has(key)) {
+                    bad.push(`SITE_LAYOUTS 有 "${table[key].name}"（指紋 ${key}）但站上已經沒有這組分享碼 —— 僵屍項目，該刪或該更新指紋`);
+                }
+            }
+        }
+        check('sitetable', `sim 的 SITE_LAYOUTS ↔ 站上分享碼一致（表 ${table ? Object.keys(table).length : 0} 筆／站上 ${siteCodes.length} 組）`,
+            bad.length, bad.length ? bad : '每組分享碼都認得出是哪一頁的哪一張');
+        if (rows.length) ctx.info('來源徽章認得的佈局', rows);
     }
 
     /* ================= 6) DEV_GUIDE 的 cond 與 needs 自洽 ================= */

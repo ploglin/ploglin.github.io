@@ -429,6 +429,55 @@
             z-index: 4;
         }
 
+        /* ─── 差異圖層：「現在」對「來源」的三態 ───
+           三態以**字符**為主通道、顏色為輔。理由有兩個：㈠ 地圖上的色相已經被
+           .blocked（實線紅框）、.suggest（藍虛線）、.fp-preview（琥珀）、.found（洋紅）、
+           動線（綠→紅色階）佔滿，再加一組純色編碼一定撞語意；㈡ 純色彩編碼在色弱下失效。
+           字符放**右下角**：右上角是景點指示點（.spot-indicators，-top-1 -right-1 z-20）、
+           左上角是序號徽章（.found-num），只有右下角是空的。
+           色洗做成子元素（比照 .flow-ov）而不是 box-shadow —— updateTileVisuals() 會寫
+           inline boxShadow，class 的 box-shadow 在有設施的格子上會被它蓋掉。
+           z-index 6：壓在建議框（5）與景點面色（3）之上（正在調查的圖層要在上），
+           仍在 .content-span（10）之下，設施標籤不被遮。 */
+        .diff-ov { position: absolute; inset: 0; pointer-events: none; z-index: 6; }
+        .diff-ov.d-add { background: rgba(5, 150, 105, .22); }
+        .diff-ov.d-chg { background: rgba(124, 58, 237, .22); }
+        /* 「拆掉」刻意不用紅：.blocked 的紅框在差異圖層開著時仍然存在（它是錯誤、不是景點
+           通道），而 🆚 比較 的縮圖也已經用紅框表示「這一格有差異」。石板灰讀起來就是
+           「這裡原本有東西、現在是缺口」，比紅更準。 */
+        .diff-ov.d-del { background: rgba(51, 65, 85, .26); }
+        .diff-mark {
+            position: absolute;
+            right: 0; bottom: -2px;
+            line-height: 1;
+            font-weight: 900;
+            font-style: normal;
+            font-size: max(8px, calc(var(--tile) * .34));
+            /* 不做成帶框徽章：重鋪一次走廊就有幾十格變更，幾十個徽章會變成徽章牆。
+               純字符＋白描邊在任何格子底色上都讀得出來，密集時仍讀成「一片標記」。 */
+            text-shadow: 0 0 2px #fff, 0 0 2px #fff, 0 0 2px #fff;
+        }
+        .d-add .diff-mark { color: #065f46; }
+        .d-del .diff-mark { color: #1e293b; }
+        .d-chg .diff-mark { color: #5b21b6; }
+        /* 菱形視角下整個 grid 轉 45°，字符要反轉回來才讀得出（比照 .found-num） */
+        body.diamond .diff-mark { transform: rotate(-45deg); }
+        /* 差異圖層開著時的建議框：源頭已 guard（updateSuggestions 照算不畫），這裡是保險。
+           刻意**不**連景點標記一起藏 —— 見 JS 端 diffActive() 的註解。 */
+        body.diffing .tile.suggest, body.diffing .tile.suggest2 { outline: none !important; }
+        /* 右軌狀態列的開關（來源／差異）：整列可點，觸控裝置補到 44px 命中高度。
+           圖層開啟時要有視覺 on 態 —— 只換文字的話，捲了調色盤回來會分不出
+           地圖上那層色洗是動線還是差異。indigo 與 flowBtn 的開啟態同語系。 */
+        #diffBtn.diff-on {
+            background: #eef2ff;
+            border: 1px solid #c7d2fe;
+            border-radius: 5px;
+            padding: 3px 6px;
+        }
+        @media (pointer: coarse) {
+            #originBtn, #diffBtn { min-height: 44px; }
+        }
+
         /* 窄螢幕（手機/直式平板）：地圖在上、建築面板在下 */
         @media (max-width: 768px) {
             #appBody { flex-direction: column; }
@@ -594,6 +643,14 @@
             :root:not([data-theme="light"]) .axis-label { color:var(--sd-ink-soft);background-color:var(--sd-axis-bg) }
             :root:not([data-theme="light"]) #searchHits .sh-hint { color:var(--sd-muted) }
             :root:not([data-theme="light"]) .found-num { border-color:var(--sd-card);box-shadow:0 1px 2px rgba(0,0,0,.6) }
+            /* 差異三態：字符的白描邊在深色底上會發光成一團 → 改用卡片色描邊；
+               「拆掉」的石板灰色洗在深色畫布上幾乎看不見 → 整體提亮一階。 */
+            :root:not([data-theme="light"]) .diff-mark { text-shadow:0 0 2px var(--sd-card),0 0 2px var(--sd-card),0 0 2px var(--sd-card) }
+            :root:not([data-theme="light"]) .diff-ov.d-del { background:rgba(148,163,184,.30) }
+            :root:not([data-theme="light"]) .d-add .diff-mark { color:#34d399 }
+            :root:not([data-theme="light"]) .d-del .diff-mark { color:#e2e8f0 }
+            :root:not([data-theme="light"]) .d-chg .diff-mark { color:#c4b5fd }
+            :root:not([data-theme="light"]) #diffBtn.diff-on { background:var(--sd-active-bg);border-color:var(--sd-active-line) }
             /* 進度條填色是介面 chrome（不是地圖內容），所以兩套深色區塊都要有 */
             :root:not([data-theme="light"]) .prog-fill { background:#4ade80 }
 :root:not([data-theme="light"]) .spot-tooltip { background-color:var(--sd-tip-bg);border-color:var(--sd-line-strong) }
@@ -705,6 +762,14 @@
         :root[data-theme="dark"] .axis-label { color:var(--sd-ink-soft);background-color:var(--sd-axis-bg) }
         :root[data-theme="dark"] #searchHits .sh-hint { color:var(--sd-muted) }
         :root[data-theme="dark"] .found-num { border-color:var(--sd-card);box-shadow:0 1px 2px rgba(0,0,0,.6) }
+        /* 差異三態：字符的白描邊在深色底上會發光成一團 → 改用卡片色描邊；
+           「拆掉」的石板灰色洗在深色畫布上幾乎看不見 → 整體提亮一階。 */
+        :root[data-theme="dark"] .diff-mark { text-shadow:0 0 2px var(--sd-card),0 0 2px var(--sd-card),0 0 2px var(--sd-card) }
+        :root[data-theme="dark"] .diff-ov.d-del { background:rgba(148,163,184,.30) }
+        :root[data-theme="dark"] .d-add .diff-mark { color:#34d399 }
+        :root[data-theme="dark"] .d-del .diff-mark { color:#e2e8f0 }
+        :root[data-theme="dark"] .d-chg .diff-mark { color:#c4b5fd }
+        :root[data-theme="dark"] #diffBtn.diff-on { background:var(--sd-active-bg);border-color:var(--sd-active-line) }
         /* 進度條填色是介面 chrome（不是地圖內容），所以兩套深色區塊都要有 */
         :root[data-theme="dark"] .prog-fill { background:#4ade80 }
 :root[data-theme="dark"] .spot-tooltip { background-color:var(--sd-tip-bg);border-color:var(--sd-line-strong) }
@@ -804,6 +869,15 @@
             <!-- 常駐景點摘要（不可折疊）：放一棟房子最想知道的事＝成立了嗎。
                  分層顯示 → 地圖乾淨時只有一行進度，有事做時才長高（優先權由狀態決定，不由版位決定）。 -->
             <div class="shrink-0 px-3 pt-2.5 pb-2 border-b border-gray-200">
+                <!-- 來源徽章＝這塊常駐摘要的 kicker（不另開第五個區塊）。
+                     這一塊的閱讀順序：身分 → 成果 → 錯誤 → 差異。 -->
+                <button id="originBtn" class="w-full flex items-center justify-between gap-2 text-left mb-2" title="這張圖的來歷、與原始的差異、回到原始狀態">
+                    <span class="min-w-0">
+                        <span id="originName" class="block text-xs font-black text-gray-700 truncate">📄 空白畫布</span>
+                        <span id="originKind" class="block text-[10px] font-bold text-gray-400 truncate"></span>
+                    </span>
+                    <span class="text-[11px] font-bold text-gray-500 shrink-0">詳情 ›</span>
+                </button>
                 <button id="spotSummaryBtn" class="w-full flex items-baseline justify-between gap-2" title="看成立清單、屬性加成合計與使用格數">
                     <span class="text-[13px] font-black text-gray-800">景點 <span id="spotCount">0</span>/29</span>
                     <span class="text-[11px] font-bold text-gray-500">明細 ›</span>
@@ -814,6 +888,9 @@
                     <div id="nearChips" class="flex flex-wrap gap-1 mt-1"></div>
                 </div>
                 <button id="blockedBtn" class="hidden w-full text-left text-[11px] font-bold text-red-600 mt-2"></button>
+                <!-- 差異列：數字本身就是圖層開關（同 blockedBtn「⚠N棟走不到（點看動線）」的慣例），
+                     所以頂列不必多一顆按鈕。 -->
+                <button id="diffBtn" class="hidden w-full text-left text-[11px] font-bold text-gray-600 mt-2" aria-pressed="false"></button>
             </div>
 
             <div class="flex-1 overflow-y-auto p-3 flex flex-col gap-4">
@@ -1103,15 +1180,22 @@
         let undoStack = [], redoStack = [];
         let blockIdCounter = 0; // 多格建築的棟別編號
 
+        /* 快照連 origin（來源徽章的來歷＋原始地形）一起存：載入類動作都會 pushHistory()，
+           所以 Ctrl+Z 可以跨過一次載入 —— 只還原格子的話，徽章會繼續宣稱
+           「湖岸小鎮完美佈局 · 已改 480 格」，等於開始說謊。 */
+        function snapshot() { return JSON.stringify({ g: gridData, o: origin }); }
+
         function pushHistory() {
-            undoStack.push(JSON.stringify(gridData));
+            undoStack.push(snapshot());
             if (undoStack.length > HISTORY_MAX) undoStack.shift();
             redoStack.length = 0;
             updateHistoryButtons();
         }
 
         function restoreSnapshot(json) {
-            const parsed = JSON.parse(json);
+            const snap = JSON.parse(json);
+            const parsed = Array.isArray(snap) ? snap : snap.g;
+            if (!Array.isArray(snap)) adoptOrigin(snap.o);
             // 快照可能是不同尺寸（例如切換地圖尺寸前的狀態）→ 先切回該尺寸
             if (parsed.length !== gridRows || (parsed[0] && parsed[0].length !== gridCols)) {
                 setGridSize(parsed.length, parsed[0].length, false);
@@ -1162,14 +1246,14 @@
 
         function undo() {
             if (!undoStack.length) { showSysMsg('沒有可復原的步驟', true); return; }
-            redoStack.push(JSON.stringify(gridData));
+            redoStack.push(snapshot());
             restoreSnapshot(undoStack.pop());
             updateHistoryButtons();
         }
 
         function redo() {
             if (!redoStack.length) { showSysMsg('沒有可重做的步驟', true); return; }
-            undoStack.push(JSON.stringify(gridData));
+            undoStack.push(snapshot());
             restoreSnapshot(redoStack.pop());
             updateHistoryButtons();
         }
@@ -1531,7 +1615,10 @@
                同時撒滿藍色的「這裡可以湊景點」虛線框會把畫面弄花，也違背聚光燈
                （壓暗全圖只留命中）的用意。這裡只跳過**繪製**、照樣算完回傳，
                所以右下資訊卡的「可立即完成／差一項」狀態不受影響。 */
-            const locating = !!hlIds;
+            /* 差異圖層開著時同樣只跳過**繪製**：它畫在空格上，會與「拆掉」態重複標記
+               同一格，語意相反。照樣算完回傳，因為 updateToolHint() 還要吃這個回傳值
+               （「可立即完成／差一項」）——使用者關掉的是藍框，不是資訊。 */
+            const locating = !!hlIds || diffActive();
             let count = 0, count2 = 0;
             for (let r = 0; r < gridRows; r++) {
                 for (let c = 0; c < gridCols; c++) {
@@ -1575,42 +1662,41 @@
             selectTool(prefs.tool && items[prefs.tool] && !items[prefs.tool].hidden ? prefs.tool : 'grass');
             fitGrid();
 
-            // 載入優先序：分享連結 → 自動儲存 → 預設圖
-            let restored = false;
+            /* 載入順序：**先**還原自動存檔（或預設圖），**再**套用分享連結，而且套用前
+               要過 guardDestructive()。
+               原本是「分享連結優先、不經守衛、不 pushHistory」：使用者昨天改到一半沒存，
+               今天回到佈局頁再點一次「🧩 在模擬器開啟」，前一天的成果就被分享碼無警告、
+               無 undo、無存檔地覆蓋掉（400ms 後連 autosave 也被蓋）。那是全檔唯一沒進
+               統一守衛的破壞性路徑，而它正是「載入範例 → 照著改 → 比對」這條主動線的入口。 */
+            loadOriginStore();
             const shareMatch = location.hash.match(/^#m=(.+)$/);
-            if (shareMatch) {
-                const shared = decodeMap(shareMatch[1]);
-                if (shared) {
-                    restored = importGridData(shared);
+            const pendingGrid = shareMatch ? decodeMap(shareMatch[1]) : null;
+            let restored = false;
+            try {
+                const auto = JSON.parse(localStorage.getItem(AUTOSAVE_KEY));
+                if (Array.isArray(auto)) {
+                    restored = importGridData(auto);
                     if (restored) {
-                        markClean(matchTown(gridData));
-                        showSysMsg('已載入分享的地圖');
-                        // 成功載入後就把 #m= 清掉：hash 的優先序高於 autosave，留著它
-                        // 會讓使用者接下來的編輯在下一次重新整理時被分享碼整份蓋掉（無警告、無 undo）。
-                        // 解碼失敗時刻意不清，讓使用者還看得到自己貼的碼。
-                        try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
+                        if (prefs.lastSave) document.getElementById('saveName').value = prefs.lastSave;
+                        /* autosave 的來歷：內容等於 pa2_origin_v1 記下的來源 → 一個字都沒改（乾淨）；
+                           等於某鎮的原始地形 → 認定為該鎮（乾淨）；否則視為「有未儲存的編輯」
+                           （baseline 留 null）。城鎮鈕的字樣改用 origin 記的城鎮，
+                           這樣「載入健康鎮完美佈局→關掉→重開」不會退化成「自訂 26×24」。 */
+                        const town = matchTown(gridData);
+                        if (origin && origin.code === encodeMap()) markClean(origin.town || town);
+                        else if (town) markClean(town);
+                        else { currentTownKey = (origin && origin.town) || null; updateTownLabel(); }
+                        if (!pendingGrid) showSysMsg('已還原上次的編輯進度');
                     }
                 }
-            }
-            if (!restored) {
-                try {
-                    const auto = JSON.parse(localStorage.getItem(AUTOSAVE_KEY));
-                    if (Array.isArray(auto)) {
-                        restored = importGridData(auto);
-                        if (restored) {
-                            if (prefs.lastSave) document.getElementById('saveName').value = prefs.lastSave;
-                            /* autosave 的來歷不明：內容剛好等於某鎮的原始地形 → 認定為該鎮（乾淨）；
-                               否則一律視為「有未儲存的編輯」（baseline 留 null）。
-                               這正是最常見的真實損失情境：上一場沒存、關掉、隔天回來、切鎮。 */
-                            const town = matchTown(gridData);
-                            if (town) markClean(town);
-                            else { currentTownKey = null; updateTownLabel(); }
-                            showSysMsg('已還原上次的編輯進度');
-                        }
-                    }
-                } catch (e) {}
-            }
-            if (!restored) loadPreset('health');
+            } catch (e) {}
+            if (!restored) loadPreset('health', { quiet: !!pendingGrid });
+            if (pendingGrid) applySharedGrid(shareMatch[1], pendingGrid);
+            updateOriginRow();
+            syncSuggestBtn();
+            // 沒有可比對的來源時安靜地自我停用（使用者什麼都還沒做，不該吃一句紅字）
+            if (prefs.diffOn && !originComparable()) savePrefs({ diffOn: false });
+            else renderDiffOverlay();
 
             // 首訪一句話（不做導覽 tour）；橫幅會改變可用高度，插入與關閉都要重算網格
             if (!prefs.introDone) {
@@ -2130,16 +2216,18 @@
             b.classList.toggle('text-white', !!prefs.flowOn);
         }
 
-        // 動線圖層開關（頂列的 👣 與常駐摘要的「⚠ N 棟走不到」共用）
+        // 動線圖層開關（頂列的 👣 與常駐摘要的「⚠ N 棟走不到」共用）。
+        // 實際的互斥／落地交給 setMapLayer()——動線與差異不能同時開（見那支的註解）。
         function toggleFlow(forceOn) {
             const want = forceOn === undefined ? !prefs.flowOn : !!forceOn;
             if (want && !lastHasGate) { showSysMsg('地圖上沒有校門，無法計算動線', true); return false; }
             if (want === !!prefs.flowOn) return true;
-            savePrefs({ flowOn: want });
+            const hadDiff = !!prefs.diffOn;
+            if (!setMapLayer(want ? 'flow' : null)) return false;
             track('toggle_flow', { on: want });
-            styleFlowBtn();
-            updateFlowOverlay();
-            showSysMsg(want ? '動線圖層：綠＝離校門近、紅＝遠、灰斜紋＝走不到' : '已關閉動線圖層');
+            showSysMsg(want
+                ? '動線圖層：綠＝離校門近、紅＝遠、灰斜紋＝走不到' + (hadDiff ? '（差異圖層已關閉）' : '')
+                : '已關閉動線圖層');
             return true;
         }
 
@@ -2291,6 +2379,9 @@
             updateFlowOverlay();
             updateToolHint(currentTool, updateSuggestions());
             if (hlIds) applyHighlight();  // 地圖變動後重新套用定位（維持目前的命中集合，不退回模糊比對）
+            // 差異要跟著每一筆編輯走（這就是「邊改邊看」的意思）；它自己會處理
+            // 「定位中暫停」與「沒有可比基準」兩種退化狀態，並更新右軌那兩列文案。
+            renderDiffOverlay();
             scheduleAutosave();
         }
 
@@ -2675,40 +2766,93 @@
         }
 
         // ─── 存檔比較 ───
+        /* 🆚 比較 同時是「來源徽章的詳情」。
+           刻意**不**另開一個「來源說明」modal：這裡本來就在回答「跟什麼比、差幾格」，
+           同一條差異規則（type 或 elevation 任一不同即一格）也早就寫在下面的迴圈裡。
+           再做第二個，站上就會有兩套「跟什麼比」的詞彙。 */
         function buildCompare() {
             let maps = {};
             try { maps = JSON.parse(localStorage.getItem('pa2_maps_v9')) || {}; } catch (e) {}
-            const opts = ['__current__', ...Object.keys(maps)];
+            const hasOrigin = originComparable();
+            const opts = ['__current__', ...(hasOrigin ? ['__origin__'] : []), ...Object.keys(maps)];
+            const label = k => k === '__current__' ? '目前地圖'
+                : (k === '__origin__' ? `原始（${origin.name}）` : k);
             const optHtml = sel => opts.map(k =>
-                `<option value="${k}" ${k === sel ? 'selected' : ''}>${k === '__current__' ? '目前地圖' : k}</option>`).join('');
-            openReport('🆚 存檔比較', `
+                `<option value="${k}" ${k === sel ? 'selected' : ''}>${esc(label(k))}</option>`).join('');
+
+            // 來歷一句話：哪裡來的、什麼時候載入的（時間格式與讀取面板一致）
+            let head;
+            if (!origin) {
+                head = `<div class="mb-2 text-gray-500">這張圖的<b class="text-gray-800">來源不明</b>，可能是上次未儲存的編輯。`
+                    + `<button id="cmpAdopt" class="ml-1 font-bold text-sky-700">把現在這張設為比較基準</button></div>`;
+            } else {
+                const d = new Date(origin.ts || Date.now());
+                const when = `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+                /* 最重要的差異不是格數，是**結果**的差：載入當下的成果一起記進 origin，
+                   所以這裡答得出「範例 29 個、我現在 26 個，少了哪三個」。 */
+                let res = '';
+                if (origin.spots) {
+                    const now = lastSpotStats.activeIds;
+                    const lost = origin.spots.filter(id => !now.has(id));
+                    const got = [...now].filter(id => !origin.spots.includes(id));
+                    const nm = ids => SPOTS.filter(s => ids.includes(s.id)).map(s => s.name).join('、');
+                    res = `<br>景點：原始 ${origin.spots.length} 個 → 現在 ${now.size} 個`
+                        + (lost.length ? `<br><b class="text-gray-800">少了：${esc(nm(lost))}</b>` : '')
+                        + (got.length ? `<br>多了：${esc(nm(got))}` : '')
+                        + (origin.blocked !== undefined && lastBlockedCount > origin.blocked
+                            ? `<br><b class="text-gray-800">走不到的建築：原始 ${origin.blocked} 棟 → 現在 ${lastBlockedCount} 棟</b>` : '');
+                }
+                head = `<div class="mb-2 text-gray-500">來源：<b class="text-gray-800">${esc(origin.name)}</b>`
+                    + (origin.from ? `（${esc(origin.from)}）` : '') + ` · ${when} 載入`
+                    + (hasOrigin ? res : (originGrid ? `<br><b class="text-gray-800">畫布已改成 ${gridRows}×${gridCols}</b>，無法逐格比對。`
+                        : '<br>只剩來歷記錄，<b class="text-gray-800">原始內容已遺失</b>，無法逐格比對。'))
+                    + '</div>';
+            }
+            openReport('🆚 地圖比較', head + `
                 <div class="flex gap-2 mb-2 items-center text-xs">
-                    <select id="cmpA" class="border border-gray-300 rounded p-1 flex-1">${optHtml('__current__')}</select>
+                    <select id="cmpA" class="border border-gray-300 rounded p-1 flex-1">${optHtml(hasOrigin ? '__origin__' : '__current__')}</select>
                     <span class="text-gray-400 font-bold">vs</span>
-                    <select id="cmpB" class="border border-gray-300 rounded p-1 flex-1">${optHtml(opts[1] || '__current__')}</select>
+                    <select id="cmpB" class="border border-gray-300 rounded p-1 flex-1">${optHtml(hasOrigin ? '__current__' : (opts[1] || '__current__'))}</select>
                 </div>
                 <div class="flex gap-3 justify-center mb-2 flex-wrap">
                     <canvas id="cmpCanvasA" class="border border-gray-200 rounded"></canvas>
                     <canvas id="cmpCanvasB" class="border border-gray-200 rounded"></canvas>
                 </div>
-                <div id="cmpSummary" class="text-xs text-gray-600"></div>`);
+                <div id="cmpSummary" class="text-xs text-gray-600"></div>`
+                + (hasOrigin ? `<div class="mt-3 pt-2 border-t border-gray-200">
+                    <button id="cmpRestore" class="text-[11px] font-bold bg-white border border-gray-300 text-gray-700 rounded px-2.5 py-1.5 hover:bg-gray-100 transition">↩ 回到原始狀態</button>
+                    <span class="text-[10px] text-gray-400 ml-1.5">會換掉目前的畫布（可 Ctrl+Z 還原）</span>
+                </div>` : ''));
             const getGrid = k => {
                 if (k === '__current__') return gridData;
+                if (k === '__origin__') return originGrid;
                 const e = maps[k];
                 return Array.isArray(e) ? e : (e && e.data);
             };
+            const restore = document.getElementById('cmpRestore');
+            if (restore) restore.addEventListener('click', () => { closeReport(); restoreOrigin(); });
+            const adopt = document.getElementById('cmpAdopt');
+            if (adopt) adopt.addEventListener('click', () => {
+                // 舊使用者（沒有 origin）的唯一出路：把現況立成基準，之後才有東西可比。
+                // 這個動作不動畫布，所以不必進 guardDestructive。
+                setOrigin({ kind: 'save', name: '你設的基準', from: '從目前的畫布立起', town: currentTownKey });
+                closeReport();
+                showSysMsg('已把目前的地圖設為比較基準');
+            });
             const render = () => {
                 const gA = getGrid(document.getElementById('cmpA').value);
                 const gB = getGrid(document.getElementById('cmpB').value);
                 if (!gA || !gB) return;
                 const diff = new Set();
                 const delta = {};
+                let elevOnly = 0;
                 for (let r = 0; r < gridRows; r++) {
                     for (let c = 0; c < gridCols; c++) {
                         const a = (gA[r] && gA[r][c]) || { type: 'empty', elevation: 1 };
                         const b = (gB[r] && gB[r][c]) || { type: 'empty', elevation: 1 };
                         if (a.type !== b.type || (a.elevation || 1) !== (b.elevation || 1)) {
                             diff.add(r + ',' + c);
+                            if (a.type === b.type) elevOnly++;
                             if (a.type !== b.type) {
                                 if (a.type !== 'empty') delta[a.type] = (delta[a.type] || 0) - 1;
                                 if (b.type !== 'empty') delta[b.type] = (delta[b.type] || 0) + 1;
@@ -2727,7 +2871,10 @@
                     .map(([t, n]) => `${items[t] ? items[t].name : t} ${n > 0 ? '+' : ''}${n}`).join('、');
                 document.getElementById('cmpSummary').innerHTML =
                     `<b>差異：${diff.size} 格</b>${diff.size ? '（紅框標示）' : '，兩張地圖相同'}` +
-                    (deltaTxt ? `<br>左→右格數變化：${deltaTxt}` : '');
+                    (deltaTxt ? `<br>左→右格數變化：${deltaTxt}` : '') +
+                    /* 誠實補兩句：高度也算一格差異（它會改寫斜坡與可達性，藏起來才是說謊）；
+                       但改一格高度會讓鄰格的斜坡跟著變，那些鄰格的儲存值沒變、不會被標成差異。 */
+                    (elevOnly ? `<br><span class="text-gray-400">其中 ${elevOnly} 格只改了高度（鄰格自動生成的斜坡會跟著變，但那些格子本身不算差異）</span>` : '');
             };
             document.getElementById('cmpA').addEventListener('change', render);
             document.getElementById('cmpB').addEventListener('change', render);
@@ -2962,7 +3109,10 @@
             hill:   { name: '百靈山丘', desc: '位於市中心有許多有錢人，開局資金多 40 萬', rows: 26, cols: 26, data: PRESET_HILL_DATA }
         };
 
-        function loadPreset(key) {
+        // opts.quiet：啟動時「先還原 autosave／預設圖、再套用分享碼」的第一步不必吐 toast
+        // （否則從佈局頁點進來會連著看到兩句「已載入…」）。
+        function loadPreset(key, opts) {
+            const quiet = !!(opts && opts.quiet);
             const preset = PRESETS[key];
             if (!preset) return;
             if (!preset.data) {
@@ -2972,6 +3122,7 @@
                 importGridData(gridData.map(row => row.map(() => ({ type: 'empty', elevation: 1 }))));
                 document.getElementById('saveName').value = preset.name;
                 track('load_preset_blank', { preset: key });
+                setOrigin({ kind: 'blank', name: `空白畫布 ${gridRows}×${gridCols}`, from: preset.name, town: key });
                 showSysMsg(`「${preset.name}」尚無地形資料，已開啟 ${preset.rows}×${preset.cols} 空白畫布`);
                 return;
             }
@@ -2982,6 +3133,8 @@
                     track('load_preset', { preset: key });
                     document.getElementById('saveName').value = preset.name;
                     markClean(key);
+                    setOrigin({ kind: 'preset', name: preset.name, from: '遊戲開局地形', town: key });
+                    if (quiet) return;
                     showSysMsg(`已載入：${preset.name}`);
                 } else {
                     showSysMsg('預設圖格式錯誤', true);
@@ -3019,6 +3172,306 @@
                 if (!p.data || p.rows !== rows || p.cols !== cols) return false;
                 try { return canonGrid(JSON.parse(p.data)) === target; } catch (e) { return false; }
             }) || null;
+        }
+
+        /* ═══ 來源徽章與差異圖層 ═══════════════════════════════════════════
+           要解決的事：從佈局頁點「🧩 在模擬器開啟」載進來之後，畫面上看不出這張圖是誰
+           （分享碼載入後 hash 被刻意清掉，自動存檔恢復後更是完全失憶），也沒辦法把
+           「現在」跟「載入時」對照。所以：
+           ㈠ 來歷在**載入動作發生時**就記下來（不是事後用 matchTown 猜「像哪一鎮」——
+              那只認得原始地形，完美佈局蓋滿之後它一定回 null），連原始地形一起存進
+              新的 key `pa2_origin_v1`（不塞 prefs：prefs 每次縮放／換筆刷都重寫，
+              帶著 3.8KB 的分享碼一起重寫太浪費）。
+           ㈡ baseline（dirty 追蹤）與 origin 是**兩件事**：baseline 會被「儲存」推進，
+              origin 只跟著載入動作走 —— 存了檔不代表你不再想跟原始範例比。 */
+        const ORIGIN_KEY = 'pa2_origin_v1';
+
+        /* 站上 8 組分享碼 → 「這是哪一頁的哪一張」。
+           sim 是純前端、讀不到別的檔，所以只能內嵌對照；為了不內嵌 17KB 的完整碼，
+           key 是指紋＝「碼長.前 12 字.後 8 字」。
+           **腐爛防線**在 scripts/checks/consistency.js：它會掃站上實際的分享碼、算同一個
+           指紋，比對這張表（多一筆、少一筆、名稱不在該頁上都報 WARN）。沒有那條檢查，
+           下一次重算完美佈局就會讓徽章默默降級成「任意分享碼」而沒有人發現。 */
+        function codeFingerprint(code) {
+            code = String(code || '');
+            return code.length + '.' + code.slice(0, 12) + code.slice(-8);
+        }
+        const SITE_LAYOUTS = {
+            '3286.MC4xLjMsMC4yw3LjEuNA':  { name: '健康鎮完美佈局',   page: 'layouts/health/index.html', from: '完美佈局：健康鎮',   town: 'health' },
+            '3852.MjZ4MjY7MTIuMTMuMS4x': { name: '冬郵小鎮完美佈局', page: 'layouts/east/index.html',   from: '完美佈局：冬郵小鎮', town: 'winter' },
+            '2747.MjR4MjQ7MTMuxMy4yLjE': { name: '湖岸小鎮完美佈局', page: 'layouts/lake/index.html',   from: '完美佈局：湖岸小鎮', town: 'lake' },
+            '3639.MjZ4MjY7Ny4xsMS4xLjE': { name: '溪谷小鎮完美佈局', page: 'layouts/valley/index.html', from: '完美佈局：溪谷小鎮', town: 'valley' },
+            '3803.MjZ4MjY7MjcuzNi4xLjE': { name: '百靈山丘完美佈局', page: 'layouts/hill/index.html',   from: '完美佈局：百靈山丘', town: 'hill' },
+            // 入門三張是「空白畫布上的幾個設施」，不是任何一鎮的地形 → 不設 town，
+            // 城鎮鈕維持誠實的「自訂 26×24」。
+            '120.MC4xLjI1MCw1LjEuMzIz': { name: '序盤 CP 值三景點', page: 'layouts/index.html', from: '佈局範例集：入門範例', town: null },
+            '112.MC4xLjI1MCwzLjEuMzI0': { name: '樞紐共用：一區三景點', page: 'layouts/index.html', from: '佈局範例集：入門範例', town: null },
+            '84.MC4xLjI1MCw0LjEuMzQ2':  { name: '教室學習區', page: 'layouts/index.html', from: '佈局範例集：入門範例', town: null }
+        };
+
+        /* origin.kind：site（站上 8 組之一）／share（任意分享碼）／preset（五鎮地形）／
+           save（具名存檔）／blank（空白畫布）／null（來源不明：舊使用者、清過 localStorage） */
+        let origin = null;
+        let originGrid = null;   // 原始地形只解碼一次進記憶體（不要每筆劃 decode 3.8KB）
+
+        function originFromCode(code) {
+            const hit = SITE_LAYOUTS[codeFingerprint(code)];
+            return hit
+                ? { kind: 'site', name: hit.name, from: hit.from, town: hit.town || null }
+                : { kind: 'share', name: '分享的地圖', from: '別人（或你自己）給的分享碼', town: null };
+        }
+
+        /* 把「現在的畫布」蓋章成 origin。呼叫時機＝載入動作剛完成（importGridData 之後，
+           所以 checkSpots 已經跑過，lastSpotStats／lastBlockedCount 就是這張圖的成果）。
+           順手記下成果，是因為使用者問「我跟範例差在哪」時，真正想知道的是**結果的差**
+           （範例 29 個景點、我現在 26 個），格數只是過程量。 */
+        function setOrigin(meta) {
+            origin = Object.assign({
+                kind: 'blank', name: '空白畫布', from: '', town: null
+            }, meta || {}, {
+                ts: Date.now(),
+                rows: gridRows, cols: gridCols,
+                code: encodeMap(),
+                spots: [...lastSpotStats.activeIds],
+                blocked: lastBlockedCount
+            });
+            originGrid = decodeMap(origin.code);
+            try { localStorage.setItem(ORIGIN_KEY, JSON.stringify(origin)); } catch (e) {}
+            // 蓋章的當下一定要重畫圖層：載入途中 checkSpots() 已經拿**舊**的 origin 畫過一次，
+            // 只更新文字的話地圖上會留著對照舊來源的色洗。
+            renderDiffOverlay();
+        }
+        function loadOriginStore() {
+            try {
+                const o = JSON.parse(localStorage.getItem(ORIGIN_KEY));
+                if (o && o.code) { origin = o; originGrid = decodeMap(o.code); }
+            } catch (e) { origin = null; originGrid = null; }
+        }
+        // Ctrl+Z 跨過一次載入時 origin 要一起回去，否則徽章會開始說謊
+        function adoptOrigin(o) {
+            origin = o || null;
+            originGrid = (o && o.code) ? decodeMap(o.code) : null;
+            try {
+                if (o) localStorage.setItem(ORIGIN_KEY, JSON.stringify(o));
+                else localStorage.removeItem(ORIGIN_KEY);
+            } catch (e) {}
+            updateOriginRow();
+        }
+        // 逐格比對只有在尺寸相同時才有意義（「只換尺寸」保留內容但換了畫布）
+        function originComparable() {
+            return !!(originGrid && origin && origin.rows === gridRows && origin.cols === gridCols
+                && origin.kind !== 'blank');
+        }
+
+        /* 三態：add＝原本空／地形變成有設施、del＝原本有設施變成空、chg＝兩邊都有東西
+           但種類不同，**或種類相同而高度不同**。把高度算進來與 🆚 比較 的規則一致
+           （type 或 elevation 任一不同即一格差異），而且高度會改寫 isSlope() 的衍生結果
+           與可達性，藏起來才是說謊 —— 所以狀態叫「改過」而不是「換過」。 */
+        function computeDiff() {
+            const out = { add: [], del: [], chg: [], elevOnly: 0, mask: null, groups: [] };
+            if (!originComparable()) return out;
+            const mask = Array(gridRows).fill(null).map(() => Array(gridCols).fill(null));
+            for (let r = 0; r < gridRows; r++) {
+                for (let c = 0; c < gridCols; c++) {
+                    const a = (originGrid[r] && originGrid[r][c]) || { type: 'empty', elevation: 1 };
+                    const b = gridData[r][c];
+                    const at = a.type, bt = b.type;
+                    const ae = a.elevation || 1, be = b.elevation || 1;
+                    if (at === bt && ae === be) continue;
+                    let kind;
+                    if (at === 'empty' && bt !== 'empty') kind = 'add';
+                    else if (at !== 'empty' && bt === 'empty') kind = 'del';
+                    else { kind = 'chg'; if (at === bt) out.elevOnly++; }
+                    mask[r][c] = kind;
+                    out[kind].push([r, c]);
+                }
+            }
+            out.mask = mask;
+            /* 標號的自然單位不是「一棟」而是「一塊改動區」：重鋪 12 格走廊按棟標號會標 12 個，
+               那正是 .found-num 的 NUM_CAP 註解要避免的噪音。改成 4 鄰接連通塊，每塊一個號。 */
+            const seen = Array(gridRows).fill(null).map(() => Array(gridCols).fill(false));
+            for (let r = 0; r < gridRows; r++) {
+                for (let c = 0; c < gridCols; c++) {
+                    if (!mask[r][c] || seen[r][c]) continue;
+                    const stack = [[r, c]];
+                    seen[r][c] = true;
+                    let br = r, bc = c;
+                    while (stack.length) {
+                        const [cr, cc] = stack.pop();
+                        if (cr < br || (cr === br && cc < bc)) { br = cr; bc = cc; }
+                        [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([dr, dc]) => {
+                            const nr = cr + dr, nc = cc + dc;
+                            if (nr < 0 || nr >= gridRows || nc < 0 || nc >= gridCols) return;
+                            if (mask[nr][nc] && !seen[nr][nc]) { seen[nr][nc] = true; stack.push([nr, nc]); }
+                        });
+                    }
+                    out.groups.push({ r: br, c: bc });
+                }
+            }
+            return out;
+        }
+
+        /* 差異圖層是不是**正在畫**。定位模式（搜尋／點選設施的聚光燈）會把全圖壓暗，
+           與色洗疊起來是泥巴 → 互斥；但互斥**不等於取消**：prefs.diffOn 留著，
+           離開定位就自己回來。理由：selectTool() 只要那種設施已經蓋在圖上就會進定位模式，
+           「照著範例改」的過程有一半時間在定位模式裡，每次都關掉的話沒人會再開它。 */
+        function diffActive() {
+            return !!prefs.diffOn && originComparable() && !document.body.classList.contains('locating');
+        }
+        let diffSpots = [];
+
+        /* 景點視覺的取捨（與定位模式**刻意不同**）：
+           定位模式把五個景點通道全部藏掉，因為聚光燈壓暗全圖、兩者搶同一組視覺通道。
+           差異圖層不壓暗任何東西，而且使用者改完最想知道的下一件事正是
+           「我這 17 格有沒有弄壞景點」——把景點藏起來等於在最需要它的時候拿走答案。
+           所以：**保留**黃圈核心格、景點指示點、hover tooltip（都是關於現況的事實）；
+           **只關**藍／天藍虛線建議框——它們是「未來的建議」、畫在空格上，而「拆掉」態
+           也正好標在空格上，同一格會被兩種相反語意重複標記。 */
+        function renderDiffOverlay() {
+            document.querySelectorAll('.diff-ov').forEach(n => n.remove());
+            document.querySelectorAll('.found-num.dn').forEach(n => n.remove());
+            document.body.classList.toggle('diffing', diffActive());
+            diffSpots = [];
+            if (!diffActive()) { updateOriginRow(); return; }
+            const d = computeDiff();
+            const MARK = { add: '+', del: '−', chg: '≠' };
+            for (let r = 0; r < gridRows; r++) {
+                for (let c = 0; c < gridCols; c++) {
+                    const kind = d.mask[r][c];
+                    if (!kind) continue;
+                    const el = tileAt(r, c);
+                    if (!el) continue;
+                    const ov = document.createElement('div');
+                    ov.className = 'diff-ov d-' + (kind === 'add' ? 'add' : kind === 'del' ? 'del' : 'chg');
+                    ov.innerHTML = '<i class="diff-mark">' + MARK[kind] + '</i>';
+                    el.appendChild(ov);
+                }
+            }
+            // 位置用「地圖上標序號」交代，不列座標（座標是機器格式）。超過上限就不標號，
+            // 沿用定位模式那句「已在地圖上全部標亮」。
+            const NUM_CAP = 40;
+            diffSpots = d.groups;
+            if (diffSpots.length <= NUM_CAP) {
+                diffSpots.forEach((s, i) => {
+                    const el = tileAt(s.r, s.c);
+                    if (!el) return;
+                    const b = document.createElement('button');
+                    b.className = 'found-num dn';
+                    b.dataset.i = i;
+                    b.textContent = i + 1;
+                    b.title = '跳到第 ' + (i + 1) + ' 處變更';
+                    el.appendChild(b);
+                });
+            }
+            updateOriginRow(d);
+        }
+
+        /* 右軌的兩列文案。第 2 列（差異）＝可點的圖層開關，比照 blockedBtn
+           「⚠ N 棟走不到（點看動線）」的句法：狀態讀數本身就是入口，頂列不必多一顆按鈕。
+           單位一律用**格**，三個數字相加等於標題數字（不可以一個說格、一個說棟）。 */
+        function updateOriginRow(pre) {
+            const nameEl = document.getElementById('originName');
+            const kindEl = document.getElementById('originKind');
+            const btn = document.getElementById('diffBtn');
+            if (!nameEl || !kindEl || !btn) return;
+
+            if (!origin) {
+                nameEl.innerText = '📄 這張圖的來源不明';
+                kindEl.innerText = '可能是上次未儲存的編輯';
+            } else {
+                nameEl.innerText = '📄 ' + origin.name;
+                const KIND_TXT = {
+                    site: '站上範例', share: '分享碼', preset: '五鎮預設地形',
+                    save: '你的存檔', blank: '從空白開始'
+                };
+                let sub = KIND_TXT[origin.kind] || '';
+                if (origin.from) sub += ' · ' + origin.from;
+                if (origin.kind !== 'blank' && !originGrid) sub += '（原始內容已遺失）';
+                else if (origin.kind !== 'blank' && (origin.rows !== gridRows || origin.cols !== gridCols)) {
+                    sub += `（已改成 ${gridRows}×${gridCols}，無法逐格比對）`;
+                }
+                kindEl.innerText = sub;
+            }
+
+            // 空白畫布／來源不明／尺寸已變 → 沒有可比的基準，這一列不存在
+            if (!originComparable()) { btn.classList.add('hidden'); return; }
+            const d = pre || computeDiff();
+            const n = d.add.length + d.del.length + d.chg.length;
+            const on = diffActive();
+            const suspended = !!prefs.diffOn && !on;
+            btn.classList.toggle('diff-on', on);
+            btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+            const spotDelta = origin && origin.spots ? lastSpotStats.activeIds.size - origin.spots.length : 0;
+            const spotTxt = spotDelta < 0 ? `，比原始少 ${-spotDelta} 個景點`
+                : (spotDelta > 0 ? `，比原始多 ${spotDelta} 個景點` : '');
+
+            if (suspended) {
+                // 圖層沒有被取消，只是暫停 → 維持可點（點一下清掉定位就回來）
+                btn.classList.remove('hidden');
+                btn.innerText = `✏ 與原始差 ${n} 格（定位中暫停，點恢復）`;
+                return;
+            }
+            if (!on) {
+                if (!n) { btn.classList.add('hidden'); return; }   // 沒差異又沒開圖層＝這一列不必存在
+                btn.classList.remove('hidden');
+                btn.innerText = `✏ 與原始差 ${n} 格（點看差異）${spotTxt}`;
+                return;
+            }
+            btn.classList.remove('hidden');
+            // 開著圖層而差異歸零時**不可以**隱藏——否則關掉它的唯一入口消失了
+            btn.innerText = n
+                ? `✏ 新增 ${d.add.length} · 拆掉 ${d.del.length} · 改過 ${d.chg.length} 格`
+                    + `（${d.groups.length} 處${d.groups.length > 40 ? '，已在地圖上全部標亮' : '，點號碼可跳'}）${spotTxt}`
+                : '✏ 與原始完全相同（點關閉差異）';
+        }
+
+        /* ─── 整圖圖層的唯一進出點 ───
+           動線與差異都是「整張圖的逐格色洗」，疊起來是泥巴 → 一次只能開一個。
+           兩個各自知道對方存在的 toggle 遲早會出現「兩個都亮」，所以收成一支
+           （理由同 setLocateMode 的「唯一進出點」）。持久旗標仍是 prefs.flowOn／prefs.diffOn，
+           localStorage 的 key 名一個都沒改。 */
+        function setMapLayer(which) {
+            if (which === 'flow' && !lastHasGate) { showSysMsg('地圖上沒有校門，無法計算動線', true); return false; }
+            if (which === 'diff' && !originComparable()) { showSysMsg('沒有可比對的原始地圖', true); return false; }
+            savePrefs({ flowOn: which === 'flow', diffOn: which === 'diff' });
+            styleFlowBtn();
+            updateFlowOverlay();
+            renderDiffOverlay();
+            syncSuggestBtn();
+            updateToolHint(currentTool, updateSuggestions());
+            return true;
+        }
+
+        function toggleDiff() {
+            if (!originComparable()) {
+                showSysMsg(origin && !originGrid ? '這張圖只剩來歷記錄，無法逐格比對' : '目前沒有可比對的原始地圖', true);
+                return;
+            }
+            // 定位中按它＝「我要看差異」→ 先清掉聚光燈，圖層自己回來
+            if (prefs.diffOn && !diffActive()) { clearLocate(); return; }
+            const want = !prefs.diffOn;
+            // 剛按下「點看差異」的這一下也是明確意圖：聚光燈讓位，不要讓他看到一片空白
+            if (want) clearLocate();
+            track('toggle_diff', { on: want, kind: origin ? origin.kind : 'none' });
+            setMapLayer(want ? 'diff' : null);
+            showSysMsg(want
+                ? '差異圖層：+ 新增、− 拆掉、≠ 改過（種類或高度）；景點標記照常顯示'
+                : '已關閉差異圖層');
+        }
+
+        // 回到原始狀態：破壞性動作 → 走統一守衛，而且自己也要可 Ctrl+Z
+        function restoreOrigin() {
+            if (!originComparable()) { showSysMsg('沒有可還原的原始地圖', true); return; }
+            const keep = origin;
+            guardDestructive(`回到「${origin.name}」的原始狀態`, () => {
+                pushHistory();
+                if (importGridData(decodeMap(keep.code))) {
+                    track('origin_restore', { kind: keep.kind });
+                    adoptOrigin(keep);
+                    markClean(keep.town || null);
+                    showSysMsg(`已回到原始狀態：${keep.name}`);
+                }
+            });
         }
 
         /* 城鎮鈕的字樣就是狀態，所以「取消切換」不可能讓控制項說謊，
@@ -3091,6 +3544,8 @@
             checkSpots();
             document.getElementById('saveName').value = '';
             markClean(null);   // 空白畫布不屬於任何城鎮
+            // 空白畫布是合法的來歷，但「跟空白比差異」沒有意義 → originComparable() 會擋掉那一列
+            setOrigin({ kind: 'blank', name: `空白畫布 ${gridRows}×${gridCols}`, from: '', town: null });
             showSysMsg(`已清成空白畫布（${gridRows}×${gridCols}）`);
         }
 
@@ -3106,6 +3561,7 @@
                     if (importGridData(parsed)) {
                         track('import_code', { fmt: 'json' });
                         markClean(matchTown(gridData));
+                        setOrigin({ kind: 'share', name: '貼上的地圖', from: '舊版 JSON 存檔碼', town: matchTown(gridData) });
                         showSysMsg('已載入（舊版存檔碼）');
                         return true;
                     }
@@ -3121,14 +3577,38 @@
                     pushHistory();
                     if (importGridData(grid)) {
                         track('import_code', { fmt: 'share' });
-                        markClean(matchTown(gridData));
-                        showSysMsg('已載入分享的地圖');
+                        // 貼進來的可能就是佈局頁那條連結 → 認得出來就報得出名字
+                        const meta = originFromCode(code);
+                        markClean(meta.town || matchTown(gridData));
+                        setOrigin(meta);
+                        track('load_site_layout', { kind: meta.kind, name: meta.name });
+                        showSysMsg('已載入：' + meta.name);
                         return true;
                     }
                 }
             }
             showSysMsg('無法辨識這段內容（支援分享連結、#m= 代碼、舊版 JSON 存檔碼）', true);
             return false;
+        }
+
+        /* 網址 hash 帶進來的分享碼（＝佈局頁那顆「🧩 在模擬器開啟」）。
+           與貼上載入走同一組規則：先問（有未儲存的編輯時）、pushHistory（誤按可 Ctrl+Z）、
+           報得出名字、成功後才清掉 hash。 */
+        function applySharedGrid(code, grid) {
+            const meta = originFromCode(code);
+            const apply = () => {
+                pushHistory();
+                if (!importGridData(grid)) { showSysMsg('分享的地圖格式錯誤', true); return; }
+                markClean(meta.town || matchTown(gridData));
+                setOrigin(meta);
+                track('load_site_layout', { kind: meta.kind, name: meta.name });
+                showSysMsg('已載入：' + meta.name);
+                /* 成功載入後就把 #m= 清掉：留著它，使用者接下來的編輯會在下一次重新整理時
+                   被分享碼整份蓋掉。解碼失敗或使用者取消時刻意不清，那串碼還看得到。 */
+                try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
+            };
+            if (isDirty()) guardDestructive(`載入「${meta.name}」會換掉目前的畫布`, apply);
+            else apply();
         }
 
         function loadSavedMap(name) {
@@ -3143,6 +3623,7 @@
                     document.getElementById('saveName').value = name;
                     savePrefs({ lastSave: name });
                     markClean(matchTown(gridData));
+                    setOrigin({ kind: 'save', name: name, from: '讀取時的內容', town: matchTown(gridData) });
                     showSysMsg(`已讀取：${name}`);
                 }
             } catch (e) { showSysMsg('讀取失敗！', true); }
@@ -3271,6 +3752,17 @@
         function highlightSelected(id) {
             const it = items[id];
             if (!it || it.hidden || id === 'empty' || it.type === 'tool') return;
+            /* 差異圖層開著時**不自動**進定位模式。
+               這裡是「選了一個已經蓋過的設施」的自動觸發，而差異圖層是使用者明確開的
+               持久模式 —— 明確意圖優先於自動行為。不擋的話，「照著範例改」的每一次選筆刷
+               都會把差異圖層踢成暫停（選建築 → 差異沒了 → 再開 → 再選 → 又沒了），
+               三次之後沒有人會再開它。
+               打字搜尋（highlightSearch）是另一個**明確**意圖，照樣可以進定位、
+               差異圖層會暫停並在那一列留一條回來的路。 */
+            if (prefs.diffOn && originComparable()) {
+                if (hlIds) { hlIds = null; applyHighlight(); }
+                return;
+            }
             const built = gridData.some(row => row.some(cell => cell.type === id));
             if (!built) { if (hlIds) { hlIds = null; applyHighlight(); } return; }
             hlIds = new Set([id]);
@@ -3296,13 +3788,26 @@
             const b = document.body;
             if (b.classList.contains('locating') === !!on) return;
             b.classList.toggle('locating', !!on);
+            syncSuggestBtn();
+            if (on) { clearSpotOverlays(); renderDiffOverlay(); }  // 差異圖層暫停（不是取消）
+            else checkSpots();                                     // 出定位：景點與差異一起回來
+        }
+        // 清掉定位（聚光燈）。差異圖層被暫停時，那一列就是靠這支把它救回來的出路。
+        function clearLocate() {
+            if (!hlIds) return;
+            hlIds = null;
+            applyHighlight();
+        }
+        /* suggestBtn 的 disabled 有兩個主人（定位模式與差異圖層）→ 收成一支，
+           不然「關掉差異」會把仍在定位模式的建議鈕重新啟用。 */
+        function syncSuggestBtn() {
             const btn = document.getElementById('suggestBtn');
-            if (btn) {
-                btn.disabled = !!on;
-                btn.title = on ? '定位中不顯示景點建議框（清除定位後可用）' : '顯示可完成景點的建議位置';
-            }
-            if (on) clearSpotOverlays();
-            else checkSpots();
+            if (!btn) return;
+            const locating = document.body.classList.contains('locating');
+            btn.disabled = locating || diffActive();
+            btn.title = locating ? '定位中不顯示景點建議框（清除定位後可用）'
+                : (diffActive() ? '差異圖層開著時不顯示建議框（它畫在空格上，會與「拆掉」重複標記）'
+                : '顯示可完成景點的建議位置');
         }
 
         function applyHighlight() {
@@ -3684,8 +4189,11 @@
             grid.addEventListener('click', (e) => {
                 const num = e.target.closest('.found-num');
                 if (!num) return;
-                const sp = hlSpots[+num.dataset.i];
-                if (sp) { focusCell(sp.r, sp.c); track('locate_facility'); }
+                // 同一種徽章服務兩件事：定位命中（.found-num）與變更區塊（.found-num.dn）。
+                // 兩者互斥（差異圖層在定位模式下暫停），所以不會同時有號碼在圖上。
+                const dn = num.classList.contains('dn');
+                const sp = (dn ? diffSpots : hlSpots)[+num.dataset.i];
+                if (sp) { focusCell(sp.r, sp.c); track(dn ? 'locate_diff' : 'locate_facility'); }
             });
 
             document.getElementById('suggestBtn').addEventListener('click', () => {
@@ -3724,6 +4232,13 @@
                 if (!lastHasGate) { showSysMsg('先在地圖上放一個校門，才能計算動線', true); return; }
                 if (toggleFlow(true) && lastBlockedFirst) focusCell(lastBlockedFirst[0], lastBlockedFirst[1]);
             });
+            // 來源徽章：整列可點 → 開 🆚 比較（預設就是「原始 vs 目前」，含回到原始狀態）
+            document.getElementById('originBtn').addEventListener('click', () => {
+                track('open_origin', { kind: origin ? origin.kind : 'none' });
+                buildCompare();
+            });
+            // 差異列：狀態讀數本身就是圖層開關（同 blockedBtn 的慣例）
+            document.getElementById('diffBtn').addEventListener('click', toggleDiff);
             document.getElementById('nearChips').addEventListener('click', (e) => {
                 if (e.target.closest('#nearMoreBtn')) {
                     nearExpanded = !nearExpanded;
