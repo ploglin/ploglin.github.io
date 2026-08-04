@@ -1,0 +1,477 @@
+/* ============================================================
+   口袋學院物語2（school2）長頁閱讀排版 — guide.css?v=1
+
+   只有 school2 的攻略頁引入，**自帶版號** → 加這一行不需要動全站
+   `?v=8`（沒有改任何共用檔）。共用的 assets/shell.css / shell.js /
+   db.js 一位元都不動；本檔只用既有 token（--brand / --ink / --line…）
+   推導，深色模式因此免費。
+
+   引入方式（head，兩行）：
+       <link rel="stylesheet" href="../assets/guide.css?v=1">
+       <script src="../assets/guide.js?v=1" defer></script>
+   （`defer` 會在 DOM 解析完、Shell.mount() 之後才跑 → 量得到 --hdr-h、
+     也找得到 shell.js 注入的浮動 ☰ 目錄。）
+
+   本檔提供的 class 契約（其他頁面照這些名字寫就會有樣式）：
+     .path-rail    主線 6 站的位置指示器（不是導覽列）
+     .next-step    內容結束、延伸閱讀之前的「下一步 →」大卡
+     .sec-num      h2 內的章節編號（<span class="sec-num">01</span>）
+     .sec-lead     h2 之後一行 15–25 字的章節摘要
+     .datablock    20–80 列的完整資料表容器（內捲 → sticky thead 生效）
+     .zone-group   <details>/<summary> 手風琴
+     .kpi-row      KPI 統計磚（取代 5 個鎮頁各自的頁內 .statgrid）
+     .toc-rail     ≥1248px 才出現的側邊目錄軌（由 guide.js 自動生成）
+     .read-progress 頁內捲動進度線（由 guide.js 自動生成）
+     .sc-*         景點檢查器 widget（自 spot-check/ 頁內 style 搬來）
+   ============================================================ */
+
+
+/* ---------- 0. 錨點落點修復（P0） ------------------------------------------
+   shell.css:237 有正確值 `calc(var(--hdr-h) + 68px)`，但同檔 348/350 行的
+   `.prose h2/h3 { scroll-margin-top: 72px }` 同特異度且在後面 → 蓋掉它。
+   實際 sticky 高度是 106px（site-header 55 ＋ game-bar 51），72px 不夠，
+   點目錄後標題會躲在功能列後面。用 `main.article` 提高特異度覆寫，不動共用檔。
+   details / datablock 也要：手風琴與資料表都會被跨頁錨點指到。
+--------------------------------------------------------------------------- */
+main.article .prose h2[id],
+main.article .prose h3[id],
+main.article .prose h4[id],
+main.article [id].datablock,
+main.article details[id],
+main.article section[id],
+main.article h2[id],
+main.article h3[id] {
+    scroll-margin-top: calc(var(--hdr-h, 55px) + 62px);
+}
+
+
+/* ---------- 1. 捲動進度線（無狀態） ----------------------------------------
+   由 guide.js 建立並以 rAF 更新 `--rp`（0–1）。刻意不加 transition：
+   加了會落後手指；平滑感來自 scaleX 的次像素而非過渡。
+   量的是 .article 的範圍而非整份文件——否則讀完內文時線只走到七成。
+   z-index 45：壓過 site-header(40) 與 game-bar(35)，但讓「更多▾」下拉(50)
+   與浮動 ☰(60) 蓋住它。
+--------------------------------------------------------------------------- */
+.read-progress {
+    position: fixed;
+    inset: 0 0 auto 0;
+    height: 2px;
+    z-index: 45;
+    pointer-events: none;
+    background: transparent;
+}
+.read-progress i {
+    display: block;
+    height: 100%;
+    background: var(--brand);
+    transform: scaleX(var(--rp, 0));
+    transform-origin: 0 50%;
+    will-change: transform;
+}
+
+
+/* ---------- 2. .path-rail：主線 6 站位置指示器 -----------------------------
+   是位置指示器，不是導覽列（往上＝麵包屑、橫向＝game-bar 已各自負責）。
+   手機必然橫捲（6 站中文標籤約 520–600px）→ guide.js 會把當前站捲到中央，
+   並在可捲時加 .can-x（右緣淡出當「還有內容」的暗示）。
+--------------------------------------------------------------------------- */
+.path-rail {
+    margin: 14px 0 18px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+}
+.path-rail::-webkit-scrollbar { display: none; }
+.path-rail ol {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    width: max-content;
+    min-width: 100%;
+}
+.path-rail li { display: flex; margin: 0; }
+.path-rail a,
+.path-rail .cur {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 44px;
+    padding: 8px 12px 8px 10px;
+    white-space: nowrap;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--ink-soft);
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-right: 0;
+    scroll-snap-align: center;
+}
+.path-rail li:first-child a,
+.path-rail li:first-child .cur { border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
+.path-rail li:last-child a,
+.path-rail li:last-child .cur { border-right: 1px solid var(--line); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
+.path-rail a:hover { background: var(--brand-soft); color: var(--brand-strong); text-decoration: none; }
+.path-rail b {
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    flex: 0 0 auto;
+    border-radius: 5px;
+    background: var(--card-2);
+    border: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 11.5px;
+    font-weight: 900;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+/* 當前站：實心（＋markup 上的 aria-current="step"） */
+.path-rail [aria-current="step"] {
+    background: var(--brand);
+    border-color: var(--brand);
+    color: #fff;
+}
+.path-rail [aria-current="step"] b {
+    background: rgba(255, 255, 255, .22);
+    border-color: transparent;
+    color: #fff;
+}
+/* 主線之外的專題分支（例如 combo/）：與主線同一條軌，但標成分支 */
+.path-rail .branch[aria-current="step"] {
+    background: var(--brand-strong);
+    border-color: var(--brand-strong);
+}
+.path-rail.can-x {
+    -webkit-mask-image: linear-gradient(90deg, #000 86%, transparent);
+    mask-image: linear-gradient(90deg, #000 86%, transparent);
+}
+
+
+/* ---------- 3. 章節編號 ＋ 章節摘要 ----------------------------------------
+   紅線：`.prose` 內 p/li/h2/h3 的字級/行高/字距/margin 一律不動。
+   編號做成 h2 內的 block 子元素（不是前置兄弟）——`.prose h2` 有
+   `border-top:2px`，做成兄弟會讓那條線插在編號與標題之間把兩者切開；
+   也刻意不用 inline-block，否則標題換行會齊到編號下方。
+--------------------------------------------------------------------------- */
+main.article .prose h2 { position: relative; }
+.sec-num {
+    display: block;
+    font-size: 12px;
+    line-height: 1;
+    letter-spacing: .08em;
+    font-weight: 900;
+    color: var(--muted);
+    margin-bottom: 5px;
+    font-variant-numeric: tabular-nums;
+}
+.sec-lead {
+    margin: -2px 0 14px;
+    color: var(--ink-soft);
+    font-size: 15px;
+    font-weight: 700;
+}
+
+
+/* ---------- 4. .datablock：20–80 列的完整資料表 ----------------------------
+   標頭含表名／筆數／篩選框／「在資料庫開啟 →」；`.table-wrap` 拿到
+   max-height 之後，shell.css 既有的 `table.data thead th{position:sticky}`
+   才終於有滾動容器可貼（在此之前 `.table-wrap` 只有 overflow-x，永遠不會
+   縱向捲動 → sticky 是死碼）。
+   高度用 min(62vh,520px) 而非 70vh：70vh ＋ 106px sticky 必然 >100vh，
+   整塊永遠無法完整落在功能列下方；iOS 的 vh 又取工具列收起時的大視窗。
+--------------------------------------------------------------------------- */
+.datablock {
+    position: relative;
+    margin: 20px 0 22px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--card-2);
+    overflow: hidden;
+}
+.dbk-h {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 10px;
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--line);
+    background: var(--card-2);
+}
+.dbk-t { font-size: 14px; font-weight: 900; color: var(--ink); }
+.dbk-n { font-size: 12.5px; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
+.dbk-f {
+    flex: 1 1 160px;
+    min-width: 130px;
+    font: inherit;
+    font-size: 16px;          /* <16px 會讓 iOS 聚焦時自動放大整頁 */
+    min-height: 44px;
+    padding: 8px 11px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--card);
+    color: var(--ink);
+}
+.dbk-f:focus-visible { outline: 2px solid var(--brand); outline-offset: 1px; }
+.dbk-open { margin-left: auto; font-size: 13px; font-weight: 800; white-space: nowrap; }
+.datablock .db-embed { margin: 0; }
+.datablock .table-wrap {
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    max-height: min(62vh, 520px);
+    overflow: auto;
+    overscroll-behavior: contain;   /* 捲到底不要把整頁帶走 */
+}
+@supports (height: 100dvh) {
+    .datablock .table-wrap { max-height: min(62dvh, 520px); }
+}
+/* 單元素雙軸（同一個 .table-wrap 縱橫都捲）→ 不會有巢狀捲動劫持。
+   解除 shell.css 的 min-width:460px，否則窄表在手機仍會左右漂移、
+   直向滑動變成斜著跑；真的需要寬表時加 .datablock--wide。 */
+.datablock table.data { min-width: 0; }
+.datablock--wide table.data { min-width: 640px; }
+/* border-collapse 下 sticky th 的 border-bottom 會隨內容捲走，資料列會從
+   標頭底下穿出來。用 1px inset 陰影補線（刻意只用一條 1px、不做階梯陰影：
+   sticky 元素上的多層陰影會在捲動時每影格重繪整條表頭）。 */
+.datablock table.data thead th {
+    box-shadow: inset 0 -1px 0 var(--line);
+    z-index: 2;
+}
+.datablock figcaption { padding: 0 12px 10px; }
+.dbk-empty { padding: 14px 12px; font-size: 13.5px; color: var(--muted); }
+.dbk-empty button {
+    font: inherit; font-size: 13px; font-weight: 800; margin-left: 8px;
+    min-height: 32px; padding: 4px 10px; cursor: pointer;
+    border: 1px solid var(--line); border-radius: 8px;
+    background: var(--card); color: var(--brand-strong);
+}
+/* 可排序表頭 */
+.datablock table.data thead th[data-sort] { cursor: pointer; user-select: none; }
+.datablock table.data thead th[data-sort]:hover { color: var(--brand-strong); }
+.datablock table.data thead th[aria-sort="ascending"]::after { content: ' ▲'; font-size: 9px; }
+.datablock table.data thead th[aria-sort="descending"]::after { content: ' ▼'; font-size: 9px; }
+
+
+/* ---------- 5. .zone-group：手風琴（只給查閱型內容，不給機制解說） --------- */
+.zone-group {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--card);
+    margin: 10px 0;
+    overflow: hidden;
+}
+.zone-group > summary {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 10px 13px;
+    cursor: pointer;
+    font-size: 14.5px;
+    font-weight: 800;
+    background: var(--card-2);
+    list-style: none;
+}
+.zone-group > summary::-webkit-details-marker { display: none; }
+.zone-group > summary::after {
+    content: '▾';
+    margin-left: auto;
+    color: var(--muted);
+    font-size: 12px;
+}
+.zone-group[open] > summary::after { content: '▴'; }
+.zone-group > summary:hover { background: var(--brand-soft); }
+.zone-group > summary:focus-visible { outline: 2px solid var(--brand); outline-offset: -2px; }
+.zone-group .zg-n { margin-left: auto; font-size: 12.5px; font-weight: 700; color: var(--muted); }
+.zone-group > summary:has(.zg-n)::after { margin-left: 8px; }
+.zone-group .zg-body { padding: 4px 14px 12px; }
+.zone-group .sw {
+    width: 14px; height: 14px; flex: 0 0 auto;
+    border-radius: 4px;
+    border: 1px solid color-mix(in srgb, var(--ink) 20%, transparent);
+}
+
+
+/* ---------- 6. .kpi-row：KPI 統計磚 ----------------------------------------
+   與 5 個鎮頁各自頁內 style 的 `.statgrid` 視覺等價（那是 8.6KB 近重複的
+   技術債）→ 鎮頁把 class 換成 kpi-row、刪掉頁內 style 即可，零視覺變化。
+   大數字留在 --brand-strong：--accent 對白只有 1.99:1，絕對不能當數字色。
+   KPI 是資料不是連結，不給 hover 位移。
+--------------------------------------------------------------------------- */
+.kpi-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+    margin: 14px 0;
+}
+.kpi-row > div {
+    background: var(--card-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+}
+.kpi-row b {
+    display: block;
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--brand-strong);
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+}
+.kpi-row span { font-size: 12.5px; color: var(--muted); font-weight: 700; }
+
+
+/* ---------- 7. .toc-rail：側邊目錄軌（≥1248px） ----------------------------
+   幾何：文字欄維持置中的 760px（中文 40 字/行已是舒適上限），軌用絕對定位
+   放進右側留白 → 正文不會相對於 1120px 置中的 header/game-bar 左偏。
+   760/2 ＋ 28 gap ＋ 200 軌寬 ＋ 16 邊距 → 斷點 1248px。
+   內容由 guide.js 從 h2[id]／h3[id] 生成（純導覽，不是內容）。
+--------------------------------------------------------------------------- */
+.toc-rail { display: none; }
+@media (min-width: 1248px) {
+    main.article { position: relative; }
+    main.article > .toc-rail {
+        display: block;
+        position: absolute;
+        left: calc(100% + 28px);
+        top: 0;
+        bottom: 0;
+        width: 200px;
+    }
+    .toc-rail nav {
+        position: sticky;
+        top: calc(var(--hdr-h, 55px) + 62px);
+        max-height: calc(100vh - var(--hdr-h, 55px) - 90px);
+        overflow: auto;
+        padding-left: 14px;
+        border-left: 2px solid var(--line);
+    }
+    .toc-rail .tr-h {
+        font-size: 11.5px;
+        font-weight: 900;
+        letter-spacing: .06em;
+        color: var(--muted);
+        margin-bottom: 8px;
+    }
+    .toc-rail ol { list-style: none; margin: 0; padding: 0; }
+    .toc-rail a {
+        display: -webkit-box;
+        padding: 4px 0;
+        font-size: 13px;
+        line-height: 1.45;
+        color: var(--muted);
+        overflow: hidden;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+    .toc-rail a:hover { color: var(--brand-strong); text-decoration: none; }
+    .toc-rail li.lv3 a { padding-left: 12px; font-size: 12.5px; }
+    .toc-rail a.on { color: var(--brand-strong); font-weight: 800; }
+    .toc-rail li.lv2 > a.on { box-shadow: -16px 0 0 -14px var(--brand); }
+    /* ≥1248px 章節編號懸掛到左留白（position 不屬於字級/行高/字距紅線） */
+    .sec-num { position: absolute; left: -52px; top: 15px; margin: 0; }
+}
+
+
+/* ---------- 8. .next-step：下一步大卡 --------------------------------------
+   放在內容結束、延伸閱讀之前。「← 上一步」小字刻意在大卡之外——放在可點區
+   內誤觸就往後跳。
+--------------------------------------------------------------------------- */
+.next-step { margin: 32px 0 6px; border-top: 1px solid var(--line); padding-top: 18px; }
+.next-step .ns-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 15px 18px;
+    border: 1px solid color-mix(in srgb, var(--brand) 32%, var(--line));
+    border-radius: var(--radius);
+    background: var(--brand-soft);
+    color: var(--ink);
+}
+.next-step .ns-card:hover { text-decoration: none; box-shadow: var(--shadow-hover); }
+.next-step .ns-ic { font-size: 26px; flex: 0 0 auto; line-height: 1; }
+.next-step .ns-t { font-size: 16.5px; font-weight: 900; color: var(--brand-strong); }
+.next-step .ns-why { font-size: 13.5px; color: var(--ink-soft); margin-top: 2px; }
+.next-step .ns-prev {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-top: 12px;
+    font-size: 12.5px;
+    color: var(--muted);
+}
+
+
+/* ---------- 9. 表格手機強化 ------------------------------------------------ */
+@media (max-width: 768px) {
+    /* 首欄 sticky：橫捲時「這一列是哪個景點／設施」不能跟著跑掉。
+       只改 background（不加 border/box-shadow）——border-collapse 下 sticky
+       的 border 不會跟著黏，而多層陰影會讓橫捲每影格重繪。 */
+    .datablock table.data thead th:first-child,
+    .datablock table.data tbody td:first-child {
+        position: sticky;
+        left: 0;
+        background: var(--card);
+    }
+    .datablock table.data thead th:first-child { background: var(--card-2); z-index: 3; }
+    /* 右緣淡出：暗示「右邊還有欄」。標頭列不蓋（top 從標頭下緣起算）。 */
+    .datablock.can-x::after {
+        content: '';
+        position: absolute;
+        top: 46px;
+        right: 0;
+        bottom: 0;
+        width: 20px;
+        pointer-events: none;
+        background: linear-gradient(to left, color-mix(in srgb, var(--card) 88%, transparent), transparent);
+    }
+    .dbk-open { margin-left: 0; }
+}
+
+
+/* ---------- 10. 景點檢查器 widget（自 spot-check/ 的頁內 style 搬來） ------- */
+.sc-tools { display: flex; gap: 8px; margin: 12px 0 8px; }
+.sc-tools input {
+    flex: 1; font: inherit; font-size: 16px; min-height: 44px;
+    padding: 9px 12px; border: 1px solid var(--line);
+    border-radius: 10px; background: var(--card); color: var(--ink);
+}
+.sc-tools button {
+    font: inherit; font-size: 13px; font-weight: 800; min-height: 44px;
+    padding: 0 14px; border: 1px solid var(--line); border-radius: 10px;
+    background: var(--card-2); color: var(--ink-soft); cursor: pointer;
+}
+.sc-res { margin-top: 6px; }
+.sc-h { font-weight: 900; font-size: 15px; margin: 16px 0 6px; }
+.sc-list { list-style: none; margin: 0; padding: 0; }
+.sc-list li {
+    padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line);
+    margin: 5px 0; font-size: 14px; background: var(--card);
+}
+.sc-list li.ok {
+    border-color: color-mix(in srgb, var(--brand) 45%, var(--line));
+    background: var(--brand-soft);
+}
+.sc-name { font-weight: 900; }
+.sc-miss { color: var(--brand-strong); font-weight: 800; }
+.sc-bonus { color: var(--muted); font-size: 12.5px; }
+
+
+/* ---------- 11. 浮動 ☰ 目錄的第二層（h3，由 guide.js 補上） ---------------- */
+.pagenav-menu a.lv3 { padding-left: 22px; font-size: 12.5px; color: var(--muted); }
+.pagenav-menu a.lv3::before { content: '– '; opacity: .6; }
+
+
+/* ---------- 12. prefers-reduced-motion ------------------------------------
+   移除位移（「動」會誘發不適），保留狀態變化（陰影深淺是資訊）。
+--------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+    .path-rail { scroll-behavior: auto; scroll-snap-type: none; }
+    .read-progress i { will-change: auto; }
+}
