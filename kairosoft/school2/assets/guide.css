@@ -25,7 +25,7 @@
      .zone/.zone-list  分區條目（前者四鎮的 div 版、後者湖岸的 ul 版）
      .note         施工旁註（比正文小一級、左邊線）
      .town-pills   五鎮完美佈局的橫向切換藥丸列
-     .toc-rail     ≥1248px 才出現的側邊目錄軌（由 guide.js 自動生成）
+     .toc-rail     ≥1568px 才出現的側邊目錄軌（由 guide.js 自動生成；出現時收掉浮動 ☰）
      .read-progress 頁內捲動進度線（由 guide.js 自動生成）
      .sc-*         景點檢查器 widget（自 spot-check/ 頁內 style 搬來）
    ============================================================ */
@@ -479,17 +479,18 @@ main.article #dbApp table thead th {
 .town-pills .tp.on i { color: rgba(255, 255, 255, .8); }
 
 
-/* ---------- 7. .toc-rail：側邊目錄軌（≥1248px） ----------------------------
+/* ---------- 7. .toc-rail：側邊目錄軌（≥1568px） ----------------------------
    幾何：文字欄維持置中的 760px（中文 40 字/行已是舒適上限），軌用絕對定位
    放進右側留白 → 正文不會相對於 1120px 置中的 header/game-bar 左偏。
-   760/2 ＋ 28 gap ＋ 200 軌寬 ＋ 16 邊距 → 斷點 1248px。
    內容由 guide.js 從 h2[id]／h3[id] 生成（純導覽，不是內容）。
 --------------------------------------------------------------------------- */
 .toc-rail { display: none; }
-/* 容器由 760 加寬到 1080 之後，軌的斷點要跟著往上推：
-   1080（容器）＋ 28（gap）＋ 200（軌寬）＋ 32（左右邊距）≈ 1340 → 取 1360px。
-   斷點沒推的話，軌會在 1248–1360 之間貼在視窗外緣被裁掉。 */
-@media (min-width: 1360px) {
+/* 軌要塞進右側留白，而容器是置中的 → 右側留白只有 (vw − 1080)/2。
+   (vw + 1080)/2 ＋ 28（gap）＋ 200（軌寬）＋ 16（邊距）≤ vw  →  vw ≥ 1568
+   實測 右邊距 = vw/2 − 760：1440 → −40px（被裁）、1568 → +24px。
+   舊註解用「1080 ＋ 28 ＋ 200 ＋ 32」算成 1360，那是把整片右側留白都當成可用，
+   但容器置中會把一半的留白留在左邊 —— 這就是 1360–1544 之間軌被裁掉的原因。 */
+@media (min-width: 1568px) {
     main.article { position: relative; }
     main.article > .toc-rail {
         display: block;
@@ -529,8 +530,18 @@ main.article #dbApp table thead th {
     .toc-rail li.lv3 a { padding-left: 12px; font-size: 12.5px; }
     .toc-rail a.on { color: var(--brand-strong); font-weight: 800; }
     .toc-rail li.lv2 > a.on { box-shadow: -16px 0 0 -14px var(--brand); }
-    /* ≥1248px 章節編號懸掛到左留白（position 不屬於字級/行高/字距紅線） */
+    /* 軌出現時章節編號懸掛到左留白（position 不屬於字級/行高/字距紅線） */
     .sec-num { position: absolute; left: -52px; top: 15px; margin: 0; }
+    /* 側邊目錄軌出現時，右下角浮動的 ☰ 章節目錄是同一份導覽的第二個入口 → 收掉。
+       **只收 ☰ 與它的選單，不收整個 `.pagenav`**：那個容器裡還有一顆
+       `↑ 回到頂端`（`.pagenav-top`，shell.js 在捲過 400px 後才顯示），它跟章節
+       目錄無關，而且螢幕越寬、正文越長，它越有用——連容器一起 display:none
+       會把它一起弄掉。`.pagenav-menu.open` 要一起寫：shell.css 的
+       `.pagenav-menu.open{display:block}` 同特異度，靠本檔在後面才蓋得掉。
+       只在 school2 的 guide.css 收，不動 shell.css（那是 29 款共用的元件）。 */
+    .pagenav-btn:not(.pagenav-top) { display: none; }
+    .pagenav-menu,
+    .pagenav-menu.open { display: none; }
 }
 
 
