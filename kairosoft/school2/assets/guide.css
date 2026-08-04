@@ -236,6 +236,36 @@ main.article .prose h2 { position: relative; }
    直向滑動變成斜著跑；真的需要寬表時加 .datablock--wide。 */
 .datablock table.data { min-width: 0; }
 .datablock--wide table.data { min-width: 640px; }
+
+/* ---------- 4b. 資料表要跳出 760px 的正文欄 ---------------------------------
+   760px 是給**正文**的（中文約 40 字/行是舒適上限），但資料表不是正文：
+   `.container-narrow` 扣掉左右 padding 只剩 720px 內容寬，7 欄的老師表放進去
+   名稱一定折行。所以 `.datablock` 在桌機往外「出血」到接近 --maxw(1120px)，
+   正文段落維持 760px 不動 —— 一頁裡「讀的欄窄、查的表寬」是刻意的。
+
+   兩段式，因為右側留白在 ≥1248px 時要讓給側邊目錄軌（`.toc-rail` 佔 200px
+   ＋ 28px gap ＋ 16px 邊距）：
+     900–1247px  → 左右對稱出血
+     ≥1248px     → **只往左出血**，右邊淨空給軌，否則表格會蓋住目錄
+   出血量一律用 min() 夾住，視窗不夠寬時自動退回 0，不會產生橫向捲軸。 */
+@media (min-width: 900px) {
+    .datablock {
+        --dbk-bleed: min(180px, calc((100vw - 760px) / 2 - 24px));
+        width: calc(100% + var(--dbk-bleed) * 2);
+        margin-left: calc(var(--dbk-bleed) * -1);
+    }
+}
+@media (min-width: 1248px) {
+    .datablock {
+        --dbk-bleed: min(200px, calc((100vw - 760px) / 2 - 244px));
+        width: calc(100% + var(--dbk-bleed));
+        margin-left: calc(var(--dbk-bleed) * -1);
+    }
+}
+/* 名稱欄不要折行：讀者是拿名字對照的，「森野熊」斷成兩行比橫向捲動更難讀。
+   欄寬不足時交給 `.table-wrap` 的橫捲處理（它本來就是雙軸捲動容器）。 */
+.datablock table.data thead th:first-child,
+.datablock table.data tbody td:first-child { white-space: nowrap; }
 /* border-collapse 下 sticky th 的 border-bottom 會隨內容捲走，資料列會從
    標頭底下穿出來。用 1px inset 陰影補線（刻意只用一條 1px、不做階梯陰影：
    sticky 元素上的多層陰影會在捲動時每影格重繪整條表頭）。 */
