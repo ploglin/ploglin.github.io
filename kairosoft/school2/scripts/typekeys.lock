@@ -1,0 +1,92 @@
+# TYPE_KEYS 鎖檔 —— 分享碼 ABI
+#
+# 這是 sim/index.html 的 `items` 宣告順序快照，也就是 `TYPE_KEYS = Object.keys(items)`。
+# 分享碼把每格的設施編成「TYPE_KEYS 的索引」，所以這份順序是**上線後不可逆**的：
+#   · 站上 8 組分享碼（layouts/index.html 3 組、五個鎮頁各 1 組）
+#   · 外部指向 sim/#m=… 的 inbound 連結
+#   · 玩家瀏覽器裡的 pa2_maps_v9 / pa2_autosave_v1 存檔
+# 全部依賴索引順序。**只能 append，不能插入、刪除、重排、改 id 字串。**
+#
+# 守衛：node scripts/check.js 驗「當前 TYPE_KEYS 必須以本檔為前綴」。
+# 新增設施後（照 /add-facility 流程）把新 id 追加到本檔尾端；除此之外不要編輯。
+#
+# 格式：一行一個 id，順序即索引（第一行 = 索引 0）。# 開頭為註解。
+empty
+grass
+aze_path
+wood_path
+asphalt
+concrete
+flower
+woods
+pine
+poplar
+palm
+azalea
+bamboo
+sakura
+special_tree
+rock
+pond
+lake
+slope
+toilet
+water
+nurse
+locker
+shop
+vending
+well
+weather
+board
+broadcast
+game_corner
+incinerator
+statue_br
+statue_gold
+tea_room
+cafeteria
+convenience
+bench
+totem
+rocket
+kairo_gold
+kairo_statue
+class
+office
+principal
+library
+av_room
+music
+science
+art
+computer
+home_ec
+career
+multi_room
+planetarium
+kairo_room
+gate
+gate_h
+field
+tennis
+basketball
+gym
+pool
+baseball
+soccer
+dojo
+club
+trampoline
+farm
+chicken
+rabbit
+pig
+cow
+duck
+mole
+panda
+koala
+croc
+giraffe
+elephant

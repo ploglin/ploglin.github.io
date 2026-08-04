@@ -81,7 +81,36 @@ kairosoft/<game>/            index.html = 內容豐富的攻略專頁(SEO 主力
 - `node scripts/gen-static.js` 會把 111 個 `db/**/index.html` 的 `#dbApp` 與首頁四個 `#*Grid` 容器**烤成靜態 HTML**，蓋在 `<!--prerender:start--> … <!--prerender:end-->` 之間並在容器上加 `data-prerendered`。冪等，可反覆重跑。
 - **改動任一遊戲的 `db/data.js`、`assets/games-index.js`、`assets/db.js`、`assets/home.js`，或新增 db 分類頁／新遊戲後，必須重跑 `node scripts/gen-static.js`**，否則靜態內容會與資料脫節(瀏覽器也不會補救，因為已預渲染的容器不重建)。
 - 預渲染區段內的 HTML 是**產生物，不要手改**；要改內容就改 `db/data.js` 或 render 函式再重跑。
-- 例行順序：`gen-game-nav.js` → `gen-related.js` → `gen-static.js` → `gen-sitemap.js`。
+- 例行順序（**產生器跑完接著跑檢查器**）：
+
+  ```sh
+  node scripts/gen-game-nav.js
+  node scripts/gen-related.js
+  node scripts/gen-static.js
+  node scripts/gen-sitemap.js
+  node scripts/link-check.js                       # 全站連結/錨點/canonical/麵包屑/sitemap/?v=
+  node kairosoft/school2/scripts/check.js          # school2 模擬器＋sim↔db 一致性
+  for t in health east lake valley hill; do node kairosoft/school2/scripts/layout-gen/verify.js $t page; done
+  ```
+
+## 檢查器
+
+兩支都是**唯讀**的，跑完不改任何檔案；有 FAIL 就退出碼 1。
+
+- **`scripts/link-check.js`**（repo 根，跨全站 29 款）：相對 `href`/`src` 目標存在性、同頁與跨頁錨點的
+  `id` 存在性、`canonical`／`og:url` 必須等於 `https://ploglin.cc/` ＋ repo 相對目錄、`og:image`
+  指向存在的檔案、麵包屑層數＝目錄深度且每個 href 可達、`sitemap.xml` 與可索引頁互相對得上（漏收/多收都報）、
+  全 repo `?v=` 同號且 `data.js` 引用不帶 `?v`。**新增/搬移/刪除任何頁面後必跑。**
+  既有無法立刻修的問題登記在檔頂的 `KNOWN_ISSUES`（每筆要寫理由與修法），降級成 WARN 但每次都會印出來。
+- **`kairosoft/school2/scripts/check.js`**：入口不可換（`/pa2-check` 技能依賴），內部拆
+  `scripts/checks/{parse,sim,consistency}.js`。除原有 8 組模擬器檢查外，另驗 `sim` 的
+  `SPOTS`/`items`/`ITEM_ICONS`/`JP_NAMES` ↔ `db/data.js` 逐列相等、`sim/presets/*.json` ↔ 內嵌地形
+  deep-equal、`typekeys.lock`（分享碼 ABI 的 append-only 守衛）、站上 8 組分享碼往返一致、
+  `DEV_GUIDE` 的 `cond`↔`needs` 自洽、每頁可見字數 ≥1,000。
+  三個層級：**PASS / WARN / FAIL**；`--strict` 把 WARN 升為 FAIL、`--verbose` 印完整清單。
+  新加的檢查一律先以 WARN 落地（不擋工作），確認穩定後再在 `checks/consistency.js` 的 `LEVEL` 表升成 `fail`。
+- 上鎖當時的實測數字全部記在 **`kairosoft/school2/scripts/BASELINE.md`**（連結數/錨點數/各頁字數表/
+  8 組分享碼/TYPE_KEYS 長度，以及「上線後不可逆項目 ↔ 守衛」對照）。數字有變動而不是刻意改的，就是回歸。
 
 ## 頁面樣板規則
 
