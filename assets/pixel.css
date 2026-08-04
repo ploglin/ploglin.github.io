@@ -133,14 +133,6 @@ main.article {
     --shadow-hover: 5px 5px 0 0 var(--px-edge);
 }
 
-/* 5 個鎮頁的 .statgrid 把 border-radius 寫死成 12px（頁內 <style>，沒走
-   token）→ 不換掉會變成「全站直角、只有這 5 頁的 KPI 磚是圓的」。
-   用權重贏過頁內規則（0,2,1 > 0,1,1），值仍取自 token，不寫死數字。
-   （guide.css 的 .kpi-row 是它的等價替代品，本來就吃 token。） */
-main.article .statgrid > div {
-    border-radius: var(--radius-sm);
-}
-
 
 /* ---------- 4. 像素字型的使用範圍（窮舉，超出即算超用）---------------------
    .statgrid b / .kpi-row b  KPI 大數字

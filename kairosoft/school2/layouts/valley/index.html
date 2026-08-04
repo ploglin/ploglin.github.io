@@ -14,7 +14,9 @@
     <meta property="og:description" content="26×26 的三層溪谷地形，開局只走得到 18 格；橡皮擦 6 格解鎖全圖之後，用分區優先的原則排出 141 棟建築、9 間教室 2 間辦公室滿編、29 個人氣景點全成立、0 棟走不到，經程式逐格驗證。">
     <meta property="og:locale" content="zh_TW">
     <meta property="og:url" content="https://ploglin.cc/kairosoft/school2/layouts/valley/">
-    <meta property="og:image" content="https://ploglin.cc/kairosoft/school2/layouts/valley-perfect.svg">
+    <meta property="og:image" content="https://ploglin.cc/kairosoft/school2/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta name="twitter:card" content="summary_large_image">
     <script type="application/ld+json">
     {
@@ -33,32 +35,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../../../assets/shell.css?v=8">
     <link rel="stylesheet" href="../../../../assets/pixel.css?v=8">
-    <link rel="stylesheet" href="../../assets/guide.css?v=4">
-    <script src="../../assets/guide.js?v=4" defer></script>
-    <style>
-        .mapwrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: #f8fafc; padding: 10px; margin: 14px 0; }
-        .mapwrap img { display: block; width: 568px; max-width: none; height: auto; }
-        .mapwrap.wide img { width: 612px; }
-        .fig-cap { font-size: 13px; color: var(--muted); margin: -4px 0 16px; }
-        .statgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin: 14px 0; }
-        .statgrid div { background: var(--card-2); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
-        .statgrid b { display: block; font-size: 22px; font-weight: 900; color: var(--brand-strong); line-height: 1.2; }
-        .statgrid span { font-size: 12.5px; color: var(--muted); font-weight: 700; }
-        .zone { border-top: 1px solid var(--line); padding: 13px 0 3px; }
-        .zone h4 { margin: 0 0 5px; font-size: 16px; font-weight: 900; }
-        .zone .zmeta { display: flex; flex-wrap: wrap; gap: 5px 12px; margin: 0 0 7px; font-size: 12.5px; font-weight: 700; color: var(--muted); }
-        .zone .zmeta span { display: inline-flex; align-items: center; gap: 5px; }
-        .zone .zmeta i { width: 10px; height: 10px; border-radius: 3px; border: 1px solid rgba(0,0,0,.22); flex: none; }
-        .zone p { margin: 5px 0; }
-        .note { font-size: 13.5px; color: var(--ink-soft); border-left: 2px solid var(--line); padding-left: 10px; margin: 8px 0; }
-        .town-pills { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 6px; }
-        .town-pills .tp { display: inline-flex; flex-direction: column; line-height: 1.25; padding: 7px 14px; border-radius: 999px;
-            border: 1px solid var(--line); background: var(--card-2); color: var(--ink-soft); font-weight: 800; font-size: 14px; text-decoration: none; }
-        .town-pills .tp i { font-style: normal; font-size: 11px; font-weight: 700; color: var(--muted); }
-        .town-pills a.tp:hover { border-color: var(--brand); color: var(--brand-strong); }
-        .town-pills .tp.on { background: var(--brand); border-color: var(--brand); color: #fff; }
-        .town-pills .tp.on i { color: rgba(255,255,255,.8); }
-    </style>
+    <link rel="stylesheet" href="../../assets/guide.css?v=5">
+    <script src="../../assets/guide.js?v=5" defer></script>
 </head>
 <body>
     <main class="container-narrow article">
@@ -81,7 +59,7 @@
             </div>
             <p class="fig-cap">（圖可左右拖動）格子上的字是設施簡稱，一棟多格建築畫成一個大方塊，<strong>虛線深色外框</strong>是高地（高地空地填成暖灰），帶斜線的黃綠色是<strong>斜坡</strong>。<strong>四種鋪面刻意不逐格標字</strong>，改看圖下方的<strong>鋪面圖例</strong>（色塊＋格數）——這一版鋪面就是分區的顏色，一眼看得出哪塊是校舍、哪塊是運動場、哪塊是農牧。邊緣數字是遊戲內座標（上方 Y、左側 X）。溪谷這張圖要特別注意<strong>暖灰與黃綠色的量</strong>：全圖 676 格裡有 <strong>384 格</strong>在台地或高地上，圖上那三條橫貫的黃綠色斜線帶（X15／X16／X17）就是谷底通往南平原的唯一樓梯。</p>
 
-            <div class="statgrid">
+            <div class="kpi-row">
                 <div><b>29 / 29</b><span>人氣景點成立（結果，不是目標）</span></div>
                 <div><b>141</b><span>建築棟數（台地與高地上 39）</span></div>
                 <div><b>9 / 2</b><span>教室／辦公室（滿編上限）</span></div>
@@ -118,13 +96,7 @@
             </nav>
 
             <h2 id="design">分區優先：這一版換了設計原則</h2>
-            <p>舊版溪谷佈局的目標是「<strong>把 29 個景點湊滿</strong>」，鋪面則是事後補上的視覺語意。問題是這樣做出來的圖，分區名根本對不上內容——「農牧園區」裡站著校長室與操場，一條街走過去材質東一塊草地西一塊道路。所以這一版把順序倒過來：</p>
-            <ol>
-                <li><strong>先劃分區。</strong>按地形切出語意清楚、<strong>成塊不碎</strong>的分區，同語意的街廓一定相鄰。</li>
-                <li><strong>再用對應材質的路連起來。</strong>每條街的材質由「<strong>誰的門開在這條街上</strong>」決定：門口全是教室就鋪走廊，體育館旁邊就鋪水泥地，豬舍旁邊就鋪草地，校門附近就鋪道路。</li>
-                <li><strong>最後才求景點數。</strong>在良好分區的前提下能成立幾個就幾個，<strong>不硬湊</strong>。硬指標只剩「0 棟建築走不到」與「0 個孤立通行格」。</li>
-            </ol>
-            <p>這張圖最後<em>剛好</em>還是 29/29，但那是結果不是目標——<strong>如果分區與景點衝突，這一版會讓景點</strong>（詳見<a href="#spots">景點那一節</a>）。</p>
+            <p>舊版溪谷佈局的目標是「<strong>把 29 個景點湊滿</strong>」，鋪面則是事後補上的視覺語意——於是「農牧園區」裡站著校長室與操場。這一版把順序倒過來：<strong>先劃成塊的分區 → 再用材質對應的路連起來 → 最後才求景點數</strong>，切成 <strong>32 個分區</strong>；硬指標只剩「0 棟建築走不到」與「0 個孤立通行格」（<a href="#spots">景點那一節</a>照實交代取捨）。三步的完整說明、為什麼不硬湊 29、路網品質怎麼量，都在<a href="../#rules">佈局範例集的通用設計原則</a>，本頁只講溪谷小鎮特有的取捨與數字。</p>
             <div class="callout key"><span class="k">溪谷的特殊難處：它的谷底只有三列深</span>其他四鎮的分區可以「照設計圖畫」，溪谷不行。<strong>街廓只能從谷底（高度 1）的空地切出來</strong>，而溪谷的谷底被台地切成三條<strong>只有 3 列深</strong>的帶（中央谷底 X12–X15、南平原 X17–X20 與 X22–X25）。一個 4×4 判定窗口要塞得下三座 2×2 就需要 4 列可用——<strong>全圖只有兩個街廓做得到</strong>（X22–X25/Y27–Y24 與 X22–X25/Y17–Y14）。「熱血」（足球場＋體育館＋游泳池）與「藝術」（美術室＋音樂室＋多功能室）剛好各要一個，所以<strong>一個給運動、一個給教學</strong>——運動園區之所以落在西南角而不是地圖中央，是這個幾何事實決定的，不是先畫好分區再套上去。</div>
 
             <h2 id="terrain">溪谷小鎮的地形：唯一的三層地圖</h2>
@@ -338,7 +310,7 @@
             </div>
 
             <h2 id="paving">四種鋪面：解鎖階段就是分區順序</h2>
-            <p>四種鋪面在遊戲裡<strong>解鎖時機各不相同</strong>，而且順序剛好對得上分區的開發順序：</p>
+            <p>四種鋪面在遊戲裡<strong>解鎖時機各不相同</strong>，而且順序剛好對得上分區的開發順序，於是「分區 → 材質」同時就是一張施工順序表。設置費、青春點、遊戲的校舍內／外分類與各項證據都在<a href="../#rules">通用原則那一節</a>，這裡只列溪谷的語意與格數：</p>
             <div class="table-wrap">
                 <table class="data">
                     <thead><tr><th>鋪面</th><th>日文</th><th>設置費</th><th>青春 P</th><th>解鎖</th><th>本圖語意</th><th>格數</th></tr></thead>
@@ -350,19 +322,11 @@
                     </tbody>
                 </table>
             </div>
-            <p>另外有一項決定性證據：遊戲的道具<strong>「抹布」加速的是「校舍內（木造廊下・パネル廊下）」，「滑板」加速的是「校舍外（あぜ道・外通路・芝生）」</strong>——遊戲自己就把鋪面分成室內／室外兩類。道路、草地、水泥地各 +1 青春點（畢業結算會 ×2000 分），走廊 0 但最便宜。</p>
-            <div class="callout warn"><span class="k">一處刻意偏離</span>我們把<strong>水泥地當成「戶外運動」</strong>的鋪面，但遊戲把パネル廊下歸在<strong>校舍內</strong>。這是照本站的設計語意實作的，兩者其實相容——運動園區的主角（體育館、游泳池、道場）本來就是室內運動建築。想完全照遊戲分類走的話，把運動園區的水泥地換成走廊即可，<strong>29 個景點一個都不會少</strong>（四種鋪面對景點判定完全等價，只有草地本身是「菜園／力量／清爽」的材料）。</div>
-            <h3>一條街怎麼決定鋪什麼</h3>
-            <p>不是逐格投票——那會讓同一條路變成「草草廊廊草草草」。做法是<strong>先把路面切成「街道段」</strong>（同一條大道／街道在兩個路口之間的那一截），整段票數加總後<strong>整段鋪同一種材質</strong>，路口留到最後取四鄰街道段的多數決。每一格的票這樣算：</p>
-            <ol>
-                <li><strong>幹道規則</strong>：落在幹道脊椎上 → 道路。幹道穿過任何分區都還是道路。</li>
-                <li><strong>區內規則</strong>：格子落在某個街廓內部 → 直接取該街廓的鋪面。</li>
-                <li><strong>臨街面規則</strong>（核心）：四鄰每有一棟建築（校門也算）就投 3 票給<strong>它所屬分區</strong>的鋪面；街廓幾何相鄰再補票（正交 2、斜角 1，決定沒有建築臨街的穿越型街道）。</li>
-            </ol>
+            <div class="callout warn"><span class="k">一處刻意偏離</span>我們把<strong>水泥地當成「戶外運動」</strong>的鋪面，但遊戲把パネル廊下歸在<strong>校舍內</strong>（理由見<a href="../#rules">通用原則</a>）。想完全照遊戲分類走的話，把運動園區那 33 格水泥地換成走廊即可，<strong>29 個景點一個都不會少</strong>。</div>
             <div class="callout key"><span class="k">溪谷的幹道脊椎必然斷成兩截</span>別鎮的脊椎是一條把兩座校門串起來的線，溪谷做不到——<strong>北門在高地台地上，兩門之間還隔著 X15／X17 兩條全寬坡道帶</strong>，而鋪面只鋪得到谷底。所以本圖的脊椎只宣告<strong>南門那一截</strong>（Y8 縱幹道 X18–X26 ＋ X26 橫幹道 Y12–Y7），北門那一截<strong>直接沿用原生的柏油路</strong>。這不是漏設定，是地形的結論，圖上與這裡都照實標。<br>順帶一提，脊椎<strong>刻意不用整條 Y8 或整條 X26</strong>：Y8 在谷底那一段（X12–X15）夾在谷底生活街與商店街之間，整條鋪成道路會把谷底唯一一片連續的室內分區從中切開；X26 的西半段則屬於運動園區與南緣步道，交還給它們的水泥地與草地。改成段式之後道路從 60 格降到 41 格，水泥地從 14 格長到 33 格。</div>
 
             <h2 id="flow">動線：0 假路面、0 走不到的路面</h2>
-            <p>光「每棟建築走得到」還不夠——舊管線會留下兩類看起來能走、其實沒有動線價值的格子：<strong>孤立通行格</strong>（四面被建築圍死的假草皮，度數 0）與<strong>走不到的通行格</strong>（整塊接不到任何校門的假中庭）。環化 pass 專門清這兩種，並順手把 2–4 格的死路短枝接回成環或收成綠地。溪谷的成績是五鎮裡最乾淨的：</p>
+            <p>光「每棟建築走得到」還不夠——舊管線會留下兩類看起來能走、其實沒有動線價值的格子（<a href="../#rules">孤立通行格與走不到的通行格</a>）。環化 pass 專門清這兩種，並順手把 2–4 格的死路短枝接回成環或收成綠地。溪谷的成績是五鎮裡最乾淨的：</p>
             <div class="table-wrap">
                 <table class="data">
                     <thead><tr><th>指標</th><th>舊版（湊景點優先）</th><th>本版（分區優先）</th></tr></thead>
@@ -400,6 +364,7 @@
                 <table class="data">
                     <thead><tr><th>階段</th><th>景點</th><th>所在分區（代表窗口）</th><th>關鍵材料的解鎖條件</th></tr></thead>
                     <tbody>
+                        <!-- gen:stage -->
                         <tr><td>1・開局（農村學園）</td><td>力量</td><td>谷底北口（X7 / Y17）</td><td>水井：一開始就可建</td></tr>
                         <tr><td>1・開局（農村學園）</td><td>水岸</td><td>北支谷專科棟（X10 / Y22）</td><td>水塘：地圖既有地形（可被建設破壞）（推定）</td></tr>
                         <tr><td>1・開局（農村學園）</td><td>好友</td><td>谷底教學棟（X12 / Y17）</td><td>飲水處：一開始就可建</td></tr>
@@ -429,6 +394,7 @@
                         <tr><td>4・名門學園</td><td>非洲</td><td>西溪動物園（X12 / Y27）</td><td>飼育長頸鹿：觀光級稀有飼育，名門學園後（推定）</td></tr>
                         <tr><td>4・名門學園</td><td>開羅</td><td>開羅廣場（X22 / Y7）</td><td>金開羅君：開羅君系列＝全遊戲最終獎勵（推定）</td></tr>
                         <tr><td>4・名門學園</td><td>熱血</td><td>南運動園區西（X22 / Y27）</td><td>游泳池：名門學園＋運動 110＋體育館</td></tr>
+                        <!-- gen:end -->
                     </tbody>
                 </table>
             </div>
@@ -441,6 +407,7 @@
                 <table class="data">
                     <thead><tr><th>景點</th><th>座標</th><th>需要設施</th><th>屬性加成</th></tr></thead>
                     <tbody>
+                        <!-- gen:spots -->
                         <tr><td>運動</td><td>X21 / Y22</td><td>操場＋籃球場＋販賣機</td><td>體育+3 頭腦+3 態度+2</td></tr>
                         <tr><td>約會</td><td>X3 / Y10</td><td>網球場＋樹林／櫻花樹＋圖書室</td><td>文系+2 理系+3 人氣+2 態度+2</td></tr>
                         <tr><td>好友</td><td>X11 / Y17</td><td>飲水處＋保健室＋茶室</td><td>文系+3 運動+2 人氣+2</td></tr>
@@ -470,6 +437,7 @@
                         <tr><td>非洲</td><td>X11 / Y27</td><td>飼育長頸鹿＋飼育大象＋圖騰柱</td><td>文系+5 理系+3 態度+2</td></tr>
                         <tr><td>宇宙</td><td>X23 / Y6</td><td>宇宙火箭＋天象館＋多媒體教室</td><td>理系+3 頭腦+2 人氣+2</td></tr>
                         <tr><td>開羅</td><td>X20 / Y9</td><td>金開羅君＋開羅君像＋開羅君房間</td><td>文系+5 理系+5 人氣+3 態度+3</td></tr>
+                        <!-- gen:end -->
                     </tbody>
                 </table>
             </div>
@@ -481,11 +449,13 @@
                 <table class="data">
                     <thead><tr><th>分類</th><th>設施</th></tr></thead>
                     <tbody>
+                        <!-- gen:fac -->
                         <tr><td>生活與設施</td><td>便利商店 ×2、保健室 ×5、公告欄 ×5、圖騰柱 ×2、宇宙火箭、廣播室 ×3、更衣室 ×4、水井 ×3、洗手間 ×5、焚化爐 ×4、百葉箱、福利社 ×2、茶室 ×2、販賣機 ×5、遊戲區 ×2、金像、金開羅君、銅像 ×4、長椅 ×9、開羅君像、飲水處 ×6、餐廳 ×3</td></tr>
-                        <tr><td>教室與專科</td><td>圖書室 ×2、多功能室、多媒體教室 ×2、天象館、家政室 ×2、教室 ×9、校長室、校門(上下用) ×2、理科室 ×2、美術室 ×2、辦公室 ×2、進路室 ×2、開羅君房間、電腦室 ×2、音樂室 ×2</td></tr>
+                        <tr><td>教室與專科</td><td>圖書室 ×2、多功能室、多媒體教室 ×2、天象館、家政室 ×2、教室 ×9、校長室、校門（上下用） ×2、理科室 ×2、美術室 ×2、辦公室 ×2、進路室 ×2、開羅君房間、電腦室 ×2、音樂室 ×2</td></tr>
                         <tr><td>運動與社團</td><td>彈跳床 ×3、操場、棒球場 ×2、游泳池、社團教室 ×6、籃球場 ×2、網球場 ×3、足球場 ×3、道場、體育館</td></tr>
                         <tr><td>動植物農牧</td><td>小農場 ×2、飼育大象 ×2、飼育長頸鹿 ×2、飼育鱷魚、飼育鼴鼠、飼鴨小屋、養兔小屋、養牛小屋、養豬小屋 ×2、養雞小屋</td></tr>
                         <tr><td>環境地形</td><td>巨石、映山紅 ×3、樹林 ×9、櫻花樹 ×11、水塘 ×16、水泥地 ×33、田埂路 ×8、竹林 ×3、草地 ×50、走廊 ×46、道路 ×41</td></tr>
+                        <!-- gen:end -->
                     </tbody>
                 </table>
             </div>

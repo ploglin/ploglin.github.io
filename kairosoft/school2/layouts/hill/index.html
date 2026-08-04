@@ -14,7 +14,9 @@
     <meta property="og:description" content="26×26 的百靈山丘，初始校園整組坐在對低地全是 2 層懸崖的高台上。分區優先重做之後：28 個語意分區、188 棟建築、29 個人氣景點全成立、0 棟走不到、9 間教室＋2 間辦公室滿編，29 組景點全部手放，經程式逐格驗證。">
     <meta property="og:locale" content="zh_TW">
     <meta property="og:url" content="https://ploglin.cc/kairosoft/school2/layouts/hill/">
-    <meta property="og:image" content="https://ploglin.cc/kairosoft/school2/layouts/hill-perfect.svg">
+    <meta property="og:image" content="https://ploglin.cc/kairosoft/school2/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta name="twitter:card" content="summary_large_image">
     <script type="application/ld+json">
     {
@@ -33,32 +35,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../../../assets/shell.css?v=8">
     <link rel="stylesheet" href="../../../../assets/pixel.css?v=8">
-    <link rel="stylesheet" href="../../assets/guide.css?v=4">
-    <script src="../../assets/guide.js?v=4" defer></script>
-    <style>
-        .mapwrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: #f8fafc; padding: 10px; margin: 14px 0; }
-        .mapwrap img { display: block; width: 568px; max-width: none; height: auto; }
-        .mapwrap.wide img { width: 612px; }
-        .fig-cap { font-size: 13px; color: var(--muted); margin: -4px 0 16px; }
-        .statgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin: 14px 0; }
-        .statgrid div { background: var(--card-2); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
-        .statgrid b { display: block; font-size: 22px; font-weight: 900; color: var(--brand-strong); line-height: 1.2; }
-        .statgrid span { font-size: 12.5px; color: var(--muted); font-weight: 700; }
-        .zone { border-top: 1px solid var(--line); padding: 13px 0 3px; }
-        .zone h4 { margin: 0 0 5px; font-size: 16px; font-weight: 900; }
-        .zone .zmeta { display: flex; flex-wrap: wrap; gap: 5px 12px; margin: 0 0 7px; font-size: 12.5px; font-weight: 700; color: var(--muted); }
-        .zone .zmeta span { display: inline-flex; align-items: center; gap: 5px; }
-        .zone .zmeta i { width: 10px; height: 10px; border-radius: 3px; border: 1px solid rgba(0,0,0,.22); flex: none; }
-        .zone p { margin: 5px 0; }
-        .note { font-size: 13.5px; color: var(--ink-soft); border-left: 2px solid var(--line); padding-left: 10px; margin: 8px 0; }
-        .town-pills { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 6px; }
-        .town-pills .tp { display: inline-flex; flex-direction: column; line-height: 1.25; padding: 7px 14px; border-radius: 999px;
-            border: 1px solid var(--line); background: var(--card-2); color: var(--ink-soft); font-weight: 800; font-size: 14px; text-decoration: none; }
-        .town-pills .tp i { font-style: normal; font-size: 11px; font-weight: 700; color: var(--muted); }
-        .town-pills a.tp:hover { border-color: var(--brand); color: var(--brand-strong); }
-        .town-pills .tp.on { background: var(--brand); border-color: var(--brand); color: #fff; }
-        .town-pills .tp.on i { color: rgba(255,255,255,.8); }
-    </style>
+    <link rel="stylesheet" href="../../assets/guide.css?v=5">
+    <script src="../../assets/guide.js?v=5" defer></script>
 </head>
 <body>
     <main class="container-narrow article">
@@ -81,7 +59,7 @@
             </div>
             <p class="fig-cap">（圖可左右拖動）格子上的字是設施簡稱，一棟多格建築畫成一個大方塊，<strong>虛線深色外框</strong>是高地（高地空地填成暖灰），帶斜線的黃綠色是<strong>斜坡</strong>。<strong>四種鋪面刻意不逐格標字</strong>，改看圖下方的<strong>鋪面圖例</strong>（色塊＋格數）——這一版鋪面就是分區的顏色，一眼看得出哪塊是校舍、哪塊是運動場、哪塊是農牧。邊緣數字是遊戲內座標（上方 Y、左側 X）。這張圖請特別注意右上角那一大片虛線框：那整塊就是<strong>初始校園所在的東北高地</strong>，它跟旁邊的低地之間<strong>沒有任何斜坡</strong>，是 2 層落差的懸崖；圖正中央那圈黃綠色斜線則是<strong>中央山丘</strong>，全圖 24 格斜坡都在那裡。</p>
 
-            <div class="statgrid">
+            <div class="kpi-row">
                 <div><b>29 / 29</b><span>人氣景點成立（結果，不是目標）</span></div>
                 <div><b>188</b><span>建築棟數（高地上 18）</span></div>
                 <div><b>28</b><span>語意分區（36 個街廓）</span></div>
@@ -116,13 +94,7 @@
             </nav>
 
             <h2 id="design">分區優先：這一版換了設計原則</h2>
-            <p>舊版百靈山丘的目標是「<strong>把 29 個景點湊滿</strong>」，鋪面則是事後補上的視覺語意。問題是這樣做出來的圖，分區名根本對不上內容——「農牧園區」裡站著三座球場，一條街走過去材質東一塊草地西一塊道路。所以這一版把順序倒過來：</p>
-            <ol>
-                <li><strong>先劃分區。</strong>按地形切出語意清楚、<strong>成塊不碎</strong>的分區，同語意的街廓一定相鄰。</li>
-                <li><strong>再用對應材質的路連起來。</strong>每條街的材質由「<strong>誰的門開在這條街上</strong>」決定：門口全是教室就鋪走廊，體育館旁邊就鋪水泥地，豬舍旁邊就鋪草地，校門附近就鋪道路。</li>
-                <li><strong>最後才求景點數。</strong>在良好分區的前提下能成立幾個就幾個，<strong>不硬湊</strong>。硬指標只剩「0 棟建築走不到」與「0 個孤立通行格」。</li>
-            </ol>
-            <p>這張圖最後<em>剛好</em>還是 29/29、<strong>放棄清單是空的</strong>，但那是結果不是目標——<strong>如果分區與景點衝突，這一版會讓景點</strong>（詳見<a href="#spots">景點那一節</a>）。</p>
+            <p>舊版百靈山丘的目標是「<strong>把 29 個景點湊滿</strong>」，鋪面則是事後補上的視覺語意——於是「農牧園區」裡站著三座球場。這一版把順序倒過來：<strong>先劃成塊的分區 → 再用材質對應的路連起來 → 最後才求景點數</strong>，切成 <strong>28 個分區</strong>；硬指標只剩「0 棟建築走不到」與「0 個孤立通行格」。這張圖最後<strong>放棄清單是空的</strong>，但那是結果不是目標（詳見<a href="#spots">景點那一節</a>）。三步的完整說明、為什麼不硬湊 29、路網品質怎麼量，都在<a href="../#rules">佈局範例集的通用設計原則</a>，本頁只講百靈山丘特有的取捨與數字。</p>
             <div class="callout key"><span class="k">百靈的特殊難處：29 組景點全部得手放</span>其他四鎮的景點是<strong>自動排版</strong>排出來的，本鎮<strong>一組都不是</strong>——全站唯一。原因是那兩張互不相通的網：<strong>自動排版只掃「有低地空地可用」的街廓</strong>，而初始 9 棟校舍全在高台上，程式<strong>看不到它們</strong>，所有「崖下開窗借高台材料」的組合它一個也湊不出來；就算湊得出來，它挑街廓的次要標準是「要動的格數最少」，同格數的組合永遠落在先掃到的西側街廓（舊版實測：「熱血」的三棟蓋進了農牧園區、「生物」蓋進了紀念物區、「時尚」蓋進了專科館）。所以本鎮的設定檔把 29 個景點全部列進<strong>手放清單</strong>，每一組的座標、門面與判定窗口都寫死在註解裡——等於一份可以逐格稽核的施工圖。代價是設定檔很長，換到的是<strong>分區語意的妥協從 7 棟降到 3 棟</strong>（見<a href="#honest">誠實說明</a>）。</div>
 
             <h2 id="terrain">百靈山丘的地形：一張圖，兩張互不相通的網</h2>
@@ -339,7 +311,7 @@
             </div>
 
             <h2 id="paving">四種鋪面：解鎖階段就是分區順序</h2>
-            <p>四種鋪面在遊戲裡<strong>解鎖時機各不相同</strong>，而且順序剛好對得上分區的開發順序：</p>
+            <p>四種鋪面在遊戲裡<strong>解鎖時機各不相同</strong>，而且順序剛好對得上分區的開發順序，於是「分區 → 材質」同時就是一張施工順序表。設置費、青春點、遊戲的校舍內／外分類與各項證據都在<a href="../#rules">通用原則那一節</a>，這裡只列百靈的語意與格數：</p>
             <div class="table-wrap">
                 <table class="data">
                     <thead><tr><th>鋪面</th><th>日文</th><th>設置費</th><th>青春 P</th><th>解鎖</th><th>本圖語意</th><th>格數</th></tr></thead>
@@ -351,19 +323,12 @@
                     </tbody>
                 </table>
             </div>
-            <p>另外有一項決定性證據：遊戲的道具<strong>「抹布」加速的是「校舍內（木造廊下・パネル廊下）」，「滑板」加速的是「校舍外（あぜ道・外通路・芝生）」</strong>——遊戲自己就把鋪面分成室內／室外兩類。道路、草地、水泥地各 +1 青春點（畢業結算會 ×2000 分），走廊 0 但最便宜。本鎮的走廊占到 <strong>38%</strong>，是五鎮最高的一張：低地中段那 84 格連續平地全給了校舍，崖下那一整條也是室內設施。</p>
-            <div class="callout warn"><span class="k">一處刻意偏離</span>我們把<strong>水泥地當成「戶外運動」</strong>的鋪面，但遊戲把パネル廊下歸在<strong>校舍內</strong>。這是照本站的設計語意實作的，兩者其實相容——運動園區的主角（體育館、游泳池、道場）本來就是室內運動建築。想完全照遊戲分類走的話，把四塊運動分區的水泥地換成走廊即可，<strong>29 個景點一個都不會少</strong>（四種鋪面對景點判定完全等價，只有草地本身是「菜園／力量／清爽」的材料）。</div>
-            <h3>一條街怎麼決定鋪什麼</h3>
-            <p>不是逐格投票——那會讓同一條路變成「草草廊廊草草草」。做法是<strong>先把路面切成「街道段」</strong>（同一條大道／街道在兩個路口之間的那一截），整段票數加總後<strong>整段鋪同一種材質</strong>，路口留到最後取四鄰街道段的多數決。每一格的票這樣算：</p>
-            <ol>
-                <li><strong>幹道規則</strong>：落在幹道脊椎上 → 道路。幹道穿過任何分區都還是道路。</li>
-                <li><strong>區內規則</strong>：格子落在某個街廓內部 → 直接取該街廓的鋪面。</li>
-                <li><strong>臨街面規則</strong>（核心）：四鄰每有一棟建築（校門也算）就投 3 票給<strong>它所屬分區</strong>的鋪面；街廓幾何相鄰再補票（正交 2、斜角 1，決定沒有建築臨街的穿越型街道）。</li>
-            </ol>
+            <p>本鎮的走廊占到 <strong>38%</strong>，是五鎮最高的一張：低地中段那 84 格連續平地全給了校舍，崖下那一整條也是室內設施。</p>
+            <div class="callout warn"><span class="k">一處刻意偏離</span>我們把<strong>水泥地當成「戶外運動」</strong>的鋪面，但遊戲把パネル廊下歸在<strong>校舍內</strong>（理由見<a href="../#rules">通用原則</a>）。想完全照遊戲分類走的話，把四塊運動分區那 38 格水泥地換成走廊即可，<strong>29 個景點一個都不會少</strong>。</div>
             <div class="callout key"><span class="k">百靈的脊椎串不起兩座校門</span>別鎮的脊椎是一條把兩座校門串起來的線，百靈做不到——<strong>東門在高台上、南門在低地，中間隔著 2 層懸崖</strong>，而鋪面重鋪只處理低地。所以本圖的脊椎只宣告低地那一側：<strong>X17 崖下大道</strong>（全寬 26 格，低地唯一橫貫全圖的東西軸）＋<strong>Y18 南門縱脊</strong>（X17–X26）。高台那一截<strong>直接沿用原生的 12 格柏油路</strong>（X10–X11/Y8–Y3）。這不是漏設定，是地形的結論。<br>脊椎也<strong>刻意不用整條 Y18</strong>：它的北段（X3–X16）夾在教學區／生活館／專科館之間，整條鋪成道路會把低地唯一一片連續的校舍區<strong>從中切開兩次</strong>。改成段式之後，道路從舊版的 124 格降到 59 格，走廊從 67 格長到 98 格，水泥地從 4 格長到 38 格。</div>
 
             <h2 id="flow">動線：0 假路面、20% 死路支線</h2>
-            <p>光「每棟建築走得到」還不夠——舊管線會留下兩類看起來能走、其實沒有動線價值的格子：<strong>孤立通行格</strong>（四面被建築圍死的假草皮，度數 0）與<strong>走不到的通行格</strong>（整塊接不到任何校門的假中庭）。環化 pass 專門清這兩種，並順手把 2–4 格的死路短枝接回成環或收成綠地。百靈這一版的數字要<strong>照實承認一件事：死路占比比舊版高</strong>。</p>
+            <p>光「每棟建築走得到」還不夠——舊管線會留下兩類看起來能走、其實沒有動線價值的格子（<a href="../#rules">孤立通行格與走不到的通行格</a>）。環化 pass 專門清這兩種，並順手把 2–4 格的死路短枝接回成環或收成綠地。百靈這一版的數字要<strong>照實承認一件事：死路占比比舊版高</strong>。</p>
             <div class="table-wrap">
                 <table class="data">
                     <thead><tr><th>指標</th><th>舊版（湊景點優先）</th><th>本版（分區優先）</th></tr></thead>
@@ -400,6 +365,7 @@
                 <table class="data">
                     <thead><tr><th>階段</th><th>景點</th><th>所在分區（代表窗口）</th><th>關鍵材料的解鎖條件</th></tr></thead>
                     <tbody>
+                        <!-- gen:stage -->
                         <tr><td>1・開局（農村學園）</td><td>力量</td><td>西北高地景觀窗（X2 / Y22）</td><td>水井：一開始就可建</td></tr>
                         <tr><td>1・開局（農村學園）</td><td>水岸</td><td>池畔綠帶（X19 / Y17）</td><td>水塘：地圖既有地形（可被建設破壞）（推定）</td></tr>
                         <tr><td>1・開局（農村學園）</td><td>好友</td><td>西北高地景觀窗（X7 / Y22）</td><td>飲水處：一開始就可建</td></tr>
@@ -429,6 +395,7 @@
                         <tr><td>4・名門學園</td><td>非洲</td><td>北農牧・動物園（X6 / Y17）</td><td>飼育長頸鹿：觀光級稀有飼育，名門學園後（推定）</td></tr>
                         <tr><td>4・名門學園</td><td>開羅</td><td>商店街（X21 / Y22）</td><td>金開羅君：開羅君系列＝全遊戲最終獎勵（推定）</td></tr>
                         <tr><td>4・名門學園</td><td>熱血</td><td>運動園區（X18 / Y7）</td><td>游泳池：名門學園＋運動 110＋體育館</td></tr>
+                        <!-- gen:end -->
                     </tbody>
                 </table>
             </div>
@@ -441,6 +408,7 @@
                 <table class="data">
                     <thead><tr><th>景點</th><th>座標</th><th>需要設施</th><th>屬性加成</th></tr></thead>
                     <tbody>
+                        <!-- gen:spots -->
                         <tr><td>運動</td><td>X21 / Y7</td><td>操場＋籃球場＋販賣機</td><td>體育+3 頭腦+3 態度+2</td></tr>
                         <tr><td>約會</td><td>X2 / Y10</td><td>網球場＋樹林／櫻花樹＋圖書室</td><td>文系+2 理系+3 人氣+2 態度+2</td></tr>
                         <tr><td>好友</td><td>X7 / Y23</td><td>飲水處＋保健室＋茶室</td><td>文系+3 運動+2 人氣+2</td></tr>
@@ -470,6 +438,7 @@
                         <tr><td>非洲</td><td>X4 / Y17</td><td>飼育長頸鹿＋飼育大象＋圖騰柱</td><td>文系+5 理系+3 態度+2</td></tr>
                         <tr><td>宇宙</td><td>X12 / Y5</td><td>宇宙火箭＋天象館＋多媒體教室</td><td>理系+3 頭腦+2 人氣+2</td></tr>
                         <tr><td>開羅</td><td>X21 / Y23</td><td>金開羅君＋開羅君像＋開羅君房間</td><td>文系+5 理系+5 人氣+3 態度+3</td></tr>
+                        <!-- gen:end -->
                     </tbody>
                 </table>
             </div>
@@ -481,11 +450,13 @@
                 <table class="data">
                     <thead><tr><th>分類</th><th>設施</th></tr></thead>
                     <tbody>
+                        <!-- gen:fac -->
                         <tr><td>生活與設施</td><td>便利商店 ×3、保健室 ×3、公告欄 ×9、圖騰柱、宇宙火箭、廣播室 ×4、更衣室 ×3、水井 ×4、洗手間 ×12、焚化爐 ×4、百葉箱 ×2、福利社、茶室 ×4、販賣機 ×12、遊戲區 ×2、金像、金開羅君、銅像 ×4、長椅 ×16、開羅君像、飲水處 ×13、餐廳</td></tr>
-                        <tr><td>教室與專科</td><td>圖書室 ×2、多功能室、多媒體教室、天象館、家政室 ×3、教室 ×9、校長室、校門(上下用)、校門(左右用)、理科室、美術室 ×2、辦公室 ×2、進路室 ×3、開羅君房間、電腦室、音樂室 ×2</td></tr>
+                        <tr><td>教室與專科</td><td>圖書室 ×2、多功能室、多媒體教室、天象館、家政室 ×3、教室 ×9、校長室、校門（上下用）、校門（左右用）、理科室、美術室 ×2、辦公室 ×2、進路室 ×3、開羅君房間、電腦室、音樂室 ×2</td></tr>
                         <tr><td>運動與社團</td><td>彈跳床 ×2、操場、棒球場、游泳池、社團教室 ×2、籃球場 ×3、網球場 ×3、足球場 ×2、道場、體育館 ×2</td></tr>
                         <tr><td>動植物農牧</td><td>小農場 ×6、飼育大象、飼育長頸鹿、飼育鼴鼠 ×4、飼鴨小屋 ×5、養兔小屋 ×6、養牛小屋 ×4、養豬小屋 ×4、養雞小屋 ×5</td></tr>
                         <tr><td>環境地形</td><td>巨石、映山紅、樹林 ×38、櫻花樹 ×10、水塘 ×20、水泥地 ×38、花壇 ×3、草地 ×80、走廊 ×98、道路 ×59</td></tr>
+                        <!-- gen:end -->
                     </tbody>
                 </table>
             </div>

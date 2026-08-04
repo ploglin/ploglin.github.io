@@ -104,19 +104,19 @@
 ```sh
 node final.js                 # 健康鎮 → code.txt + zones-health.json
 node east.js                  # 冬郵小鎮 → code-east.txt + zones-east.json
-node gen-assets.js            # code.txt      → layouts/health-perfect.svg + spots/fac/stage-table-health.html
-node gen-assets.js east       # code-east.txt → layouts/east-perfect.svg  + spots/fac/stage-table-east.html
+node gen-assets.js            # code.txt      → layouts/health-perfect.svg + 三張表蓋章進 layouts/health/index.html
+node gen-assets.js east       # code-east.txt → layouts/east-perfect.svg  + 三張表蓋章進 layouts/east/index.html
 node verify.js health         # 驗 code.txt 本身
 node verify.js health page    # 驗「layouts/health/index.html 上實際貼的那一串分享碼」
 node hill.js                  # 百靈山丘 → code-hill.txt + zones-hill.json
-node gen-assets.js hill       # code-hill.txt → layouts/hill-perfect.svg  + spots/fac/stage-table-hill.html
+node gen-assets.js hill       # code-hill.txt → layouts/hill-perfect.svg  + 三張表蓋章進 layouts/hill/index.html
 node verify.js east page
 node verify.js hill page
 node valley.js                # 溪谷小鎮 → code-valley.txt + zones-valley.json
-node gen-assets.js valley     # code-valley.txt → layouts/valley-perfect.svg + spots/fac/stage-table-valley.html
+node gen-assets.js valley     # code-valley.txt → layouts/valley-perfect.svg + 三張表蓋章進 layouts/valley/index.html
 node verify.js valley page
 node lake.js                  # 湖岸小鎮 → code-lake.txt + zones-lake.json
-node gen-assets.js lake       # code-lake.txt → layouts/lake-perfect.svg   + spots/fac/stage-table-lake.html
+node gen-assets.js lake       # code-lake.txt → layouts/lake-perfect.svg   + 三張表蓋章進 layouts/lake/index.html
 node verify.js lake page
 node stages.js                # 自檢:列出 items 註冊表裡還沒登記解鎖階段的 id ＋ 各景點的階段
 ```
@@ -138,9 +138,29 @@ layouts/*-perfect.svg       兩鎮共用同一層的 SVG(子頁以 ../xxx-perfec
 (巢狀 key,href 要多退一層)。新增城鎮頁後重跑 `node scripts/gen-related.js`
 與 `node scripts/gen-sitemap.js`。
 
-把 `code-*.txt` 貼進該鎮子頁的「在模擬器開啟」按鈕、表格 HTML 貼進對應
-`<tbody>`,然後**一定要跑 `node verify.js <town> page`**——它直接從該鎮子頁
-抓分享碼解碼重驗,確保頁面上的圖就是驗過的那張。全部 PASS 才算完成。
+### 三張表是蓋章的,不要手改
+
+景點座標表、設施清單、階段 × 分區表的 `<tbody>` 由 `gen-assets.js` **直接蓋章**
+進鎮頁,標記風格比照 repo 根的 `scripts/gen-embed.js`:
+
+```html
+<tbody>
+    <!-- gen:spots -->     ← 也有 gen:fac / gen:stage
+    …產生物,一個字都不要手改…
+    <!-- gen:end -->
+</tbody>
+```
+
+縮排由標記那一行決定,行尾符號沿用該檔原本的(valley/hill 是 LF、其餘三鎮是
+CRLF——統一成一種會讓整份檔案都算成改動,`git diff` 就看不出真正變了什麼)。
+**找不到標記一律 throw**:漏了標記等於那張表悄悄停止更新,而那正是舊做法的病
+——上線時實測到冬郵三張表的第一列縮排掉到第 0 欄、五鎮設施表的「校門(上下用)」
+全都停在 `items` 改成全角括號之前的舊字串,沒有任何守衛看得出來。
+蓋章是冪等的,連跑兩次第二次會全印「(未變)」。
+
+把 `code-*.txt` 貼進該鎮子頁的「在模擬器開啟」按鈕、跑一次 `node gen-assets.js
+<town>` 把三張表蓋上,然後**一定要跑 `node verify.js <town> page`**——它直接從
+該鎮子頁抓分享碼解碼重驗,確保頁面上的圖就是驗過的那張。全部 PASS 才算完成。
 
 ## 加一個新城鎮
 
@@ -547,7 +567,7 @@ groups = [{ why: '一句話理由', cells: [[r, c, 'path'|'empty'], …] }]
   冬郵把整個北半部都標成 stage 1／2 試過,棟數會掉到 108。
 
 「階段 × 分區」對照表由 `gen-assets.js` **從分享碼反推**產生
-(`stage-table-<town>.html`,欄位:階段／景點／所在分區／關鍵材料的解鎖條件),不手寫。
+(蓋章標記 `<!-- gen:stage -->`,欄位:階段／景點／所在分區／關鍵材料的解鎖條件),不手寫。
 分區名的取法:一個景點常常在好幾個 4×4 窗口都成立,取「窗口左上角落在有名字的街廓、
 而且街廓階段最接近景點階段」的那一個當代表;全都查不到就標「既有校舍／其他」。
 
@@ -953,7 +973,7 @@ groups = [{ why: '一句話理由', cells: [[r, c, 'path'|'empty'], …] }]
 
 ### ⚠ 順手修掉的共用機具 bug:`gen-assets.js` 不支援「景點沒成立」
 
-`spots-table-*.html` 的產生器直接寫 `where.get(s.id)[0]`,景點沒成立時 `spotWindows()`
+景點座標表(`gen:spots`)的產生器直接寫 `where.get(s.id)[0]`,景點沒成立時 `spotWindows()`
 查不到窗口 → **TypeError**(湖岸 23/29 第一個踩到)。分區優先架構下景點數不再一定是 29,
 所以這裡改成未成立就標「—(放棄)」,表格仍然是完整的 29 列。其餘四鎮不受影響。
 

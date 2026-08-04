@@ -20,6 +20,11 @@
      .datablock    20–80 列的完整資料表容器（內捲 → sticky thead 生效）
      .zone-group   <details>/<summary> 手風琴
      .kpi-row      KPI 統計磚（取代 5 個鎮頁各自的頁內 .statgrid）
+     .mapwrap      佈局地圖 SVG 的橫捲圖框（.wide＝26×26 的 612px 版）
+     .fig-cap      圖說
+     .zone/.zone-list  分區條目（前者四鎮的 div 版、後者湖岸的 ul 版）
+     .note         施工旁註（比正文小一級、左邊線）
+     .town-pills   五鎮完美佈局的橫向切換藥丸列
      .toc-rail     ≥1248px 才出現的側邊目錄軌（由 guide.js 自動生成）
      .read-progress 頁內捲動進度線（由 guide.js 自動生成）
      .sc-*         景點檢查器 widget（自 spot-check/ 頁內 style 搬來）
@@ -411,6 +416,67 @@ main.article #dbApp table thead th {
     font-variant-numeric: tabular-nums;
 }
 .kpi-row span { font-size: 12.5px; color: var(--muted); font-weight: 700; }
+
+
+/* ---------- 6b. 五個城鎮完美佈局頁的共用元件 -------------------------------
+   `layouts/{health,east,lake,valley,hill}/` 五頁原本各自帶一份頁內 <style>，
+   逐字近重複（合計 10.4KB）：改一處要改五處，而 lake 那份已經漂走了
+   （`.zone-list` 而非 `.zone`、`.fig-cap` 寫成 inline style、留著沒人用的
+   `.tp.soon`）。這裡是它們的唯一正本；五頁的頁內 style 因此全部刪除。
+
+   `.statgrid` 不在這裡：它與上一節的 `.kpi-row` 視覺等價，五頁已改用 kpi-row。
+--------------------------------------------------------------------------- */
+
+/* 地圖圖框：SVG 原尺寸 568/612px 都比 760px 的正文欄窄，但比手機視窗寬 →
+   只需要橫捲，不縮圖（縮到 375px 寬時格子只剩 14px，字全糊掉，不如讓它捲）。
+   底色刻意跟 SVG 內的 `<rect fill="#f8fafc">` 同色，圖與框才連成一塊。 */
+.mapwrap {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: #f8fafc;
+    padding: 10px;
+    margin: 14px 0;
+}
+/* 兩種寬度是地圖尺寸決定的，不是城鎮特例：26×24／24×24 → 568，26×26 → 612。
+   `max-width: none` 是要壓過 shell.css 的 `img { max-width: 100% }`，
+   否則圖會被壓縮成非整數縮放、格線出現摩爾紋。 */
+.mapwrap img { display: block; width: 568px; max-width: none; height: auto; }
+.mapwrap.wide img { width: 612px; }
+.fig-cap { font-size: 13px; color: var(--muted); margin: -4px 0 16px; }
+
+/* 分區條目。兩種寫法並存且都要留著：
+     .zone      四鎮用的 <div>（h4 標題 ＋ .zmeta 色塊列），分區數 12–17
+     .zone-list 湖岸用的 <ul>（.zt 粗體開頭 ＋ 內文同段），分區數只有 4 組
+   湖岸的分區描述長到每條 300 字以上，做成 h4 會讓目錄軌長出 20 個雜訊項目。 */
+.zone { border-top: 1px solid var(--line); padding: 13px 0 3px; }
+.zone h4 { margin: 0 0 5px; font-size: 16px; font-weight: 900; }
+.zone .zmeta { display: flex; flex-wrap: wrap; gap: 5px 12px; margin: 0 0 7px; font-size: 12.5px; font-weight: 700; color: var(--muted); }
+.zone .zmeta span { display: inline-flex; align-items: center; gap: 5px; }
+.zone .zmeta i { width: 10px; height: 10px; border-radius: 3px; border: 1px solid rgba(0, 0, 0, .22); flex: none; }
+.zone p { margin: 5px 0; }
+.zone-list { list-style: none; padding: 0; margin: 12px 0; }
+.zone-list li { border-left: 3px solid var(--brand); padding: 8px 0 8px 12px; margin: 10px 0; }
+.zone-list .zt { font-weight: 900; }
+
+/* 施工註記：比正文小一級、靠一條左邊線與正文分開（不是 callout —— 這些是
+   「這一格不要蓋」等級的旁註，一頁二十幾條，做成 callout 會蓋掉正文）。 */
+.note { font-size: 13.5px; color: var(--ink-soft); border-left: 2px solid var(--line); padding-left: 10px; margin: 8px 0; }
+
+/* 五鎮橫向切換。它是 game-bar 之下的**同層切換**（五張圖互為平行選項），
+   不是導覽分層裡的「往上」或「往下」，所以做成藥丸列而不是麵包屑。
+   當前頁是 <span> 不是 <a>（沒有連到自己的連結），靠 .on 標實心。 */
+.town-pills { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 6px; }
+.town-pills .tp {
+    display: inline-flex; flex-direction: column; line-height: 1.25;
+    padding: 7px 14px; border-radius: 999px;
+    border: 1px solid var(--line); background: var(--card-2); color: var(--ink-soft);
+    font-weight: 800; font-size: 14px; text-decoration: none;
+}
+.town-pills .tp i { font-style: normal; font-size: 11px; font-weight: 700; color: var(--muted); }
+.town-pills a.tp:hover { border-color: var(--brand); color: var(--brand-strong); }
+.town-pills .tp.on { background: var(--brand); border-color: var(--brand); color: #fff; }
+.town-pills .tp.on i { color: rgba(255, 255, 255, .8); }
 
 
 /* ---------- 7. .toc-rail：側邊目錄軌（≥1248px） ----------------------------

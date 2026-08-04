@@ -14,7 +14,9 @@
     <meta property="og:description" content="24×24 的湖岸小鎮：先劃語意清楚的分區，再用對應鋪面連接。滿編 9 間教室＋2 間辦公室全部就位，146 格湖面完整保留，南北只靠兩格寬的走廊與一座自己長出來的踏石橋相連，23 個人氣景點經程式逐格驗證。">
     <meta property="og:locale" content="zh_TW">
     <meta property="og:url" content="https://ploglin.cc/kairosoft/school2/layouts/lake/">
-    <meta property="og:image" content="https://ploglin.cc/kairosoft/school2/layouts/lake-perfect.svg">
+    <meta property="og:image" content="https://ploglin.cc/kairosoft/school2/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta name="twitter:card" content="summary_large_image">
     <script type="application/ld+json">
     {
@@ -33,27 +35,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../../../assets/shell.css?v=8">
     <link rel="stylesheet" href="../../../../assets/pixel.css?v=8">
-    <link rel="stylesheet" href="../../assets/guide.css?v=4">
-    <script src="../../assets/guide.js?v=4" defer></script>
-    <style>
-        .mapwrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: #f8fafc; padding: 10px; margin: 14px 0; }
-        .mapwrap img { display: block; width: 568px; max-width: none; height: auto; }
-        .statgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin: 14px 0; }
-        .statgrid div { background: var(--card-2); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
-        .statgrid b { display: block; font-size: 22px; font-weight: 900; color: var(--brand-strong); line-height: 1.2; }
-        .statgrid span { font-size: 12.5px; color: var(--muted); font-weight: 700; }
-        .zone-list { list-style: none; padding: 0; margin: 12px 0; }
-        .zone-list li { border-left: 3px solid var(--brand); padding: 8px 0 8px 12px; margin: 10px 0; }
-        .zone-list .zt { font-weight: 900; }
-        .town-pills { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 6px; }
-        .town-pills .tp { display: inline-flex; flex-direction: column; line-height: 1.25; padding: 7px 14px; border-radius: 999px;
-            border: 1px solid var(--line); background: var(--card-2); color: var(--ink-soft); font-weight: 800; font-size: 14px; text-decoration: none; }
-        .town-pills .tp i { font-style: normal; font-size: 11px; font-weight: 700; color: var(--muted); }
-        .town-pills a.tp:hover { border-color: var(--brand); color: var(--brand-strong); }
-        .town-pills .tp.on { background: var(--brand); border-color: var(--brand); color: #fff; }
-        .town-pills .tp.on i { color: rgba(255,255,255,.8); }
-        .town-pills .tp.soon { opacity: .55; }
-    </style>
+    <link rel="stylesheet" href="../../assets/guide.css?v=5">
+    <script src="../../assets/guide.js?v=5" defer></script>
 </head>
 <body>
     <main class="container-narrow article">
@@ -74,9 +57,9 @@
                 <img src="../lake-perfect.svg" width="568" height="630"
                      alt="口袋學院物語2 湖岸小鎮完美佈局地圖：24×24 格校園全圖，北高地上的高原運動公園與高原教學棟、北岸教學棟與動物園、中央半島水岸、南北鎖喉走廊、踏石橋、南商業街與行政學術翼">
             </div>
-            <p style="font-size:13px;color:var(--muted);margin-top:-6px">看法與另外幾張相同：格子上的字是設施簡稱，一棟多格建築畫成一個大方塊，<strong>虛線深色外框</strong>是高地（高地空地填成暖灰），帶斜線的黃綠色是<strong>斜坡</strong>。<strong>四種鋪面（道路／走廊／水泥地／草地）刻意不逐格標字</strong>，改看圖下方的<strong>鋪面圖例</strong>（色塊＋格數）。邊緣數字是遊戲內座標（上方 Y、左側 X）。這張圖請先看三個地方：<strong>高地西半</strong>是把運動園區整組搬上去的<strong>高原運動公園</strong>（水泥地步道）、<strong>高地東半 Y15–Y12</strong> 是本版新開的<strong>高原教學棟</strong>（三間教室＋走廊，取代舊版的高原動物園），以及 <strong>X16 / Y19–Y18</strong> 那兩格——南北唯一的天然通道。<strong>九間教室分散在四棟</strong>：高原教學棟 3、舊校舍 2＋原生 1、北岸教學棟 2、高原觀星棟 1。</p>
+            <p class="fig-cap">看法與另外幾張相同：格子上的字是設施簡稱，一棟多格建築畫成一個大方塊，<strong>虛線深色外框</strong>是高地（高地空地填成暖灰），帶斜線的黃綠色是<strong>斜坡</strong>。<strong>四種鋪面（道路／走廊／水泥地／草地）刻意不逐格標字</strong>，改看圖下方的<strong>鋪面圖例</strong>（色塊＋格數）。邊緣數字是遊戲內座標（上方 Y、左側 X）。這張圖請先看三個地方：<strong>高地西半</strong>是把運動園區整組搬上去的<strong>高原運動公園</strong>（水泥地步道）、<strong>高地東半 Y15–Y12</strong> 是本版新開的<strong>高原教學棟</strong>（三間教室＋走廊，取代舊版的高原動物園），以及 <strong>X16 / Y19–Y18</strong> 那兩格——南北唯一的天然通道。<strong>九間教室分散在四棟</strong>：高原教學棟 3、舊校舍 2＋原生 1、北岸教學棟 2、高原觀星棟 1。</p>
 
-            <div class="statgrid">
+            <div class="kpi-row">
                 <div><b>9 / 9</b><span>教室（1–3 年級各 3 班，滿編）</span></div>
                 <div><b>2 / 2</b><span>辦公室（遊戲上限）</span></div>
                 <div><b>23 / 29</b><span>人氣景點成立（本鎮宣告目標 23）</span></div>
@@ -99,7 +82,7 @@
             <p>舊版湖岸小鎮寫的是「29 / 29 全成立」。這一版<strong>刻意不再那樣做</strong>，原因有兩件事同時發生：</p>
             <ol>
                 <li><strong>設施尺寸大修正。</strong>實機確認<strong>操場／棒球場／足球場／體育館／道場／游泳池，以及電腦室／理科室／音樂室／美術室／家政室／多功能室全部都是 2×2</strong>（天象館是橫 2 格）。舊版把它們當 1×1 排的，等於憑空多用了幾十格；<strong>舊圖有 21 座多格建築在新尺寸下是「鋪不滿」的</strong>——那不是佈局變差，是舊圖從一開始就量錯了。</li>
-                <li><strong>設計原則換成分區優先。</strong>舊架構的目標是湊滿 29，鋪面是事後補上的視覺語意，於是產出「農牧園區裡站著校長室與操場」、一條街材質東一塊草地西一塊道路的圖。新原則是：<strong>先有語意清楚、成塊的分區，再用對應材質的通路連起來；景點數降級為「良好分區前提下的最大可成立數」。</strong></li>
+                <li><strong>設計原則換成分區優先。</strong>舊架構的目標是湊滿 29，鋪面是事後補上的視覺語意，於是產出「農牧園區裡站著校長室與操場」的圖。新原則是<strong>先劃成塊的分區 → 再用材質對應的通路連起來 → 景點數降級為「良好分區前提下的最大可成立數」</strong>；三步的完整說明與路網品質怎麼量寫在<a href="../#rules">佈局範例集的通用設計原則</a>，本頁只講湖岸小鎮特有的取捨與數字。</li>
             </ol>
             <p>湖岸是五張圖裡受這兩件事衝擊最大的一張，因為<strong>2×2 的位置在這裡是最稀缺的資源</strong>：南校區（X17–X25）扣掉原生校舍、原生走廊與水面，整片只排得下 11 座 2×2；北岸帶那兩列平地被 <strong>8 株高地樹墩</strong>打斷，幾乎排不出一座 2×2。所以要嘛把專科教室拆散、塞進農牧區與運動區把分區名變成謊話，要嘛誠實放棄幾個景點。<strong>本版選後者：23 個成立、6 個放棄</strong>（藝術／家庭／時尚／燒水／澀谷／名門，逐個理由見<a href="#spots">景點一節</a>）。</p>
             <div class="callout tip"><span class="k">代價換到了什麼</span>別的數字反而全面變好：走不到的通行格維持 <strong>0</strong>、<strong>四種鋪面的配比也正常了</strong>（水泥地從舊版的 4 格變成 20 格的正式通路）、分區真的成塊：運動全部在北高地、農牧集中在北岸東半與南緣、室內設施成四棟教學區。<em>死路支線一度壓到全五鎮最低的 12%，但下一節那 8 間教室把它推回 <strong>18%</strong>——那是實話，寫在<a href="#flow">動線一節</a>。</em></div>
@@ -210,7 +193,7 @@
             </ul>
 
             <h2 id="paving">四種鋪面：鋪面就是分區語意</h2>
-            <p>遊戲的通行鋪面有<strong>道路</strong>（外通路）、<strong>走廊</strong>（木造廊下）、<strong>水泥地</strong>（パネル廊下）、<strong>草地</strong>（芝生）四種。四種都能走，而且對 4×4 景點判定<strong>完全等價</strong>——只有草地本身另外是「菜園」「力量」「清爽」的材料。既然功能等價，這一版就把它們當成<strong>分區的表達</strong>：</p>
+            <p>四種鋪面都能走，而且對 4×4 景點判定<strong>完全等價</strong>——只有草地本身另外是「菜園」「力量」「清爽」的材料（四種的解鎖階段、設置費、青春點與遊戲的校舍內／外分類，整理在<a href="../#rules">通用原則那一節</a>）。既然功能等價，這一版就把它們當成<strong>分區的表達</strong>：</p>
             <div class="table-wrap">
                 <table class="data">
                     <thead><tr><th>鋪面</th><th>本圖格數</th><th>語意 → 鋪在哪</th><th>遊戲內的證據</th></tr></thead>
@@ -223,10 +206,10 @@
                 </table>
             </div>
             <p><strong>四種鋪面的解鎖階段剛好對得上分區的開發順序</strong>（校舍 → 對外幹道 → 農牧公園 → 運動園區），所以「分區 → 材質」同時就是<a href="#stages">施工順序表</a>。鋪面資料來自 wikiwiki 的カイロパーク攻略（同一張表抓三次互相對照，數值一律自己重寫）。</p>
-            <div class="callout warn"><span class="k">一處刻意偏離，兩點沒有出處</span><strong>㈠</strong> 本站把<strong>水泥地當「戶外運動」</strong>用，但遊戲的道具分類把パネル廊下歸在<strong>校舎内</strong>。我們照使用者指定的語意實作，並在這裡標明落差——兩者其實相容：運動園區的主角（體育館／游泳池／道場）本身就是室內運動建築。<strong>㈡</strong> wiki 沒有任何「哪種設施該接哪種鋪面」的官方建議，也沒有鋪面影響屬性或打工收入的記載；本站舊版寫過「相機組／寫生按走廊算打工收入」，<strong>找不到出處，已刪除</strong>。<strong>㈢</strong> 想省錢的話，把鋪面全部改成最便宜的走廊，<strong>23 個景點一個都不會少</strong>——唯一要留著的是草地，因為它真的是景點材料（本圖的 55 格草地裡，南農牧帶那幾格是「菜園」「清爽」的材料、水井口袋那幾格是「力量」的材料，這兩處不能換）。</div>
+            <div class="callout warn"><span class="k">湖岸這一節的兩點誠實補充</span><strong>㈠</strong> 本站把<strong>水泥地當「戶外運動」</strong>用，但遊戲的道具分類把パネル廊下歸在<strong>校舎内</strong>——這是刻意偏離，理由與「查不到官方建議哪種設施該接哪種鋪面」一併寫在<a href="../#rules">通用原則</a>。<strong>㈡</strong> 想省錢的話，把鋪面全部改成最便宜的走廊，<strong>23 個景點一個都不會少</strong>——但湖岸有兩處草地不能換：<strong>南農牧帶</strong>那幾格是「菜園」「清爽」的材料、<strong>水井口袋</strong>那幾格是「力量」的材料。</div>
 
             <h2 id="flow">動線：地形給的死路照留，自己做的死路清掉</h2>
-            <p>這張圖的主題本來就是<strong>動線經營</strong>。除了「每一棟都走得到」，本版還跑了<strong>環化 pass</strong>（跑在鋪面重鋪之後、輸出分享碼之前）：把死路端點旁的樹墩、花草<strong>改鋪成路</strong>讓支線接回成環，或把 4 格以內、不服務任何建築門面的短枝整條改種綠化；每一步都要「景點不能少、被包圍的建築不能變多、動線總分真的變好」才採用。湖岸有一份<strong>豁免清單</strong>（鎖喉走廊的銜接格、中央半島死巷、水井口袋參道、東岸步道的 Y2 草徑），那些是地圖給的唯一通路，<strong>一格都不准動</strong>。前後對比：</p>
+            <p>這張圖的主題本來就是<strong>動線經營</strong>。除了「每一棟都走得到」，本版還跑了<strong>環化 pass</strong>（跑在鋪面重鋪之後、輸出分享碼之前）——<a href="../#rules">兩種清理手段與三道守衛</a>跟其他四鎮相同，湖岸能改鋪成路的是死路端點旁的樹墩與花草。湖岸另有一份<strong>豁免清單</strong>（鎖喉走廊的銜接格、中央半島死巷、水井口袋參道、東岸步道的 Y2 草徑），那些是地圖給的唯一通路，<strong>一格都不准動</strong>。前後對比：</p>
             <div class="table-wrap">
                 <table class="data">
                     <thead><tr><th></th><th>舊版（湊 29 景點）</th><th>分區優先版</th><th>本版（＋滿編 9 教室）</th></tr></thead>
@@ -263,6 +246,7 @@
                 <table class="data">
                     <thead><tr><th>景點</th><th>座標</th><th>需要設施</th><th>屬性加成</th></tr></thead>
                     <tbody>
+                        <!-- gen:spots -->
                         <tr><td>運動</td><td>X3 / Y20</td><td>操場＋籃球場＋販賣機</td><td>體育+3 頭腦+3 態度+2</td></tr>
                         <tr><td>約會</td><td>X16 / Y7</td><td>網球場＋樹林／櫻花樹＋圖書室</td><td>文系+2 理系+3 人氣+2 態度+2</td></tr>
                         <tr><td>好友</td><td>X15 / Y20</td><td>飲水處＋保健室＋茶室</td><td>文系+3 運動+2 人氣+2</td></tr>
@@ -292,6 +276,7 @@
                         <tr><td>非洲</td><td>X6 / Y16</td><td>飼育長頸鹿＋飼育大象＋圖騰柱</td><td>文系+5 理系+3 態度+2</td></tr>
                         <tr><td>宇宙</td><td>X2 / Y11</td><td>宇宙火箭＋天象館＋多媒體教室</td><td>理系+3 頭腦+2 人氣+2</td></tr>
                         <tr><td>開羅</td><td>X22 / Y6</td><td>金開羅君＋開羅君像＋開羅君房間</td><td>文系+5 理系+5 人氣+3 態度+3</td></tr>
+                        <!-- gen:end -->
                     </tbody>
                 </table>
             </div>
@@ -303,11 +288,13 @@
                 <table class="data">
                     <thead><tr><th>分類</th><th>設施</th></tr></thead>
                     <tbody>
+                        <!-- gen:fac -->
                         <tr><td>生活與設施</td><td>便利商店、保健室、公告欄 ×3、圖騰柱、宇宙火箭、廣播室 ×2、更衣室 ×2、水井、洗手間 ×3、焚化爐 ×4、福利社、茶室 ×2、販賣機 ×2、金開羅君、銅像、長椅 ×5、開羅君像、飲水處 ×3、餐廳</td></tr>
-                        <tr><td>教室與專科</td><td>圖書室、多媒體教室 ×2、天象館、家政室、教室 ×9、校長室、校門(上下用)、校門(左右用)、理科室、辦公室 ×2、開羅君房間、電腦室、音樂室</td></tr>
+                        <tr><td>教室與專科</td><td>圖書室、多媒體教室 ×2、天象館、家政室、教室 ×9、校長室、校門（上下用）、校門（左右用）、理科室、辦公室 ×2、開羅君房間、電腦室、音樂室</td></tr>
                         <tr><td>運動與社團</td><td>彈跳床 ×2、操場、棒球場、游泳池 ×2、社團教室 ×2、籃球場 ×2、網球場、足球場、道場、體育館</td></tr>
                         <tr><td>動植物農牧</td><td>小農場 ×3、飼育大象、飼育熊貓、飼育長頸鹿、飼育鱷魚、飼育鼴鼠 ×2、飼鴨小屋 ×3、養兔小屋 ×4、養牛小屋 ×2、養豬小屋 ×2、養雞小屋 ×2</td></tr>
                         <tr><td>環境地形</td><td>在意之樹 ×13、巨石、映山紅、樹林 ×25、櫻花樹 ×7、水塘 ×146、水泥地 ×20、竹林 ×4、花壇、草地 ×55、走廊 ×43、道路 ×36</td></tr>
+                        <!-- gen:end -->
                     </tbody>
                 </table>
             </div>
@@ -319,6 +306,7 @@
                 <table class="data">
                     <thead><tr><th>階段</th><th>景點</th><th>所在分區（代表窗口）</th><th>關鍵材料的解鎖條件</th></tr></thead>
                     <tbody>
+                        <!-- gen:stage -->
                         <tr><td>1・開局（農村學園）</td><td>力量</td><td>山中湖水岸（X12 / Y10）</td><td>水井：一開始就可建</td></tr>
                         <tr><td>1・開局（農村學園）</td><td>水岸</td><td>山中湖水岸（X12 / Y10）</td><td>水塘：地圖既有地形（可被建設破壞）（推定）</td></tr>
                         <tr><td>1・開局（農村學園）</td><td>好友</td><td>中央半島農牧（X15 / Y20）</td><td>飲水處：一開始就可建</td></tr>
@@ -348,6 +336,7 @@
                         <tr><td>4・名門學園</td><td>非洲</td><td>高原教學棟（X6 / Y15）</td><td>飼育長頸鹿：觀光級稀有飼育，名門學園後（推定）</td></tr>
                         <tr><td>4・名門學園</td><td>開羅</td><td>東南高台（開羅台）（X22 / Y5）</td><td>金開羅君：開羅君系列＝全遊戲最終獎勵（推定）</td></tr>
                         <tr><td>4・名門學園</td><td>熱血</td><td>高原運動公園（西）（X3 / Y24）</td><td>游泳池：名門學園＋運動 110＋體育館</td></tr>
+                        <!-- gen:end -->
                     </tbody>
                 </table>
             </div>

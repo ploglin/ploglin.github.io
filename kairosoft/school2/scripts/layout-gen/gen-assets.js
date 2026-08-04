@@ -1,7 +1,13 @@
-/* 由分享碼產生：地圖 SVG + 攻略頁要用的表格 HTML
+/* 由分享碼產生：地圖 SVG ＋ 縮圖 ＋ 鎮頁上的三張表
    用法：node gen-assets.js          → 健康鎮（code.txt → health-perfect.svg）
          node gen-assets.js east     → 冬郵小鎮（code-east.txt → east-perfect.svg）
-   產出的 SVG 直接寫到 ../../layouts/，表格 HTML 留在本目錄供貼上。 */
+
+   SVG／縮圖寫到 ../../layouts/；三張表**直接蓋章進該鎮的 layouts/<town>/index.html**
+   （景點座標表 → gen:spots、設施清單 → gen:fac、階段×分區 → gen:stage）。
+   舊做法是把表格 HTML 另存成 spots-table-*.html 等 15 個檔案供人手貼，於是
+   ㈠貼漏了沒人知道（實測冬郵三張表的第一列縮排掉到第 0 欄、五鎮設施表的
+   「校門(上下用)」全都停在改成全角括號之前的舊字串）㈡頁面上的數字與分享碼
+   可能不一致卻沒有守衛。改成蓋章之後那些檔案沒有存在的理由，已刪除。 */
 const fs = require('fs');
 const path = require('path');
 const townKey = (process.argv[2] || 'health').replace(/^--?/, '');
@@ -12,6 +18,32 @@ const { items, SPOTS, gridRows, gridCols, town } = E;
 
 const CODE_FILE = { health: 'code.txt', east: 'code-east.txt', hill: 'code-hill.txt', valley: 'code-valley.txt', lake: 'code-lake.txt' }[townKey];
 const OUT_DIR = path.join(__dirname, '..', '..', 'layouts');
+const PAGE = path.join(OUT_DIR, town.page, 'index.html');
+
+/* ---------- 蓋章 ----------
+   標記風格比照 scripts/gen-embed.js 的 `<!-- db:x … --><!-- db:end -->`：
+     <!-- gen:spots -->  …產生物…  <!-- gen:end -->
+   縮排由標記那一行決定（產生的列不自帶縮排），行尾符號沿用該檔原本的
+   —— valley/hill 是 LF、health/east/lake 是 CRLF，統一成一種會把整份檔案
+   都算成改動，那樣 `git diff` 就看不出真正變了什麼。
+   找不到標記一律 throw：漏了標記等於那張表悄悄停止更新，正是舊做法的病。 */
+const stamped = [];
+function stamp(name, rows) {
+    const rel = path.relative(path.join(__dirname, '..', '..'), PAGE);
+    if (rel.startsWith('..') || path.isAbsolute(rel)) throw new Error('拒絕寫入 school2 之外的路徑：' + PAGE);
+    const orig = fs.readFileSync(PAGE, 'utf8');
+    const re = new RegExp('([ \\t]*)<!--\\s*gen:' + name + '\\s*-->[\\s\\S]*?<!--\\s*gen:end\\s*-->');
+    const m = re.exec(orig);
+    if (!m) throw new Error(rel + ' 裡找不到 <!-- gen:' + name + ' --> … <!-- gen:end --> 標記');
+    const indent = m[1];
+    const nl = /\r\n/.test(orig) ? '\r\n' : '\n';
+    const block = indent + '<!-- gen:' + name + ' -->' + nl +
+        rows.map(r => indent + r).join(nl) + nl +
+        indent + '<!-- gen:end -->';
+    const next = orig.slice(0, m.index) + block + orig.slice(m.index + m[0].length);
+    if (next !== orig) fs.writeFileSync(PAGE, next);
+    stamped.push('gen:' + name + ' ' + rows.length + ' 列' + (next === orig ? '（未變）' : ''));
+}
 
 const code = fs.readFileSync(path.join(__dirname, CODE_FILE), 'utf8').trim();
 const dec = E.decodeMap(code);
@@ -150,9 +182,9 @@ const rows = SPOTS.map(s => {
        `spotWindows()` 查不到窗口 —— 舊版直接 `w[0]` 會 TypeError（湖岸 23/29 時踩到）。
        未成立的照實標「—（放棄）」，頁面上的表格因此仍然是完整的 29 列。 */
     const at = w ? `X${E.gameX(w[0])} / Y${E.gameY(w[1])}` : '—（放棄）';
-    return `                        <tr><td>${s.name}</td><td>${at}</td><td>${req}</td><td>${s.bonus || ''}</td></tr>`;
-}).join('\n');
-fs.writeFileSync(path.join(__dirname, 'spots-table-' + townKey + '.html'), rows);
+    return `<tr><td>${s.name}</td><td>${at}</td><td>${req}</td><td>${s.bonus || ''}</td></tr>`;
+});
+stamp('spots', rows);
 
 /* ---------- 設施統計表 ---------- */
 const cnt = {};
@@ -166,8 +198,8 @@ Object.entries(cnt).forEach(([t, n]) => {
 });
 const facRows = ['生活與設施', '教室與專科', '運動與社團', '動植物農牧', '環境地形']
     .filter(k => byCat[k])
-    .map(k => `                        <tr><td>${k}</td><td>${byCat[k].sort().join('、')}</td></tr>`).join('\n');
-fs.writeFileSync(path.join(__dirname, 'fac-table-' + townKey + '.html'), facRows);
+    .map(k => `<tr><td>${k}</td><td>${byCat[k].sort().join('、')}</td></tr>`);
+stamp('fac', facRows);
 
 /* ---------- 階段 × 分區對照表 ----------
    由分享碼反推，不手寫：
@@ -206,9 +238,9 @@ const stageRows = SPOTS.map(s => {
     .map(x => {
         const cond = items[x.key].name + '：' + S.itemCond(x.key) + (S.itemSrc(x.key) === '推定' ? '（推定）' : '');
         const at = x.z.wr === null ? '—' : 'X' + E.gameX(x.z.wr) + ' / Y' + E.gameY(x.z.wc);
-        return `                        <tr><td>${x.st}・${S.STAGE_NAMES[x.st]}</td><td>${x.s.name}</td><td>${x.z.name}（${at}）</td><td>${cond}</td></tr>`;
-    }).join('\n');
-fs.writeFileSync(path.join(__dirname, 'stage-table-' + townKey + '.html'), stageRows);
+        return `<tr><td>${x.st}・${S.STAGE_NAMES[x.st]}</td><td>${x.s.name}</td><td>${x.z.name}（${at}）</td><td>${cond}</td></tr>`;
+    });
+stamp('stage', stageRows);
 const perStage = [1, 2, 3, 4].map(n => n + '階 ' + SPOTS.filter(s => S.spotStage(s) === n).length + ' 個').join('｜');
 console.log('階段分佈：' + perStage);
 
@@ -231,4 +263,4 @@ console.log('建築棟數：' + Math.round(bCount) + '（高地上 ' + Math.roun
 console.log('鋪面格數：' + PAVE.map(t => items[t].name + ' ' + paveCount[t]).join('｜') +
     '（合計 ' + paveTotal + '，走廊占 ' + (paveTotal ? Math.round(paveCount.wood_path / paveTotal * 100) : 0) + '%）');
 console.log('屬性加成合計：' + Object.entries(bonus).sort((a, b) => b[1] - a[1]).map(([k, v]) => k + ' +' + v).join('、'));
-console.log('表格：spots-table-' + townKey + '.html / fac-table-' + townKey + '.html / stage-table-' + townKey + '.html');
+console.log('蓋章：layouts/' + town.page + '/index.html ← ' + stamped.join('｜'));
