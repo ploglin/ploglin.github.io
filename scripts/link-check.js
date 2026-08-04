@@ -334,13 +334,26 @@ section('6. ?v= 版號一致性');
 
     const byVer = new Map();
     const dataWithV = [];
+    /* 版號分兩軌，因為它們的變更成本完全不同：
+       ①「共用資產」`/assets/*`（29 款同吃）——改一次就要全站同步，所以必須同號。
+       ②「單一遊戲自己的資產」`kairosoft/<game>/assets/*`——只有那款吃，
+          自帶版號才對；硬要它跟全站同號，等於每次改一款的樣式就讓 29 款 cache miss。
+       所以這裡只斷言「共用資產的版號唯一」，遊戲本地資產各自列出。 */
+    const localVer = new Map();   // 遊戲本地資產的版號
     let dataRefs = 0;
     for (const f of files) {
         const rel = path.relative(ROOT, f).split(path.sep).join('/');
         const txt = fs.readFileSync(f, 'utf8');
-        for (const m of txt.matchAll(/\?v=(\d+)/g)) {
-            if (!byVer.has(m[1])) byVer.set(m[1], []);
-            byVer.get(m[1]).push(rel);
+        for (const m of txt.matchAll(/(?:src|href)\s*=\s*"([^"]*?\?v=(\d+))"/g)) {
+            const target = m[1], ver = m[2];
+            // 要用「解析後的 repo 相對路徑」判斷歸屬：頁面寫的是 `../assets/guide.css?v=1`
+            // 這種相對路徑，字串裡沒有 kairosoft/，直接比對會全部誤判成共用資產。
+            const resolved = path.relative(ROOT, path.resolve(path.dirname(f), target.split('?')[0]))
+                .split(path.sep).join('/');
+            const isLocal = /^kairosoft\/[^/]+\/assets\//.test(resolved);
+            const bucket = isLocal ? localVer : byVer;
+            if (!bucket.has(ver)) bucket.set(ver, []);
+            bucket.get(ver).push(rel + ' → ' + target.replace(/^.*\//, ''));
         }
         // db/data.js 的引用一律不帶 ?v（現有慣例）
         for (const m of txt.matchAll(/(?:src|href)\s*=\s*"([^"]*data\.js[^"]*)"/g)) {
@@ -349,9 +362,12 @@ section('6. ?v= 版號一致性');
         }
     }
     const vers = [...byVer.keys()].sort();
-    for (const v of vers) ok(`?v=${v}`, byVer.get(v).length + ' 處 / ' + new Set(byVer.get(v)).size + ' 檔');
-    verdict('全 repo 只有一個 ?v 版號', vers.length !== 1,
+    for (const v of vers) ok(`共用資產 ?v=${v}`, byVer.get(v).length + ' 處 / ' + new Set(byVer.get(v).map(s => s.split(' → ')[0])).size + ' 檔');
+    verdict('共用資產（/assets/）只有一個 ?v 版號', vers.length !== 1,
         vers.length === 1 ? '?v=' + vers[0] : '出現 ' + vers.length + ' 個版號：' + vers.join(', '));
+    const lvers = [...localVer.keys()].sort();
+    if (lvers.length) ok('遊戲本地資產各自帶版號（刻意，改一款不必動全站）',
+        lvers.map(v => '?v=' + v + '×' + localVer.get(v).length).join('、'));
     verdict(`data.js 引用不帶 ?v（共 ${dataRefs} 處）`, dataWithV.length,
         dataWithV.length ? list(dataWithV) : '0 處帶版號');
 }
