@@ -1,0 +1,226 @@
+/* ============================================================
+   8bit 視覺 — token 層 (pixel.css)
+
+   放在全站 /assets/ 是為了「可推廣」（第二款只要在 head 多一行 link 就
+   拿到同一套語言），但**不被任何頁自動載入** → 對現有 29 款零影響。
+   目前引入者：school2 的 28 個攻略頁（不含 sim/，那是獨立 app）。
+
+   引入方式（head，放在 shell.css 之後、遊戲本地 css 之前）：
+       <link rel="stylesheet" href="../../assets/pixel.css?v=8">
+
+   ── 為什麼是 ?v=8 而不是 ?v=1 ────────────────────────────────
+   scripts/link-check.js 第 6 節斷言「共用資產 /assets/ 只有一個 ?v 版號」
+   （29 款同吃，改一次就要全站同步）。本檔在 /assets/ → 屬共用軌，必須同號。
+   這不等於「動了全站版號」：既有 439 處 ?v=8 一個字都沒改，而本檔是新檔、
+   沒有舊快取要打掉，掛 ?v=8 直接滿足兩個條件。
+
+   ── 切法：HUD 化，不是貼皮 ──────────────────────────────────
+   L1 框（盒子邊界語言：硬邊、直角、零模糊階梯陰影、按下下沉）→ 做
+   L2 數與籤（KPI 大數字、章節編號、座標）                     → 做
+   L3 正文（.prose 內 p/li/h2/h3 的字級行高字距 margin）      → 一格都不動（紅線）
+   讀者「這是同一個世界」的判斷九成來自進頁一秒內的框與大數字，
+   不是第 3,000 字的字形 → L1+L2 拿九成識別度、付零可讀性代價。
+
+   ── 明確不做（每條都有技術理由，不要自作主張加回來）──────────
+   1. CJK 點陣字：繁中在 16px 內幾乎不可讀（CJK 需 12×12 點，常見免費像素
+      字型是 8×8），檔案 2–8MB 對 80–95KB 的頁面是 30–100 倍成本，LCP 爆。
+   2. 整頁 dithering／掃描線：WCAG 對比計算假設純色背景，紋理背景無法驗證；
+      非整數縮放產生摩爾紋。
+   3. 對 layouts/*-perfect.svg／*-thumb.svg 加 `image-rendering: pixelated`
+      —— **那是負分**。它們是純 <rect>+<text> 的向量圖，image-rendering 只
+      影響光柵取樣，套了不會更像素，只會讓 stroke-width="0.6" 的白描邊與
+      <text> 反鋸齒失效變成鋸齒爛字。本檔因此一處都沒有 image-rendering。
+   4. 字距/行高追求機械感：CJK 加字距破壞詞組黏著。
+   5. 把 emoji 換成自繪像素圖示：站上 emoji 用量極大，要上百個 SVG 且失去
+      跨平台與無障礙優勢。衝突的不是 emoji，是「emoji 裸放在頁面上」
+      → 給它一個像素風容器（.px-ico）即可。
+
+   ── 不碰（P0）────────────────────────────────────────────────
+   · table.data thead th（sticky）與 .db-cmp-table th:first-child（sticky
+     left）只能改 background/font，**不能加 border 或 box-shadow**：
+     ①sticky 元素上的階梯陰影會在捲動時每影格重繪整條表頭
+     ②border-collapse: collapse 下 sticky th 的 border 不跟著黏，現有 CSS 用
+       border-bottom＋底色迴避了這個老 bug，改成硬邊會把它叫醒。
+     本檔對 thead th 零宣告；--shadow 覆寫也碰不到它（guide.css 給的是寫死的
+     `inset 0 -1px 0 var(--line)`，不走 token）。
+   · .ad-slot 不加任何裝飾框線（AdSense 政策：不得讓廣告看起來像網站內容）。
+     它只跟著 --radius-sm 變直角，那是既有 token 換值。
+   · 表格族不用 clip-path（.table-wrap 是捲動容器，會裁掉內容）。
+   · --accent 對白只有 1.99:1 → 絕對不當「重點數字」色。KPI 數字留 --brand-strong。
+   · .db-* 的 DOM 由 assets/db.js 純函式產生、被 gen-static.js 烤進 111 個
+     HTML（帶 data-prerendered 就不重建）→ 只能靠既有 class 選擇器＋token
+     換值，不新增 class、不改 DOM。
+   · 覆寫既有 hover 用權重而非 !important。
+   ============================================================ */
+
+
+/* ---------- 1. 像素字型（只給拉丁字符與數字）--------------------------------
+   Silkscreen 400 latin 子集，8.2KB，自託管。
+   不走 Google Fonts CDN：頁面已在排隊載 Noto Sans TC + Inter，第三個 CDN
+   來源只會再加一次 DNS+TLS。
+
+   unicode-range 鎖死拉丁範圍 → CJK 永遠不可能落到像素字型上，連 fallback
+   判斷都不用寫（瀏覽器自己跳到下一個 family）。
+--------------------------------------------------------------------------- */
+@font-face {
+    font-family: "PixelNum";
+    src: url("silkscreen-latin-400.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0030-0039, U+002E, U+002F, U+0025, U+002B, U+002D, U+00D7, U+0041-005A, U+0061-007A;
+}
+
+/* shell.css:26 已定義 `--font-pixel: "Inter", system-ui, sans-serif`，是佔位值
+   且全站零使用 → 靠後載入的同權重 :root 覆寫來「履行」它，不改共用檔。
+   fallback 用 ui-monospace 而非 Inter：等寬 → swap 時字寬不變、版面不跳
+   （CLS 才是 Core Web Vitals 會扣分的，FOUT 不會）。 */
+:root {
+    --font-pixel: "PixelNum", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+
+/* ---------- 2. 硬邊與階梯陰影的顏色 token -----------------------------------
+   一律定義成既有 token 的函數（color-mix 從 --ink / --card 推導），絕不寫死
+   hex：站上已有兩份色票（shell.css 的深色重寫、sim 的 40 個 --sd-*），不要
+   製造第三份。深色因此免費、各遊戲換 --brand 也免費。
+
+   為什麼 55%／70% 這兩個比例在淺色與深色都成立：
+   淺色 --ink 是暗的 → 混進 --card 會變暗；深色 --ink 是亮的 → 會變亮。
+   對比度取絕對值，**兩個方向都遠離 --card**，所以同一條公式兩邊都過關：
+     --px-edge (70%)  淺 5.54:1 ／ 深 7.61:1  對 --card（UI 邊界要 ≥3:1）
+     --px-drop (55%)  淺 3.54:1 ／ 深 5.23:1  對 --card
+   這正是「color-mix 推導最容易失敗處」的解法。反例：`--ink 22% + --card`
+   在深色是「比底色更亮一點」＝幾乎看不見，那個方向不能用。
+
+   為什麼深色的「陰影」是偏亮的偏移塊而不是暗塊：深色 --card #16211c 與
+   --bg #0e1613 的對比只有 1.11:1，往下壓到純黑最多也只有 1.14:1
+   → **在這套深色票裡，變暗的投影在物理上不可能看得見**。所以深色改用 8bit
+   HUD 的另一個慣用語：偏移的實色描邊塊（offset outline）。它是可見的，
+   而「可見」才是驗收條件。
+
+   兩行同名宣告＝color-mix 不支援時的 fallback：舊瀏覽器丟掉第二行、留第一行。
+   fallback 也只用既有 token（--ink-soft / --muted），不引入任何色值字面。
+--------------------------------------------------------------------------- */
+:root {
+    --px-edge: var(--ink-soft);
+    --px-edge: color-mix(in srgb, var(--ink) 70%, var(--card));
+    --px-drop: var(--muted);
+    --px-drop: color-mix(in srgb, var(--ink) 55%, var(--card));
+}
+
+
+/* ---------- 3. 最高投報率的一行：讓既有元件一起變直角 -----------------------
+   換值、不覆寫規則 → 零 HTML 改動、零風險。一次影響（都在 main.article 內）：
+     shell.css   .game-card(302) .callout(362) .table-wrap(369) .toc(377)
+                 .ad-slot(391) .db-cat-card(473) .sim-panel(485)
+     guide.css   .path-rail .cur(115/117) .datablock(193) .zone-group(350)
+                 .kpi-row > div(402) .next-step .ns-card(482)
+   刻意只 scope 在 main.article：site-header / game-bar / footer / .pagenav
+   維持圓角（它們是全站外殼，不屬於這一款的內容區）。
+
+   用 2px 而非 0：純 0 在小元件顯得脆，真實 8bit 精靈的角是 1 像素倒角。
+
+   --shadow / --shadow-hover 換成零模糊階梯陰影，同樣是純換值：所有 var(--shadow)
+   的既有使用者（.game-card / .db-cat-card / .sim-panel / .ns-card:hover）一起
+   換掉柔和 blur。box-shadow 不影響 layout → 不會位移任何東西。
+   sticky thead th 不受影響（它的陰影是寫死的 inset，不走 token）。
+--------------------------------------------------------------------------- */
+main.article {
+    --radius: 2px;
+    --radius-sm: 2px;
+    --shadow: 3px 3px 0 0 var(--px-drop);
+    --shadow-hover: 5px 5px 0 0 var(--px-edge);
+}
+
+/* 5 個鎮頁的 .statgrid 把 border-radius 寫死成 12px（頁內 <style>，沒走
+   token）→ 不換掉會變成「全站直角、只有這 5 頁的 KPI 磚是圓的」。
+   用權重贏過頁內規則（0,2,1 > 0,1,1），值仍取自 token，不寫死數字。
+   （guide.css 的 .kpi-row 是它的等價替代品，本來就吃 token。） */
+main.article .statgrid > div {
+    border-radius: var(--radius-sm);
+}
+
+
+/* ---------- 4. 像素字型的使用範圍（窮舉，超出即算超用）---------------------
+   .statgrid b / .kpi-row b  KPI 大數字
+   .sec-num                  章節編號
+   .coord                    座標
+   .hero .pill               門面標籤
+   **刻意不用在 H1/H2/H3**：純 CJK 套了無效，只會讓標題裡的數字變像素字跟
+   CJK 打架，看起來像 bug。也不用在 .prose 的 p/li（L3 紅線）。
+
+   ── .prose code 為什麼從清單裡拿掉（實測後的決定）──────────────
+   計畫原本把 .prose code 列進來，但實測 28 頁共 8 個 code 片段，**只有 1 個
+   （`concrete`）整串都在像素字型的 unicode-range 內**，其餘 7 個都含範圍外
+   字符（`1×2（直）`、`2×1（橫）`、`?→46`、`X15/Y2 草坡 → …豬舍`）。
+   unicode-range 會讓拉丁走 Silkscreen、全角括號與 CJK 走 monospace →
+   同一個 code 片段裡兩種字型的字高與基線對不齊，正是計畫拿來排除 H1/H2/H3
+   的同一個理由（「跟 CJK 打架，看起來像 bug」）。7/8 命中率太低，不值得。
+   這也是驗收條款 2「該元素文字不含 CJK」唯一的違反點 → 拿掉後該條乾淨通過。
+   （方向上這是「少用」不是「超用」，屬安全側；要加回來只需補一行選擇器。）
+
+   font-synthesis: none 是這裡的關鍵：Silkscreen 只有 400 一個字重，而
+   .kpi-row b / .sec-num 都是 font-weight: 900 → 瀏覽器會「合成粗體」把字形
+   往旁邊抹一份，像素邊緣直接糊掉。宣告 none 讓它老實用 400，不必改
+   font-weight（改了反而在 swap 前後跳字重）。
+--------------------------------------------------------------------------- */
+main.article .statgrid b,
+main.article .kpi-row b,
+main.article .sec-num,
+main.article .coord,
+.hero .pill {
+    font-family: var(--font-pixel);
+    font-synthesis: none;
+}
+
+
+/* ---------- 5. 工具 class（給頁面主動套用；本批不改任何 HTML 結構）--------- */
+
+/* 5a. .px-frame：盒子的邊界語言 —— 2px 硬邊＋4px 零模糊階梯陰影＋直角 */
+.px-frame {
+    border: 2px solid var(--px-edge);
+    border-radius: 2px;
+    box-shadow: 4px 4px 0 0 var(--px-drop);
+    background: var(--card);
+}
+
+/* 5b. .px-ico：裸 emoji 的像素風容器 —— 第二有效的轉換
+   （衝突的不是 emoji，是 emoji 沒有容器地漂在頁面上）
+   32px 方框；只會放大命中區、不會縮小 → 觸控目標無退化。 */
+.px-ico {
+    display: inline-grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    flex: 0 0 auto;
+    border: 2px solid var(--px-edge);
+    border-radius: 2px;
+    background: var(--card-2);
+    font-size: 18px;
+    line-height: 1;
+}
+
+/* 5c. .px-press：按下下沉一格
+   steps(2, end) 而非 ease：階梯式讓位移「跳」而不是「滑」（8bit 沒有次像素
+   補間），而且比 ease 便宜。位移 2px 同時把陰影從 4px 收到 2px → 看起來是
+   整個盒子往投影裡沉進去一格。 */
+.px-press {
+    transition: transform .08s steps(2, end), box-shadow .08s steps(2, end);
+}
+.px-press:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 0 var(--px-drop);
+}
+
+/* prefers-reduced-motion：移除位移、**保留陰影變化**。
+   位移是「動」（會誘發不適）；陰影深淺是「狀態」（是資訊）。全關會讓按鈕
+   失去按下回饋 —— 那是拿無障礙的名義做出更差的無障礙。 */
+@media (prefers-reduced-motion: reduce) {
+    .px-press {
+        transition: box-shadow .08s steps(2, end);
+    }
+    .px-press:active {
+        transform: none;
+    }
+}
