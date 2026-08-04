@@ -40,6 +40,9 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../../assets/shell.css?v=8">
+    <!-- 只取 guide.css 的樣式（第 2 章的 `.next-step` 由 gen-embed 蓋章，需要它才有樣式）；
+         guide.js 的側邊軌與進度線留給 B5 連同本頁去重一起做，避免在收尾批動版面。 -->
+    <link rel="stylesheet" href="../assets/guide.css?v=1">
     <style>
         .layout-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; margin: 16px 0; box-shadow: var(--shadow); }
         .layout-card h3 { margin: 0 0 4px; font-size: 18px; font-weight: 900; }
@@ -184,17 +187,21 @@
                 <li>點「在模擬器開啟」→ 模擬器會載入該地圖，右側即時顯示成立的景點。</li>
                 <li>想改就直接在模擬器上拖曳增減；<a href="../sim/">模擬器</a>會提示「差一步」與建議位置，也會用紅框標出被包圍、走不到的建築。</li>
                 <li>做出自己的佈局後，模擬器的「分享」鈕會產生你自己的網址，可存起來或分享給別人。</li>
-                <li>只想查「這幾個設施能湊出什麼」，用<a href="../spot-check/">景點檢查器</a>比較快。</li>
+                <li>只想查「這幾個設施能湊出什麼」，用攻略總覽頁的<a href="../#spot-check">景點檢查器</a>比較快。</li>
             </ul>
             <p style="font-size:13px;color:var(--muted);margin-top:26px">範例地圖由本站產生並以模擬器邏輯驗證，僅供規劃參考。景點條件參考カイロパーク攻略 Wiki 等公開資料整理。若有更好的擺法歡迎指正。</p>
         </div>
         <!-- chapter:start -->
-        <nav class="related chapter-nav">
-            <h2>第 1 / 3 章 · 接著讀</h2>
-            <div class="db-cat-grid">
-                <a class="db-cat-card" href="../walkthrough/"><span class="ic">🧭</span><span class="lb">下一章：經營與升級 →</span><span class="n">照學園規模門檻決定每年要蓋什麼</span></a>
-            </div>
-        </nav>
+        <aside class="next-step">
+            <a class="ns-card" href="../training/">
+                <span class="ns-ic">🎓</span>
+                <div>
+                    <div class="ns-t">下一步：第 3 章 育成 →</div>
+                    <div class="ns-why">地圖蓋好之後剩下的全是育成：38 位老師投資誰、七屬性怎麼長、社團怎麼衝優勝。</div>
+                </div>
+            </a>
+            <a class="ns-prev" href="../start/">← 上一步：第 1 章 開局指南（選圖與前三年的現金流）</a>
+        </aside>
         <!-- chapter:end -->
         <!-- related:start -->
         <section class="related">
@@ -202,7 +209,7 @@
             <div class="db-cat-grid">
                 <a class="db-cat-card" href="health/"><span class="ic">🏫</span><span class="lb">健康鎮完美佈局</span><span class="n">26×24 · 29 景點 · 164 棟</span></a>
                 <a class="db-cat-card" href="east/"><span class="ic">🏞️</span><span class="lb">冬郵小鎮完美佈局</span><span class="n">26×26 · 29 景點 · 144 棟</span></a>
-                <a class="db-cat-card" href="../spot-check/"><span class="ic">🔎</span><span class="lb">景點檢查器</span><span class="n">勾設施查可成景點</span></a>
+                <a class="db-cat-card" href="../#spot-check"><span class="ic">🔎</span><span class="lb">景點檢查器</span><span class="n">勾設施查可成景點</span></a>
             </div>
             <p style="margin-top:14px"><a class="back-hub" href="../">← 口袋學院物語2 攻略總覽</a></p>
         </section>

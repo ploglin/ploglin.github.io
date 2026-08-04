@@ -36,14 +36,49 @@ const DATA_JS = path.join(SCHOOL2, 'db', 'data.js');
 const SHELL = path.join(ROOT, 'assets', 'shell.js');
 
 /* ---- 主線章節：章序只定義一次 ---------------------------------------------
-   本批先填「現況已存在」的頁當骨架；B4 建 combo/start/training/endgame 時
-   把它們插進這個陣列即可，六頁的上一章／下一章會同時更新，永不脫節。
+   六站（第 0 站是門面 index.html，第 1–5 站是主線五章），與各頁頁首
+   `.path-rail` 的 6 格、hub 卡片牆的「主線五章」三處是同一個順序。
+
+   欄位：t 章名（含「第 N 章」字樣，由本表寫死而非算出來，因為門面沒有編號）／
+   icon／why 進入下一章的理由（≤80 字，蓋在 `.ns-why`）／sub 當它是「上一步」時
+   括號裡的一句話（≤20 字）。
+   TAIL 是最後一章之後的去處（不是主線章，所以不在陣列裡）。
+
+   蓋章目標是各頁的 `<!-- chapter:start/end -->`，產生物就是 `.next-step` 大卡
+   ——「下一步」只有這一個來源，頁面不要再手寫第二張，否則 200px 內會出現兩次。
+   不在本表的 school2 頁若有 chapter 標記，區塊會被清成一行註解（例如附錄
+   glossary/：它的橫向去處交給 `<!-- related -->`）。
 --------------------------------------------------------------------------- */
 const CHAPTERS = [
-    { slug: 'layouts/', t: '佈局設計原則', icon: '🗺️', why: '先把路網與 4×4 窗口的規則讀懂' },
-    { slug: 'walkthrough/', t: '經營與升級', icon: '🧭', why: '照學園規模門檻決定每年要蓋什麼' },
-    { slug: 'glossary/', t: '中日對照附錄', icon: '📖', why: '查日文攻略或實機畫面時當字典' }
+    {
+        slug: '', t: '攻略總覽', icon: '📄', sub: '這遊戲在玩什麼、本站怎麼用',
+        why: '先看這遊戲在玩什麼、難在哪，以及主線五章各自回答什麼問題。'
+    },
+    {
+        slug: 'start/', t: '第 1 章 開局指南', icon: '🚀', sub: '選圖與前三年的現金流',
+        why: '選哪座城鎮、開場前三年該蓋什麼、怎麼不把地形浪費掉。'
+    },
+    {
+        slug: 'layouts/', t: '第 2 章 佈局設計原則', icon: '🗺️', sub: '路網與 4×4 街廓怎麼切',
+        why: '選好圖、站穩現金流之後，接著要決定路網與 4×4 街廓怎麼切——那才是 29 種景點能不能全成立的上限。'
+    },
+    {
+        slug: 'training/', t: '第 3 章 育成', icon: '🎓', sub: '老師、學生、社團與特別授業',
+        why: '地圖蓋好之後剩下的全是育成：38 位老師投資誰、七屬性怎麼長、社團怎麼衝優勝。'
+    },
+    {
+        slug: 'walkthrough/', t: '第 4 章 經營與升級', icon: '🧭', sub: '年度排程、課題與規模門檻',
+        why: '老師與學生都要錢養：接著把收支結構、教育P 產出與年度排程排好，育成才有燃料。'
+    },
+    {
+        slug: 'endgame/', t: '第 5 章 終盤', icon: '🏁', sub: '結算、二周目與隱藏要素',
+        why: '升上常春藤之後還沒結束：11 年目 4 月會強制結算換算分數，而開羅君、天象館與隱藏社團正是把分數推到頂的最後一哩。'
+    }
 ];
+const TAIL = {
+    slug: 'combo/', t: '人氣景點 combo 全 29 種', icon: '🎯', label: '接下來',
+    why: '結算分數最肥的可控項目就是景點種數（每種 5000 分）。主線讀完之後把 29 種 combo 與 4×4 規則整套記熟，是下一輪拉開差距最快的方式。'
+};
 
 /* ---- 資料來源（刻意複製 gen-static.js 的 loadWindowScript） --------------- */
 function loadWindowScript(file) {
@@ -353,25 +388,54 @@ for (const catKey of Object.keys(CATS)) {
     usedByReport.push(`  ✓ db/${cat.slug}：${list.length} 個內文入口`);
 }
 
-/* ---- 第三輪：章節導覽 -------------------------------------------------- */
+/* ---- 第三輪：章節導覽（`.next-step` 大卡）------------------------------
+   markup 對齊 school2/assets/guide.css 第 8 節：`.ns-t`／`.ns-why` 必須是
+   **區塊元素**（用 <div>），寫成 <span> 會讓標題與理由擠在同一行。
+   「← 上一步」整條做成 <a>，`.ns-prev` 的 min-height:44px 才是真的命中區。
+------------------------------------------------------------------------ */
+function nextStepLines(up, next, prev) {
+    const L = ['<aside class="next-step">'];
+    if (next) {
+        L.push('    <a class="ns-card" href="' + up + next.slug + '">',
+            '        <span class="ns-ic">' + next.icon + '</span>',
+            '        <div>',
+            '            <div class="ns-t">' + (next.label || '下一步') + '：' + next.t + ' →</div>',
+            '            <div class="ns-why">' + next.why + '</div>',
+            '        </div>',
+            '    </a>');
+    }
+    if (prev) {
+        L.push('    <a class="ns-prev" href="' + up + prev.slug + '">← 上一步：' + prev.t +
+            (prev.sub ? '（' + prev.sub + '）' : '') + '</a>');
+    }
+    L.push('</aside>');
+    return L;
+}
+
 const chapterReport = [];
+const chapterFiles = new Set();
 CHAPTERS.forEach((ch, i) => {
     const file = path.join(SCHOOL2, ch.slug, 'index.html');
     if (!fs.existsSync(file)) { warn.push(`  ⚠ CHAPTERS 的 '${ch.slug}' 沒有實體目錄`); return; }
-    const depth = ch.slug.replace(/\/$/, '').split('/').length;
+    chapterFiles.add(file);
+    const depth = ch.slug ? ch.slug.replace(/\/$/, '').split('/').length : 0;
     const up = '../'.repeat(depth);
-    const prev = CHAPTERS[i - 1], next = CHAPTERS[i + 1];
-    const lines = ['<nav class="related chapter-nav">',
-        `    <h2>第 ${i + 1} / ${CHAPTERS.length} 章 · 接著讀</h2>`,
-        '    <div class="db-cat-grid">'];
-    if (next) lines.push('        ' + cardHtml(up + next.slug, next.icon, '下一章：' + next.t + ' →', next.why));
-    if (prev) lines.push('        ' + cardHtml(up + prev.slug, prev.icon, '← 上一章：' + prev.t, prev.why));
-    lines.push('    </div>', '</nav>');
-    const r = stampBlock(file, 'chapter', lines);
-    if (r === null) return;
+    const prev = CHAPTERS[i - 1];
+    const next = i + 1 < CHAPTERS.length ? CHAPTERS[i + 1] : TAIL;
+    const r = stampBlock(file, 'chapter', nextStepLines(up, next, prev));
+    if (r === null) return;                            // 這一頁沒放標記（門面自己寫）
     if (r) written++;
-    chapterReport.push(`  ✓ ${ch.slug}（第 ${i + 1} 章）`);
+    chapterReport.push(`  ✓ ${ch.slug || 'index.html'}（第 ${i} 站 → ${next.t}）`);
 });
+
+/* 不在章序裡卻留著 chapter 標記的頁：清空，避免留下上一版的章號 */
+for (const file of files) {
+    if (chapterFiles.has(file)) continue;
+    const r = stampBlock(file, 'chapter', ['<!-- 本頁不在主線章序（CHAPTERS）內，橫向去處交給 related 區塊 -->']);
+    if (r === null) continue;
+    if (r) written++;
+    chapterReport.push(`  · ${path.relative(SCHOOL2, file).split(path.sep).join('/')}：不在章序，已清空`);
+}
 
 /* ---- 摘要 ------------------------------------------------------------- */
 const total = Object.values(usedBy).reduce((n, l) => n + l.length, 0);

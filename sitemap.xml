@@ -5,6 +5,9 @@
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://ploglin.cc/404.html</loc>
+  </url>
+  <url>
     <loc>https://ploglin.cc/about.html</loc>
   </url>
   <url>
@@ -359,12 +362,6 @@
     <loc>https://ploglin.cc/kairosoft/school2/</loc>
   </url>
   <url>
-    <loc>https://ploglin.cc/kairosoft/school2/activities/</loc>
-  </url>
-  <url>
-    <loc>https://ploglin.cc/kairosoft/school2/challenges/</loc>
-  </url>
-  <url>
     <loc>https://ploglin.cc/kairosoft/school2/combo/</loc>
   </url>
   <url>
@@ -413,9 +410,6 @@
     <loc>https://ploglin.cc/kairosoft/school2/db/towns/</loc>
   </url>
   <url>
-    <loc>https://ploglin.cc/kairosoft/school2/economy/</loc>
-  </url>
-  <url>
     <loc>https://ploglin.cc/kairosoft/school2/endgame/</loc>
   </url>
   <url>
@@ -440,31 +434,10 @@
     <loc>https://ploglin.cc/kairosoft/school2/layouts/valley/</loc>
   </url>
   <url>
-    <loc>https://ploglin.cc/kairosoft/school2/maps/</loc>
-  </url>
-  <url>
-    <loc>https://ploglin.cc/kairosoft/school2/ng-plus/</loc>
-  </url>
-  <url>
-    <loc>https://ploglin.cc/kairosoft/school2/romance/</loc>
-  </url>
-  <url>
-    <loc>https://ploglin.cc/kairosoft/school2/secrets/</loc>
-  </url>
-  <url>
     <loc>https://ploglin.cc/kairosoft/school2/sim/</loc>
   </url>
   <url>
-    <loc>https://ploglin.cc/kairosoft/school2/spot-check/</loc>
-  </url>
-  <url>
     <loc>https://ploglin.cc/kairosoft/school2/start/</loc>
-  </url>
-  <url>
-    <loc>https://ploglin.cc/kairosoft/school2/students/</loc>
-  </url>
-  <url>
-    <loc>https://ploglin.cc/kairosoft/school2/teachers/</loc>
   </url>
   <url>
     <loc>https://ploglin.cc/kairosoft/school2/training/</loc>

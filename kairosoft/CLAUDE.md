@@ -43,8 +43,15 @@ kairosoft/<game>/            index.html = 內容豐富的攻略專頁(SEO 主力
 - **頁面端不需任何設定**：`shell.js` 由網址 `kairosoft/<id>/…` 推導出遊戲與所在層級，自動算出相對連結。只要照樣板呼叫 `Shell.mount({...})` 就會有。
 - **資料來源**：`assets/shell.js` 裡的 `GAME_NAV` 區塊，由 `node scripts/gen-game-nav.js` **掃描實際檔案**產生(遊戲名／emoji／色系取自 `games-index.js`)。**新增或刪除子頁後要重跑這支腳本**，否則功能列不會出現新分頁。
 - **新的子頁 slug** 要先在 `scripts/gen-game-nav.js` 的 `LABELS` 加中文標籤與圖示，否則產生時會警告並略過。
-- **功能列版面**：`main` 固定**最多 4 個 tab**（攻略總覽／模擬器／資料庫／更多攻略▾），其餘子頁一律收進「更多攻略▾」下拉；下拉依 `LABELS` 的 `group` 欄位分成 `tool`（工具：佈局範例、景點檢查器…）與 `guide`（攻略：流程、老師、學生…）兩群顯示。要進 main 的子頁在 `LABELS` 標 `main:true`，其餘標 `group:'tool'` 或 `group:'guide'`。
+- **功能列版面**：`main` **最多 4 項**（含腳本硬加的第一項「攻略總覽」），其餘子頁一律收進「更多攻略▾」下拉。
+  - 第 4 項幾乎一定是 `db/`——**「資料庫」跨 29 款出現在同一個位置**是一致性紅線，不要為了塞別的頁把它擠掉。
+  - 4 項版**只適用子頁量足夠撐起主線的遊戲**（目前只有 school2：攻略總覽／`start/` 開局指南／`sim/` 模擬器／`db/` 資料庫）。其餘 28 款只有 `db/` 與 `sim/`，`main` 自然是 3 項，本規則對它們零影響。
+  - 下拉依 `LABELS` 的 `group` 分成 `tool`（工具／查表型專題）與 `guide`（主題攻略）兩群，**群組小標由 `shell.js` 在 group 值「變動」時插入** → `LABELS` 裡同一個 group 的項目**必須連續宣告**，否則同一個小標會被插兩次。
+  - **`LABELS` 的宣告順序就是排序依據**（`main` 的左右順序與下拉的上下順序都是）。改順序＝改導覽，別把新 slug 隨手加在表尾。
 - **新增子頁後也要在 `scripts/gen-related.js` 的 `RELATED` 加精選連結**（game → 頁面 slug → 3 個相關頁，含 href／icon／標題／一句短描述）；沒設定就走 fallback（依 GAME_NAV 的上一頁／下一頁＋資料庫自動湊），品質較差。改標記或 RELATED 後重跑 `node scripts/gen-related.js` 即冪等蓋章。
+  - **db 分類頁一定要明寫 key**（`'db/spots'` 這種）。db 頁的 slug 不在 `GAME_NAV` 裡，fallback 找不到自己 → 只會產出「資料庫」**一條**連結，那一格看起來像壞掉。
+  - **有 `.next-step` 的頁（主線章節）也一定要明寫 key**：fallback 會照 `GAME_NAV` 抓上一頁／下一頁，等於讓「下一章」在 200px 內出現兩次。這些頁的 RELATED 只放**橫向**連結（資料表、工具），主線前後章交給 `.next-step`。
+  - **不要把「頁面內嵌了這張表」的那一頁放進該 db 分類的 RELATED**：`gen-embed.js` 的 `usedby` 區塊已經自動列出全部內文入口，重複放等於同一畫面出現兩張一樣的卡。
 - **全螢幕工具(模擬器)**：不套 `shell.css`、不注入站台 header/footer，改呼叫 `Shell.mountBar()`，只加一條自帶樣式的精簡功能列(含回站台鈕)。模擬器頁尾固定為：
   ```html
   <script src="../../../assets/shell.js?v=N"></script>
@@ -52,6 +59,8 @@ kairosoft/<game>/            index.html = 內容豐富的攻略專頁(SEO 主力
   ```
   `data-shell` 屬性不可省略——`school2/scripts/check.js` 靠「無屬性的 `<script>`」找主程式。
 - **快取**：改動 `shell.js` / `shell.css` / `db.js` / `home.js` 後，全站 `?v=N` 要一起加一號(目前 `?v=8`，含各頁對 `db.js`、首頁對 `games-index.js`／`home.js` 的引用)。改完 `grep -rn '?v=<舊號>'` 確認零殘留。
+  - **版號分兩軌，不要混**：`/assets/*` 是 29 款同吃的共用資產，必須同號；`kairosoft/<game>/assets/*` 是**單一遊戲自己的資產，自帶版號**（例：school2 專屬的 `guide.css?v=1`／`guide.js?v=1`）。改一款遊戲自己的樣式**不要**跟著 bump 全站 `?v`——那只會讓 29 款無謂 cache miss；反過來 bump 全站時也不要順手把本地版號一起改。`link-check.js` 第 6 節就是照這兩軌各自斷言的。
+  - 新增一個只有某一款引入的 CSS/JS 檔**不需要動全站 `?v`**（沒改共用檔）。
 
 ## 導覽分層原則
 
@@ -85,6 +94,7 @@ kairosoft/<game>/            index.html = 內容豐富的攻略專頁(SEO 主力
 
   ```sh
   node scripts/gen-game-nav.js
+  node scripts/gen-embed.js                        # school2 專用；db 表格／usedby／章節導覽
   node scripts/gen-related.js
   node scripts/gen-static.js
   node scripts/gen-sitemap.js
@@ -92,6 +102,51 @@ kairosoft/<game>/            index.html = 內容豐富的攻略專頁(SEO 主力
   node kairosoft/school2/scripts/check.js          # school2 模擬器＋sim↔db 一致性
   for t in health east lake valley hill; do node kairosoft/school2/scripts/layout-gen/verify.js $t page; done
   ```
+
+## 表格蓋章 `gen-embed.js`（目前 school2 專用）
+
+攻略頁與 `db/` 常常需要**同一份事實**。正本永遠是 `db/data.js`；攻略頁只寫一行宣告，表格由建置期蓋章產生。腳本硬寫死只掃 `kairosoft/school2/`、寫檔前斷言路徑不逸出、只替換標記之間、**沒有標記的檔案一位元都不碰** → 對其他 28 款風險為 0。
+
+三族標記，各自獨立：
+
+| 標記 | 放哪 | 產生什麼 |
+|---|---|---|
+| `<!-- db:<cat> … -->` … `<!-- db:end -->` | 攻略頁 | `<figure class="db-embed">` 表格 ＋ figcaption（自動附筆數與「在資料庫開啟 →」連結） |
+| `<!-- usedby:start -->` … `<!-- usedby:end -->` | db 分類頁 | 「哪些攻略用到這張表」卡片牆，由第一族的**反向索引**推導（錨點取標記前最近的 `id=`，說明取最近的 `<h2>`） |
+| `<!-- chapter:start -->` … `<!-- chapter:end -->` | 主線章節頁 | `.next-step` 大卡（下一步 ＋ 上一步），由腳本頂端**單一 `CHAPTERS` 陣列**推導 |
+
+`db:` 的參數（全部選用，值可用雙引號或單引號——`rows=` 帶 JSON 時用單引號包）：
+
+| 參數 | 作用 | 例 |
+|---|---|---|
+| `cols` | 選欄、重排、改顯示名（值仍取自 db，只換表頭字樣） | `cols="景點=人氣景點,需要設施,加成"` |
+| `rows` | 選列。`{"keys":[…]}` 依給定順序取列（缺一列即報錯）；`{"col":…,"in":[…]}` 依某欄取值 | `rows='{"col":"教師","in":["開羅君"]}'` |
+| `where` | 過濾，`;` 分隔多子句，運算子 `=` `!=` `~`（含）`!~`（不含） | `where="類別=戀愛"` |
+| `sort` | 排序欄名，前置 `-` 為降冪（能轉數字就比數字） | `sort="-指導力(上限)"` |
+| `limit` | 只取前 N 列 | `limit="10"` |
+| `caption` | figcaption 文字（不給時取分類 `intro` 的第一句） | |
+| `empty` | 空格印什麼 | `empty="—"` |
+| `strip` | `strip="jp"` 去掉含日文假名的括號段 | 「公園散步（公園散策）」→「公園散步」 |
+| `sep` | 分隔符替換，寫成 `來源>取代` | `sep="・> · "` |
+| `num` | 區間寫法，`fw` 用全角 `～`、`ascii` 用 `~` | |
+| `key` | 指定 key 欄，讓 `rows.keys` 的比對不依列序（預設第 0 欄） | |
+
+**紅線：蓋章區段（`db:`／`usedby`／`chapter`／`related`／`prerender`）之內全部是產生物，一個字都不要手改。** 手改會在下一次重跑被覆蓋，而且中間那段時間頁面上的數字與資料庫不一致卻沒人知道。要改內容就改 `db/data.js`、改標記的參數，或改 `CHAPTERS`／`RELATED`，再重跑。
+
+主線章序**只定義一次**（`gen-embed.js` 的 `CHAPTERS`）。它同時是 `.path-rail` 的站數與 `.next-step` 的前後關係，所以頁面**不要再手寫第二張「下一步」卡**。不在 `CHAPTERS` 裡卻留著 `chapter` 標記的頁，區塊會被清成一行註解（附錄頁的橫向去處交給 `related`）。**新章節頁記得引入該遊戲的 `assets/guide.css`**，否則蓋出來的 `.next-step` 沒有樣式。
+
+## 表格與敘述交錯的紀律（硬約束）
+
+把 db 表格複製進攻略頁，若沒有紀律就等於把薄內容搬上主力頁，正中 AdSense「大量表格包在少量文字裡」的典型判定。所以：
+
+- **表格分兩型**：
+  - **內嵌重點表**（3–8 列）：素表直接落在散文流裡，讀者不必離開句子。
+  - **`.datablock`**（20–80 列）：標頭含表名／筆數／篩選框／「在資料庫開啟 →」，`max-height:70vh` 讓 sticky 表頭真的生效，視覺內凹讓眼睛能一眼跳過整塊。
+- **兩個 `.datablock` 不可相鄰**：中間至少 2 段散文或一個章節邊界。
+- **不可緊接 `h2`**：標題之後先給讀者一句「這節在幹什麼」。
+- **每張表前後各要有原創文字**：前面說「看什麼」、後面說「怎麼用」。
+- **沒有評註的表格就該刪掉，改成一句話連往 db**。表格本身不是內容，對它的判斷才是。
+- **每頁 `.datablock` ≤ 6**。超過就是這一頁該拆，或該有幾張表只留連結。
 
 ## 檢查器
 

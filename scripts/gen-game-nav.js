@@ -12,23 +12,26 @@ const ROOT = path.join(__dirname, '..');
 const KAIRO = path.join(ROOT, 'kairosoft');
 const SHELL = path.join(ROOT, 'assets', 'shell.js');
 
-// 子頁 slug → 顯示名稱。main = 直接顯示在功能列，more = 收在「更多」選單
+/* 子頁 slug → 顯示名稱。main = 直接顯示在功能列，more = 收在「更多攻略▾」選單。
+   ── 兩條硬規則 ──
+   ① **宣告順序＝排序依據**，而 shell.js 的群組小標只在 group 值「變動」時插入
+      → 同一個 group 的項目必須連續宣告，否則同一個小標會被插兩次。
+   ② main 最多 4 項（含腳本硬加的第一項「攻略總覽」）：`''` / `start/` / `sim/` / `db/`。
+      只有子頁量足夠的遊戲（目前僅 school2）撐得起 4 項；其餘 28 款只有 db/sim，
+      main 自然是 3 項，不受本表順序影響。 */
 const LABELS = {
+    // ---- main：功能列直接顯示（順序即左到右）----
+    'start': { t: '開局指南', icon: '🚀', main: true },
     'sim': { t: '佈局模擬器', icon: '🧩', main: true },
     'db': { t: '資料庫', icon: '📚', main: true },
-    'layouts': { t: '佈局範例', icon: '🗺️', group: 'tool' },
-    'spot-check': { t: '景點檢查器', icon: '🔎', group: 'tool' },
-    'walkthrough': { t: '流程攻略', icon: '🧭', group: 'guide' },
-    'teachers': { t: '老師培育', icon: '👩‍🏫', group: 'guide' },
-    'students': { t: '學生養成', icon: '🎓', group: 'guide' },
-    'economy': { t: '經營與資金', icon: '💰', group: 'guide' },
-    'activities': { t: '行事與活動', icon: '🎪', group: 'guide' },
-    'challenges': { t: '挑戰目標', icon: '🏆', group: 'guide' },
-    'maps':    { t: '五城鎮地圖', icon: '🗾', group: 'guide' },
-    'ng-plus': { t: '二周目與結算', icon: '🔁', group: 'guide' },
-    'romance': { t: '戀愛與告白', icon: '💘', group: 'guide' },
-    'secrets': { t: '隱藏要素', icon: '🛸', group: 'guide' },
-    'glossary': { t: '中日對照', icon: '📖', group: 'guide' }
+    // ---- more / group:'guide'（小標「主題攻略」）：主線其餘章節 ＋ 附錄，5 項 ----
+    'layouts': { t: '佈局設計', icon: '🗺️', group: 'guide' },
+    'training': { t: '育成', icon: '🎓', group: 'guide' },
+    'walkthrough': { t: '經營與升級', icon: '🧭', group: 'guide' },
+    'endgame': { t: '終盤', icon: '🏁', group: 'guide' },
+    'glossary': { t: '中日對照', icon: '📖', group: 'guide' },
+    // ---- more / group:'tool'（小標「工具」）：查表型專題 ----
+    'combo': { t: '景點 combo 全解析', icon: '🎯', group: 'tool' }
 };
 
 // 讀 games-index.js 取標題／日文名／emoji／色系

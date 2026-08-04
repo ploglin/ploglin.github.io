@@ -27,35 +27,36 @@ const SHELL = path.join(ROOT, 'assets', 'shell.js');
 --------------------------------------------------------------------------- */
 const RELATED = {
     school2: {
+        /* ---- 主線五章 ＋ combo 專題 -------------------------------------------
+           這六頁都有 `.next-step`（由 gen-embed.js 依 CHAPTERS 蓋章）負責「上一步／
+           下一步」，所以這裡**只挑橫向連結**（資料表與工具），一條主線前後章都不放。
+           走 fallback 會照 GAME_NAV 順序抓前後頁 → 同一個「下一章」會在 200px 內
+           出現兩次，所以這六個 key 一定要明寫。
+        ---------------------------------------------------------------------- */
+        'combo': [
+            { href: '../db/spots/', icon: '🎯', label: '人氣景點資料庫', desc: '29 種景點的成立條件' },
+            { href: '../sim/', icon: '🧩', label: '佈局模擬器', desc: '擺上去即時判定成立' },
+            { href: '../db/facilities/', icon: '🏗️', label: '設施資料庫', desc: '77 種設施的佔地尺寸' }
+        ],
+        'start': [
+            { href: '../db/towns/', icon: '🗾', label: '五城鎮資料庫', desc: '尺寸、開局資金與難度' },
+            { href: '../sim/', icon: '🧩', label: '佈局模擬器', desc: '先在模擬器試排一次' },
+            { href: '../db/ranks/', icon: '🏅', label: '學校排名資料庫', desc: '每一階的規模門檻' }
+        ],
+        'training': [
+            { href: '../db/teachers/', icon: '🧑‍🏫', label: '老師資料庫', desc: '38 位老師五科數值表' },
+            { href: '../db/careers/', icon: '🎓', label: '進路資料庫', desc: '60 條進路年收與門檻' },
+            { href: '../db/lessons/', icon: '📚', label: '特別授業資料庫', desc: '每堂課的教育P CP 值' }
+        ],
         'walkthrough': [
-            { href: '../economy/', desc: '資金週轉與收支控管' },
-            { href: '../challenges/', desc: '各關卡達成條件一覽' },
-            { href: '../ng-plus/', desc: '二周目繼承與結算' }
-        ],
-        'teachers': [
-            { href: '../students/', desc: '學生能力與升學培養' },
-            { href: '../#teacher', icon: '👩‍🏫', label: '靠景點招募老師', desc: '用人氣景點招募強師' },
-            { href: '../db/teachers/', icon: '🧑‍🏫', label: '老師資料庫', desc: '全老師五科數值表' }
-        ],
-        'students': [
-            { href: '../teachers/', desc: '老師招募與能力養成' },
-            { href: '../romance/', desc: '學生戀愛與告白' },
-            { href: '../db/careers/', icon: '🎓', label: '進路資料庫', desc: '各進路條件與去向' }
-        ],
-        'economy': [
-            { href: '../walkthrough/', desc: '序盤到通關的節奏' },
-            { href: '../challenges/', desc: '各關卡達成條件一覽' },
-            { href: '../maps/', desc: '五城鎮選圖建議' }
-        ],
-        'activities': [
-            { href: '../students/', desc: '學生能力與升學培養' },
-            { href: '../economy/', desc: '資金週轉與收支控管' },
-            { href: '../db/events/', icon: '🎪', label: '行事活動資料庫', desc: '全年行事與活動表' }
-        ],
-        'challenges': [
-            { href: '../ng-plus/', desc: '二周目繼承與結算' },
             { href: '../db/tasks/', icon: '📝', label: '挑戰資料庫', desc: '9 科 40 級逐級明細' },
-            { href: '../db/achievements/', icon: '🏆', label: '成就資料庫', desc: '全成就解除條件' }
+            { href: '../db/events/', icon: '🎪', label: '行事活動資料庫', desc: '全年行事預算與獎勵' },
+            { href: '../db/ranks/', icon: '🏅', label: '學校排名資料庫', desc: '升階要湊哪些條件' }
+        ],
+        'endgame': [
+            { href: '../db/achievements/', icon: '🏆', label: '成就資料庫', desc: '全成就與金盃條件' },
+            { href: '../db/teachers/', icon: '🧑‍🏫', label: '老師資料庫', desc: '※特殊老師的出現條件' },
+            { href: '../db/clubs/', icon: '🎽', label: '社團資料庫', desc: '隱藏社團的成立組合' }
         ],
         'glossary': [
             { href: '../#combo', icon: '🧩', label: '29 種景點 combo 總表', desc: '29 景點成立配方' },
@@ -65,7 +66,7 @@ const RELATED = {
         'layouts': [
             { href: 'health/', icon: '🏫', label: '健康鎮完美佈局', desc: '26×24 · 29 景點 · 164 棟' },
             { href: 'east/', icon: '🏞️', label: '冬郵小鎮完美佈局', desc: '26×26 · 29 景點 · 144 棟' },
-            { href: '../spot-check/', desc: '勾設施查可成景點' }
+            { href: '../#spot-check', icon: '🔎', label: '景點檢查器', desc: '勾設施查可成景點' }
         ],
         // 各鎮子頁在 layouts/<鎮>/，相對路徑要多退一層（gen-game-nav 只掃第一層，
         // 所以這些子頁不進遊戲功能列，橫向切換由各鎮頁上方的城鎮 pills 負責）
@@ -98,31 +99,6 @@ const RELATED = {
             { href: '../valley/', icon: '🏔️', label: '溪谷小鎮完美佈局', desc: '同樣 26×26 的丘陵地形' },
             { href: '../', icon: '🗺️', label: '佈局設計原則', desc: '五鎮共用的排法通則' }
         ],
-        'spot-check': [
-            { href: '../layouts/', desc: '完美佈局實例參考' },
-            { href: '../#combo', icon: '🧩', label: '29 種景點 combo 總表', desc: '29 景點成立配方' },
-            { href: '../db/spots/', icon: '🎯', label: '景點資料庫', desc: '全人氣景點條件表' }
-        ],
-        'maps': [
-            { href: '../economy/', desc: '資金週轉與收支控管' },
-            { href: '../walkthrough/', desc: '序盤到通關的節奏' },
-            { href: '../layouts/', desc: '五鎮的完整佈局規劃圖' }
-        ],
-        'ng-plus': [
-            { href: '../challenges/', desc: '各關卡達成條件一覽' },
-            { href: '../romance/', desc: '學生戀愛與告白' },
-            { href: '../economy/', desc: '資金週轉與收支控管' }
-        ],
-        'romance': [
-            { href: '../ng-plus/', desc: '二周目繼承與結算' },
-            { href: '../students/', desc: '學生能力與升學培養' },
-            { href: '../db/items/', icon: '🎒', label: '道具資料庫', desc: '全道具效果一覽' }
-        ],
-        'secrets': [
-            { href: '../db/spots/', icon: '🎯', label: '景點資料庫', desc: '全人氣景點條件表' },
-            { href: '../teachers/', desc: '老師招募與能力養成' },
-            { href: '../ng-plus/', desc: '二周目繼承與結算' }
-        ],
 
         /* ---- db 分類頁（14 個）------------------------------------------------
            必須明寫：db 頁的 slug（'db/spots'）不在 GAME_NAV 裡，fallbackLinks()
@@ -143,29 +119,29 @@ const RELATED = {
             { href: '../spots/', icon: '🎯', label: '人氣景點資料庫', desc: '反查這棟能湊哪些景點' }
         ],
         'db/teachers': [
-            { href: '../../teachers/', icon: '👩‍🏫', label: '老師培育攻略', desc: '怎麼挑、怎麼養、何時裁' },
+            { href: '../../walkthrough/#edup', icon: '🧭', label: '教育P 怎麼賺', desc: '老師產 P、P 換學力' },
             { href: '../spots/', icon: '🎯', label: '人氣景點資料庫', desc: '哪個景點才招得到他' },
             { href: '../lessons/', icon: '📚', label: '特別授業資料庫', desc: '老師產的 P 開什麼課' }
         ],
         'db/students': [
-            { href: '../../students/', icon: '🎓', label: '學生養成攻略', desc: '五科初期值怎麼補' },
+            { href: '../../training/#students', icon: '🎓', label: '育成：學生篇', desc: '七屬性與三條成長來源' },
             { href: '../careers/', icon: '🎓', label: '進路資料庫', desc: '這批學生能推到哪' },
             { href: '../items/', icon: '🎒', label: '道具資料庫', desc: '用題本補缺的屬性' }
         ],
         'db/clubs': [
-            { href: '../../teachers/', icon: '👩‍🏫', label: '老師培育攻略', desc: '靠老師勸誘學生入社' },
+            { href: '../students/', icon: '🧑‍🎓', label: '學生名冊資料庫', desc: '誰有那一科的適性' },
             { href: '../ranks/', icon: '🏅', label: '學校排名資料庫', desc: '常春藤要 8 社優勝' },
             { href: '../facilities/', icon: '🏗️', label: '設施資料庫', desc: '成立條件要蓋哪幾棟' }
         ],
         'db/careers': [
-            { href: '../../students/', icon: '🎓', label: '學生養成攻略', desc: '把志願推上高年收' },
+            { href: '../../walkthrough/#careers', icon: '🧭', label: '畢業生與學校評價', desc: '進路怎麼回饋成評價' },
             { href: '../students/', icon: '🧑‍🎓', label: '學生名冊資料庫', desc: '看初期值決定推誰' },
             { href: '../tasks/', icon: '📝', label: '挑戰資料庫', desc: '學力靠課題逐級堆' }
         ],
         'db/events': [
             { href: '../items/', icon: '🎒', label: '道具資料庫', desc: '首辦褒賞的長期用法' },
             { href: '../ranks/', icon: '🏅', label: '學校排名資料庫', desc: '規模才是解鎖鑰匙' },
-            { href: '../../economy/', icon: '💰', label: '經營與資金攻略', desc: '行事預算從哪裡來' }
+            { href: '../../start/', icon: '🚀', label: '開局指南', desc: '序盤撐不撐得起行事' }
         ],
         'db/lessons': [
             { href: '../teachers/', icon: '🧑‍🏫', label: '老師資料庫', desc: '研究P 全靠老師產' },
@@ -180,20 +156,20 @@ const RELATED = {
         'db/items': [
             { href: '../events/', icon: '🎪', label: '行事活動資料庫', desc: '移動與賺錢道具的來源' },
             { href: '../students/', icon: '🧑‍🎓', label: '學生名冊資料庫', desc: '決定題本要餵給誰' },
-            { href: '../../romance/', icon: '💘', label: '戀愛與告白攻略', desc: '天使弓箭怎麼用' }
+            { href: '../../endgame/', icon: '🏁', label: '終盤與二周目', desc: '哪些道具留到周回' }
         ],
         'db/tasks': [
-            { href: '../../challenges/', icon: '🏆', label: '挑戰目標攻略', desc: '每月 2 次怎麼排' },
+            { href: '../../training/', icon: '🎓', label: '育成', desc: '學力靠配課與授業堆' },
             { href: '../facilities/', icon: '🏗️', label: '設施資料庫', desc: '發現條件要先蓋什麼' },
             { href: '../ranks/', icon: '🏅', label: '學校排名資料庫', desc: '後段課題要規模才開' }
         ],
         'db/towns': [
-            { href: '../../maps/', icon: '🗾', label: '五城鎮地圖選擇', desc: '開局選哪張圖' },
+            { href: '../../sim/', icon: '🧩', label: '佈局模擬器', desc: '載入該鎮地形試排' },
             { href: '../../layouts/', icon: '🗺️', label: '佈局範例集', desc: '五鎮各有一張完美佈局' },
             { href: '../facilities/', icon: '🏗️', label: '設施資料庫', desc: '初期設施是什麼' }
         ],
         'db/achievements': [
-            { href: '../../challenges/', icon: '🏆', label: '挑戰目標攻略', desc: '課題等級怎麼練滿' },
+            { href: '../../walkthrough/', icon: '🧭', label: '經營與升級', desc: '規模與課題怎麼推進' },
             { href: '../tasks/', icon: '📝', label: '挑戰資料庫', desc: '5 科全滿的逐級明細' },
             { href: '../clubs/', icon: '🎽', label: '社團資料庫', desc: '優勝成就從社團來' }
         ],

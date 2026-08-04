@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>找不到這個頁面｜開羅攻略站</title>
+    <meta name="description" content="開羅攻略站的 404 頁面。若你是從舊網址進來的，這裡會直接把你送到內容搬家後的新位置；找不到對應時會列出站台的主要入口。">
+    <meta name="robots" content="noindex, follow">
+    <link rel="canonical" href="https://ploglin.cc/404.html">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕹️</text></svg>">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="找不到這個頁面｜開羅攻略站">
+    <meta property="og:description" content="舊網址對照與站台主要入口。">
+    <meta property="og:locale" content="zh_TW">
+    <meta property="og:url" content="https://ploglin.cc/404.html">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/shell.css?v=8">
+</head>
+
+<body>
+    <main class="container-narrow article">
+        <h1>找不到這個頁面</h1>
+        <p class="lead">這個網址在本站上不存在。可能是連結打錯、或是內容搬家了——下面會盡量幫你找到它現在的位置。</p>
+
+        <div class="prose">
+            <!-- ① 精確命中舊網址：JS 填入並自動轉往新位置 -->
+            <div id="moved" hidden></div>
+
+            <!-- ② 前綴命中（同一款遊戲、同一章節底下的其他網址）：列相關頁 -->
+            <div id="near" hidden></div>
+
+            <!-- ③ 全不中：站台主要入口（靜態寫死，JS 壞掉也還在） -->
+            <section id="hot">
+                <h2>從這裡重新開始</h2>
+                <p>本站最常被用到的幾個入口。想找特定作品的攻略，從遊戲總覽進去最快。</p>
+                <div class="db-cat-grid">
+                    <a class="db-cat-card" href="/index.html"><span class="ic">🕹️</span><span class="lb">全站遊戲總覽</span><span class="n">29 款開羅遊戲的攻略入口</span></a>
+                    <a class="db-cat-card" href="/kairosoft/school2/"><span class="ic">📄</span><span class="lb">口袋學院物語2 攻略總覽</span><span class="n">主線五章 ＋ 資料庫 ＋ 模擬器</span></a>
+                    <a class="db-cat-card" href="/kairosoft/school2/sim/"><span class="ic">🧩</span><span class="lb">佈局模擬器</span><span class="n">拖放規劃校園、即時判定人氣景點</span></a>
+                    <a class="db-cat-card" href="/kairosoft/school2/db/"><span class="ic">📚</span><span class="lb">口袋學院物語2 資料庫</span><span class="n">14 個分類的可篩選資料表</span></a>
+                </div>
+            </section>
+
+            <h2>舊網址對照表</h2>
+            <p>2026 年 8 月，《口袋學院物語2》的 11 個主題頁重整成<strong>主線五章</strong>：內容沒有刪，是併進了更完整的章節裡。下表是全部的搬遷對照，你要找的段落都還在，只是換了門牌。</p>
+            <div class="table-wrap">
+                <table class="data">
+                    <thead>
+                        <tr>
+                            <th>舊網址</th>
+                            <th>現在在哪</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>maps/</td><td><a href="/kairosoft/school2/start/#towns">第 1 章 開局指南 · 五城鎮</a></td></tr>
+                        <tr><td>economy/</td><td><a href="/kairosoft/school2/start/#flow">第 1 章 · 序盤現金流</a>（前三年）／<a href="/kairosoft/school2/walkthrough/#money">第 4 章 · 收支結構</a>（其餘）</td></tr>
+                        <tr><td>activities/</td><td><a href="/kairosoft/school2/walkthrough/#events">第 4 章 · 行事與活動</a>（社團在<a href="/kairosoft/school2/training/#clubs">第 3 章</a>）</td></tr>
+                        <tr><td>challenges/</td><td><a href="/kairosoft/school2/walkthrough/#tasks">第 4 章 · 課題與挑戰</a></td></tr>
+                        <tr><td>teachers/</td><td><a href="/kairosoft/school2/training/#teachers">第 3 章 育成 · 老師</a></td></tr>
+                        <tr><td>students/</td><td><a href="/kairosoft/school2/training/#students">第 3 章 育成 · 學生</a></td></tr>
+                        <tr><td>romance/</td><td><a href="/kairosoft/school2/training/#romance">第 3 章 育成 · 戀愛與情侶</a></td></tr>
+                        <tr><td>ng-plus/</td><td><a href="/kairosoft/school2/endgame/#settlement">第 5 章 終盤 · 結算與二周目</a></td></tr>
+                        <tr><td>secrets/</td><td><a href="/kairosoft/school2/endgame/#kairo">第 5 章 終盤 · 隱藏要素</a></td></tr>
+                        <tr><td>spot-check/</td><td><a href="/kairosoft/school2/#spot-check">攻略總覽 · 景點檢查器</a></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p style="font-size:13px;color:var(--muted);margin-top:6px">舊網址一律以 <code>/kairosoft/school2/</code> 為前綴。</p>
+
+            <div class="callout warn"><span class="k">誠實標註</span>這一頁的 HTTP 狀態碼<strong>仍然是 404</strong>。上面的對照與自動跳轉是<strong>給讀者的 UX 補救，不是 SEO 手段</strong>——它不會把舊網址的搜尋權重傳給新頁，也不等於 301 轉址。我們選擇直刪舊網址而不留導引空殼頁，是因為本站站齡短、站外對這些子頁的深層連結為 0，留一批只有三句話的空頁對讀者與搜尋引擎都是負擔。</div>
+
+            <p style="margin-top:28px"><a class="back-hub" href="/index.html">← 回到首頁</a></p>
+        </div>
+    </main>
+
+    <script src="/assets/shell.js?v=8"></script>
+    <script>Shell.mount({ page: '404', breadcrumb: [{ t: '找不到頁面' }] });</script>
+    <script>
+        /* 舊網址 → 新網址對照。key 是相對於 kairosoft/school2/ 的舊 slug。
+           to 為單一目的地（精確命中就自動轉過去）；alts 為兩個以上的去處
+           （內容一分為二，機器沒有立場替讀者選，只列出來讓他挑）。 */
+        (function () {
+            var BASE = '/kairosoft/school2/';
+            var MAP = {
+                'maps/': {
+                    to: 'start/#towns', icon: '🚀', t: '第 1 章 開局指南 · 五城鎮',
+                    why: '五張地圖的尺寸、地形與選圖建議已併進開局指南。'
+                },
+                'activities/': {
+                    to: 'walkthrough/#events', icon: '🧭', t: '第 4 章 經營與升級 · 行事與活動',
+                    why: '全年行事的預算與首辦獎勵在第 4 章；社團與特別授業搬到第 3 章育成。'
+                },
+                'challenges/': {
+                    to: 'walkthrough/#tasks', icon: '🧭', t: '第 4 章 經營與升級 · 課題與挑戰',
+                    why: '9 科 40 級的逐級明細與建議順序都在第 4 章的課題一節。'
+                },
+                'teachers/': {
+                    to: 'training/#teachers', icon: '🎓', t: '第 3 章 育成 · 老師',
+                    why: '38 位老師的投資順序、配課與招募條件在第 3 章。'
+                },
+                'students/': {
+                    to: 'training/#students', icon: '🎓', t: '第 3 章 育成 · 學生',
+                    why: '七屬性的成長來源、模試與 60 條進路在第 3 章。'
+                },
+                'romance/': {
+                    to: 'training/#romance', icon: '🎓', t: '第 3 章 育成 · 戀愛與情侶',
+                    why: '相遇率、告白流程與戀愛道具在第 3 章最後一段。'
+                },
+                'ng-plus/': {
+                    to: 'endgame/#settlement', icon: '🏁', t: '第 5 章 終盤 · 結算與二周目',
+                    why: '13 項計分公式、繼承規則與結算分數試算器都在第 5 章。'
+                },
+                'secrets/': {
+                    to: 'endgame/#kairo', icon: '🏁', t: '第 5 章 終盤 · 隱藏要素',
+                    why: '開羅君設施鏈、宇宙線、※特殊老師與隱藏社團在第 5 章。'
+                },
+                'spot-check/': {
+                    to: '#spot-check', icon: '🔎', t: '攻略總覽 · 景點檢查器',
+                    why: '勾選手上的設施、反查還能湊出哪些人氣景點——工具原樣搬到攻略總覽頁下方。'
+                },
+                'economy/': {
+                    icon: '💰', t: '經營與資金（內容一分為二）',
+                    alts: [
+                        { to: 'start/#flow', icon: '🚀', t: '第 1 章 · 序盤現金流', why: '開局到第 3 年的收支與該蓋什麼。' },
+                        { to: 'walkthrough/#money', icon: '🧭', t: '第 4 章 · 收支結構與賺錢', why: '學費、教育P、滾雪球與年度排程。' }
+                    ]
+                }
+            };
+
+            /* 站台主要入口（前綴命中時當第二順位列出） */
+            var SCHOOL2_HOT = [
+                { to: '', icon: '📄', t: '攻略總覽', why: '這遊戲在玩什麼、主線五章怎麼讀' },
+                { to: 'start/', icon: '🚀', t: '第 1 章 開局指南', why: '選城鎮、開場該蓋什麼' },
+                { to: 'layouts/', icon: '🗺️', t: '第 2 章 佈局設計原則', why: '路網與 4×4 街廓，含五鎮完美佈局' },
+                { to: 'training/', icon: '🎓', t: '第 3 章 育成', why: '老師、學生、社團與特別授業' },
+                { to: 'walkthrough/', icon: '🧭', t: '第 4 章 經營與升級', why: '年度排程、課題與規模門檻' },
+                { to: 'endgame/', icon: '🏁', t: '第 5 章 終盤', why: '結算分數、二周目與隱藏要素' }
+            ];
+
+            function card(href, icon, t, why) {
+                var a = document.createElement('a');
+                a.className = 'db-cat-card';
+                a.href = href;
+                a.innerHTML = '<span class="ic"></span><span class="lb"></span><span class="n"></span>';
+                a.children[0].textContent = icon;
+                a.children[1].textContent = t;
+                a.children[2].textContent = why || '';
+                return a;
+            }
+            function grid(items) {
+                var d = document.createElement('div');
+                d.className = 'db-cat-grid';
+                items.forEach(function (it) { d.appendChild(card(BASE + it.to, it.icon, it.t, it.why)); });
+                return d;
+            }
+            function show(el) { el.hidden = false; }
+            function hide(el) { el.hidden = true; }
+
+            /* 目前網址 → 相對於 school2 的舊 slug（沒落在 school2 底下就是 null）。
+               GitHub Pages 把 404.html 直接**在原網址上**吐出來（不轉址），所以
+               location.pathname 就是讀者要的舊路徑；也因為這樣，這一頁所有連結
+               都必須寫成根絕對路徑（`/kairosoft/...`），相對路徑會接在舊路徑後面。
+               保留前導斜線：BASE 也帶斜線，兩者才對得上。 */
+            var raw = location.pathname.replace(/index\.html$/, '');
+            var slug = null;
+            var i = raw.indexOf(BASE);
+            if (i >= 0) slug = raw.slice(i + BASE.length);
+            if (slug && slug.charAt(slug.length - 1) !== '/') slug += '/';
+
+            var moved = document.getElementById('moved');
+            var near = document.getElementById('near');
+            var hot = document.getElementById('hot');
+
+            var hit = slug ? MAP[slug] : null;
+            if (hit) {
+                /* ① 精確命中 */
+                var h2 = document.createElement('h2');
+                h2.textContent = '這一頁搬家了';
+                moved.appendChild(h2);
+                var p = document.createElement('p');
+                p.innerHTML = '<code></code> 的內容已經併進新的章節，沒有刪除。';
+                p.querySelector('code').textContent = '/' + BASE + slug;
+                moved.appendChild(p);
+
+                if (hit.alts) {
+                    var p2 = document.createElement('p');
+                    p2.textContent = '這一頁的內容一分為二，請依你要找的東西選一邊——所以這裡不自動跳轉：';
+                    moved.appendChild(p2);
+                    moved.appendChild(grid(hit.alts));
+                } else {
+                    moved.appendChild(grid([hit]));
+                    var note = document.createElement('p');
+                    note.style.cssText = 'font-size:13px;color:var(--muted)';
+                    note.textContent = '2.5 秒後自動前往，或直接點上面的卡片。';
+                    moved.appendChild(note);
+                    var url = BASE + hit.to;
+                    var timer = setTimeout(function () { location.replace(url); }, 2500);
+                    var stay = document.createElement('button');
+                    stay.type = 'button';
+                    stay.className = 'btn ghost';
+                    stay.textContent = '留在這一頁';
+                    stay.addEventListener('click', function () {
+                        clearTimeout(timer);
+                        note.textContent = '已取消自動跳轉。';
+                        stay.remove();
+                    });
+                    moved.appendChild(stay);
+                }
+                show(moved);
+                hide(hot);
+            } else if (slug !== null) {
+                /* ② 前綴命中：網址落在 school2 底下但不是已知的舊頁 */
+                var h2b = document.createElement('h2');
+                h2b.textContent = '《口袋學院物語2》的頁面在這裡';
+                near.appendChild(h2b);
+                var pb = document.createElement('p');
+                pb.textContent = '這個網址不存在，但你要找的應該是下面其中一頁。';
+                near.appendChild(pb);
+                near.appendChild(grid(SCHOOL2_HOT));
+                show(near);
+                hide(hot);
+            }
+            /* ③ 全不中：#hot 本來就是顯示的，什麼都不用做 */
+        })();
+    </script>
+</body>
+
+</html>
