@@ -16,7 +16,7 @@
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5891811504833462" crossorigin="anonymous"></script>
     <title>口袋學院物語2 佈局模擬器｜人氣景點規劃工具（名門ポケット学院2）</title>
-    <meta name="description" content="口袋學院物語2（名門ポケット学院2／Pocket Academy 2）免費線上佈局模擬器：26×24 校園地圖規劃、29 種人氣景點自動判定與放置建議、設施尺寸與自動斜坡、發展解鎖指南與攻略手冊，繁體中文介面並附中日名稱對照。">
+    <meta name="description" content="口袋學院物語2（名門ポケット学院2／Pocket Academy 2）免費線上佈局模擬器：26×24 校園地圖規劃、29 種人氣景點自動判定與放置建議、設施尺寸與自動斜坡、發展解鎖指南，並內建景點／設施／中日對照三張速查表，繁體中文介面。">
     <meta name="keywords" content="口袋學院物語2,名門ポケット学院2,Pocket Academy 2,佈局模擬器,人氣景點,校園規劃,攻略,開羅遊戲,カイロソフト,Kairosoft">
     <meta name="robots" content="index, follow">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏫</text></svg>">
@@ -27,7 +27,7 @@
     <meta property="og:image:height" content="630">
     <meta property="og:type" content="website">
     <meta property="og:title" content="口袋學院物語2 佈局模擬器｜人氣景點規劃工具">
-    <meta property="og:description" content="免費線上規劃你的口袋學院物語2 校園：29 種人氣景點自動判定、放置建議、發展解鎖指南與攻略手冊。">
+    <meta property="og:description" content="免費線上規劃你的口袋學院物語2 校園：29 種人氣景點自動判定、放置建議、發展解鎖指南與景點／設施速查表。">
     <meta property="og:locale" content="zh_TW">
     <meta property="og:locale:alternate" content="ja_JP">
     <meta property="og:site_name" content="口袋學院物語2 佈局模擬器">
@@ -38,7 +38,7 @@
         "@type": "WebApplication",
         "name": "口袋學院物語2 佈局模擬器",
         "alternateName": ["名門ポケット学院2 レイアウトシミュレーター", "Pocket Academy 2 Layout Simulator"],
-        "description": "口袋學院物語2（名門ポケット学院2）的校園佈局模擬器：人氣景點自動判定、放置建議、設施發展指南與攻略手冊。",
+        "description": "口袋學院物語2（名門ポケット学院2）的校園佈局模擬器：人氣景點自動判定、放置建議、設施發展指南與景點／設施速查表。",
         "applicationCategory": "GameApplication",
         "operatingSystem": "Web",
         "inLanguage": "zh-Hant",
@@ -784,7 +784,7 @@
     </style>
 </head>
 <body class="h-screen w-screen flex flex-col">
-    <noscript>口袋學院物語2（名門ポケット学院2）佈局模擬器需要啟用 JavaScript 才能使用。這是一個免費的校園地圖規劃工具，支援 29 種人氣景點自動判定、放置建議與攻略手冊。</noscript>
+    <noscript>口袋學院物語2（名門ポケット学院2）佈局模擬器需要啟用 JavaScript 才能使用。這是一個免費的校園地圖規劃工具，支援 29 種人氣景點自動判定、放置建議與景點／設施速查表。</noscript>
 
     <!-- 頂列：主控（歷史／縮放／城鎮）永遠在；次要叢集在桌機同列、在手機收進 ⋯ 面板 -->
     <header class="bg-white border-b border-gray-200 px-4 py-2.5 flex flex-wrap items-center justify-between shadow-sm z-30 shrink-0 gap-3">
@@ -930,7 +930,7 @@
             <!-- 參考資料的固定入口：不進捲動流，手機 42vh 的面板裡也永遠摸得到 -->
             <div class="shrink-0 grid grid-cols-3 gap-1 p-2 border-t border-gray-200 bg-gray-50">
                 <button id="devGuideBtn" class="text-[11px] font-bold bg-white border border-gray-300 text-gray-700 rounded py-2.5 hover:bg-gray-100 transition">📈 發展</button>
-                <button id="handbookBtn" class="text-[11px] font-bold bg-white border border-gray-300 text-gray-700 rounded py-2.5 hover:bg-gray-100 transition">📖 手冊</button>
+                <button id="handbookBtn" class="text-[11px] font-bold bg-white border border-gray-300 text-gray-700 rounded py-2.5 hover:bg-gray-100 transition">📖 速查表</button>
                 <button id="compareBtn" class="text-[11px] font-bold bg-white border border-gray-300 text-gray-700 rounded py-2.5 hover:bg-gray-100 transition">🆚 比較</button>
             </div>
         </aside>
@@ -974,6 +974,11 @@
         <span id="sysMsgIcon"></span>
         <span id="sysMsgText"></span>
     </div>
+
+    <!-- 速查表的資料正本（景點／設施／中日對照三張表都讀它，sim 內不再有手寫副本）。
+         defer：在 DOMContentLoaded 之前跑完，時序安全，又不擋畫布首次繪製。
+         照全站慣例**不帶 ?v**（link-check.js 第 6 節會斷言）。 -->
+    <script src="../db/data.js" defer></script>
 
     <script>
         // w/h＝建築占地格數（w：橫向/Y方向、h：縱向/X方向），未填代表 1×1
@@ -2498,198 +2503,177 @@
             openReport('📈 發展建議', html);
         }
 
-        // ─── 遊戲手冊（資料來源：カイロパーク攻略 Wiki，人名以日文版為準）───
-        const HB_TH = 'class="text-left font-bold text-gray-700 border-b border-gray-300 px-1 py-0.5"';
-        const HB_TD = 'class="border-b border-gray-100 px-1 py-0.5 align-top"';
-        const HANDBOOK = {
-            tips: { title: '攻略要點', html: `
-                <div class="font-black text-gray-800 mb-1">💰 金流與開局</div>
-                <ul class="list-disc ml-4 mb-2">
-                    <li><b>核心引擎</b>：先蓋福利社、便利商店賺錢 → 加餐廳成立「購物景點」→ 旁邊放養豬＋養牛小屋疊「特盛景點」，收入與學生能力一起滾雪球。</li>
-                    <li>序盤缺錢：花壇是環境設施中唯一有維持費的，先拆掉省錢。</li>
-                    <li>課題挑戰每月可做 2 次，優先做、盡量每月做，學費會一路上升。</li>
-                    <li>制服可中途更換（選單→校內→學校）。</li>
-                </ul>
-                <div class="font-black text-gray-800 mb-1">🧑‍🏫 教師</div>
-                <ul class="list-disc ml-4 mb-2">
-                    <li>單科指導力練到 100 比平均加點更有效率。</li>
-                    <li>優先雇「薪水低、合計指導力高」的高 CP 教師；<b>段燕燕（田山ゆきみ）</b>（全國平均 200 分出現）CP 值最高，出現就招。</li>
-                    <li>名門學園之前只雇上限薪資 40 萬以下的教師；超過 45 萬的基本不需要。</li>
-                    <li>一年只上 3 次課，指導力影響其實有限——便宜教師多雇、賺教育 P 開特別授業更划算。</li>
-                </ul>
-                <div class="font-black text-gray-800 mb-1">🏫 佈局與其他</div>
-                <ul class="list-disc ml-4 mb-2">
-                    <li>校園別蓋太大太散：學生相遇率下降，告白與活動換裝容易失敗。</li>
-                    <li>畢業出路的發現有隨機成分（約 1/3），高頭腦學生使用設施或通過課題時觸發。</li>
-                    <li>農作物只有 9 種，選單的空格不是未解鎖，本來就沒有。</li>
-                    <li>原創學生畢業後會再入學，實家職業＝畢業時的職業（可鋪職業收集）。</li>
-                </ul>
-                <div class="font-black text-gray-800 mb-1">🔁 周回（二周目）</div>
-                <ul class="list-disc ml-4">
-                    <li>11 年目 4 月結算。繼承：<b>設施等級、景點辭典</b>；其餘重置。</li>
-                    <li>結算分數：最終資金/1000、課題Lv×1000、入學希望者×10、發現設施×1000、發現職業×2000、年收500萬+畢業生×1000、年收1000萬+×3000、平均學力×200、<b>人氣景點×5000</b>、青春點×2000、<b>情侶×10000</b>、發現社團×2000、<b>優勝社團×10000</b>。</li>
-                </ul>` },
-            rank: { title: '學園規模', html: `
-                <table class="w-full"><tr><th ${HB_TH}>規模</th><th ${HB_TH}>學生</th><th ${HB_TH}>景點</th><th ${HB_TH}>年數</th><th ${HB_TH}>平均分</th><th ${HB_TH}>其他</th></tr>
-                <tr><td ${HB_TD}>農村學園</td><td ${HB_TD} colspan="5">初始狀態</td></tr>
-                <tr><td ${HB_TD}>發展學園</td><td ${HB_TD}>5</td><td ${HB_TD}>—</td><td ${HB_TD}>—</td><td ${HB_TD}>—</td><td ${HB_TD}></td></tr>
-                <tr><td ${HB_TD}>有望學園</td><td ${HB_TD}>14</td><td ${HB_TD}>1</td><td ${HB_TD}>2</td><td ${HB_TD}>—</td><td ${HB_TD}></td></tr>
-                <tr><td ${HB_TD}>超大型（マンモス校）</td><td ${HB_TD}>18</td><td ${HB_TD}>3</td><td ${HB_TD}>4</td><td ${HB_TD}>300</td><td ${HB_TD}></td></tr>
-                <tr><td ${HB_TD}>名門學園</td><td ${HB_TD}>20</td><td ${HB_TD}>6</td><td ${HB_TD}>6</td><td ${HB_TD}>400</td><td ${HB_TD}></td></tr>
-                <tr><td ${HB_TD}>常春藤（アイビーリーグ）</td><td ${HB_TD}>28</td><td ${HB_TD}>16</td><td ${HB_TD}>20</td><td ${HB_TD}>400</td><td ${HB_TD}>8 個社團優勝</td></tr></table>
-                <div class="text-gray-400 mt-1">人氣景點種數會直接卡升級門檻——這正是佈局模擬的重點。</div>` },
-            teacher: { title: '教師', html: `
-                <div class="text-gray-400 mb-1">與景點/條件相關的教師（括號內為日文原文，片假名人名為暫譯；其餘教師多為一開始或隨學園規模解鎖）：</div>
-                <table class="w-full"><tr><th ${HB_TH}>教師</th><th ${HB_TH}>招募條件</th></tr>
-                <tr><td ${HB_TD}>中野阪助</td><td ${HB_TD}>學習景點</td></tr>
-                <tr><td ${HB_TD}>足元藏助（足元蔵助）</td><td ${HB_TD}>怪談景點</td></tr>
-                <tr><td ${HB_TD}>阿布法拉國王（アブファラ国王）</td><td ${HB_TD}>購物景點</td></tr>
-                <tr><td ${HB_TD}>馬棟（チョンマゲ・タカシ）</td><td ${HB_TD}>有望學園＋熱血景點</td></tr>
-                <tr><td ${HB_TD}>鴨田鴨子（アヒル田カモ子）</td><td ${HB_TD}>超大型學校＋家庭景點</td></tr>
-                <tr><td ${HB_TD}>森野熊克斯（森野クマックス）</td><td ${HB_TD}>超大型學校＋藝術景點＋森林×20</td></tr>
-                <tr><td ${HB_TD}>段燕燕（田山ゆきみ）⭐</td><td ${HB_TD}>全國平均 200 分（攻略公認 CP 值最高）</td></tr>
-                <tr><td ${HB_TD}>李倫倫（ルー・ロンロン）</td><td ${HB_TD}>有望學園</td></tr>
-                <tr><td ${HB_TD}>約翰班森（ジョンベンソン）／亞利安・韓（アリアン・ハーン）／甲賀麥克羅倫（甲賀マクローレン）／安德烈・勘助（アンドレ・カンスケ）／面堂小手助（面堂コテ助）</td><td ${HB_TD}>名門學園</td></tr>
-                <tr><td ${HB_TD}>黑猩猩G（チンパンG）／開羅君（カイロくん）／蘇芙子公主（ソフ子姫）</td><td ${HB_TD}>特殊條件（景點提示中標「※」者與此相關）</td></tr></table>` },
-            club: { title: '社團', html: `
-                <table class="w-full"><tr><th ${HB_TH}>社團</th><th ${HB_TH}>預算(萬)</th><th ${HB_TH}>遠征(週)</th><th ${HB_TH}>解鎖條件</th></tr>
-                <tr><td ${HB_TD}>棒球社（野球部）</td><td ${HB_TD}>18</td><td ${HB_TD}>3</td><td ${HB_TD}>一開始</td></tr>
-                <tr><td ${HB_TD}>足球社（サッカー部）</td><td ${HB_TD}>28</td><td ${HB_TD}>3</td><td ${HB_TD}>一開始</td></tr>
-                <tr><td ${HB_TD}>網球社（テニス部）</td><td ${HB_TD}>30</td><td ${HB_TD}>2</td><td ${HB_TD}>一開始</td></tr>
-                <tr><td ${HB_TD}>籃球社（バスケットボール部）</td><td ${HB_TD}>30</td><td ${HB_TD}>3</td><td ${HB_TD}>一開始</td></tr>
-                <tr><td ${HB_TD}>舞蹈社（ダンス部）</td><td ${HB_TD}>25</td><td ${HB_TD}>2</td><td ${HB_TD}>一開始</td></tr>
-                <tr><td ${HB_TD}>茶花道社（茶華道部）</td><td ${HB_TD}>15</td><td ${HB_TD}>2</td><td ${HB_TD}>一開始</td></tr>
-                <tr><td ${HB_TD}>田徑社（陸上部）</td><td ${HB_TD}>30</td><td ${HB_TD}>3</td><td ${HB_TD}>操場</td></tr>
-                <tr><td ${HB_TD}>美術社（美術部）</td><td ${HB_TD}>12</td><td ${HB_TD}>3</td><td ${HB_TD}>美術室</td></tr>
-                <tr><td ${HB_TD}>拼布同好會（キルト同好会）</td><td ${HB_TD}>6</td><td ${HB_TD}>2</td><td ${HB_TD}>辦公室＋校長室＋彈跳床</td></tr>
-                <tr><td ${HB_TD}>戲劇社（演劇部）</td><td ${HB_TD}>8</td><td ${HB_TD}>2</td><td ${HB_TD}>多功能室＋多媒體教室＋體育館</td></tr>
-                <tr><td ${HB_TD}>電腦社（コンピュータ部）</td><td ${HB_TD}>42</td><td ${HB_TD}>3</td><td ${HB_TD}>電腦室＋圖書室＋焚化爐</td></tr>
-                <tr><td ${HB_TD}>管樂社（吹奏楽部）</td><td ${HB_TD}>20</td><td ${HB_TD}>3</td><td ${HB_TD}>家政室＋廣播室＋天象館</td></tr>
-                <tr><td ${HB_TD}>政治研究社（政治研究部）</td><td ${HB_TD}>12</td><td ${HB_TD}>3</td><td ${HB_TD}>多媒體教室＋養雞小屋＋巨石＋遊戲區</td></tr>
-                <tr><td ${HB_TD}>電玩社（テレビゲーム部）</td><td ${HB_TD}>4</td><td ${HB_TD}>3</td><td ${HB_TD}>理科室＋映山紅＋白楊樹＋飼育長頸鹿＋長椅</td></tr>
-                <tr><td ${HB_TD}>UFO研究社（UFO研究部）</td><td ${HB_TD}>6</td><td ${HB_TD}>3</td><td ${HB_TD}>天象館＋松樹＋飼育鼴鼠＋電腦室＋遊戲區＋理科室</td></tr></table>
-                <div class="text-gray-400 mt-1">解鎖條件欄的設施蓋齊後才可能被發現；常春藤需要 8 個社團優勝，預算與遠征是強化的成本參考。</div>` },
-            career: { title: '畢業出路', html: `
-                <div class="text-gray-400 mb-1">依年收分級（萬円）。發現有隨機成分（約 1/3），高頭腦學生使用設施／通過課題時觸發。<b>太空人</b>是天象館的解鎖前置。</div>
-                <table class="w-full"><tr><th ${HB_TH}>年收</th><th ${HB_TH}>出路</th></tr>
-                <tr><td ${HB_TD}>80~200</td><td ${HB_TD}>打工族（フリーター）／三流大學（三流大学）／搞笑藝人（お笑い芸人）／二流大學（二流大学）／一流大學（一流大学）／明信片達人（はがき職人）／浪人（遊び人）／程式設計師（プログラマー）／賭徒（賭博師）</td></tr>
-                <tr><td ${HB_TD}>300~400</td><td ${HB_TD}>蛋糕店（ケーキ屋さん）／花店（お花屋さん）／落語家（落語家）／麵包店（パン屋さん）／冒險家（冒険家）／護理師（看護師）／設計師（デザイナー）／漫畫家（漫画家）</td></tr>
-                <tr><td ${HB_TD}>500~600</td><td ${HB_TD}>保育員（保育士）／保全公司（警備会社）／攝影師（カメラマン）／舞者（ダンサー）／教師（教師）／獸醫（獣医）／電競玩家（ゲーマー）／馬丘塞茨大學（マーチューセツ大学）／消防員（消防士）／靈媒（霊媒師）／小說家（小説家）／聲優（声優）／文案（コピーライター）／遊戲製作人（ゲームクリエイター）</td></tr>
-                <tr><td ${HB_TD}>700~950</td><td ${HB_TD}>廚師（調理師）／大型商社（大手商社）／巴士導遊（バスガイド）／警察官（警察官）／翻譯家（翻訳家）／記者（ジャーナリスト）／紳士（紳士）／報社記者（新聞記者）</td></tr>
-                <tr><td ${HB_TD}>1000~1200</td><td ${HB_TD}>侍酒師（ソムリエ）／服飾業（アパレル関係）／歌手（歌手）／模特兒（モデル）／指揮家（指揮者）／名流（セレブ）</td></tr>
-                <tr><td ${HB_TD}>1500~1800</td><td ${HB_TD}>公司社長（会社の社長）／偶像（アイドル）／間諜（スパイ）／電影導演（映画監督）／聯合國職員（国連勤務）／醫生（医者）／電視主播（TVアナウンサー）／足球選手（サッカー選手）／棒球選手（野球選手）</td></tr>
-                <tr><td ${HB_TD}>2000~3000</td><td ${HB_TD}>空間設計師（空間デザイナー）／機師（パイロット）／石油王（石油王）／<b>太空人（宇宙飛行士）</b>／總統（大統領）／開羅君工場（カイロ君工場）</td></tr></table>` },
-            event: { title: '行事活動', html: `
-                <table class="w-full"><tr><th ${HB_TH}>行事</th><th ${HB_TH}>預算(G)</th><th ${HB_TH}>獎勵</th><th ${HB_TH}>解鎖</th></tr>
-                <tr><td ${HB_TD}>百人一首大會（カルタ大会）</td><td ${HB_TD}>500</td><td ${HB_TD}></td><td ${HB_TD}>一開始</td></tr>
-                <tr><td ${HB_TD}>藝術鑒賞會（芸術鑑賞会）</td><td ${HB_TD}>2000</td><td ${HB_TD}>寫生組</td><td ${HB_TD}>一開始</td></tr>
-                <tr><td ${HB_TD}>公園散步（公園散策）</td><td ${HB_TD}>300</td><td ${HB_TD}>釣具</td><td ${HB_TD}>發展學園</td></tr>
-                <tr><td ${HB_TD}>俳句競賽（俳句コンクール）</td><td ${HB_TD}>1200</td><td ${HB_TD}></td><td ${HB_TD}>發展學園</td></tr>
-                <tr><td ${HB_TD}>武術大會（武道会）</td><td ${HB_TD}>5000</td><td ${HB_TD}></td><td ${HB_TD}>發展學園</td></tr>
-                <tr><td ${HB_TD}>電腦大賽（パソコン大会）</td><td ${HB_TD}>8000</td><td ${HB_TD}></td><td ${HB_TD}>發展學園</td></tr>
-                <tr><td ${HB_TD}>球技大賽（球技大会）</td><td ${HB_TD}>2500</td><td ${HB_TD}></td><td ${HB_TD}>有望學園</td></tr>
-                <tr><td ${HB_TD}>烤番薯派對（焼き芋パーティ）</td><td ${HB_TD}>3500</td><td ${HB_TD}></td><td ${HB_TD}>有望學園</td></tr>
-                <tr><td ${HB_TD}>運動會（体育祭）</td><td ${HB_TD}>10000</td><td ${HB_TD}>滑板</td><td ${HB_TD}>有望學園</td></tr>
-                <tr><td ${HB_TD}>合唱比賽（合唱コンクール）</td><td ${HB_TD}>10000</td><td ${HB_TD}></td><td ${HB_TD}>有望學園</td></tr>
-                <tr><td ${HB_TD}>閱讀大賽（読書大会）</td><td ${HB_TD}>5000</td><td ${HB_TD}></td><td ${HB_TD}>超大型</td></tr>
-                <tr><td ${HB_TD}>社會實習（社会科見学）</td><td ${HB_TD}>7000</td><td ${HB_TD}>相機組</td><td ${HB_TD}>超大型</td></tr>
-                <tr><td ${HB_TD}>科學競賽（科学コンクール）</td><td ${HB_TD}>10000</td><td ${HB_TD}></td><td ${HB_TD}>超大型</td></tr>
-                <tr><td ${HB_TD}>馬拉松大賽（マラソン大会）</td><td ${HB_TD}>12000</td><td ${HB_TD}></td><td ${HB_TD}>超大型</td></tr>
-                <tr><td ${HB_TD}>文化祭（文化祭）</td><td ${HB_TD}>12000</td><td ${HB_TD}></td><td ${HB_TD}>超大型</td></tr>
-                <tr><td ${HB_TD}>時裝秀（ファッションショー）</td><td ${HB_TD}>15000</td><td ${HB_TD}></td><td ${HB_TD}>超大型</td></tr>
-                <tr><td ${HB_TD}>遠足（遠足）</td><td ${HB_TD}>10000</td><td ${HB_TD}></td><td ${HB_TD}>名門學園</td></tr>
-                <tr><td ${HB_TD}>修學旅行（修学旅行）</td><td ${HB_TD}>18000</td><td ${HB_TD}>溜冰鞋</td><td ${HB_TD}>名門學園</td></tr>
-                <tr><td ${HB_TD}>游泳大會（水泳大会）</td><td ${HB_TD}>14000</td><td ${HB_TD}>小船</td><td ${HB_TD}>常春藤</td></tr>
-                <tr><td ${HB_TD}>滑雪教室（スキー教室）</td><td ${HB_TD}>20000</td><td ${HB_TD}>滑雪板</td><td ${HB_TD}>常春藤</td></tr></table>
-                <div class="text-gray-400 mt-1">獎勵道具的效果見「道具」分頁；行事會影響各類型入學希望者的增減。</div>` },
-            lesson: { title: '特別授業', html: `
-                <div class="text-gray-400 mb-1">消耗教育 P 提升學力（攻略推薦：多雇便宜教師賺 P 來開課）。</div>
-                <table class="w-full"><tr><th ${HB_TH}>授業</th><th ${HB_TH}>解鎖</th><th ${HB_TH}>消費P</th></tr>
-                <tr><td ${HB_TD}>筆記方法（ノートの取り方）／農活特訓（農作業の特訓）／英文小考（英語の小テスト）／理科小考（理科の小テスト）</td><td ${HB_TD}>農村學園</td><td ${HB_TD}>文10／體15／文20／理30</td></tr>
-                <tr><td ${HB_TD}>英文小考（英語の小テスト）／數學小考（数学の小テスト）／社會小考（社会の小テスト）／打招呼訓練（挨拶トレーニング）</td><td ${HB_TD}>發展學園</td><td ${HB_TD}>文25／理25／體35／體30</td></tr>
-                <tr><td ${HB_TD}>話術特訓（話術の特訓）／小說朗讀（小説の朗読）</td><td ${HB_TD}>有望學園</td><td ${HB_TD}>體45／文55</td></tr>
-                <tr><td ${HB_TD}>珠算教室（そろばん教室）／背英文單字（英単語の暗記）／英語會話課（英会話レッスン）／道德課（道徳の授業）</td><td ${HB_TD}>超大型</td><td ${HB_TD}>理65／文65／體70／文90</td></tr>
-                <tr><td ${HB_TD}>校長的往事（校長の昔話）／科學實驗（科学の実験）／打電動（テレビゲームで遊ぶ）／搞笑DVD（お笑いのDVD）／看電影（映画を見る）／大學教授演講（大学教授の話）</td><td ${HB_TD}>名門學園</td><td ${HB_TD}>文100／理100／體100／體105／理105／文100</td></tr>
-                <tr><td ${HB_TD}>大腦訓練（脳のトレーニング）／合唱課（コーラスのレッスン）／志工服務（奉仕活動）／程式設計（プログラミング）</td><td ${HB_TD}>常春藤</td><td ${HB_TD}>各 90</td></tr></table>` },
-            task: { title: '課題挑戰', html: `
-                <div class="text-gray-400 mb-1">每月可挑戰 2 次，通過即提高學費（攻略：優先、每月做）。發現課題後，前置設施可以拆除。</div>
-                <table class="w-full"><tr><th ${HB_TH}>科目</th><th ${HB_TH}>解鎖條件</th><th ${HB_TH}>LV5 總收入(円)</th></tr>
-                <tr><td ${HB_TD}>國語（国語）</td><td ${HB_TD}>一開始</td><td ${HB_TD}>21,000</td></tr>
-                <tr><td ${HB_TD}>數學（数学）／外國語（外国語）</td><td ${HB_TD}>一開始</td><td ${HB_TD}>19,500</td></tr>
-                <tr><td ${HB_TD}>理科（理科）</td><td ${HB_TD}>一開始</td><td ${HB_TD}>13,500</td></tr>
-                <tr><td ${HB_TD}>地理歷史（地理歴史）</td><td ${HB_TD}>一開始</td><td ${HB_TD}>14,500</td></tr>
-                <tr><td ${HB_TD}>農業（農業）</td><td ${HB_TD}>小農場×2＋平均 200 分</td><td ${HB_TD}>11,500</td></tr>
-                <tr><td ${HB_TD}>體育（体育）</td><td ${HB_TD}>網球場＋籃球場＋操場</td><td ${HB_TD}>12,000</td></tr>
-                <tr><td ${HB_TD}>藝術（芸術）</td><td ${HB_TD}>發展學園＋美術室×2</td><td ${HB_TD}>15,000</td></tr>
-                <tr><td ${HB_TD}>資訊IT（情報IT）</td><td ${HB_TD}>超大型＋電腦室×2</td><td ${HB_TD}>12,500</td></tr>
-                <tr><td ${HB_TD}>進學菁英（進学エリート）</td><td ${HB_TD}>名門＋圖書室×5＋學力全國前 5</td><td ${HB_TD}>9,500</td></tr></table>` },
-            item: { title: '道具', html: `
-                <div class="font-black text-gray-800 mb-1">購買道具（消耗研究P）</div>
-                <table class="w-full mb-2"><tr><th ${HB_TH}>道具</th><th ${HB_TH}>需求P(文/理/體)</th><th ${HB_TH}>效果</th></tr>
-                <tr><td ${HB_TD}>學習題本（学習ドリル）</td><td ${HB_TD}>22/16/—</td><td ${HB_TD}>頭腦上升</td></tr>
-                <tr><td ${HB_TD}>運動題本（スポーツドリル）</td><td ${HB_TD}>—/12/28</td><td ${HB_TD}>運動上升</td></tr>
-                <tr><td ${HB_TD}>道德題本（道徳ドリル）</td><td ${HB_TD}>25/—/—</td><td ${HB_TD}>態度上升</td></tr>
-                <tr><td ${HB_TD}>入社申請書（入部届）</td><td ${HB_TD}>40/40/50</td><td ${HB_TD}>更換所屬社團</td></tr>
-                <tr><td ${HB_TD}>萬人迷藥（モテモテ薬）</td><td ${HB_TD}>20/80/—</td><td ${HB_TD}>成功時人氣大升</td></tr>
-                <tr><td ${HB_TD}>進路指導書（進路指導書）</td><td ${HB_TD}>65/65/60</td><td ${HB_TD}>更換志願出路</td></tr>
-                <tr><td ${HB_TD}>愛迪生頭帶（エジソンバンド）</td><td ${HB_TD}>80/—/20</td><td ${HB_TD}>成功時頭腦大升</td></tr>
-                <tr><td ${HB_TD}>天使弓箭（天使の弓矢）</td><td ${HB_TD}>各150</td><td ${HB_TD}>告白心意</td></tr>
-                <tr><td ${HB_TD}>天之神諭（天のおつげ）</td><td ${HB_TD}>各230</td><td ${HB_TD}>改名</td></tr>
-                <tr><td ${HB_TD}>地獄弓箭（地獄の弓矢）</td><td ${HB_TD}>各459</td><td ${HB_TD}>拆散情侶</td></tr></table>
-                <div class="font-black text-gray-800 mb-1">移動道具（影響學生走路速度）</div>
-                <table class="w-full mb-2"><tr><th ${HB_TH}>道具</th><th ${HB_TH}>取得</th><th ${HB_TH}>效果</th></tr>
-                <tr><td ${HB_TD}>抹布（ぞうきん）</td><td ${HB_TD}>蓋更衣室</td><td ${HB_TD}>校舍內（走廊）移動加速（穿運動服的學生）</td></tr>
-                <tr><td ${HB_TD}>滑板（スケボー）</td><td ${HB_TD}>辦體育祭</td><td ${HB_TD}>校舍外（田埂路、道路、草地）移動加速</td></tr>
-                <tr><td ${HB_TD}>溜冰鞋（スケート靴）</td><td ${HB_TD}>辦修學旅行</td><td ${HB_TD}>可在結冰的水塘上移動（12~2 月）</td></tr>
-                <tr><td ${HB_TD}>小船（ボート）</td><td ${HB_TD}>辦游泳大會</td><td ${HB_TD}>可在水塘上移動（12~2 月以外）</td></tr>
-                <tr><td ${HB_TD}>滑雪板（スキー）</td><td ${HB_TD}>辦滑雪教室</td><td ${HB_TD}>草地上移動（與滑板擇一使用）</td></tr></table>
-                <div class="font-black text-gray-800 mb-1">賺錢道具</div>
-                <table class="w-full"><tr><th ${HB_TH}>道具</th><th ${HB_TH}>取得</th><th ${HB_TH}>收入(円)／使用場所</th></tr>
-                <tr><td ${HB_TD}>相機組（カメラセット）</td><td ${HB_TD}>社會科見學</td><td ${HB_TD}>10,000~21,000／走廊</td></tr>
-                <tr><td ${HB_TD}>釣具（釣り具）</td><td ${HB_TD}>公園散策</td><td ${HB_TD}>魚 16,000~36,000／水塘</td></tr>
-                <tr><td ${HB_TD}>寫生組（写生）</td><td ${HB_TD}>藝術鑑賞會</td><td ${HB_TD}>5,000~24,000／走廊</td></tr></table>
-                <div class="text-gray-400 mt-1">更衣室、水塘、走廊、道路這些設施地形都和道具連動——蓋不蓋會影響學生的移動與打工收入。</div>` }
-        };
+        /* ─── 速查表（景點／設施／中日對照）─────────────────────────────
+           資料**一律讀 `db/data.js` 的 window.GAME_DB**（正本）。這裡曾經有一份 180 行的
+           手寫副本（攻略要點／學園規模／教師／社團／進路／行事／授業／挑戰／道具／學生），
+           它已經漂移過一次——而漂移的後果是「同一個螢幕上兩個互相矛盾的答案」，比兩個頁面
+           不一致嚴重一級，所以整份刪掉。
 
-        HANDBOOK.students = { title: '學生名冊', html: `
-            <div class="text-gray-400 mb-1">原創學生與其「實家職業」（畢業後再入學時，實家職業＝上次畢業的出路，可用來鋪職業收集）。括號內為日文原名，假名人名為暫譯。</div>
-            <div class="font-black text-gray-800 mb-1">男學生</div>
-            <div class="grid grid-cols-2 gap-x-4 mb-2">
-                ${[
-                    ['學生太郎（学生太郎）', '三流上班族'], ['枝島平七', '醫生'], ['大平凸助（大平でこ助）', '小說家'], ['岡山卓（岡山すぐる）', '護理師'],
-                    ['回廊福藏（回廊ふく蔵）', '消防員'], ['勝亦慶應', '醫生'], ['加藤香草茶（加藤ハーブテイー）', '保育員'], ['小泉純（小泉じゅん）', '醫生'],
-                    ['鯉沼亂太郎（鯉沼乱太郎）', '警察'], ['小坂冬夫', '一流上班族'], ['茶川龍太郎', '保全公司'], ['七三分藏（七三わけ蔵）', '漫畫家'],
-                    ['白川勝（白川まさる）', '二流上班族'], ['志村牛朗（志村ウシ朗）', '護理師'], ['新渡戶稻吉（新渡戸稲吉）', '大型商社'], ['神宮寺三郎', '保育員'],
-                    ['玉打高爾府（玉打ごる府）', '設計師'], ['伊達次郎（伊達じろう）', '保全公司'], ['都築新鷹', '二流上班族'], ['都築操（都築みさお）', '二流上班族'],
-                    ['椿穗次郎（椿ほじろう）', '消防員'], ['中分仁（中分ひとし）', '一流上班族'], ['夏目漱治（夏目そうじ）', '攝影師'], ['望川庸輔', '攝影師'],
-                    ['服部圭介', '大型商社'], ['福留幸雄（福留ゆきお）', '醫生'], ['藤元富士夫（藤元ふじお）', '一流上班族'], ['丸米丸夫（丸米まるお）', '二流上班族'],
-                    ['本村俊秋', '二流上班族'], ['本村允一', '小說家'], ['玉米・源氏（モロコシ・ゲンジ）', '報社記者']
-                ].map(([n, j]) => `<div class="border-b border-gray-100 py-0.5">${n}<span class="text-gray-400">｜${j}</span></div>`).join('')}
-            </div>
-            <div class="font-black text-gray-800 mb-1">女學生</div>
-            <div class="grid grid-cols-2 gap-x-4">
-                ${[
-                    ['學生花子（学生花子）', '三流上班族'], ['青空美奈子（青空みなこ）', '電視主播'], ['安德魯・亞紀（アンドリュー・アキ）', '二流上班族'], ['五十嵐春江', '一流上班族'],
-                    ['伊集院光子（伊集院ミツコ）', '記者'], ['宇佐美萌子', '巴士導遊'], ['歌田歌子（歌田うた子）', '一流上班族'], ['襟川夏天（襟川サマー）', '巴士導遊'],
-                    ['大河內京子（大河内キョウコ）', '大型商社'], ['鴨川秋子（鴨川あきこ）', '一流上班族'], ['川島文子（川島ふみこ）', '三流上班族'], ['嘎登乳山（ガッデム乳山）', '醫生'],
-                    ['惠山花子（恵山ハナコ）', '翻譯家'], ['小林登美（小林とめ）', '翻譯家'], ['小松崎幸穗（小松崎サチホ）', '一流上班族'], ['齊藤卑彌呼（斉藤ひみこ）', '遊戲製作人'],
-                    ['島山二見（島山ふたみ）', '翻譯家'], ['白雪穗乃美（白雪ほの美）', '記者'], ['珍妮佛・智子（ジェニファー・トモコ）', '服飾業'], ['珍・岩波（ジェーン・岩波）', '大型商社'],
-                    ['春蜜柑（春みかん）', '歌手'], ['潘蒂・奇拉子（プァンティ・チラコ）', '三流上班族'], ['卷紙・珍珠（マキガミ・パール）', '三流上班族'], ['松元香織（松元かをり）', '二流上班族'],
-                    ['瑪琳・莎拉波娃（マリン・シャラポワー）', '模特兒'], ['三神神子（三神かみ子）', '三流上班族'], ['宮家惠子（宮家ケイコ）', '巴士導遊'], ['桃山桃子（桃山ももこ）', '一流上班族'],
-                    ['山川三十子', '二流上班族'], ['山梨三毛子（山梨ミケコ）', '三流上班族'], ['山本桃子（山本モモコ）', '三流上班族'], ['吉本留美子', '二流上班族'],
-                    ['蘭・蘭蘭（ラン・ランラン）', '三流上班族'], ['李・琳琳（リー・リンリン）', '二流上班族']
-                ].map(([n, j]) => `<div class="border-b border-gray-100 py-0.5">${n}<span class="text-gray-400">｜${j}</span></div>`).join('')}
-            </div>` };
+           只留三張表的判準：**留在畫布旁邊的表，必須知道畫布的狀態。**
+             景點 → 每列標「已成立 ✔／差一項：缺 ○○」，表頭再壓一條升級門檻條（N/29 的分母）
+             設施 → 每列標「已建 N」，並預設按尺寸排序（「右邊只剩 3 格寬，有什麼放得下」）
+             中日對照 → 唯一在 sim 裡零存在感、又必須「邊看日文攻略邊查」的資料（靠篩選框才站得住）
+           其餘 11 類（老師／學生／社團／進路／行事／授業／排名／道具／挑戰／成就／城鎮）
+           對不上這張圖，正確形態就是一條連往 ../db/<slug>/ 的連結：那裡欄位更完整（例如老師
+           有 9 欄含五科指導力與給與上下限）、可被搜尋引擎索引，也不必在 modal 裡重做一個
+           比較差的資料庫。攻略敘述（金流／教師 CP／二周目結算）歸 ../start|walkthrough|training|endgame/。
 
+           連結一律 target="_blank"，理由是硬的兩條：㈠ undoStack 是純記憶體（最多 60 步），
+           同頁跳走等於不可回復地清空整個復原歷史；㈡ scheduleAutosave() 是 400ms debounce
+           且沒有 pagehide flush，最後一筆筆劃落在那個窗口內會靜默消失。 */
+        const HB_TH = 'class="text-left font-bold text-gray-700 border-b border-gray-300 px-1 py-1 sticky top-0 bg-white"';
+        const HB_TD = 'class="border-b border-gray-100 px-1 py-1 align-top"';
+        // cols＝要顯示的 db 欄位索引（刻意少於 db 的欄數：日文與地圖標籤在畫布上已有——
+        // 調色盤 tooltip 給日文、格子上就印著標籤——但篩選仍比對全部欄位：能被搜到，不必被看到）
+        const HB_TABS = [
+            { key: 'spots', label: '景點', cols: [0, 2, 3, 4] },
+            { key: 'facilities', label: '設施', cols: [0, 3, 2, 4] },
+            { key: 'terms', label: '中日對照', cols: [0, 1, 2] }
+        ];
+        // 被移除的分頁的交接出口：db 的其餘 11 類。三個分頁 ∪ 這張表＝14 類，
+        // checks/consistency.js 會斷言沒有任何一類從模擬器到不了。
+        const HB_MORE = [
+            ['teachers', '🧑‍🏫 老師'], ['students', '🧑‍🎓 學生'], ['clubs', '🎽 社團'],
+            ['careers', '🎓 進路'], ['events', '🎪 行事活動'], ['lessons', '📚 特別授業'],
+            ['ranks', '🏅 學校排名'], ['items', '🎒 道具'], ['tasks', '📝 挑戰'],
+            ['achievements', '🏆 成就'], ['towns', '🗾 城鎮地圖']
+        ];
+        const HB_GUIDES = [['start', '開局指南'], ['walkthrough', '全流程'], ['training', '育成'], ['endgame', '終盤']];
 
-        function buildHandbook(section) {
-            if (!HANDBOOK[section]) section = 'tips';
-            track('open_handbook', { section });
-            const nav = Object.entries(HANDBOOK).map(([k, s]) =>
-                `<button class="hb-tab px-2 py-0.5 rounded border text-[11px] font-bold transition ${k === section ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100'}" data-hb="${k}">${s.title}</button>`
+        function hbCat(key) {
+            const db = window.GAME_DB;
+            if (!db || !Array.isArray(db.categories)) return null;
+            return db.categories.find(c => c.key === key) || null;
+        }
+
+        // 景點列的畫布狀態（nearMap 的 key 就是缺的設施名，與側欄「差一項」同一份來源）
+        function hbSpotState(name) {
+            const s = SPOTS.find(x => x.name === name);
+            if (!s) return '<span class="text-gray-400">—</span>';
+            if (lastSpotStats.activeIds.has(s.id)) return '<span class="text-green-600 font-bold">已成立 ✔</span>';
+            const near = lastSpotStats.nearMap.get(s.id);
+            if (near) return `<span class="text-sky-600">差一項：缺 ${esc([...near.keys()].join(' 或 '))}</span>`;
+            return '<span class="text-gray-400">—</span>';
+        }
+        // 設施列的畫布狀態（countBuilt 已處理多格建築的棟別，不會把 2×2 算成 4 棟）
+        function hbFacState(name) {
+            const id = Object.keys(items).find(k => items[k].name === name);
+            if (!id) return '<span class="text-gray-400">—</span>';
+            const n = countBuilt(id);
+            return n ? `<span class="text-green-600 font-bold">已建 ${n}</span>` : '<span class="text-gray-400">未建</span>';
+        }
+        // 「2×1（橫）」這種帶方向註記的尺寸也吃得下；排序鍵＝面積為主、寬度為輔
+        function hbSizeKey(s) {
+            const m = /(\d+)×(\d+)/.exec(String(s));
+            return m ? (+m[1]) * (+m[2]) * 10 + (+m[1]) : 999;
+        }
+
+        /* 景點分頁頂端的門檻條：模擬器的頭條數字是 N/29，而它的分母其實是升級門檻
+           （有望 1／超大型 3／名門 6／常春藤 16）。盯著 24/29 卻不知道 16 就已經到頂，
+           是資訊層級錯置，所以 ranks 不給一個分頁（只有 6 列），而是壓在景點表上方。 */
+        function hbRankStrip() {
+            const c = hbCat('ranks');
+            if (!c) return '';
+            const need = r => (parseInt(r[3], 10) || 0);
+            const have = lastSpotStats.activeIds.size;
+            const next = c.rows.find(r => have < need(r));
+            const reached = c.rows.filter(r => have >= need(r));
+            const chips = c.rows.map(r => {
+                const n = need(r);
+                const cls = (r === next) ? 'bg-yellow-50 border-yellow-200' : 'bg-white border-gray-200';
+                return `<span class="inline-flex items-center gap-1 border rounded px-1.5 py-0.5 whitespace-nowrap ${cls}">${esc(r[0])}`
+                    + `<span class="${have >= n ? 'text-green-600' : 'text-gray-400'}">${n ? n + ' 種' : '無門檻'}</span></span>`;
+            }).join('');
+            const last = reached.length ? reached[reached.length - 1][0] : c.rows[0][0];
+            const tail = next ? `下一關「${esc(next[0])}」需 ${need(next)} 種` : '景點門檻已全部達成';
+            return `<div class="mb-2"><div class="text-gray-500 mb-1">目前成立 <b class="text-gray-800">${have}／${SPOTS.length}</b> 種`
+                + ` · 已過「${esc(last)}」的景點門檻 · ${tail}（學生數／年數／平均分要對照學校排名表）</div>`
+                + `<div class="flex flex-wrap gap-1">${chips}</div></div>`;
+        }
+
+        // modal 底部的固定出口。只說一次「新視窗開啟」，不逐條標；也不寫「不會影響你的地圖」——
+        // 為了安撫而先讓人想到危險，比不提更糟。
+        function hbMoreHtml() {
+            const chips = HB_MORE.map(([slug, label]) =>
+                `<a class="hb-out inline-flex items-center gap-1 bg-white border border-gray-200 rounded px-1.5 py-1 whitespace-nowrap hover:bg-gray-100 transition" data-out="db/${slug}" href="../db/${slug}/" target="_blank" rel="noopener">${label}</a>`
             ).join('');
-            openReport('📖 遊戲手冊',
-                `<div class="flex flex-wrap gap-1 mb-3">${nav}</div><div class="text-xs leading-relaxed text-gray-600">${HANDBOOK[section].html}</div>`);
+            const guides = HB_GUIDES.map(([slug, label]) =>
+                `<a class="hb-out font-bold text-sky-600 hover:text-sky-900" data-out="${slug}" href="../${slug}/" target="_blank" rel="noopener">${label}</a>`
+            ).join(' · ');
+            return `<div class="border-t border-gray-200 mt-3 pt-2">`
+                + `<div class="font-bold text-gray-700 mb-1">完整資料表在資料庫（新視窗開啟 ↗）</div>`
+                + `<div class="flex flex-wrap gap-1">${chips}</div>`
+                + `<div class="text-gray-500 mt-1.5">想看攻略文字：${guides}</div></div>`;
+        }
+
+        /* 篩選只切換 <tr> 的 display（照 filterPalette() 的慣例），**絕不重繪 innerHTML**：
+           重繪會把輸入框自己砍掉重建 → 焦點掉到 body、游標歸零，中文 IME 的組字更會在每個
+           按鍵被中斷（注音打「教室」會直接壞掉）。而 check.js 只做 new Function 語法檢查，
+           這個 bug 不會被任何檢查器抓到，所以寫在這裡。 */
+        function hbFilter(q) {
+            const wrap = document.getElementById('hbTable');
+            if (!wrap) return;
+            const needle = q.trim().toLowerCase();
+            const rows = wrap.querySelectorAll('tr[data-hbq]');
+            let n = 0;
+            rows.forEach(tr => {
+                const hit = !needle || tr.dataset.hbq.indexOf(needle) >= 0;
+                tr.style.display = hit ? '' : 'none';
+                if (hit) n++;
+            });
+            const cnt = document.getElementById('hbCount');
+            if (cnt) cnt.textContent = needle ? `符合 ${n} 項／共 ${rows.length} 項` : `共 ${rows.length} 項`;
+            const empty = document.getElementById('hbEmpty');
+            if (empty) empty.style.display = (needle && !n) ? '' : 'none';
+        }
+
+        function buildHandbook(section, isSwitch) {
+            const tab = HB_TABS.find(t => t.key === section) || HB_TABS[0];
+            section = tab.key;
+            track(isSwitch ? 'handbook_tab' : 'open_handbook', { section });
+            // 3 顆等寬按鈕＝真的分頁控件（≥44px 高，不再是 20px 的小晶片）
+            const nav = `<div role="tablist" class="flex gap-1 mb-3">` + HB_TABS.map(t =>
+                `<button id="hbTab-${t.key}" role="tab" aria-selected="${t.key === section}" class="hb-tab flex-1 px-3 py-3 rounded-lg border text-xs font-bold transition ${t.key === section ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-100'}" data-hb="${t.key}">${t.label}</button>`
+            ).join('') + `</div>`;
+
+            const c = hbCat(section);
+            let body;
+            if (!c || !c.rows || !c.rows.length) {
+                // 靜默失效是最糟的失效模式（使用者只會覺得「速查表壞了」，不會回報）→ 明講並給出口
+                body = `<div class="text-gray-500 py-3">讀不到資料庫（<b class="text-gray-700">db/data.js</b> 沒載入，或分類「${esc(section)}」不在正本裡）。`
+                    + `<a class="hb-out font-bold text-sky-600 hover:text-sky-900" data-out="db/${section}" href="../db/${section}/" target="_blank" rel="noopener">在資料庫開啟這張表 ↗</a></div>`;
+            } else {
+                const stateCol = section === 'spots' ? '這張圖' : (section === 'facilities' ? '這張圖' : '');
+                const order = c.rows.map((r, i) => ({ r, i }));
+                if (section === 'facilities') order.sort((a, b) => hbSizeKey(a.r[3]) - hbSizeKey(b.r[3]) || a.i - b.i);
+                const head = tab.cols.map(j => `<th ${HB_TH}>${esc(c.columns[j])}</th>`).join('')
+                    + (stateCol ? `<th ${HB_TH}>${stateCol}</th>` : '');
+                const trs = order.map(({ r }) => {
+                    const nm = section === 'facilities' ? String(r[0]).replace(/^\S+\s/, '') : r[0];
+                    const st = section === 'spots' ? hbSpotState(nm) : (section === 'facilities' ? hbFacState(nm) : '');
+                    return `<tr data-hbq="${esc(r.join(' ').toLowerCase())}">`
+                        + tab.cols.map(j => `<td ${HB_TD}>${esc(r[j] || '—')}</td>`).join('')
+                        + (stateCol ? `<td ${HB_TD}>${st}</td>` : '') + `</tr>`;
+                }).join('');
+                /* 表格自捲、外殼不捲：#reportModal 的面板是 max-h-[85vh] overflow-y-auto，
+                   而關閉鈕是 absolute top-3 —— 面板一捲，✕ 就跟著捲走，而觸控沒有 Esc。
+                   把表格關進自己的捲動框，分頁／篩選／✕／底部連結就永遠在視野內；
+                   sticky 表頭也才真的生效。max/min 是為了讓短視窗也留得住表格高度。 */
+                body = `<div class="text-gray-400 mb-2">${esc(String(c.intro).split('。')[0])}。</div>`
+                    + (section === 'spots' ? hbRankStrip() : '')
+                    + `<div class="relative mb-1"><input id="hbFilter" type="text" placeholder="🔍 篩選這張表（也可以打日文）" class="w-full text-xs border border-gray-300 rounded-lg pl-2.5 pr-7 py-2 outline-none focus:border-blue-400 bg-gray-50 focus:bg-white transition">`
+                    + `<button id="hbClearBtn" class="absolute right-1.5 top-1/2 -translate-y-1/2 w-4 h-4 flex items-center justify-center text-gray-400 hover:text-gray-700 text-xs font-bold" title="清除篩選">✕</button></div>`
+                    + `<div id="hbCount" class="text-gray-400 mb-1" aria-live="polite">共 ${c.rows.length} 項</div>`
+                    + `<div id="hbTable" class="overflow-auto" style="max-height:max(8rem, min(52vh, calc(85vh - 21rem)))"><table class="w-full"><thead><tr>${head}</tr></thead><tbody>${trs}</tbody></table></div>`
+                    + `<div id="hbEmpty" class="text-gray-500 py-3" style="display:none">找不到符合的項目。試試日文名稱，或到資料庫查完整欄位（下方連結）。</div>`;
+            }
+
+            openReport('📖 速查表', nav + body + hbMoreHtml());
+            // 換分頁時捲軸要歸零（只在速查表做，不動另外兩支共用者的行為）
+            const panel = document.getElementById('reportBody').parentElement;
+            if (panel) panel.scrollTop = 0;
+            // openReport 把焦點放在關閉鈕（那個契約是對的）；但「切分頁」的焦點該留在剛按的那顆
+            if (isSwitch) document.getElementById('hbTab-' + section)?.focus();
         }
 
         // 把任意地圖資料畫到 canvas（axis=0 表示不畫座標軸；diffSet 內的格子加紅框）
@@ -4215,11 +4199,35 @@
                     .catch(() => { prompt('請手動複製此連結：', url); });
             });
             document.getElementById('devGuideBtn').addEventListener('click', () => { track('open_dev_guide'); buildDevGuide(); });
-            document.getElementById('handbookBtn').addEventListener('click', () => buildHandbook('tips'));
+            // 預設分頁＝景點：模擬器的頭條數字是 N/29，預設分頁要和工具的主題一致
+            document.getElementById('handbookBtn').addEventListener('click', () => buildHandbook('spots'));
             document.getElementById('compareBtn').addEventListener('click', () => { track('open_compare'); buildCompare(); });
             document.getElementById('reportBody').addEventListener('click', (e) => {
                 const b = e.target.closest('.hb-tab');
-                if (b) buildHandbook(b.dataset.hb);
+                if (b) { buildHandbook(b.dataset.hb, true); return; }
+                if (e.target.closest('#hbClearBtn')) {
+                    // 觸控沒有 Esc，這顆 ✕ 是唯一的清除出口
+                    const inp = document.getElementById('hbFilter');
+                    if (inp) { inp.value = ''; hbFilter(''); inp.focus(); }
+                    return;
+                }
+                // 一週後如果「老師」的點擊遠超其他，那就是資料在說該有第四個分頁
+                const out = e.target.closest('.hb-out');
+                if (out) track('handbook_out', { cat: out.dataset.out });
+            });
+            // 速查表的篩選（事件委派：輸入框是每次換分頁重建的）。去抖動比照面板搜尋的 120ms。
+            let hbFilterTimer = null;
+            document.getElementById('reportBody').addEventListener('input', (e) => {
+                if (e.target.id !== 'hbFilter') return;
+                const v = e.target.value;
+                clearTimeout(hbFilterTimer);
+                hbFilterTimer = setTimeout(() => hbFilter(v), 120);
+            });
+            document.getElementById('reportBody').addEventListener('keydown', (e) => {
+                if (e.target.id !== 'hbFilter' || e.key !== 'Escape') return;
+                // Esc 兩段式：框內有字→清空並吃掉這一鍵（不然 document 的 handler 會順手關窗）；
+                // 框內空→讓它冒泡去關 modal（照面板搜尋既有的慣例）
+                if (e.target.value) { e.stopPropagation(); e.target.value = ''; hbFilter(''); }
             });
             document.getElementById('reportCloseBtn').addEventListener('click', closeReport);
             document.getElementById('reportModal').addEventListener('click', (e) => {

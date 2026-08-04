@@ -10,7 +10,8 @@ const path = require('path');
 // 每項檢查的嚴重度。B0 一律 warn；確認穩定後逐項改 'fail'。
 const LEVEL = {
     spots: 'warn', facilities: 'warn', presets: 'warn',
-    typekeys: 'warn', sharecodes: 'warn', sitetable: 'warn', devguide: 'warn', wordcount: 'warn'
+    typekeys: 'warn', sharecodes: 'warn', sitetable: 'warn', devguide: 'warn', wordcount: 'warn',
+    handbook: 'warn'
 };
 
 const TOWN_SIZES = { '26x24': '健康鎮', '24x24': '湖岸小鎮', '26x26': '冬郵／溪谷／百靈' };
@@ -333,5 +334,57 @@ module.exports = function consistencyChecks(ctx) {
         check('wordcount', `每頁可見字數 ≥1,000（${pages.length} 頁，不含 sim/）`, thin.length,
             thin.length ? thin.map(c => `${c.page}：${c.n} 字`) : '全部達標');
         ctx.info('字數分佈（少→多）', counts.map(c => `${c.n}\t${c.page}`));
+    }
+
+    /* ========== 8) 速查表讀 db/data.js 正本，sim 內不得再有手寫副本 ==========
+       sim 的 `HANDBOOK` 曾是一份 180 行的手寫遊戲資料副本（攻略要點／學園規模／教師／社團／
+       進路／行事／授業／挑戰／道具／學生），與 db/data.js 是同一批事實的兩份正本 → 漂移過。
+       它現在改成三個分頁（景點／設施／中日對照）直接讀 window.GAME_DB，其餘 11 類退回
+       ../db/<slug>/ 的連結。這條檢查守四件事，缺一件就會靜默腐爛：
+         ㈠ 正本真的被引用（且照慣例不帶 ?v）——不然三個分頁會是空的，而沒人會回報「壞了」
+         ㈡ 手寫副本沒有復活（`const HANDBOOK` / `HANDBOOK.xxx =` 都不該再出現）
+         ㈢ 分頁指到的分類與欄位索引真的存在——db 改欄序時分頁會默默顯示錯欄
+         ㈣ 14 個 db 分類全部有出口（3 個分頁 ∪ HB_MORE），沒有哪一類從模擬器到不了 */
+    {
+        const bad = [];
+
+        const refs = [...html.matchAll(/<script[^>]+src="([^"]*db\/data\.js[^"]*)"/g)].map(m => m[1]);
+        if (!refs.length) bad.push('sim/index.html 沒有引用 ../db/data.js —— 速查表讀不到正本，三個分頁會是空的');
+        refs.filter(r => r.includes('?')).forEach(r => bad.push(`data.js 的引用帶了查詢字串「${r}」（全站慣例是不帶 ?v，link-check 第 6 節也會擋）`));
+
+        if (/const HANDBOOK\s*=/.test(html)) bad.push('sim 又出現 const HANDBOOK＝手寫資料副本復活了；速查表只能讀 db/data.js');
+        if (/HANDBOOK\.\w+\s*=/.test(html)) bad.push('sim 出現 HANDBOOK.xxx = … 的追加副本');
+
+        const grab = (name, label) => {
+            const m = new RegExp('const ' + name + ' = (\\[[\\s\\S]*?\\n        \\]);').exec(html);
+            if (!m) { bad.push(`sim 內找不到 const ${name}（${label}）`); return null; }
+            try { return new Function('return ' + m[1])(); }
+            catch (e) { bad.push(`${name} 解析失敗：${e.message}`); return null; }
+        };
+        const tabs = grab('HB_TABS', '速查表的三個分頁設定');
+        const more = grab('HB_MORE', '被移除的分頁的交接連結');
+
+        (tabs || []).forEach(t => {
+            const c = cat(t.key);
+            if (!c) { bad.push(`分頁「${t.label}」指向 db 沒有的分類 key="${t.key}"`); return; }
+            if (!c.rows.length) bad.push(`分頁「${t.label}」對到的 db 分類 ${t.key} 一列都沒有`);
+            (t.cols || []).forEach(j => {
+                if (!c.columns[j]) bad.push(`分頁「${t.label}」要顯示第 ${j} 欄，但 db/${t.key} 只有 ${c.columns.length} 欄`);
+            });
+        });
+
+        (more || []).forEach(([slug, label]) => {
+            if (!db.categories.some(c => c.slug === slug)) bad.push(`HB_MORE 的「${label}」slug="${slug}" 不是 db 的分類`);
+            if (!fs.existsSync(path.join(S2, 'db', slug, 'index.html'))) bad.push(`HB_MORE 的「${label}」指向不存在的 db/${slug}/index.html`);
+        });
+
+        if (tabs && more) {
+            const covered = new Set([...tabs.map(t => t.key), ...more.map(x => x[0])]);
+            db.categories.map(c => c.key).filter(k => !covered.has(k)).forEach(k =>
+                bad.push(`db 分類 ${k} 既不是速查表的分頁、也不在連結區 —— 使用者從模擬器到不了它`));
+        }
+
+        check('handbook', `sim 速查表讀 db/data.js 正本、無手寫副本（分頁 ${(tabs || []).length} 個／交接連結 ${(more || []).length} 條／db 共 ${db.categories.length} 類）`,
+            bad.length, bad.length ? bad : '三個分頁都指到正本，14 個分類都有出口，手寫副本沒有復活');
     }
 };
