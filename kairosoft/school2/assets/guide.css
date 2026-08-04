@@ -1,5 +1,5 @@
 /* ============================================================
-   口袋學院物語2（school2）長頁閱讀排版 — guide.css?v=1
+   口袋學院物語2（school2）長頁閱讀排版 — guide.css?v=6
 
    只有 school2 的攻略頁引入，**自帶版號** → 加這一行不需要動全站
    `?v=8`（沒有改任何共用檔）。共用的 assets/shell.css / shell.js /
@@ -7,8 +7,8 @@
    推導，深色模式因此免費。
 
    引入方式（head，兩行）：
-       <link rel="stylesheet" href="../assets/guide.css?v=1">
-       <script src="../assets/guide.js?v=1" defer></script>
+       <link rel="stylesheet" href="../assets/guide.css?v=6">
+       <script src="../assets/guide.js?v=6" defer></script>
    （`defer` 會在 DOM 解析完、Shell.mount() 之後才跑 → 量得到 --hdr-h、
      也找得到 shell.js 注入的浮動 ☰ 目錄。）
 
@@ -28,6 +28,11 @@
      .toc-rail     ≥1568px 才出現的側邊目錄軌（由 guide.js 自動生成；出現時收掉浮動 ☰）
      .read-progress 頁內捲動進度線（由 guide.js 自動生成）
      .sc-*         景點檢查器 widget（自 spot-check/ 頁內 style 搬來）
+
+   ── 8bit 換皮（BV2）落在哪 ──────────────────────────────────
+   §13 是「形狀語言」的總覆寫（callout／btn／db-* 等 shell.css 元件），
+   本檔既有各節（§2 §5 §6 §6b §8 §10）則就地改自己的元件。分界很簡單：
+   **shell.css 的元件在 §13，guide.css 自己的元件在原節**。
    ============================================================ */
 
 
@@ -127,7 +132,12 @@ main.article h3[id] {
     width: 20px;
     height: 20px;
     flex: 0 0 auto;
-    border-radius: 5px;
+    /* 2px（不是 5px）：BV1 的 `--radius-sm: 2px` 換值救得到 .path-rail 的首尾段
+       （:120/:122 走 token），救不到這 6 顆寫死 5px 的編號晶片。而 .path-rail 是
+       進頁後視線的第二個落點（h1 之下），一秒內的畫面裡 6 顆圓角小方塊嵌在直角
+       分段軌裡是最容易被看見的殘留。
+       刻意**不**給它像素字型：11.5px 的 Silkscreen 落在非 8 倍數尺寸，字幹不勻。 */
+    border-radius: 2px;
     background: var(--card-2);
     border: 1px solid var(--line);
     color: var(--muted);
@@ -271,16 +281,24 @@ main.article > .prose > ol,
 main.article > .prose > blockquote,
 main.article > .prose > .callout,
 main.article > .prose > .zone-group,
-main.article > .prose > .next-step {
+main.article > .prose > .next-step,
+/* 這兩個原本漏了，兩處都造成「比它旁邊的正文寬 320px」的錯位：
+   · .toc  —— 8 頁是 main.article 直系子（已限寬），但 4 個佈局頁的目錄包在
+     .prose 裡 → 那 4 頁的目錄寬 1080px。目錄是「讀」的，本來就該在這張清單裡。
+   · .fig-cap —— 它是圖說（散文）。BV2 讓 .mapwrap 收成 fit-content（588/632px）
+     之後，1080px 的圖說會比它說明的那張圖寬 450px 以上，讀起來像跑掉了。 */
+main.article > .prose > .toc,
+main.article > .prose > .fig-cap {
     max-width: 760px;
     margin-right: auto;
 }
-/* 寬元素吃滿容器：這幾類是「查」的，不是「讀」的 */
+/* 寬元素吃滿容器：這幾類是「查」的，不是「讀」的。
+   .mapwrap 刻意**不在**這張清單裡（BV2 移出）：它是一張有固定尺寸的圖，
+   圖框要收成 fit-content 剛好包住圖，理由見 §6b。 */
 main.article > .prose > .datablock,
 main.article > .prose > .db-embed,
 main.article > .prose > .table-wrap,
 main.article > .prose > figure,
-main.article > .prose > .mapwrap,
 main.article > .prose > .kpi-row,
 main.article > #dbApp,
 main.article > .db-prose > .table-wrap {
@@ -294,10 +312,14 @@ main.article > .db-prose > .table-wrap {
 #dbApp table thead th:first-child,
 #dbApp table tbody td:first-child { white-space: nowrap; }
 /* border-collapse 下 sticky th 的 border-bottom 會隨內容捲走，資料列會從
-   標頭底下穿出來。用 1px inset 陰影補線（刻意只用一條 1px、不做階梯陰影：
-   sticky 元素上的多層陰影會在捲動時每影格重繪整條表頭）。 */
+   標頭底下穿出來。用一條 inset 陰影補線（刻意只用一條、不做階梯陰影：
+   sticky 元素上的多層陰影會在捲動時每影格重繪整條表頭）。
+   BV2 把它從 1px 改成 2px：同一個 .datablock 裡 .dbk-h 的分隔線已是 2px，表頭再用
+   1px 就是同一個盒子裡兩種線寬。這是**改既有那一層 inset 的粗細**，沒有新增任何
+   陰影層、沒有新增 border → 重繪成本與 1px 完全相同，不觸犯「sticky th 不得加
+   border/box-shadow」那條紅線。 */
 .datablock table.data thead th {
-    box-shadow: inset 0 -1px 0 var(--line);
+    box-shadow: inset 0 -2px 0 var(--line);
     z-index: 2;
 }
 .datablock figcaption { padding: 0 12px 10px; }
@@ -344,14 +366,17 @@ main.article #dbApp .table-wrap {
 main.article table.data thead th,
 main.article #dbApp table thead th {
     background: var(--card-2);
-    box-shadow: inset 0 -1px 0 var(--line);
+    box-shadow: inset 0 -2px 0 var(--line);   /* 與上面同一個理由，兩處必須同號 */
     z-index: 2;
 }
 
 
-/* ---------- 5. .zone-group：手風琴（只給查閱型內容，不給機制解說） --------- */
+/* ---------- 5. .zone-group：手風琴（只給查閱型內容，不給機制解說） ---------
+   BV2：2px 硬邊（Tier 2「框住」——你穿過它閱讀，所以**不給階梯陰影**，理由見 §13）。
+   邊色走 --px-edge-soft 而非滿的 --px-edge：一頁最多 15 個手風琴，全上滿會變黑格網。
+--------------------------------------------------------------------------- */
 .zone-group {
-    border: 1px solid var(--line);
+    border: 2px solid var(--px-edge-soft);
     border-radius: var(--radius-sm);
     background: var(--card);
     margin: 10px 0;
@@ -379,12 +404,21 @@ main.article #dbApp table thead th {
 .zone-group[open] > summary::after { content: '▴'; }
 .zone-group > summary:hover { background: var(--brand-soft); }
 .zone-group > summary:focus-visible { outline: 2px solid var(--brand); outline-offset: -2px; }
+/* 展開時把標頭與內容分開。用 **inset 陰影**而不是 border-bottom：border 會進 layout，
+   展開的那一瞬間使用者的眼睛正好在那一行下方等內容出現，讓他要讀的東西跳 2px 是零收益
+   的傷害。inset 外觀相同、零位移，而且是本檔已經在用的手法（見上面 sticky th 的補線）。 */
+.zone-group[open] > summary { box-shadow: inset 0 -2px 0 var(--px-edge-soft); }
+/* 按壓回饋：**齊邊元件不用位移**。summary 是齊邊貼在 `overflow: hidden` 的容器裡，
+   translate(2px,2px) 會讓左上緣露出容器底色、右緣被 clip 切掉、外投影整條被吃掉
+   —— 結果不是「按下去」而是「這一塊破了」。改用底色下沉，順帶免疫 reduced-motion。
+   **這是一條通則**：本檔所有位在 `overflow: hidden` 容器內的齊邊子元件都照這個做。 */
+.zone-group > summary:active { background: color-mix(in srgb, var(--ink) 8%, var(--card-2)); }
 .zone-group .zg-n { margin-left: auto; font-size: 12.5px; font-weight: 700; color: var(--muted); }
 .zone-group > summary:has(.zg-n)::after { margin-left: 8px; }
 .zone-group .zg-body { padding: 4px 14px 12px; }
 .zone-group .sw {
     width: 14px; height: 14px; flex: 0 0 auto;
-    border-radius: 4px;
+    border-radius: 2px;   /* 與 .zone .zmeta i 同號（同一頁上的同一種色票） */
     border: 1px solid color-mix(in srgb, var(--ink) 20%, transparent);
 }
 
@@ -401,10 +435,14 @@ main.article #dbApp table thead th {
     gap: 10px;
     margin: 14px 0;
 }
+/* BV2：Tier 1「浮起」。這是全站最像 HUD 的一塊 —— 9 塊同規格的凸起磚排在 grid 裡
+   讀起來是**一台儀表板**，不是 9 個互相搶戲的物件，所以它是少數保留階梯陰影的容器。
+   底色維持 --card-2（內凹底色是刻意的），不要跟著 .px-frame 的 --card 走。 */
 .kpi-row > div {
     background: var(--card-2);
-    border: 1px solid var(--line);
+    border: 2px solid var(--px-edge-soft);
     border-radius: var(--radius-sm);
+    box-shadow: var(--shadow);
     padding: 10px 12px;
 }
 .kpi-row b {
@@ -429,11 +467,42 @@ main.article #dbApp table thead th {
 
 /* 地圖圖框：SVG 原尺寸 568/612px 都比 760px 的正文欄窄，但比手機視窗寬 →
    只需要橫捲，不縮圖（縮到 375px 寬時格子只剩 14px，字全糊掉，不如讓它捲）。
-   底色刻意跟 SVG 內的 `<rect fill="#f8fafc">` 同色，圖與框才連成一塊。 */
+   底色刻意跟 SVG 內的 `<rect fill="#f8fafc">` 同色，圖與框才連成一塊。
+
+   ── BV2：這裡是「SVG 深色模式」那一題的答案（實測後，不是假設）─────────────
+   原本的假設是「SVG 裡寫死淺色，深色模式下會看不見」。**實測推翻了它**：10 個
+   layouts/*.svg（5 張 perfect ＋ 5 張 thumb）每一張的第一個元素都是全畫布的
+   `<rect fill="#f8fafc"/>` → 深色模式下 SVG 自成一塊淺色畫布，座標軸（#94a3b8）、
+   圖例（#334155/#64748b）、格子上的設施簡稱全部正常顯示，**沒有一個字看不見**。
+
+   真正壞掉的是這個圖框：它 `background: #f8fafc` 寫死、又在寬元素清單裡吃滿容器
+   1080px，而 SVG 只有 568px（26×26 的版本 612px）→ 深色模式下地圖右邊多出一片
+   **512×696px 的純白空地**，地圖擠在左三分之一。淺色下看不出來（頁面本來就是淺的），
+   深色下是整頁最亮的一塊。修法是讓圖框收成剛好包住圖：白色面積 1080×696 → 588×694
+   （−46%），**而且不需要任何深色覆寫**。
+
+   `width: fit-content` 一個宣告就夠（＝`min(available, max-content)`）：捲動容器的
+   min-content 是 0，所以窄螢幕會自然縮回容器寬並橫捲，不必再寫 `max-width: 100%`。
+   前提是它已經從上面的寬元素清單移出，否則 `main.article > .prose > .mapwrap`
+   的 (0,3,1) 會壓過這裡的 (0,1,0)——加前綴打特異度戰是繞遠路，移出清單才是正解。
+
+   border-color 刻意寫死 `#94a3b8`（＝SVG 自己畫座標軸與圖例色塊描邊用的色），
+   **不用 --px-edge**：襯邊永遠是淺色的 #f8fafc，而 --px-edge 在淺色是暗的、在深色是
+   亮的 → 用 token 會讓這條線在深色模式裡消失在襯邊上。這張圖是「一張有固定色票的
+   圖片」（由 scripts/layout-gen/gen-assets.js 用遊戲的格子色產生），圖框是它的襯邊，
+   襯邊跟圖同一套色票是裱框的基本原則，不跟 theme 走。
+
+   刻意**不做**的兩件：①`<picture>` ＋ 深色版 SVG —— 5 張 perfect 合計 536KB，再產
+   一份是 +536KB 與 5 個要同步的產物，而實測沒有可讀性問題，收益只有「不那麼亮」。
+   ②`filter: brightness(.9)` —— 它壓縮亮端，會讓草地與空地兩個淺綠靠攏到分不開，
+   同時吃掉 #334155 圖例文字對 #f8fafc 的對比：用全域濾鏡換「不那麼亮」，代價是這張
+   圖存在的理由（格子可辨識）。深色模式下一張亮的圖片就是圖片該有的樣子。 */
 .mapwrap {
     overflow-x: auto;
-    border: 1px solid var(--line);
+    width: fit-content;
+    border: 2px solid #94a3b8;
     border-radius: var(--radius);
+    box-shadow: var(--shadow);
     background: #f8fafc;
     padding: 10px;
     margin: 14px 0;
@@ -443,7 +512,9 @@ main.article #dbApp table thead th {
    否則圖會被壓縮成非整數縮放、格線出現摩爾紋。 */
 .mapwrap img { display: block; width: 568px; max-width: none; height: auto; }
 .mapwrap.wide img { width: 612px; }
-.fig-cap { font-size: 13px; color: var(--muted); margin: -4px 0 16px; }
+/* margin-top 由 -4px 改 2px：亮塊貼著文字比亮塊本身更刺眼，圖框下緣到圖說要留呼吸。
+   （font-size/color 不動——.fig-cap 不在 .prose 的紅線裡，但也沒有理由動它。） */
+.fig-cap { font-size: 13px; color: var(--muted); margin: 2px 0 16px; }
 
 /* 分區條目。兩種寫法並存且都要留著：
      .zone      四鎮用的 <div>（h4 標題 ＋ .zmeta 色塊列），分區數 12–17
@@ -453,7 +524,7 @@ main.article #dbApp table thead th {
 .zone h4 { margin: 0 0 5px; font-size: 16px; font-weight: 900; }
 .zone .zmeta { display: flex; flex-wrap: wrap; gap: 5px 12px; margin: 0 0 7px; font-size: 12.5px; font-weight: 700; color: var(--muted); }
 .zone .zmeta span { display: inline-flex; align-items: center; gap: 5px; }
-.zone .zmeta i { width: 10px; height: 10px; border-radius: 3px; border: 1px solid rgba(0, 0, 0, .22); flex: none; }
+.zone .zmeta i { width: 10px; height: 10px; border-radius: 2px; border: 1px solid rgba(0, 0, 0, .22); flex: none; }
 .zone p { margin: 5px 0; }
 .zone-list { list-style: none; padding: 0; margin: 12px 0; }
 .zone-list li { border-left: 3px solid var(--brand); padding: 8px 0 8px 12px; margin: 10px 0; }
@@ -464,17 +535,27 @@ main.article #dbApp table thead th {
 .note { font-size: 13.5px; color: var(--ink-soft); border-left: 2px solid var(--line); padding-left: 10px; margin: 8px 0; }
 
 /* 五鎮橫向切換。它是 game-bar 之下的**同層切換**（五張圖互為平行選項），
-   不是導覽分層裡的「往上」或「往下」，所以做成藥丸列而不是麵包屑。
-   當前頁是 <span> 不是 <a>（沒有連到自己的連結），靠 .on 標實心。 */
-.town-pills { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 6px; }
+   不是導覽分層裡的「往上」或「往下」，所以做成同層的按鍵列而不是麵包屑。
+   當前頁是 <span> 不是 <a>（沒有連到自己的連結），靠 .on 標實心。
+
+   BV2：藥丸（999px）改方角，並且用「凸起／沉入」把「你在哪一鎮」**多編碼一次**
+   （原本只靠實心綠底）—— 未選中的 <a> 凸起（Tier 1，可操作物件），當前的 <span>
+   沉入。這不是裝飾，是 8bit 分頁列的原生慣用語：選中的那一格是按進去的。
+   gap 由 8px 改 10px：加了 3px 階梯陰影之後，窄螢幕換行時上下兩排只剩 5px 淨距。 */
+.town-pills { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 6px; }
 .town-pills .tp {
     display: inline-flex; flex-direction: column; line-height: 1.25;
-    padding: 7px 14px; border-radius: 999px;
-    border: 1px solid var(--line); background: var(--card-2); color: var(--ink-soft);
+    padding: 7px 14px; border-radius: var(--radius-sm);
+    border: 2px solid var(--px-edge-soft); background: var(--card-2); color: var(--ink-soft);
     font-weight: 800; font-size: 14px; text-decoration: none;
 }
 .town-pills .tp i { font-style: normal; font-size: 11px; font-weight: 700; color: var(--muted); }
-.town-pills a.tp:hover { border-color: var(--brand); color: var(--brand-strong); }
+.town-pills a.tp {
+    box-shadow: var(--shadow);
+    transition: transform .1s steps(2, end), box-shadow .1s steps(2, end), border-color .1s steps(2, end);
+}
+.town-pills a.tp:hover { border-color: var(--brand); color: var(--brand-strong); box-shadow: var(--shadow-hover); }
+.town-pills a.tp:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 0 var(--px-drop); }
 .town-pills .tp.on { background: var(--brand); border-color: var(--brand); color: #fff; }
 .town-pills .tp.on i { color: rgba(255, 255, 255, .8); }
 
@@ -550,18 +631,35 @@ main.article #dbApp table thead th {
    內誤觸就往後跳。
 --------------------------------------------------------------------------- */
 .next-step { margin: 32px 0 6px; border-top: 1px solid var(--line); padding-top: 18px; }
+/* BV2：Tier 1「浮起」，而且是全套。這是每一頁唯一的主 CTA（讀完這章要去哪），
+   是讀者當天在這一頁的最後一個動作 —— 沒有理由讓它停在 1px 邊。
+   修掉的既有缺陷：原本靜止無陰影、hover 才 `box-shadow: var(--shadow-hover)`，
+   而且**沒有宣告 transition** → BV1 把 --shadow-hover 換成 `5px 5px 0 --px-edge`
+   之後，滑過去的瞬間是一個 5px 實色塊**憑空瞬跳**出現。 */
 .next-step .ns-card {
     display: flex;
     align-items: center;
     gap: 14px;
     padding: 15px 18px;
-    border: 1px solid color-mix(in srgb, var(--brand) 32%, var(--line));
+    border: 2px solid color-mix(in srgb, var(--brand) 45%, var(--line));
     border-radius: var(--radius);
     background: var(--brand-soft);
     color: var(--ink);
+    box-shadow: var(--shadow);
+    transition: transform .1s steps(2, end), box-shadow .1s steps(2, end);
 }
-.next-step .ns-card:hover { text-decoration: none; box-shadow: var(--shadow-hover); }
-.next-step .ns-ic { font-size: 26px; flex: 0 0 auto; line-height: 1; }
+.next-step .ns-card:hover { text-decoration: none; transform: translate(-1px, -1px); box-shadow: var(--shadow-hover); }
+.next-step .ns-card:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 0 var(--px-drop); }
+/* 裸 emoji 給像素風容器（與 .db-cat-card .ic 同一組值，理由見 §13）。
+   這裡整頁只有 1 個，框它是純收益。 */
+.next-step .ns-ic {
+    display: inline-grid; place-items: center;
+    width: 36px; height: 36px; flex: 0 0 auto;
+    border: 2px solid var(--px-drop);
+    border-radius: var(--radius-sm);
+    background: var(--card-2);
+    font-size: 24px; line-height: 1;
+}
 .next-step .ns-t { font-size: 16.5px; font-weight: 900; color: var(--brand-strong); }
 .next-step .ns-why { font-size: 13.5px; color: var(--ink-soft); margin-top: 2px; }
 .next-step .ns-prev {
@@ -601,27 +699,37 @@ main.article #dbApp table thead th {
 }
 
 
-/* ---------- 10. 景點檢查器 widget（自 spot-check/ 的頁內 style 搬來） ------- */
+/* ---------- 10. 景點檢查器 widget（自 spot-check/ 的頁內 style 搬來） -------
+   BV2：這是攻略首頁上唯一一個讀者會**輸入文字**的互動工具，是那一頁互動意圖最高的
+   區塊，而它上下都是 2px 硬邊直角的 callout／datablock，自己卻是一組 8–10px 圓角的
+   軟盒子 → 第一眼會讀成「這個 widget 是外來的、或是舊版沒改到的」。
+--------------------------------------------------------------------------- */
 .sc-tools { display: flex; gap: 8px; margin: 12px 0 8px; }
 .sc-tools input {
     flex: 1; font: inherit; font-size: 16px; min-height: 44px;
-    padding: 9px 12px; border: 1px solid var(--line);
-    border-radius: 10px; background: var(--card); color: var(--ink);
+    padding: 9px 12px; border: 2px solid var(--px-edge);
+    border-radius: var(--radius-sm); background: var(--card); color: var(--ink);
 }
+.sc-tools input:focus-visible { outline: 2px solid var(--brand); outline-offset: 0; }
 .sc-tools button {
     font: inherit; font-size: 13px; font-weight: 800; min-height: 44px;
-    padding: 0 14px; border: 1px solid var(--line); border-radius: 10px;
+    padding: 0 14px; border: 2px solid var(--px-edge); border-radius: var(--radius-sm);
     background: var(--card-2); color: var(--ink-soft); cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: transform .1s steps(2, end), box-shadow .1s steps(2, end);
 }
+.sc-tools button:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 0 var(--px-drop); }
 .sc-res { margin-top: 6px; }
 .sc-h { font-weight: 900; font-size: 15px; margin: 16px 0 6px; }
 .sc-list { list-style: none; margin: 0; padding: 0; }
+/* li 維持 1px 邊：一次會列出十幾條，全上 2px 會變成清單狀的黑格網（同 .zone-group
+   的克制）。只把圓角收成直角，形狀語言就到位了。 */
 .sc-list li {
-    padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line);
+    padding: 8px 10px; border-radius: var(--radius-sm); border: 1px solid var(--line);
     margin: 5px 0; font-size: 14px; background: var(--card);
 }
 .sc-list li.ok {
-    border-color: color-mix(in srgb, var(--brand) 45%, var(--line));
+    border-color: color-mix(in srgb, var(--brand) 65%, var(--line));
     background: var(--brand-soft);
 }
 .sc-name { font-weight: 900; }
@@ -636,8 +744,265 @@ main.article #dbApp table thead th {
 
 /* ---------- 12. prefers-reduced-motion ------------------------------------
    移除位移（「動」會誘發不適），保留狀態變化（陰影深淺是資訊）。
+   全關會讓按鈕失去按下回饋 —— 那是拿無障礙的名義做出更差的無障礙。
+
+   §13 的按壓位移**不是**靠 pixel.css 的 `.px-press` 實作（那個 media block 只選
+   `.px-press` class，而我們是以選擇器採用，見 §13 開頭）→ 每一個新增的 transform
+   都必須在這裡各補一條。清單要與 §13／§6b／§8／§10 的 `:active`／`:hover` 位移
+   逐一對得上，加一個就補一個。
 --------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
     .path-rail { scroll-behavior: auto; scroll-snap-type: none; }
     .read-progress i { will-change: auto; }
+    /* 位移全部移除、陰影變化全部保留 */
+    main.article .btn:active,
+    main.article .db-cat-card:active,
+    main.article .db-cat-card:hover,
+    main.article .town-pills a.tp:active,
+    main.article .next-step .ns-card:active,
+    main.article .next-step .ns-card:hover,
+    main.article .sc-tools button:active,
+    main.article .dbk-empty button:active {
+        transform: none;
+    }
 }
+
+
+/* ============================================================================
+   13. 8bit 元件換皮：shell.css 元件的形狀語言覆寫（BV2）
+   ============================================================================
+   BV1 在 assets/pixel.css 建好了 token 層：`--px-edge`／`--px-drop`（用 color-mix
+   從 --ink/--card 推導，淺深色都過對比）、`main.article { --radius: 2px;
+   --shadow: 3px 3px 0 var(--px-drop); --shadow-hover: 5px 5px 0 var(--px-edge) }`。
+   本節把那套語言真正套到元件上。**一律不改 assets/shell.css**（29 款共用），
+   靠 `main.article` 提高特異度覆寫。
+
+   ── 為什麼不往 HTML 加 .px-frame／.px-ico／.px-press ─────────────────────────
+   目標清單裡有一半的 markup 不是手寫的，加不了 class：
+     · .db-cat-card / .db-chip / .db-cat-card .ic  → assets/db.js 產生（29 款共用，禁改）
+     · .next-step / .datablock                     → gen-embed.js 蓋章區段（手改會被覆蓋）
+   半數能加、半數不能加 → 結果是兩套機制並存，比一套選擇器難維護。所以這裡以選擇器
+   採用同一組宣告；pixel.css 的三個工具 class 留作**其他 28 款的可攜契約**。
+   代價有兩個，都已經處理：
+     ① 值有兩份要同步（改這裡要順手看一眼 pixel.css §5，反之亦然）
+     ② `.px-press` 的 reduced-motion 逃生門綁在 class 上 → §12 已逐條補齊
+   另外**不逐字複製 `.px-frame`**：它帶 `background: var(--card)`，而 .toc／
+   .kpi-row > div／.datablock／.dbk-h 現在是刻意的 `--card-2` 內凹底色。只採用
+   border / border-radius / box-shadow，`background` 一律不帶。
+
+   ── 誰有資格拿到階梯陰影：三層權重，一個深度 ─────────────────────────────
+   深度只用一個（`var(--shadow)` = 3px；hover 5px、按下 2px 是**狀態**不是第二三種
+   深度）。但深度統一不等於可以到處灑：舊的 --shadow 是 `0 1px 2px rgba(...,.05)`
+   幾乎不可見，新的是一條 3px 的實色帶（對 --card 3.54:1）。若 callout／toc／
+   table-wrap／zone-group／datablock 全上，一頁會有 35–50 個實色帶 —— 位移陰影的語意
+   是「這個東西浮在頁面之上」，**如果所有東西都浮著，就沒有東西浮著**。
+     Tier 1 浮起（2px 硬邊 ＋ var(--shadow)）＝你會動手操作、或本質上被抬離文流的物件
+       .db-cat-card / .btn / .next-step .ns-card / .town-pills a.tp /
+       .kpi-row > div / .mapwrap / .sc-tools button
+     Tier 2 框住（2px 硬邊，**無陰影**）＝你會穿過它閱讀的容器
+       .callout / .toc / .zone-group / .datablock / .table-wrap
+       （JRPG 的對話框是平的、厚邊的、沒有投影的；第 15 個投影不會讓它更 8bit）
+     Tier 3 齊平（不動）＝ table.data thead th（sticky，紅線）、.ad-slot（AdSense 政策）
+
+   ── 邊色只有兩個權重 ────────────────────────────────────────────────────
+     --px-edge       滿的硬邊：小元件、輸入框、可點晶片、裸 .callout（要大聲）
+     --px-edge-soft  45% 混色：一頁會出現 8–15 個的容器（卡牆／手風琴／KPI 磚／表框）
+   14 張卡或 15 個手風琴全上滿 --px-edge 會讓整片變成黑格網 —— 那是吵，不是硬。
+
+   ── 深色模式 ────────────────────────────────────────────────────────────
+   本節所有值都走 --px-edge / --px-edge-soft / --px-drop / --shadow / --line /
+   --brand，全部已 theme-derived → **不需要任何深色覆寫區塊**（站上深色有兩套
+   `@media (prefers-color-scheme: dark) :root:not([data-theme="light"])` 與
+   `:root[data-theme="dark"]`，要覆寫必須兩套逐字各補一份；本節刻意設計成不必）。
+   唯一的例外是「選中態的沉入內陰影」，見下面 13d 的說明 —— theme-derived 不等於
+   theme-correct。（另一處固定色是 §6b 的 #94a3b8/#f8fafc，理由在那裡。）
+
+   ── 順手記一筆給下一個人（不是本批要修的）─────────────────────────────
+   pixel.css §4 列了 5 個像素字型選擇器，其中 `.statgrid`／`.coord`／`.hero .pill`
+   在 school2 是**零節點**（五個鎮頁早就改用 .kpi-row 了、school2 沒有 .hero）。
+   實際只有 `.kpi-row b`（只在 5 個佈局頁）與 `.sec-num` 吃到像素字型 → L2「數與籤」
+   層在其餘 23 頁只剩一個 12px 的章節編號。別以為 L2 已經鋪滿了。
+   另外 pixel.css 的 `.px-frame` 用 4px 階梯陰影，是全站唯一的 4px（本節統一 3px）；
+   它零使用所以不會與 3px 同時出現在畫面上，不能改（改 pixel.css 要全站 bump ?v）。
+--------------------------------------------------------------------------- */
+
+/* 宣告在 :root（跟 pixel.css 的 --px-edge 同一層）而不是 main.article：--shadow 那類
+   「只在內容區生效」的換值才需要 scope，邊色是純推導值，放 :root 就不必擔心某天有元件
+   落在 main.article 之外時 var() 解不出來（custom property 解不出來會讓整條
+   border-color 失效成 currentColor —— 那種壞法很難查）。 */
+:root {
+    --px-edge-soft: color-mix(in srgb, var(--px-edge) 45%, var(--line));
+}
+
+
+/* ---- 13a. .callout（shell.css:362–366）—— Tier 2 --------------------------
+   1px → 2px。variant 的邊色混色比例**必須跟著加**（35%→55%、45%→65%）：那些比例是
+   為 1px 調的，1px 的低對比細線讀起來是「一條線」，2px 的低對比線讀起來是一條
+   **糊掉的色帶** —— 正好是 8bit 語言的反面（8bit 對話框的邊是硬的）。
+   色相與分工一個字都不動（tip 走 --brand、warn 走琥珀、key 走 --accent）：
+   「顏色不動」的意思是不動色相，不是不動數值。
+   裸 .callout 的邊色由 --line 改 --px-edge：2px 的 --line 看起來像沒關掉的 debug 框。
+   padding / font-size 不動（那會動到框內的行寬與正文節奏）。 */
+main.article .callout { border-width: 2px; border-color: var(--px-edge); }
+main.article .callout.tip { border-color: color-mix(in srgb, var(--brand) 55%, var(--line)); }
+main.article .callout.warn { border-color: color-mix(in srgb, #e0a020 65%, var(--line)); }
+main.article .callout.key { border-color: color-mix(in srgb, var(--accent) 65%, var(--line)); }
+
+
+/* ---- 13b. .toc（shell.css:377）與 .table-wrap（:369）—— Tier 2 -----------
+   `.datablock .table-wrap` 是 border: 0（它的框由 .datablock 提供），而
+   `main.article .table-wrap` 的 (0,2,1) 會壓過 `.datablock .table-wrap` 的 (0,2,0)
+   → 必須明寫回 0，否則 datablock 內會多長一條 2px 邊。 */
+main.article .toc { border-width: 2px; border-color: var(--px-edge-soft); }
+main.article .table-wrap { border-width: 2px; border-color: var(--px-edge-soft); }
+main.article .datablock .table-wrap { border-width: 0; }
+
+
+/* ---- 13c. .btn（shell.css:414–423）—— Tier 1 ------------------------------
+   `border-radius: 10px` 是寫死的、不走 token → BV1 的 --radius 換值救不到它，
+   是全站唯一還圓著的主要按鈕。inset 陰影換成階梯陰影是同一件事的兩種說法
+   （inset＝「這是一顆實體鍵」，drop 也是，但屬於這套語言）。
+   順手補 :focus-visible —— .btn 在 shell.css 完全沒有鍵盤焦點樣式。 */
+main.article .btn {
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow);
+    transition: filter .15s ease, transform .1s steps(2, end), box-shadow .1s steps(2, end);
+}
+main.article .btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 0 var(--px-drop); }
+main.article .btn:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+main.article .btn.ghost { border: 2px solid var(--px-edge); box-shadow: var(--shadow); }
+
+
+/* ---- 13d. 「選中態」＝沉入：五個一起做 -----------------------------------
+   main.article 裡有一整族「這一個是選中的」，五個都是實心 --brand ＋ #fff：
+     .town-pills .tp.on（五鎮切換）／.db-chip.active（分類列）／.db-pick.on（比較挑選）
+     .db-cmp-btn.on（比較模式開關）／.path-rail [aria-current="step"]（主線位置）
+   一個新語意只做一處那不是語言、是裝飾——讀者學不到「沉入＝你在這」的規則，
+   只會覺得那一顆長得怪。所以五個共用同一條規則。.path-rail 尤其該做：接合式分段軌
+   的當前段沉入，正是這個慣用語的原生用法。
+
+   ── 為什麼這裡用寫死的 rgba(0,0,0,.28) 而不是 color-mix(--ink …) ────────
+   `--ink` 淺色是 #1c2b24（暗）、深色是 #e8f0eb（亮）→ `--ink` 混出來的內陰影在淺色
+   是暗的（＝凹）、在深色是**亮的（＝凸）**，會把「你在這一頁」編碼成相反的意思。
+   這五個元素的底都是 `var(--brand)`，兩個 theme 下都是**中間調的飽和綠**
+   （#16794a / #4cc38a）、不是 --card → 飽和色塊上的內陰影是**物理打光**、不是主題色，
+   黑色 alpha 在兩邊都正確。這就是「theme-derived ≠ theme-correct」的那個例外。
+   陰影只在左上內緣，不影響 #fff 文字的對比。 */
+main.article .town-pills .tp.on,
+main.article .db-chip.active,
+main.article .db-pick.on,
+main.article .db-cmp-btn.on,
+main.article .path-rail [aria-current="step"] {
+    box-shadow: inset 2px 2px 0 0 rgba(0, 0, 0, .28);
+}
+
+
+/* ---- 13e. .db-cat-card（shell.css:471–480）—— Tier 1 ---------------------
+   邊 1px → 2px 但走 --px-edge-soft（14 張卡全上滿會變黑格網），:hover 才升到滿的
+   --px-edge。transition 整條統一 `.1s steps(2,end)`（原本是三條 .16s ease；.16s 下
+   的 steps(2) 讀起來鈍——兩格各 80ms。border-color 分兩格跳在這個語言裡是對的）。
+   hover 抬起（既有 translateY(-2px) ＋ --shadow-hover）、按下沉入，是一組完整的手感。 */
+main.article .db-cat-card {
+    border-width: 2px;
+    border-color: var(--px-edge-soft);
+    transition: transform .1s steps(2, end), box-shadow .1s steps(2, end), border-color .1s steps(2, end);
+}
+main.article .db-cat-card:hover { border-color: var(--px-edge); }
+main.article .db-cat-card:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 0 var(--px-drop); }
+/* 觸控裝置沒有 hover → 只有 3px 靜止沉到 2px＝差 1px，等於沒有回饋。位移做足。
+   （桌機是 hover −2px/5px 按到 active +2px/2px，本來就有 4px 落差。） */
+@media (hover: none) {
+    main.article .db-cat-card:active { transform: translate(3px, 3px); box-shadow: none; }
+}
+
+/* 裸 emoji 給像素風容器。**刻意不照 pixel.css 的 .px-ico（32px 框 / 18px 字）**：
+   卡片只有 150–200px 寬，emoji 是 14 張卡唯一的辨識錨點，26px→18px 是面積 −52%，
+   等於「把容器變吵、把內容變小」—— chrome 不准比 content 大聲。
+   36px 框 / 24px 字（幾乎不縮），邊用 --px-drop 而不是 --px-edge：卡片邊是
+   --px-edge-soft（刻意壓弱），icon 框若用滿的 --px-edge 會變成整張卡上最強的一條線，
+   比定義可點區域的卡片邊還強＝主從關係倒過來。
+   高度影響：26px emoji 的 line box 約 30–32px，換 36px 框只 +4~6px，而 .db-cat-grid
+   是 grid、同列自動 stretch → 不會高矮不齊。 */
+main.article .db-cat-card .ic {
+    display: inline-grid; place-items: center;
+    width: 36px; height: 36px; flex: 0 0 auto;
+    border: 2px solid var(--px-drop);
+    border-radius: var(--radius-sm);
+    background: var(--card-2);
+    font-size: 24px; line-height: 1;
+}
+
+
+/* ---- 13f. db 分類頁的控制列（shell.css:431–465）--------------------------
+   `.db-nav`（晶片列）**正上方 14px** 就是 `.db-tools`（.db-search ＋ .db-cmp-btn），
+   再下面是 .db-cmp-clear。只方化晶片、放著同一畫面上體積更大的主搜尋框圓著，
+   是這批改動裡最刺眼的不一致，而且出現在 14 個 db 分類頁的第一屏 → 一起改。
+   `.db-pick` 是比較模式下視覺全等的第二排晶片，同理一起改。
+
+   命中區 36px → 44px，**不設 `@media (pointer: coarse)`**：①觸控筆電接鍵盤時報
+   pointer: fine，條件式測錯裝置 ②44px 對滑鼠使用者也更好（瞄準成本永遠 >0），而
+   本檔別處（.path-rail a / .dbk-f / .sc-tools / .zone-group > summary / .ns-prev）
+   已經一律用無條件 min-height: 44px —— 這裡開一個條件式例外只是多一個分支要驗兩次。
+   晶片是 flex 容器（.db-nav / .db-chipcloud）的子元素、已被 blockify，但仍要
+   inline-flex ＋ align-items: center 才能讓文字在 44px 裡置中。
+   晶片刻意**不給階梯陰影**：一排 14 顆凸起是噪音；選中態靠 13d 的沉入表達。 */
+main.article .db-chip,
+main.article .db-pick {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 14px;
+    border-width: 2px;
+    border-color: var(--px-edge);
+    border-radius: var(--radius-sm);
+}
+main.article .db-search,
+main.article .db-cmp-btn {
+    border-width: 2px;
+    border-color: var(--px-edge);
+    border-radius: var(--radius-sm);
+}
+/* `.db-search:focus` 刻意不覆寫：shell.css:461 已經給了 outline ＋ border-color，
+   而 outline-offset 沒被宣告過（＝預設 0）→ 這裡沒有 .dbk-f 那個「三條同心線」的問題，
+   多寫一條只會把 shell.css 的 `border-color: var(--brand)` 弄掉。 */
+main.article .db-cmp-clear { border-width: 2px; border-color: var(--px-edge); border-radius: var(--radius-sm); }
+
+
+/* ---- 13g. .datablock 標頭（guide.css §4）—— Tier 2 -----------------------
+   `thead th` 一個字都不碰（sticky 紅線；那條補線的粗細改動見 §4 的說明）。
+   .dbk-f 的 outline-offset 由 1px 改 0：2px 暗邊 ＋ 1px 空隙 ＋ 2px 綠 outline
+   會變成三條同心線。
+   .dbk-empty button 32px → 44px：搜不到東西時那顆「清除篩選」是使用者唯一的出路，
+   回頭的那顆鈕不該比別的鈕小。 */
+main.article .datablock { border-width: 2px; border-color: var(--px-edge-soft); }
+main.article .dbk-h { border-bottom-width: 2px; }
+main.article .dbk-f { border-width: 2px; border-color: var(--px-edge); border-radius: var(--radius-sm); }
+main.article .dbk-f:focus-visible { outline: 2px solid var(--brand); outline-offset: 0; }
+main.article .dbk-empty button {
+    min-height: 44px;
+    border-width: 2px;
+    border-color: var(--px-edge);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow);
+    transition: transform .1s steps(2, end), box-shadow .1s steps(2, end);
+}
+main.article .dbk-empty button:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 0 var(--px-drop); }
+
+
+/* ---- 13h. 刻意不碰（每條都有理由，不要自作主張加回來）--------------------
+   · `.pagenav-btn`（圓形）／`.pagenav-menu`（14px 圓角＋柔和 blur）—— **不改**。
+     ①它是 29 款 1:1 共用的唯一浮動控件。驗收標準是「並排要看得出是同一個站」，
+       而外殼恆定正是「同一個站」的載體：內容區可以是分館，外殼不行。
+     ②`.pagenav-menu` 的 blur 陰影在**做功能**：那是蓋在任意內容之上的 240px 浮層，
+       模糊陰影是唯一能讓它的邊界從底下不確定的文字／表格裡分離出來的東西。零模糊
+       位移塊是給「貼在平底上的行內盒子」用的，放在浮層上邊界會跟底下內容糊在一起。
+     ③圓形＝「這是覆蓋層控件」，方形＝「這是內容」。方化＋硬邊＋階梯陰影之後它會讀成
+       「一張卡片卡在文章上面」，像渲染 bug，不像控件。
+     pixel.css:119–120 已經帶著書面理由把 site-header/game-bar/footer/.pagenav 劃在
+     界外。guide.css 只影響這 28 頁在技術上為真，但技術上做得到不是設計上該做。
+   · `table.data thead th` 不加 border／box-shadow（見 §4）。
+   · `.ad-slot` 不加任何裝飾框線（AdSense：不得讓廣告看起來像網站內容）。
+   · `.prose` 的 p/li/h1/h2/h3 字型／字級／行高／字距／顏色／margin —— L3 紅線。
+     本節只動 border/radius/box-shadow/transform/min-height，一個字級都沒碰。
+   · 表格族不用 clip-path（.table-wrap 是捲動容器，會裁掉內容）。
+--------------------------------------------------------------------------- */
