@@ -158,6 +158,30 @@
             /* 只閃 3 下就停:無限脈動會逼瀏覽器每個影格重繪整個區域,造成持續卡頓 */
             animation: foundPulse 1.1s ease-in-out 3;
         }
+        /* 定位跳轉：點座標晶片時把那一棟閃三下（與 .found 的持續外框區分開來，
+           .found 是「這一類全部」，.locate 是「你現在跳到的這一棟」） */
+        .tile.locate {
+            outline: 4px solid #f59e0b;
+            outline-offset: -1px;
+            z-index: 16;
+            animation: locatePulse .5s steps(2, end) 3;
+        }
+        @keyframes locatePulse {
+            0%, 100% { outline-color: #f59e0b; }
+            50% { outline-color: #fff; }
+        }
+        /* 搜尋／點選的命中摘要：原本是 11px 的一行小字，看不清楚也跳不過去 */
+        #searchHits { font-size: 12px; line-height: 1.5; }
+        #searchHits .sh-sum { font-weight: 900; font-size: 13px; }
+        #searchHits .sh-chips { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 4px; }
+        #searchHits .sh-chip {
+            font: inherit; font-size: 11px; font-weight: 800; cursor: pointer;
+            min-height: 24px; padding: 2px 6px;
+            border: 1px solid #e9d5ff; border-radius: 5px;
+            background: #faf5ff; color: #7e22ce;
+        }
+        #searchHits .sh-chip:hover { background: #f3e8ff; border-color: #d8b4fe; }
+        #searchHits .sh-more { font-size: 11px; color: #9ca3af; align-self: center; }
         @keyframes foundPulse {
             0%, 100% { outline-color: #d946ef; }
             50% { outline-color: #fbbf24; }
@@ -416,7 +440,10 @@
             /* 菱形視角的畫布本來就要透明（旋轉後的方框不能露出來）；上一條特異度較高會蓋掉它 */
             :root:not([data-theme="light"]) body.diamond .map-container { background-color:transparent }
             :root:not([data-theme="light"]) .axis-label { color:var(--sd-ink-soft);background-color:var(--sd-axis-bg) }
-            :root:not([data-theme="light"]) .spot-tooltip { background-color:var(--sd-tip-bg);border-color:var(--sd-line-strong) }
+            :root:not([data-theme="light"]) #searchHits .sh-chip { background-color:var(--sd-card-2);border-color:var(--sd-line);color:var(--sd-ink-soft) }
+:root:not([data-theme="light"]) #searchHits .sh-chip:hover { background-color:var(--sd-card);border-color:var(--sd-ink-soft) }
+:root:not([data-theme="light"]) #searchHits .sh-more { color:var(--sd-muted) }
+:root:not([data-theme="light"]) .spot-tooltip { background-color:var(--sd-tip-bg);border-color:var(--sd-line-strong) }
             :root:not([data-theme="light"]) .spot-tooltip::after { border-top-color:var(--sd-tip-bg) }
             :root:not([data-theme="light"]) body.searching .game-grid::after { background:var(--sd-veil) }
             :root:not([data-theme="light"]) ::-webkit-scrollbar-thumb { background:var(--sd-sb) }
@@ -522,7 +549,10 @@
         /* 菱形視角的畫布本來就要透明（旋轉後的方框不能露出來）；上一條特異度較高會蓋掉它 */
         :root[data-theme="dark"] body.diamond .map-container { background-color:transparent }
         :root[data-theme="dark"] .axis-label { color:var(--sd-ink-soft);background-color:var(--sd-axis-bg) }
-        :root[data-theme="dark"] .spot-tooltip { background-color:var(--sd-tip-bg);border-color:var(--sd-line-strong) }
+        :root[data-theme="dark"] #searchHits .sh-chip { background-color:var(--sd-card-2);border-color:var(--sd-line);color:var(--sd-ink-soft) }
+:root[data-theme="dark"] #searchHits .sh-chip:hover { background-color:var(--sd-card);border-color:var(--sd-ink-soft) }
+:root[data-theme="dark"] #searchHits .sh-more { color:var(--sd-muted) }
+:root[data-theme="dark"] .spot-tooltip { background-color:var(--sd-tip-bg);border-color:var(--sd-line-strong) }
         :root[data-theme="dark"] .spot-tooltip::after { border-top-color:var(--sd-tip-bg) }
         :root[data-theme="dark"] body.searching .game-grid::after { background:var(--sd-veil) }
         :root[data-theme="dark"] ::-webkit-scrollbar-thumb { background:var(--sd-sb) }
@@ -2640,7 +2670,54 @@
             // 聚光燈只在真的有找到時開，避免搜不到東西卻整張圖變暗
             document.body.classList.toggle('searching', parts.length > 0);
             hits.style.display = '';
-            hits.innerText = parts.length ? '📍 地圖上：' + parts.join('、') : '地圖上沒有符合的設施';
+            if (!parts.length) { hits.innerHTML = '<span class="sh-sum">地圖上沒有符合的設施</span>'; hlSpots = []; return; }
+            // 逐棟列出座標並可點擊跳轉：只標「幾棟」而不給位置，放大或平移之後
+            // 使用者根本找不到那幾棟在哪（聚光燈只在可見範圍內有意義）。
+            hlSpots = locateSpots(matched);
+            const total = hlSpots.length;
+            const shown = hlSpots.slice(0, 24);
+            hits.innerHTML =
+                '<span class="sh-sum">📍 ' + parts.join('、') + '</span>'
+                + '<div class="sh-chips">'
+                + shown.map((s, i) => `<button class="sh-chip" data-i="${i}" title="跳到這一棟">${s.label}</button>`).join('')
+                + (total > shown.length ? `<span class="sh-more">…共 ${total} 棟</span>` : '')
+                + '</div>';
+        }
+
+        /* 把命中的格子收斂成「一棟一個座標」：多格建築取左上角（同 bid 只算一次），
+           1×1 的環境地形每格算一個。回傳依 X→Y 排序，讀起來跟地圖的閱讀順序一致。 */
+        function locateSpots(matched) {
+            const seen = new Set(), out = [];
+            for (let r = 0; r < gridRows; r++) {
+                for (let c = 0; c < gridCols; c++) {
+                    const cell = gridData[r][c];
+                    if (!matched.has(cell.type)) continue;
+                    if (cell.bid !== undefined) {
+                        if (seen.has(cell.bid)) continue;
+                        seen.add(cell.bid);
+                    }
+                    out.push({ r, c, label: 'X' + (r + 2) + '/Y' + (gridCols + 1 - c) });
+                }
+            }
+            return out;
+        }
+        let hlSpots = [];
+
+        /* 跳到某一格：把捲動容器移到讓它居中，並閃三下。
+           用 scrollLeft/Top 直接算而不用 scrollIntoView——後者會連整頁一起捲。 */
+        function focusCell(r, c) {
+            const el = tileAt(r, c);
+            const box = document.getElementById('mapContainer');
+            if (!el || !box) return;
+            box.scrollTo({
+                left: el.offsetLeft - box.clientWidth / 2 + el.offsetWidth / 2,
+                top: el.offsetTop - box.clientHeight / 2 + el.offsetHeight / 2,
+                behavior: 'smooth'
+            });
+            document.querySelectorAll('.tile.locate').forEach(t => t.classList.remove('locate'));
+            el.classList.add('locate');
+            setTimeout(() => el.classList.remove('locate'), 1600);
+            updateCoordHint(r, c);
         }
 
         // 最近使用列（存進偏好，跨次記憶）
@@ -2816,6 +2893,14 @@
                 inp.value = '';
                 filterPalette('');
                 inp.focus();
+            });
+
+            // 命中座標晶片 → 跳到那一棟（事件委派：晶片是每次重繪的）
+            document.getElementById('searchHits').addEventListener('click', (e) => {
+                const chip = e.target.closest('.sh-chip');
+                if (!chip) return;
+                const s = hlSpots[+chip.dataset.i];
+                if (s) { focusCell(s.r, s.c); track('locate_facility'); }
             });
 
             document.getElementById('suggestBtn').addEventListener('click', () => {
