@@ -243,6 +243,16 @@ section('3. canonical / og:url / og:image');
     verdict('og:url 缺漏', noOg.length, noOg.length ? list(noOg) : '0 頁', 'warn');
     ok(`有 og:image 的頁面 ${ogi} / ${pages.length}`);
     verdict('og:image 指向存在的檔案', missImg.length, missImg.length ? list(missImg) : '全部存在', 'warn');
+    // 寄居在同網域、與攻略站無關的一次性頁面：預覽卡寫「開羅攻略站」是錯的資訊，
+    // 所以刻意不給 og:image。gen-og.js 的 NON_STATION 是同一組，改要一起改。
+    const NON_STATION = new Set([
+        'kindergarten/20260303.html',
+        'privacy/wealth_navigator.html',
+        'travel/20251009.html',
+    ]);
+    const lackImg = noImg.filter(p => !NON_STATION.has(p));
+    verdict('og:image 缺漏（跑 node scripts/gen-og.js --stamp 補齊）', lackImg.length,
+        lackImg.length ? list(lackImg) : `0 頁（另有 ${noImg.length - lackImg.length} 頁刻意不給）`, 'warn');
 }
 
 /* ==================== 4. 麵包屑 ==================== */
