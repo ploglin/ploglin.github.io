@@ -293,7 +293,7 @@ for (const file of files) {
         const anchor = ids.length ? ids[ids.length - 1].match(/id="([^"]+)"/)[1] : '';
         const h2s = before.match(/<h2[^>]*>([\s\S]*?)<\/h2>/g) || [];
         const h2 = h2s.length
-            ? h2s[h2s.length - 1].replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim()
+            ? h2s[h2s.length - 1].replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').replace(/^\d{2}\s*/, '').trim()
             : '';
         (usedBy[catKey] = usedBy[catKey] || []).push({ slug, anchor, h2 });
 
