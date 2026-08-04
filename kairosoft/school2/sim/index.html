@@ -835,7 +835,7 @@
             { id: 'date', name: '約會', req: ['tennis', ['woods', 'sakura'], 'library'], bonus: '文系+2 理系+3 人氣+2 態度+2', dotColor: 'bg-pink-500', teacher: '黑猩猩G※' },
             { id: 'nakayoshi', name: '好友', req: ['water', 'nurse', 'tea_room'], bonus: '文系+3 運動+2 人氣+2', dotColor: 'bg-yellow-400', teacher: '黑猩猩G※' },
             { id: 'kaidan', name: '怪談', req: ['music', 'science', 'incinerator'], bonus: '理系+3 頭腦+3', dotColor: 'bg-violet-600', teacher: '足元藏助・黑猩猩G※' },
-            { id: 'benkyou', name: '學習', req: ['principal', 'library', 'av_room'], bonus: '文系+3 理系+3 態度+3', dotColor: 'bg-blue-500', teacher: '中野坂助' },
+            { id: 'benkyou', name: '學習', req: ['principal', 'library', 'av_room'], bonus: '文系+3 理系+3 態度+3', dotColor: 'bg-blue-500', teacher: '中野阪助' },
             { id: 'geijutsu', name: '藝術', req: ['art', 'music', 'multi_room'], bonus: '理系+3 運動+3', dotColor: 'bg-purple-500', teacher: '森野熊克斯・開羅君※' },
             { id: 'katei', name: '家庭', req: ['nurse', 'home_ec', 'toilet'], bonus: '文系+2 體育+2 人氣+3', dotColor: 'bg-rose-400', teacher: '鴨田鴨子・開羅君※' },
             { id: 'kaimono', name: '購物', req: ['shop', 'convenience', 'cafeteria'], bonus: '體育+3 運動+3 態度+1', dotColor: 'bg-orange-500', teacher: '阿布法拉國王・黑猩猩G※・開羅君※' },
@@ -853,7 +853,7 @@
             { id: 'senkyo', name: '選舉', req: ['principal', 'office', 'tea_room'], bonus: '理系+2 體育+3 運動+2 人氣+2', dotColor: 'bg-indigo-500' },
             { id: 'yakimochi', name: '吃醋', req: ['incinerator', 'cafeteria', 'home_ec'], bonus: '理系+3 體育+2 頭腦+2 態度+2', dotColor: 'bg-amber-400' },
             { id: 'shibuya', name: '澀谷', req: ['soccer', 'club', 'convenience'], bonus: '文系+3 體育+1 人氣+2', dotColor: 'bg-cyan-600' },
-            { id: 'nekketsu', name: '熱血', req: ['soccer', 'gym', 'pool'], bonus: '文系+2 理系+3 頭腦+3 運動+3', dotColor: 'bg-red-400', teacher: '丁髷武志・開羅君※' },
+            { id: 'nekketsu', name: '熱血', req: ['soccer', 'gym', 'pool'], bonus: '文系+2 理系+3 頭腦+3 運動+3', dotColor: 'bg-red-400', teacher: '馬棟・開羅君※' },
             { id: 'action', name: '動作', req: ['dojo', 'club', 'trampoline'], bonus: '體育+3 頭腦+2 運動+2', dotColor: 'bg-stone-600' },
             { id: 'meimon', name: '名門', req: ['statue_br', 'statue_gold', 'computer'], bonus: '文系+3 體育+3 人氣+3 態度+3', dotColor: 'bg-yellow-500' },
             { id: 'aozora', name: '青空', req: ['giraffe', 'statue_br', 'totem'], bonus: '文系+3 頭腦+2 人氣+2', dotColor: 'bg-sky-400' },
@@ -2070,7 +2070,7 @@
                 <div class="font-black text-gray-800 mb-1">🧑‍🏫 教師</div>
                 <ul class="list-disc ml-4 mb-2">
                     <li>單科指導力練到 100 比平均加點更有效率。</li>
-                    <li>優先雇「薪水低、合計指導力高」的高 CP 教師；<b>田山雪美（田山ゆきみ）</b>（全國平均 200 分出現）CP 值最高，出現就招。</li>
+                    <li>優先雇「薪水低、合計指導力高」的高 CP 教師；<b>段燕燕（田山ゆきみ）</b>（全國平均 200 分出現）CP 值最高，出現就招。</li>
                     <li>名門學園之前只雇上限薪資 40 萬以下的教師；超過 45 萬的基本不需要。</li>
                     <li>一年只上 3 次課，指導力影響其實有限——便宜教師多雇、賺教育 P 開特別授業更划算。</li>
                 </ul>
@@ -2098,14 +2098,14 @@
             teacher: { title: '教師', html: `
                 <div class="text-gray-400 mb-1">與景點/條件相關的教師（括號內為日文原文，片假名人名為暫譯；其餘教師多為一開始或隨學園規模解鎖）：</div>
                 <table class="w-full"><tr><th ${HB_TH}>教師</th><th ${HB_TH}>招募條件</th></tr>
-                <tr><td ${HB_TD}>中野坂助</td><td ${HB_TD}>學習景點</td></tr>
+                <tr><td ${HB_TD}>中野阪助</td><td ${HB_TD}>學習景點</td></tr>
                 <tr><td ${HB_TD}>足元藏助（足元蔵助）</td><td ${HB_TD}>怪談景點</td></tr>
                 <tr><td ${HB_TD}>阿布法拉國王（アブファラ国王）</td><td ${HB_TD}>購物景點</td></tr>
-                <tr><td ${HB_TD}>丁髷武志（チョンマゲ・タカシ）</td><td ${HB_TD}>有望學園＋熱血景點</td></tr>
+                <tr><td ${HB_TD}>馬棟（チョンマゲ・タカシ）</td><td ${HB_TD}>有望學園＋熱血景點</td></tr>
                 <tr><td ${HB_TD}>鴨田鴨子（アヒル田カモ子）</td><td ${HB_TD}>超大型學校＋家庭景點</td></tr>
                 <tr><td ${HB_TD}>森野熊克斯（森野クマックス）</td><td ${HB_TD}>超大型學校＋藝術景點＋森林×20</td></tr>
-                <tr><td ${HB_TD}>田山雪美（田山ゆきみ）⭐</td><td ${HB_TD}>全國平均 200 分（攻略公認 CP 值最高）</td></tr>
-                <tr><td ${HB_TD}>盧・隆隆（ルー・ロンロン）</td><td ${HB_TD}>有望學園</td></tr>
+                <tr><td ${HB_TD}>段燕燕（田山ゆきみ）⭐</td><td ${HB_TD}>全國平均 200 分（攻略公認 CP 值最高）</td></tr>
+                <tr><td ${HB_TD}>李倫倫（ルー・ロンロン）</td><td ${HB_TD}>有望學園</td></tr>
                 <tr><td ${HB_TD}>約翰班森（ジョンベンソン）／亞利安・韓（アリアン・ハーン）／甲賀麥克羅倫（甲賀マクローレン）／安德烈・勘助（アンドレ・カンスケ）／面堂小手助（面堂コテ助）</td><td ${HB_TD}>名門學園</td></tr>
                 <tr><td ${HB_TD}>黑猩猩G（チンパンG）／開羅君（カイロくん）／蘇芙子公主（ソフ子姫）</td><td ${HB_TD}>特殊條件（景點提示中標「※」者與此相關）</td></tr></table>` },
             club: { title: '社團', html: `
