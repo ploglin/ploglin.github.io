@@ -59,7 +59,7 @@ kairosoft/<game>/            index.html = 內容豐富的攻略專頁(SEO 主力
   ```
   `data-shell` 屬性不可省略——`school2/scripts/check.js` 靠「無屬性的 `<script>`」找主程式。
 - **快取**：改動 `shell.js` / `shell.css` / `db.js` / `home.js` 後，全站 `?v=N` 要一起加一號(目前 `?v=8`，含各頁對 `db.js`、首頁對 `games-index.js`／`home.js` 的引用)。改完 `grep -rn '?v=<舊號>'` 確認零殘留。
-  - **版號分兩軌，不要混**：`/assets/*` 是 29 款同吃的共用資產，必須同號；`kairosoft/<game>/assets/*` 是**單一遊戲自己的資產，自帶版號**（例：school2 專屬的 `guide.css?v=1`／`guide.js?v=1`）。改一款遊戲自己的樣式**不要**跟著 bump 全站 `?v`——那只會讓 29 款無謂 cache miss；反過來 bump 全站時也不要順手把本地版號一起改。`link-check.js` 第 6 節就是照這兩軌各自斷言的。
+  - **版號分兩軌，不要混**：`/assets/*` 是 29 款同吃的共用資產，必須同號；`kairosoft/<game>/assets/*` 是**單一遊戲自己的資產，自帶版號**（例：school2 專屬的 `guide.css`／`guide.js`，兩者必須同號、目前 `?v=6`）。改一款遊戲自己的樣式**不要**跟著 bump 全站 `?v`——那只會讓 29 款無謂 cache miss；反過來 bump 全站時也不要順手把本地版號一起改。`link-check.js` 第 6 節就是照這兩軌各自斷言的。
   - 新增一個只有某一款引入的 CSS/JS 檔**不需要動全站 `?v`**（沒改共用檔）。
 
 ## 導覽分層原則
@@ -82,6 +82,17 @@ kairosoft/<game>/            index.html = 內容豐富的攻略專頁(SEO 主力
 - **`db.js`**：`DB.mountCategory('<key>')` / `DB.mountIndex()`，讀 `window.GAME_DB`。產 HTML 的部分是**純函式** `DB.categoryHtml(db, key)` / `DB.indexHtml(db)`(不碰 DOM)，`scripts/gen-static.js` 以 `require('assets/db.js')` 吃同一份 → 建置期預渲染與瀏覽器渲染保證同字串。掛載時若 `#dbApp` 已帶 `data-prerendered` 就不重建 innerHTML，只把搜尋／排序／比較的事件接到既有節點上。
 - **`games-index.js`**：`window.GAMES = [...]` 全站遊戲索引(Hub 首頁用)。新增遊戲要在此登記(id/slug/title/jp/en/emoji/status/type/tags/desc)。
 - **`home.js`**：Hub 首頁四個卡片區(精選／模擬器／攻略與資料表／全部)的區塊定義與卡片 HTML。純函式 `HOME.cardHtml` / `HOME.gridsHtml(GAMES)` 同樣被 `gen-static.js` require；瀏覽器端 `HOME.mount()`，容器已帶 `data-prerendered` 就只補點擊追蹤。首頁**不要**再把渲染邏輯寫成 inline script。
+- **`pixel.css` ＋ `silkscreen-latin-400.woff2`**：8bit 視覺層(見下節)。放在共用 `/assets/` 因此吃共用 `?v` 軌，但**目前只有 school2 的 28 個攻略頁引入**。
+
+### 8bit 視覺層(`assets/pixel.css`)
+
+開羅遊戲本身是像素風，攻略頁跟著走同一路線。做法是**HUD 化，不是貼皮**：改的是「框、章、鈕、標籤」這類介面元件，**正文一個字都不動**。
+
+- **token 層在 `assets/pixel.css`**：`--px-edge`／`--px-drop` 用 `color-mix` 從 `--ink`／`--card` 推導(深淺色都過對比，換 `--brand` 也免費)，`--font-pixel` 由自託管的 `PixelNum`(Silkscreen)履行，`unicode-range` **鎖死拉丁範圍** → CJK 永遠不可能落到像素字型上。`main.article { --radius: 2px }` 讓直角只作用在正文容器內。
+- **像素字型的使用範圍是窮舉的**(`.statgrid b`／`.kpi-row b`／`.sec-num`／`.coord`／`.hero .pill`)，**刻意不用在 H1/H2/H3 與 `.prose` 的 p/li**：純 CJK 套了無效，只會讓標題裡的數字跟 CJK 打架、看起來像 bug。`font-synthesis: none` 是必要的——Silkscreen 只有 400 一個字重，`font-weight: 900` 會讓瀏覽器合成粗體把像素邊緣抹糊。
+- **元件換皮寫在該遊戲自己的 `assets/guide.css`，不改 `shell.css`**：`.callout`／`.btn`／`.db-*` 都是 29 款共用的，用 `main.article` 提高特異度覆寫即可。分三層權重：Tier 1 浮起(按鈕、卡片、KPI 磚、地圖框)、Tier 2 只硬邊不給陰影(callout、目錄、手風琴、資料表)、Tier 3 不動(sticky `thead`、`.ad-slot`)。**陰影要節制**——每個框都浮起來等於沒有層級。
+- **紅線：正文零改動**。改完要實測，不是目測：抓 `.prose` 的 p/li/h1/h2/h3，比對字型/字級/字重/行高/字距/顏色/margin 等屬性的簽章，開關 `pixel.css` 前後必須 0 差異(BV1 435 節點 × 14 屬性 0 差異)。
+- `--radius` 目前**只覆寫到 `main.article` 內**，所以站台 header／遊戲功能列／footer 仍是 14px 圓角。這是刻意的：`pixel.css` 只有 school2 引入，把外框也改直角會讓 school2 與其他 28 款脫節。等 8bit 推廣到全部 29 款再一次改。
 
 ### 預渲染(SEO／AdSense 必要)
 
