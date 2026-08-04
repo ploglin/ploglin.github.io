@@ -20,6 +20,30 @@
 <body>
   <main class="container-narrow article">
     <div id="dbApp" data-prerendered><!--prerender:start--><h1>口袋學院物語2　資料庫</h1><p class="lead">分類查詢《口袋學院物語2》的遊戲內資料，可搜尋、排序與自訂比較：人氣景點、設施、老師、學生名冊、社團、進路、行事活動、特別授業、學校排名、道具、挑戰、城鎮地圖、成就、中日名詞。</p><p>《口袋學院物語2》的資料量是系列裡最大的一款，這個資料庫把它拆成 14 張表：從佈局端的人氣景點與設施，到養成端的老師、學生名冊、社團、進路，再到營運端的行事活動、特別授業、學校排名、道具、挑戰、城鎮地圖，以及成就與中日名詞兩張附錄表。</p><p>新手照這個順序查：先用「城鎮地圖」挑一張地形好上手的圖（表內已標開局資金與難度），再用「人氣景點」找幾組便宜好湊的景點，對著「設施」確認尺寸與解鎖條件排位置。人氣景點的種數會直接卡住「學校排名」的升級門檻，所以景點不是加分項，而是必修。</p><p>老手把它當規劃工具：從「學校排名」的主要卡點欄倒推每一階要備齊的學生數、景點數與平均分，再用「老師」表挑上限指導力高、給與低的高 CP 值人選，配上「特別授業」與「挑戰」的建議順序安排研究P 與收入的節奏；想衝特定出路就對照「進路」的精確年收與「道具」裡的進路指導書。看日文攻略卡住時翻「中日名詞」，想挑戰全成就就看「成就」。</p><p>資料來源致謝：部分數值參考「新・カイロパーク攻略 Wiki」（wikiwiki.jp/kairoparknew）等公開玩家整理資料後，以繁體中文重新編寫與重新組表，非轉載；譯名盡量對齊 Steam 官方繁體中文。表中若有與實機不符之處，各分類的說明段已標出存疑欄位。</p><div class="db-cat-grid"><a class="db-cat-card" href="spots/"><span class="ic">🎯</span><span class="lb">人氣景點</span><span class="n">29 筆</span></a><a class="db-cat-card" href="facilities/"><span class="ic">🏗️</span><span class="lb">設施</span><span class="n">77 筆</span></a><a class="db-cat-card" href="teachers/"><span class="ic">🧑‍🏫</span><span class="lb">老師</span><span class="n">38 筆</span></a><a class="db-cat-card" href="students/"><span class="ic">🧑‍🎓</span><span class="lb">學生名冊</span><span class="n">65 筆</span></a><a class="db-cat-card" href="clubs/"><span class="ic">🎽</span><span class="lb">社團</span><span class="n">16 筆</span></a><a class="db-cat-card" href="careers/"><span class="ic">🎓</span><span class="lb">進路</span><span class="n">60 筆</span></a><a class="db-cat-card" href="events/"><span class="ic">🎪</span><span class="lb">行事活動</span><span class="n">30 筆</span></a><a class="db-cat-card" href="lessons/"><span class="ic">📚</span><span class="lb">特別授業</span><span class="n">24 筆</span></a><a class="db-cat-card" href="ranks/"><span class="ic">🏅</span><span class="lb">學校排名</span><span class="n">6 筆</span></a><a class="db-cat-card" href="items/"><span class="ic">🎒</span><span class="lb">道具</span><span class="n">18 筆</span></a><a class="db-cat-card" href="tasks/"><span class="ic">📝</span><span class="lb">挑戰</span><span class="n">40 筆</span></a><a class="db-cat-card" href="towns/"><span class="ic">🗾</span><span class="lb">城鎮地圖</span><span class="n">5 筆</span></a><a class="db-cat-card" href="achievements/"><span class="ic">🏆</span><span class="lb">成就</span><span class="n">10 筆</span></a><a class="db-cat-card" href="terms/"><span class="ic">📖</span><span class="lb">中日名詞</span><span class="n">50 筆</span></a></div><!--prerender:end--></div>
+    <section class="prose db-prose">
+      <h2 id="byquestion">按問題找表</h2>
+      <p>資料庫的問題從來不是「有哪些表」，而是「我現在這個問題該翻哪一張」。以下 12 個是實際玩的時候最常冒出來的問句，直接點右邊的表：</p>
+      <ol>
+        <li><strong>「這個設施要幾格、什麼時候才能蓋？」</strong>→ <a href="facilities/">設施</a>（尺寸欄的 <code>1×2（直）</code>／<code>2×1（橫）</code> 方向註記會決定它塞不塞得進 4×4）</li>
+        <li><strong>「這個景點要哪三棟設施？成立後加多少？」</strong>→ <a href="spots/">人氣景點</a>（「／」是任選一個、「・」是全都要）</li>
+        <li><strong>「下一階學園規模還缺哪一項？」</strong>→ <a href="ranks/">學校排名</a>（看「主要卡點」欄，五個數值欄是同時滿足）</li>
+        <li><strong>「第一次玩該選哪張地圖？」</strong>→ <a href="towns/">城鎮地圖</a>（段差少的好排景點，水場多的有釣具收入）</li>
+        <li><strong>「該優先培養哪個老師？他怎麼才會進招募名單？」</strong>→ <a href="teachers/">老師</a>看上限指導力與上限給與，<a href="spots/">人氣景點</a>的「可招募老師」欄反查要先成立哪個景點</li>
+        <li><strong>「這名轉學生值不值得收？」</strong>→ <a href="students/">學生名冊</a>（合計 150 是平均，但要回頭看五科分配）</li>
+        <li><strong>「想讓學生走這條出路，年收多少、要練什麼？」</strong>→ <a href="careers/">進路</a>（學校拿該出路總收入的 3% 當獎金）</li>
+        <li><strong>「這個月該挑哪一科的課題？」</strong>→ <a href="tasks/">挑戰</a>（每月只有 2 次額度，且「科目總收入」是整科練滿的金額）</li>
+        <li><strong>「研究P 該花在哪一項特別授業？」</strong>→ <a href="lessons/">特別授業</a>（消費欄的文系／理系／體育是「要哪種 P」，不是課的屬性）</li>
+        <li><strong>「這場行事要花多少、會招來哪類學生、給什麼褒賞？」</strong>→ <a href="events/">行事活動</a>看研究類型與入學希望者增減，褒賞的釣具・寫生組・相機組見 <a href="items/">道具</a></li>
+        <li><strong>「這個社團怎麼發現？遠征要幾週？」</strong>→ <a href="clubs/">社團</a>（未發現社團要把設施蓋進公告欄 5×5 內，且必須由老師使用公告欄）</li>
+        <li><strong>「日文攻略這個詞是什麼意思？全成就清單長怎樣？」</strong>→ <a href="terms/">中日名詞</a> 與 <a href="achievements/">成就</a></li>
+      </ol>
+      <h3>14 張表的共同慣例</h3>
+      <p>所有表格的欄位都遵守同一組寫法，看懂一次就能套用到 14 張：多值以「／」（任選其一）或「・」（同時具備）分隔；「—」代表<strong>該欄不適用或本站不知道</strong>，空白格代表<strong>沒有額外條件</strong>——這兩者刻意不合併，因為「不知道」與「沒有」在決策上是兩回事。金額單位一律標在欄名裡（萬円或円），日文原名一律獨立成欄以便對照日版畫面。可搜尋、可點欄名排序，也可以用「⚖️ 比較」把幾列並排看。</p>
+      <h3>三條查表動線</h3>
+      <p><strong>新手動線：</strong>城鎮地圖挑圖 → 人氣景點挑幾組便宜好湊的 → 設施確認尺寸與解鎖 → 學校排名確認這幾年要補哪一欄。<strong>育成動線：</strong>學校排名倒推缺口 → 老師挑上限高、薪水低的 → 特別授業安排 P 的收支 → 學生名冊與進路決定培養對象。<strong>營運動線：</strong>挑戰照建議順序排每月 2 次額度 → 行事活動決定兩個年度窗口辦什麼 → 道具把研究P 花在進路指導書 → 社團中期開始鋪常春藤要的 8 社優勝。三條動線都會回到「學校排名」，它是全站唯一同時是門檻表與解鎖表的一張。</p>
+      <h3>資料來源與已知存疑</h3>
+      <p>部分數值參考「新・カイロパーク攻略 Wiki」（wikiwiki.jp/kairoparknew）等公開玩家整理資料後，以繁體中文重新編寫與重新組表，非轉載；譯名盡量對齊 Steam 官方繁體中文。本站的原則是<strong>存疑之處標出來而不抹平</strong>：特別授業有三處原始資料疑義（同名的英文小考、社會小考記在體育系、常春藤四項同值）、老師表有兩位的初期給與寫成 <code>?→46</code>、成就的金銀銅是從獎盃色碼推斷、道具的相機組收入上限採 24,000 円待實機確認、進路與學生名冊刻意不列無依據的機率欄。各分類頁的「常見誤解與實測註記」一節寫明了每一處的來由與判斷方式。</p>
+    </section>
   </main>
   <script src="./data.js"></script>
   <script src="../../../assets/db.js?v=8"></script>
