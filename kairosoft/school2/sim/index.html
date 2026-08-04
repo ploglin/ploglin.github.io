@@ -22,14 +22,16 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏫</text></svg>">
     <link rel="canonical" href="https://ploglin.cc/kairosoft/school2/sim/">
     <meta property="og:url" content="https://ploglin.cc/kairosoft/school2/sim/">
-    <meta property="og:image" content="https://ploglin.cc/kairosoft/school2/sim/og-image.png">
+    <meta property="og:image" content="https://ploglin.cc/kairosoft/school2/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta property="og:type" content="website">
     <meta property="og:title" content="口袋學院物語2 佈局模擬器｜人氣景點規劃工具">
     <meta property="og:description" content="免費線上規劃你的口袋學院物語2 校園：29 種人氣景點自動判定、放置建議、發展解鎖指南與攻略手冊。">
     <meta property="og:locale" content="zh_TW">
     <meta property="og:locale:alternate" content="ja_JP">
     <meta property="og:site_name" content="口袋學院物語2 佈局模擬器">
-    <meta name="twitter:card" content="summary">
+    <meta name="twitter:card" content="summary_large_image">
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -359,6 +361,74 @@
             border-color: rgba(255, 255, 255, 0.98) transparent transparent transparent;
         }
 
+        /* ── 收斂後的頂列與面板 ──
+           頂列只留「最常用＋反映狀態」的控制，其餘（工具模式／圖層／存檔／分享）
+           在桌機是同一列的次要叢集、在手機收進 ⋯ 面板。 */
+        #moreBtn, #thToggle { display: none; }
+        #hdrExtra { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+        /* 彈出面板（城鎮／讀取存檔）：清單式，每一列都可點，
+           取代「選一個下拉、再從幾顆動詞按鈕裡猜一顆」的舊模式。 */
+        .pop {
+            position: absolute;
+            top: 100%;
+            margin-top: 6px;
+            width: 268px;
+            max-height: min(70vh, 460px);
+            overflow-y: auto;
+            border-radius: 10px;
+            padding: 6px;
+            box-shadow: 0 14px 28px -8px rgba(0, 0, 0, .3);
+            z-index: 55;
+        }
+        .pop-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            text-align: left;
+            padding: 7px 8px;
+            border-radius: 7px;
+            font-size: 12px;
+            line-height: 1.35;
+        }
+        /* 右側的面板往左掛，才不會超出視窗右緣 */
+        #loadPop { right: 0; }
+        .pop-sep { margin: 5px 4px; border-top: 1px solid; opacity: .5; }
+
+        /* 景點進度條：常駐摘要的「一眼」編碼（數字負責精確）。
+           軌道用已映射的 bg-gray-200；填色是介面 chrome（不是地圖內容），
+           所以兩套深色區塊都補了 .prog-fill 的深色版。 */
+        .prog { height: 4px; border-radius: 2px; overflow: hidden; }
+        .prog-fill { display: block; height: 100%; transition: width .25s ease; background: #16a34a; }
+
+        /* 「差一項」晶片：常駐摘要裡的主要行動 → 做成真的可點晶片，
+           觸控裝置用 ::after 把命中區補到 44px（視覺方塊維持小）。 */
+        .near-chip { position: relative; }
+        @media (pointer: coarse) {
+            .near-chip::after {
+                content: '';
+                position: absolute;
+                top: 50%; left: 50%;
+                min-width: 44px; min-height: 44px;
+                width: 100%; height: 100%;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        /* 清除工具的「整棟拆除」預覽：紅色虛線＋交叉斜紋。
+           刻意不用 .blocked 的實線紅框（那代表「被包圍、不可用」），
+           同一張圖上同一種紅不該指兩件事。預覽本身就是說明，不再加文字。 */
+        .tile.fp-raze { outline: 2px dashed #b91c1c; outline-offset: -2px; z-index: 16; }
+        .tile.fp-raze::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(45deg, rgba(185, 28, 28, .38) 0 3px, transparent 3px 7px);
+            pointer-events: none;
+            z-index: 4;
+        }
+
         /* 窄螢幕（手機/直式平板）：地圖在上、建築面板在下 */
         @media (max-width: 768px) {
             #appBody { flex-direction: column; }
@@ -368,8 +438,48 @@
                 border-left: none;
                 border-top: 1px solid #e5e7eb;
             }
+            /* 浮動資訊卡在手機沒有位置（會與 coordHint 撞同一條線）→
+               同一份內容搬進建築面板的標題列（見 #thToggle / #thBody），不是刪掉。 */
             #toolHint { display: none; }
             #coordHint { bottom: calc(42vh + 0.5rem); }
+            #asideTitle { display: none; }
+            #thToggle { display: flex; }
+            #moreBtn { display: inline-flex; }
+            /* 標題在手機吃掉一整列 → 縮小讓它與控制同列 */
+            header h1 { font-size: 12px; }
+            /* 頂列次要控制收進 ⋯ 面板。刻意做成**底部**浮層：
+               頂端有站台功能列＋頁首，高度不固定，用 top 錨定一定會壓到某個東西。 */
+            #hdrExtra {
+                display: none;
+                position: fixed;
+                left: .5rem;
+                right: .5rem;
+                bottom: .5rem;
+                width: auto;
+                max-height: 70vh;
+                overflow-y: auto;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+                padding: 10px;
+                background: #ffffff;
+                border: 1px solid #e5e7eb;
+                border-radius: 10px;
+                box-shadow: 0 14px 28px -8px rgba(0, 0, 0, .3);
+                z-index: 55;
+            }
+            body.sheet-open #hdrExtra { display: flex; }
+            .pop, #loadPop {
+                position: fixed;
+                left: .5rem;
+                right: .5rem;
+                top: auto;
+                bottom: .5rem;
+                width: auto;
+                margin-top: 0;
+                max-height: 70vh;
+                z-index: 56;
+            }
         }
 
         ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -484,6 +594,8 @@
             :root:not([data-theme="light"]) .axis-label { color:var(--sd-ink-soft);background-color:var(--sd-axis-bg) }
             :root:not([data-theme="light"]) #searchHits .sh-hint { color:var(--sd-muted) }
             :root:not([data-theme="light"]) .found-num { border-color:var(--sd-card);box-shadow:0 1px 2px rgba(0,0,0,.6) }
+            /* 進度條填色是介面 chrome（不是地圖內容），所以兩套深色區塊都要有 */
+            :root:not([data-theme="light"]) .prog-fill { background:#4ade80 }
 :root:not([data-theme="light"]) .spot-tooltip { background-color:var(--sd-tip-bg);border-color:var(--sd-line-strong) }
             :root:not([data-theme="light"]) .spot-tooltip::after { border-top-color:var(--sd-tip-bg) }
             :root:not([data-theme="light"]) body.searching .game-grid::after { background:var(--sd-veil) }
@@ -491,6 +603,7 @@
             :root:not([data-theme="light"]) ::-webkit-scrollbar-thumb:hover { background:var(--sd-sb-hover) }
             @media (max-width: 768px) {
                 :root:not([data-theme="light"]) #appBody aside { border-top-color:var(--sd-line) }
+                :root:not([data-theme="light"]) #hdrExtra { background-color:var(--sd-card);border-color:var(--sd-line) }
             }
         }
         :root[data-theme="dark"] {
@@ -592,6 +705,8 @@
         :root[data-theme="dark"] .axis-label { color:var(--sd-ink-soft);background-color:var(--sd-axis-bg) }
         :root[data-theme="dark"] #searchHits .sh-hint { color:var(--sd-muted) }
         :root[data-theme="dark"] .found-num { border-color:var(--sd-card);box-shadow:0 1px 2px rgba(0,0,0,.6) }
+        /* 進度條填色是介面 chrome（不是地圖內容），所以兩套深色區塊都要有 */
+        :root[data-theme="dark"] .prog-fill { background:#4ade80 }
 :root[data-theme="dark"] .spot-tooltip { background-color:var(--sd-tip-bg);border-color:var(--sd-line-strong) }
         :root[data-theme="dark"] .spot-tooltip::after { border-top-color:var(--sd-tip-bg) }
         :root[data-theme="dark"] body.searching .game-grid::after { background:var(--sd-veil) }
@@ -599,59 +714,60 @@
         :root[data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background:var(--sd-sb-hover) }
         @media (max-width: 768px) {
             :root[data-theme="dark"] #appBody aside { border-top-color:var(--sd-line) }
+            :root[data-theme="dark"] #hdrExtra { background-color:var(--sd-card);border-color:var(--sd-line) }
         }
     </style>
 </head>
 <body class="h-screen w-screen flex flex-col">
     <noscript>口袋學院物語2（名門ポケット学院2）佈局模擬器需要啟用 JavaScript 才能使用。這是一個免費的校園地圖規劃工具，支援 29 種人氣景點自動判定、放置建議與攻略手冊。</noscript>
 
-    <header class="bg-white border-b border-gray-200 px-4 py-2.5 flex flex-wrap items-center justify-between shadow-sm z-30 shrink-0 gap-4">
+    <!-- 頂列：主控（歷史／縮放／城鎮）永遠在；次要叢集在桌機同列、在手機收進 ⋯ 面板 -->
+    <header class="bg-white border-b border-gray-200 px-4 py-2.5 flex flex-wrap items-center justify-between shadow-sm z-30 shrink-0 gap-3">
         <div class="flex items-center gap-3">
-            <h1 class="text-lg font-black text-green-700 tracking-tight">🏫 口袋學院物語2 佈局模擬器</h1>
-            <div class="flex gap-2">
-                <button id="undoBtn" title="復原 (Ctrl+Z)" class="text-xs font-bold bg-gray-100 text-gray-600 px-2.5 py-1.5 rounded hover:bg-gray-200 transition border border-gray-300 opacity-40">↩</button>
-                <button id="redoBtn" title="重做 (Ctrl+Y)" class="text-xs font-bold bg-gray-100 text-gray-600 px-2.5 py-1.5 rounded hover:bg-gray-200 transition border border-gray-300 opacity-40">↪</button>
-                <button id="rectBtn" title="矩形填滿模式（也可按住 Shift 拖曳）" class="text-xs font-bold bg-gray-100 text-gray-600 px-2.5 py-1.5 rounded hover:bg-gray-200 transition border border-gray-300">▭ 矩形</button>
-                <button id="clearBtn" class="text-xs font-bold bg-red-50 text-red-600 px-2.5 py-1.5 rounded hover:bg-red-100 transition border border-red-200">清空</button>
-                <button id="diamondBtn" title="切換菱形（等角）視角" class="text-xs font-bold bg-gray-100 text-gray-600 px-2.5 py-1.5 rounded hover:bg-gray-200 transition border border-gray-300">◆ 視角</button>
-                <div class="flex items-center gap-0.5 border border-gray-300 rounded bg-gray-100 px-1 py-1" title="縮放地圖 50%–300%（Ctrl+滾輪以游標為中心縮放；放大後用滾輪捲動或按住滑鼠中鍵拖曳平移。觸控：雙指拖曳平移、捏合縮放）">
-                    <button id="zoomOutBtn" class="w-5 h-5 leading-none text-sm font-bold text-gray-600 hover:bg-gray-200 rounded">−</button>
-                    <button id="zoomResetBtn" class="text-[10px] font-bold text-gray-500 hover:bg-gray-200 rounded px-1" title="回到 100%">100%</button>
-                    <button id="zoomInBtn" class="w-5 h-5 leading-none text-sm font-bold text-gray-600 hover:bg-gray-200 rounded">＋</button>
-                </div>
-                <button id="suggestBtn" title="開關地圖上的建議標示（藍框／天藍框）" class="text-xs font-bold bg-gray-100 text-gray-600 px-2.5 py-1.5 rounded hover:bg-gray-200 transition border border-gray-300">💡 建議</button>
-                <button id="flowBtn" title="顯示從校門出發的步行距離（近綠遠紅，灰斜紋＝走不到）" class="text-xs font-bold bg-gray-100 text-gray-600 px-2.5 py-1.5 rounded hover:bg-gray-200 transition border border-gray-300">👣 動線</button>
-                <select id="presetSelect" class="text-xs font-bold bg-amber-50 text-amber-700 px-2 py-1.5 rounded border border-amber-200 outline-none cursor-pointer"></select>
-                <select id="sizeSelect" title="地圖尺寸（依城鎮而異；切換會保留左上角已畫內容）" class="text-xs font-bold bg-sky-50 text-sky-700 px-2 py-1.5 rounded border border-sky-200 outline-none cursor-pointer">
-                    <option value="26x24-health">健康鎮 26×24</option>
-                    <option value="26x26-east">冬郵小鎮 26×26</option>
-                    <option value="24x24-lake">湖岸小鎮 24×24</option>
-                    <option value="26x26-valley">溪谷小鎮 26×26</option>
-                    <option value="26x26-hill">百靈山丘 26×26</option>
-                </select>
-                <button id="loadPresetBtn" class="text-xs font-bold bg-amber-50 text-amber-700 px-2.5 py-1.5 rounded hover:bg-amber-100 transition border border-amber-200">載入</button>
+            <h1 class="text-base font-black text-green-700 tracking-tight">🏫 口袋學院物語2 佈局模擬器</h1>
+            <div class="flex gap-1">
+                <button id="undoBtn" title="復原 (Ctrl+Z)" class="text-xs font-bold bg-gray-100 text-gray-600 px-2.5 py-1.5 rounded hover:bg-gray-200 transition border border-gray-300 opacity-50">↩</button>
+                <button id="redoBtn" title="重做 (Ctrl+Y)" class="text-xs font-bold bg-gray-100 text-gray-600 px-2.5 py-1.5 rounded hover:bg-gray-200 transition border border-gray-300 opacity-50">↪</button>
+            </div>
+            <div class="flex items-center gap-0.5 border border-gray-300 rounded bg-gray-100 px-1 py-1" title="縮放地圖 50%–300%（Ctrl+滾輪以游標為中心縮放；放大後用滾輪捲動或按住滑鼠中鍵拖曳平移。觸控：雙指拖曳平移、捏合縮放）">
+                <button id="zoomOutBtn" class="w-5 h-5 leading-none text-sm font-bold text-gray-600 hover:bg-gray-200 rounded">−</button>
+                <button id="zoomResetBtn" class="text-[11px] font-bold text-gray-600 hover:bg-gray-200 rounded px-1" title="回到 100%">100%</button>
+                <button id="zoomInBtn" class="w-5 h-5 leading-none text-sm font-bold text-gray-600 hover:bg-gray-200 rounded">＋</button>
+            </div>
+            <!-- 城鎮：唯一的地形／尺寸入口（原本的「城鎮下拉＋尺寸下拉＋載入鈕」三件事）。
+                 按鈕字樣即是狀態（載入了哪一鎮／自訂尺寸），所以取消切換不可能讓它說謊。 -->
+            <div class="relative">
+                <button id="townBtn" class="text-xs font-bold bg-gray-100 text-gray-700 px-2.5 py-1.5 rounded hover:bg-gray-200 transition border border-gray-300" title="選擇城鎮地形／清空畫布">🗺 城鎮 ▾</button>
+                <div id="townPop" class="pop hidden bg-white border border-gray-200"></div>
             </div>
         </div>
 
-        <div class="flex items-center gap-3">
+        <button id="moreBtn" class="text-xs font-bold bg-gray-100 text-gray-700 px-2.5 py-1.5 rounded hover:bg-gray-200 transition border border-gray-300" title="其他工具與存檔">⋯</button>
+
+        <div id="hdrExtra">
+            <!-- 工具模式（改變下一次點擊的後果）：分段控制，與圖層開關在外觀上分家 -->
+            <div class="flex bg-gray-200 p-0.5 rounded gap-0.5" title="筆刷＝逐格畫；矩形＝拖曳框選一次填滿（按住 Shift 拖曳也可以）">
+                <button id="brushBtn" class="px-2 py-1 text-[11px] font-bold rounded bg-white text-gray-800 shadow-sm transition">✏ 筆刷</button>
+                <button id="rectBtn" class="px-2 py-1 text-[11px] font-bold rounded text-gray-500 hover:text-gray-800 transition">▭ 矩形</button>
+            </div>
+            <!-- 圖層與視角（改變地圖顯示什麼） -->
+            <div class="flex gap-1">
+                <button id="suggestBtn" title="開關地圖上的建議標示（藍框／天藍框）" class="text-xs font-bold bg-gray-100 text-gray-600 px-2.5 py-1.5 rounded hover:bg-gray-200 transition border border-gray-300">💡 建議</button>
+                <button id="flowBtn" title="顯示從校門出發的步行距離（近綠遠紅，灰斜紋＝走不到）" class="text-xs font-bold bg-gray-100 text-gray-600 px-2.5 py-1.5 rounded hover:bg-gray-200 transition border border-gray-300">👣 動線</button>
+                <button id="diamondBtn" title="切換菱形（等角）視角" class="text-xs font-bold bg-gray-100 text-gray-600 px-2.5 py-1.5 rounded hover:bg-gray-200 transition border border-gray-300">◆ 視角</button>
+            </div>
+            <!-- 存檔與分享 -->
             <div class="flex items-center gap-1.5 bg-gray-50 p-1 rounded border border-gray-200">
                 <input type="text" id="saveName" class="w-28 text-xs border-gray-300 border p-1 rounded bg-white outline-none focus:border-green-400" placeholder="地圖名稱...">
                 <button id="saveLocalBtn" class="bg-green-500 hover:bg-green-600 text-white text-xs font-bold py-1 px-2.5 rounded transition">儲存</button>
             </div>
-            <div class="flex items-center gap-1.5 bg-gray-50 p-1 rounded border border-gray-200">
-                <select id="loadLocalSelect" class="w-32 text-xs border-gray-300 border p-1 rounded bg-white outline-none focus:border-blue-400">
-                    <option value="">-- 讀取存檔 --</option>
-                </select>
-                <button id="loadLocalBtn" class="bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold py-1 px-2.5 rounded transition">讀取</button>
-                <button id="deleteLocalBtn" class="bg-red-500 hover:bg-red-600 text-white text-xs font-bold py-1 px-2.5 rounded transition">刪除</button>
-                <button id="renameLocalBtn" class="bg-gray-400 hover:bg-gray-500 text-white text-xs font-bold py-1 px-2.5 rounded transition">改名</button>
-            </div>
-            
-            <div class="flex items-center gap-1.5 ml-2 border-l pl-3 border-gray-200">
-                <button id="saveCodeBtn" class="bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 text-xs font-bold py-1 px-2.5 rounded transition" title="複製存檔碼">匯出</button>
-                <button id="loadCodeBtn" class="bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 text-xs font-bold py-1 px-2.5 rounded transition" title="從剪貼簿載入">匯入</button>
-                <button id="exportImgBtn" class="bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 text-xs font-bold py-1 px-2.5 rounded transition" title="下載地圖 PNG 圖片">圖片</button>
-                <button id="shareBtn" class="bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 text-xs font-bold py-1 px-2.5 rounded transition" title="複製含地圖的分享連結">分享</button>
+            <div class="flex items-center gap-1.5">
+                <div class="relative">
+                    <button id="loadBtn" class="bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 text-xs font-bold py-1.5 px-2.5 rounded transition" title="讀取存檔、或貼上代碼／連結載入">📂 讀取 ▾</button>
+                    <div id="loadPop" class="pop hidden bg-white border border-gray-200"></div>
+                </div>
+                <button id="exportImgBtn" class="bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 text-xs font-bold py-1.5 px-2.5 rounded transition" title="下載地圖 PNG 圖片">🖼 圖片</button>
+                <button id="shareBtn" class="bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 text-xs font-bold py-1.5 px-2.5 rounded transition" title="複製含地圖的分享連結（對方開啟即載入）">🔗 分享</button>
             </div>
         </div>
     </header>
@@ -659,21 +775,47 @@
     <div id="appBody" class="flex flex-1 overflow-hidden">
         
         <main class="flex-1 flex flex-col overflow-auto bg-gray-100 p-4 relative">
+            <!-- 首訪一句話（可關閉、不做導覽 tour）。文案不指方向：手機的調色盤在下面。 -->
+            <div id="introTip" class="hidden shrink-0 mb-2 mx-auto max-w-[640px] flex items-start gap-2 bg-white border border-gray-200 rounded-lg px-3 py-2 text-[11px] leading-relaxed text-gray-600 shadow-sm">
+                <span class="flex-1">先選一個建築，再在地圖上拖曳畫出來。<b class="text-gray-800">藍框＝放這裡會成立人氣景點。</b></span>
+                <button id="introClose" class="text-gray-400 hover:text-gray-700 font-bold leading-none" title="不再顯示">✕</button>
+            </div>
             <div class="map-container" id="mapContainer">
                 <div class="game-grid" id="gameGrid"></div>
             </div>
         </main>
 
         <aside class="w-72 shrink-0 bg-white border-l border-gray-200 flex flex-col shadow-[-5px_0_15px_rgba(0,0,0,0.02)] z-20">
-            <div class="p-3 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
-                <h2 class="text-sm font-black text-gray-700">🧱 建築面板</h2>
-                <div class="flex bg-gray-200 p-0.5 rounded gap-0.5">
-                    <button id="layer1Btn" class="px-2 py-1 text-[10px] font-bold rounded bg-white text-gray-800 shadow-sm transition" onclick="setElevation(1)">平地</button>
-                    <button id="layer2Btn" class="px-2 py-1 text-[10px] font-bold rounded text-gray-500 hover:text-gray-800 transition" onclick="setElevation(2)">高地1</button>
-                    <button id="layer3Btn" class="px-2 py-1 text-[10px] font-bold rounded text-gray-500 hover:text-gray-800 transition" onclick="setElevation(3)">高地2</button>
+            <div class="p-3 bg-gray-50 border-b border-gray-200">
+                <div class="flex justify-between items-center gap-2">
+                    <h2 id="asideTitle" class="text-sm font-black text-gray-700">🧱 建築面板</h2>
+                    <!-- 手機：桌機那張浮動資訊卡沒有位置，同一份內容改由這一列承擔
+                         （收合態就帶負載：建築名＋參與幾個景點），點一下就地展開。 -->
+                    <button id="thToggle" class="items-center gap-1 text-xs font-bold text-gray-700 text-left flex-1 min-w-0"></button>
+                    <div class="flex bg-gray-200 p-0.5 rounded gap-0.5 shrink-0">
+                        <button id="layer1Btn" class="px-2 py-1 text-[11px] font-bold rounded bg-white text-gray-800 shadow-sm transition" onclick="setElevation(1)">平地</button>
+                        <button id="layer2Btn" class="px-2 py-1 text-[11px] font-bold rounded text-gray-500 hover:text-gray-800 transition" onclick="setElevation(2)">高地1</button>
+                        <button id="layer3Btn" class="px-2 py-1 text-[11px] font-bold rounded text-gray-500 hover:text-gray-800 transition" onclick="setElevation(3)">高地2</button>
+                    </div>
                 </div>
+                <div id="thBody" class="hidden text-[11px] leading-relaxed mt-1.5 max-h-40 overflow-y-auto"></div>
             </div>
-            
+
+            <!-- 常駐景點摘要（不可折疊）：放一棟房子最想知道的事＝成立了嗎。
+                 分層顯示 → 地圖乾淨時只有一行進度，有事做時才長高（優先權由狀態決定，不由版位決定）。 -->
+            <div class="shrink-0 px-3 pt-2.5 pb-2 border-b border-gray-200">
+                <button id="spotSummaryBtn" class="w-full flex items-baseline justify-between gap-2" title="看成立清單、屬性加成合計與使用格數">
+                    <span class="text-[13px] font-black text-gray-800">景點 <span id="spotCount">0</span>/29</span>
+                    <span class="text-[11px] font-bold text-gray-500">明細 ›</span>
+                </button>
+                <div class="prog bg-gray-200 mt-1.5"><i id="spotProg" class="prog-fill" style="width:0%"></i></div>
+                <div id="nearWrap" class="hidden mt-2">
+                    <div class="text-[11px] font-bold text-gray-500">差一項就成立<span class="font-normal text-gray-400">（點設施可亮出位置）</span></div>
+                    <div id="nearChips" class="flex flex-wrap gap-1 mt-1"></div>
+                </div>
+                <button id="blockedBtn" class="hidden w-full text-left text-[11px] font-bold text-red-600 mt-2"></button>
+            </div>
+
             <div class="flex-1 overflow-y-auto p-3 flex flex-col gap-4">
                 <div class="sticky -top-3 -mt-1 -mx-1 px-1 pt-2 pb-1.5 bg-white z-10">
                     <div class="relative">
@@ -682,24 +824,6 @@
                     </div>
                     <div id="searchHits" class="text-[11px] font-bold text-fuchsia-700 mt-1" style="display:none"></div>
                     <div id="recentRow" class="flex gap-1 flex-wrap mt-1.5"></div>
-                </div>
-                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-2.5">
-                    <button id="spotStatsToggle" class="w-full flex items-center justify-between text-xs font-black text-gray-700">
-                        <span>📊 景點總覽</span>
-                        <span class="flex items-center gap-1.5">
-                            <span id="spotStatsSummary" class="text-[10px] font-bold text-gray-500"></span>
-                            <span id="spotStatsArrow" class="text-gray-400">▸</span>
-                        </span>
-                    </button>
-                    <div id="spotStatsBody" class="hidden">
-                        <div id="spotStats" class="text-[11px] leading-relaxed text-gray-600 mt-1.5 max-h-56 overflow-y-auto pr-1">尚無成立的景點</div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-1.5 mt-1.5">
-                        <button id="reportBtn" class="text-[11px] font-bold bg-white border border-yellow-300 text-yellow-700 rounded py-1 hover:bg-yellow-100 transition">📋 體檢</button>
-                        <button id="devGuideBtn" class="text-[11px] font-bold bg-white border border-yellow-300 text-yellow-700 rounded py-1 hover:bg-yellow-100 transition">📈 發展</button>
-                        <button id="handbookBtn" class="text-[11px] font-bold bg-white border border-yellow-300 text-yellow-700 rounded py-1 hover:bg-yellow-100 transition">📖 手冊</button>
-                        <button id="compareBtn" class="text-[11px] font-bold bg-white border border-yellow-300 text-yellow-700 rounded py-1 hover:bg-yellow-100 transition">🆚 比較</button>
-                    </div>
                 </div>
                 <div>
                     <div class="grid grid-cols-4 gap-1.5" id="palette-tools"></div>
@@ -725,25 +849,46 @@
                     <div class="grid grid-cols-4 gap-1.5" id="palette-farm"></div>
                 </div>
             </div>
+
+            <!-- 參考資料的固定入口：不進捲動流，手機 42vh 的面板裡也永遠摸得到 -->
+            <div class="shrink-0 grid grid-cols-3 gap-1 p-2 border-t border-gray-200 bg-gray-50">
+                <button id="devGuideBtn" class="text-[11px] font-bold bg-white border border-gray-300 text-gray-700 rounded py-2.5 hover:bg-gray-100 transition">📈 發展</button>
+                <button id="handbookBtn" class="text-[11px] font-bold bg-white border border-gray-300 text-gray-700 rounded py-2.5 hover:bg-gray-100 transition">📖 手冊</button>
+                <button id="compareBtn" class="text-[11px] font-bold bg-white border border-gray-300 text-gray-700 rounded py-2.5 hover:bg-gray-100 transition">🆚 比較</button>
+            </div>
         </aside>
 
     </div>
 
     <!-- 座標與格子資訊提示列 -->
-    <div id="coordHint" class="fixed bottom-3 left-4 bg-gray-800/80 text-white text-xs font-bold px-3 py-1.5 rounded-full z-40 pointer-events-none shadow-lg">移到格子上顯示座標</div>
+    <div id="coordHint" class="fixed bottom-3 left-4 max-w-[calc(100vw-2rem)] bg-gray-800/80 text-white text-xs font-bold px-3 py-1.5 rounded-full z-40 pointer-events-none shadow-lg">移到格子上顯示座標</div>
 
-    <!-- 選取建築的景點組合資訊卡 -->
+    <!-- 選取建築的景點組合資訊卡（桌機浮動；手機同內容改掛在建築面板標題列） -->
     <div id="toolHint" class="hidden fixed bottom-3 right-[19rem] max-w-[280px] bg-white/95 border border-gray-200 rounded-lg shadow-lg px-3 py-2 text-[11px] leading-relaxed z-40 pointer-events-none"></div>
 
-    <!-- Hidden IO textareas for import/export -->
-    <textarea id="ioData" class="hidden"></textarea>
-
-    <!-- 佈局體檢報告 -->
+    <!-- 報告／手冊／比較／景點明細共用的 modal 外殼 -->
     <div id="reportModal" class="hidden fixed inset-0 bg-black/40 z-[60] flex items-center justify-center p-6">
         <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto p-5 relative">
             <button id="reportCloseBtn" class="absolute top-3 right-3 text-gray-400 hover:text-gray-700 font-bold">✕</button>
-            <h2 id="reportTitle" class="text-base font-black text-gray-800 mb-3">📋 佈局體檢報告</h2>
+            <h2 id="reportTitle" class="text-base font-black text-gray-800 mb-3">📈 發展建議</h2>
             <div id="reportBody" class="text-xs leading-relaxed text-gray-600"></div>
+        </div>
+    </div>
+
+    <!-- 破壞性動作的統一守衛：城鎮切換／貼上載入／讀取存檔／清空共用這一個對話框。
+         破壞性動作在最左、離預設鍵最遠；取消緊鄰預設；預設焦點在最安全的「儲存並繼續」。 -->
+    <div id="askModal" class="hidden fixed inset-0 bg-black/40 z-[70] flex items-center justify-center p-6">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-5">
+            <h2 id="askTitle" class="text-sm font-black text-gray-800">要先儲存目前的地圖嗎？</h2>
+            <p id="askBody" class="text-xs leading-relaxed text-gray-500 mt-1.5"></p>
+            <label class="block text-[11px] font-bold text-gray-500 mt-3">存成這個名稱
+                <input type="text" id="askName" class="w-full mt-1 text-xs border border-gray-300 rounded p-1.5 bg-white outline-none focus:border-green-400">
+            </label>
+            <div class="flex items-center justify-end gap-2 mt-4">
+                <button id="askDiscard" class="text-xs font-bold bg-red-50 text-red-600 border border-red-200 px-2.5 py-1.5 rounded hover:bg-red-100 transition">不儲存，直接繼續</button>
+                <button id="askCancel" class="text-xs font-bold bg-gray-100 text-gray-700 border border-gray-300 px-2.5 py-1.5 rounded hover:bg-gray-200 transition">取消</button>
+                <button id="askSave" class="text-xs font-bold bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded transition">儲存並繼續</button>
+            </div>
         </div>
     </div>
 
@@ -996,47 +1141,22 @@
             assignBlockIds();
             for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++) updateTileVisuals(r, c);
             checkSpots();
-            const sel = document.getElementById('sizeSelect');
-            if (sel) {
-                const size = rows + 'x' + cols;
-                const sizeOf = v => v.split('-')[0];
-                // 同尺寸城鎮各自一個選項：目前選項尺寸相符就不動（保留使用者選的城鎮），
-                // 否則挑第一個同尺寸選項；都沒有(例如匯入外部存檔)就動態補一個
-                if (sizeOf(sel.value) !== size) {
-                    const hit = [...sel.options].find(o => sizeOf(o.value) === size);
-                    if (hit) sel.value = hit.value;
-                    else {
-                        const opt = document.createElement('option');
-                        opt.value = size; opt.innerText = rows + '×' + cols;
-                        sel.appendChild(opt);
-                        sel.value = size;
-                    }
-                }
-            }
+            updateTownLabel();  // 城鎮鈕的字樣就是狀態（含「自訂 R×C」），尺寸一變就要跟上
         }
 
-        // 尺寸下拉：切換前若會裁掉已畫內容，先確認
-        function changeGridSize(val) {
-            const m = /^(\d+)x(\d+)/.exec(val); // value 可帶 -城鎮 後綴（同尺寸城鎮分列）
-            if (!m) return;
-            const rows = +m[1], cols = +m[2];
+        /* 只換尺寸、保留已畫內容（城鎮面板的次要動作）。
+           臨摹族的用途：先照著遊戲畫在 26×24 上，事後發現自己玩的是 26×26 的溪谷。
+           縮小會裁掉超界格，所以先確認。 */
+        function changeGridSizeTo(rows, cols) {
             if (rows === gridRows && cols === gridCols) return;
             let lost = 0;
             for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++) {
                 if ((r >= rows || c >= cols) && gridData[r][c].type !== 'empty') lost++;
             }
-            if (lost && !confirm(`縮小到 ${rows}×${cols} 會裁掉 ${lost} 格已放置的內容，確定？`)) {
-                const sel = document.getElementById('sizeSelect');
-                if (sel) {
-                    const size = gridRows + 'x' + gridCols;
-                    const hit = [...sel.options].find(o => o.value.split('-')[0] === size);
-                    if (hit) sel.value = hit.value;
-                }
-                return;
-            }
+            if (lost && !confirm(`縮小到 ${rows}×${cols} 會裁掉 ${lost} 格已放置的內容，確定？`)) return;
             pushHistory();
             setGridSize(rows, cols, true);
-            showSysMsg(`地圖尺寸已切換為 ${rows}×${cols}`);
+            showSysMsg(`地圖尺寸已切換為 ${rows}×${cols}（內容保留）`);
             track('grid_resize', { size: rows + 'x' + cols });
         }
 
@@ -1100,7 +1220,11 @@
                 cont.scrollTop = ay * cont.scrollHeight - py;
             }
             const label = document.getElementById('zoomResetBtn');
-            if (label) label.innerText = Math.round(zoomLevel * 100) + '%';
+            if (label) {
+                label.innerText = Math.round(zoomLevel * 100) + '%';
+                // 它是可按的（回 100%），但無底無框會被當成狀態顯示 → 非 100% 時給它底色
+                label.classList.toggle('bg-gray-200', Math.abs(zoomLevel - 1) > 0.01);
+            }
             // 觸控裝置：不知道能雙指平移的人會陷在放大後的視野裡，第一次放大時提示一次
             if (!transient && zoomLevel > 1 && !prefs.panHint &&
                 window.matchMedia && matchMedia('(pointer: coarse)').matches) {
@@ -1109,12 +1233,32 @@
             }
         }
 
-        // 體檢報告用的最近一次計算結果
+        // 摘要與明細用的最近一次計算結果（都由 checkSpots／updateAccessWarnings 更新）
         let lastSpotStats = { activeIds: new Set(), nearMap: new Map() };
         let lastBlockedCount = 0;
+        let lastHasGate = false;       // 地圖上有沒有校門（沒有＝動線無法檢查，不等於沒問題）
+        let lastBlockedFirst = null;   // 第一棟走不到的建築位置（給摘要的「點看動線」跳過去）
+        let lastBuildingGroups = 0;    // 地圖上的設施棟數（還沒蓋東西時不必嘮叨校門）
 
-        // ─── 矩形填滿工具 ───
+        // ─── 繪製模式（筆刷／矩形填滿）───
         let rectMode = false, rectStart = null, rectEnd = null;
+
+        function styleModeBtns() {
+            const on = 'px-2 py-1 text-[11px] font-bold rounded bg-white text-gray-800 shadow-sm transition';
+            const off = 'px-2 py-1 text-[11px] font-bold rounded text-gray-500 hover:text-gray-800 transition';
+            const b = document.getElementById('brushBtn'), r = document.getElementById('rectBtn');
+            if (b) b.className = rectMode ? off : on;
+            if (r) r.className = rectMode ? on : off;
+        }
+        function setDrawMode(rect) {
+            if (rectMode === rect) return;
+            rectMode = rect;
+            track('toggle_rect', { on: rectMode });
+            styleModeBtns();
+            showSysMsg(rectMode
+                ? '矩形模式：拖曳框選範圍一次填滿（限 1×1 項目；按住 Shift 拖曳也可以）'
+                : '筆刷模式：拖曳逐格畫');
+        }
 
         function previewRect() {
             document.querySelectorAll('.tile.rect-preview').forEach(t => t.classList.remove('rect-preview'));
@@ -1219,6 +1363,7 @@
             clearTimeout(autosaveTimer);
             autosaveTimer = setTimeout(() => {
                 try { localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(gridData)); } catch (e) {}
+                updateTownLabel();  // 這裡本來就要序列化整張圖，順便讓城鎮鈕的字樣跟上狀態
             }, 400);
         }
 
@@ -1271,11 +1416,48 @@
             const tileEl = tileAt(r, c);
             const warn = tileEl && tileEl.classList.contains('blocked') ? '　⚠ 被包圍，學生無法進入' : '';
             const elevName = cell.elevation === 3 ? '高地2層' : cell.elevation === 2 ? '高地1層' : '平地';
-            document.getElementById('coordHint').innerText = `X:${r + 2}　Y:${gridCols + 1 - c}　${label}（${elevName}）${warn}`;
+            /* 吸管是只活在程式碼裡的操作 → 停在有建築的格子上時，就地講一次
+               （觸控裝置沒有右鍵，講「長按」）。用過一次就不再顯示：一次性學習不該變成永久裝飾。
+               有 ⚠ 時讓警告贏——這條膠囊只有一行，教學不跟錯誤搶。 */
+            let pick = '';
+            if (!warn && !prefs.pickHint && cell.type !== 'empty') {
+                pick = coarsePointer() ? '　·　長按吸取' : '　·　右鍵吸取';
+            }
+            const el = document.getElementById('coordHint');
+            el.innerHTML = `X:${r + 2}　Y:${gridCols + 1 - c}　${esc(label)}（${elevName}）${warn}`
+                + (pick ? `<span class="opacity-60">${pick}</span>` : '');
+        }
+        function coarsePointer() {
+            return !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
         }
 
-        // 多格建築的放置預覽：標示滑鼠所在位置放下去會占據的範圍
+        /* 放置預覽：多格建築標出會占據的範圍（琥珀框）。
+           清除工具停在多格建築上時，標出**整棟**會被拆掉的範圍（紅虛線＋斜紋）——
+           「點一格整棟消失」原本只存在程式碼裡，預覽本身就是說明，不必加文字。 */
+        let lastRazeBid = null;
         function previewFootprint(r, c) {
+            const cell = gridData[r][c];
+            if (currentTool === 'empty') {
+                document.querySelectorAll('.tile.fp-preview').forEach(t => t.classList.remove('fp-preview'));
+                const bid = cell.bid;
+                if (bid === lastRazeBid) return;   // hover 逐格觸發：同一棟不重算
+                lastRazeBid = bid;
+                document.querySelectorAll('.tile.fp-raze').forEach(t => t.classList.remove('fp-raze'));
+                if (bid === undefined) return;
+                for (let rr = 0; rr < gridRows; rr++) {
+                    for (let cc = 0; cc < gridCols; cc++) {
+                        if (gridData[rr][cc].bid === bid) {
+                            const el = tileAt(rr, cc);
+                            if (el) el.classList.add('fp-raze');
+                        }
+                    }
+                }
+                return;
+            }
+            if (lastRazeBid !== null) {
+                lastRazeBid = null;
+                document.querySelectorAll('.tile.fp-raze').forEach(t => t.classList.remove('fp-raze'));
+            }
             document.querySelectorAll('.tile.fp-preview').forEach(t => t.classList.remove('fp-preview'));
             const fp = getFootprint(currentTool);
             if (fp.w === 1 && fp.h === 1) return;
@@ -1376,10 +1558,9 @@
             renderPalette();
             renderRecent();
             renderGrid();
-            renderPresetOptions();
             setupEventListeners();
             seedProgressSave();
-            loadSavedMapsList();
+            renderLoadPanel();
 
             // 還原上次的操作偏好
             if (prefs.diamond) {
@@ -1390,10 +1571,7 @@
             if (prefs.elevation >= 2) setElevation(prefs.elevation);
             styleSuggestBtn();
             styleFlowBtn();
-            if (prefs.statsOpen) {
-                document.getElementById('spotStatsBody').classList.remove('hidden');
-                document.getElementById('spotStatsArrow').innerText = '▾';
-            }
+            styleModeBtns();
             selectTool(prefs.tool && items[prefs.tool] && !items[prefs.tool].hidden ? prefs.tool : 'grass');
             fitGrid();
 
@@ -1405,6 +1583,7 @@
                 if (shared) {
                     restored = importGridData(shared);
                     if (restored) {
+                        markClean(matchTown(gridData));
                         showSysMsg('已載入分享的地圖');
                         // 成功載入後就把 #m= 清掉：hash 的優先序高於 autosave，留著它
                         // 會讓使用者接下來的編輯在下一次重新整理時被分享碼整份蓋掉（無警告、無 undo）。
@@ -1419,16 +1598,25 @@
                     if (Array.isArray(auto)) {
                         restored = importGridData(auto);
                         if (restored) {
-                            if (prefs.lastSave) {
-                                document.getElementById('saveName').value = prefs.lastSave;
-                                document.getElementById('loadLocalSelect').value = prefs.lastSave;
-                            }
+                            if (prefs.lastSave) document.getElementById('saveName').value = prefs.lastSave;
+                            /* autosave 的來歷不明：內容剛好等於某鎮的原始地形 → 認定為該鎮（乾淨）；
+                               否則一律視為「有未儲存的編輯」（baseline 留 null）。
+                               這正是最常見的真實損失情境：上一場沒存、關掉、隔天回來、切鎮。 */
+                            const town = matchTown(gridData);
+                            if (town) markClean(town);
+                            else { currentTownKey = null; updateTownLabel(); }
                             showSysMsg('已還原上次的編輯進度');
                         }
                     }
                 } catch (e) {}
             }
             if (!restored) loadPreset('health');
+
+            // 首訪一句話（不做導覽 tour）；橫幅會改變可用高度，插入與關閉都要重算網格
+            if (!prefs.introDone) {
+                const tip = document.getElementById('introTip');
+                if (tip) { tip.classList.remove('hidden'); fitGrid(); }
+            }
         });
 
         function showSysMsg(text, isError = false) {
@@ -1445,9 +1633,14 @@
         }
 
         // GA4 事件埋點：只記錄有意義的離散動作（不追蹤逐格塗畫）
+        // 一律走 Shell.track（會自動帶 game_id/game_type）→ 行為事件與 page_engage 同口徑，
+        // 才切得出「進來 sim 的人有多少真的動手」。Shell 還沒載入時退回直接打 gtag。
         let lastToolTracked = '';
         function track(name, params) {
-            try { if (window.gtag) gtag('event', name, params || {}); } catch (e) {}
+            try {
+                if (window.Shell && Shell.track) { Shell.track(name, params); return; }
+                if (window.gtag) gtag('event', name, params || {});
+            } catch (e) {}
         }
 
         function setElevation(lvl) {
@@ -1534,13 +1727,12 @@
 
                 // Map Tiles
                 for (let c = 0; c < gridCols; c++) {
-                    const currentY = gridCols + 1 - c;
-
                     const tile = document.createElement('div');
                     tile.className = 'tile';
                     tile.dataset.r = r;
                     tile.dataset.c = c;
-                    tile.title = `[X:${currentX}, Y:${currentY}]`;
+                    /* 刻意不設原生 title：座標已由座標軸標籤與左下 #coordHint 各講一次，
+                       第三次會與即時出現的 .spot-tooltip 疊成同一次 hover 的兩個延遲不同的通道。 */
 
                     const contentSpan = document.createElement('span');
                     contentSpan.className = 'content-span relative z-10 pointer-events-none drop-shadow-sm';
@@ -1564,6 +1756,7 @@
                         e.preventDefault(); // 右鍵吸管：選取此格的類型
                         const t = gridData[r][c].type;
                         selectTool(t);
+                        savePrefs({ pickHint: 1 });  // 學會了就不用再提示
                         showSysMsg(t === 'empty' ? '吸管：已切換為清除模式' : `吸管：已選取「${items[t].name}」`);
                     });
                     tile.addEventListener('mouseenter', () => {
@@ -1675,6 +1868,8 @@
                 isDrawing = false;
                 flushCheckSpots();  // 拖出地圖外也要結算，不然統計會停在拖曳前的狀態
                 document.querySelectorAll('.tile.fp-preview').forEach(t => t.classList.remove('fp-preview'));
+                document.querySelectorAll('.tile.fp-raze').forEach(t => t.classList.remove('fp-raze'));
+                lastRazeBid = null;
             });
         }
 
@@ -1701,13 +1896,19 @@
             updateToolHint(id, updateSuggestions());
         }
 
-        // 右下角資訊卡：選取的建築能組成哪些景點、目前地圖上的狀態
+        /* 「這棟參與哪些景點」＝唯一回答「我為什麼要放這個」的地方。
+           桌機：右下浮動卡。手機：同一份內容掛在建築面板標題列（收合態就帶負載：
+           建築名＋參與幾個景點），點一下就地展開 —— 是搬位置，不是刪掉。 */
         function updateToolHint(id, res) {
             const el = document.getElementById('toolHint');
             const item = items[id];
-            if (!item || id === 'empty') { el.classList.add('hidden'); return; }
+            const hideBoth = () => {
+                el.classList.add('hidden');
+                setToolHintMobile('', '');
+            };
+            if (!item || id === 'empty') { hideBoth(); return; }
             // 定位模式整卡收起：它講的全是景點搭配，而定位模式的唯一問題是「這種蓋在哪」
-            if (document.body.classList.contains('locating')) { el.classList.add('hidden'); return; }
+            if (document.body.classList.contains('locating')) { hideBoth(); return; }
             const inGroup = g => (Array.isArray(g) ? g.includes(id) : g === id);
             const related = SPOTS.filter(s => s.req.some(inGroup));
             const fp = getFootprint(id);
@@ -1735,6 +1936,27 @@
             }
             el.innerHTML = html;
             el.classList.remove('hidden');
+            const done = related.filter(s => lastSpotStats.activeIds.has(s.id)).length;
+            const head = related.length
+                ? `${item.name} · ${related.length} 個景點（${done} 已成立）`
+                : `${item.name} · 不參與景點`;
+            setToolHintMobile(head, html);
+        }
+
+        // 手機版的同一份資訊；展開狀態存在 body class 上，才不會一邊畫一邊自己開闔
+        function setToolHintMobile(head, html) {
+            const t = document.getElementById('thToggle'), b = document.getElementById('thBody');
+            if (!t || !b) return;
+            if (!head) {
+                t.innerHTML = '<span class="text-gray-400">🧱 選一個建築</span>';
+                b.innerHTML = '';
+                b.classList.add('hidden');
+                return;
+            }
+            const open = document.body.classList.contains('th-open');
+            t.innerHTML = `<span class="truncate">${esc(head)}</span><span class="text-gray-400 shrink-0">${open ? '▾' : '▸'}</span>`;
+            b.innerHTML = html;
+            b.classList.toggle('hidden', !open);
         }
 
         // 自動斜坡（遊戲規則）：高低差相差一層的整條交界都是斜坡，斜坡位於「高的那格」，
@@ -1908,6 +2130,19 @@
             b.classList.toggle('text-white', !!prefs.flowOn);
         }
 
+        // 動線圖層開關（頂列的 👣 與常駐摘要的「⚠ N 棟走不到」共用）
+        function toggleFlow(forceOn) {
+            const want = forceOn === undefined ? !prefs.flowOn : !!forceOn;
+            if (want && !lastHasGate) { showSysMsg('地圖上沒有校門，無法計算動線', true); return false; }
+            if (want === !!prefs.flowOn) return true;
+            savePrefs({ flowOn: want });
+            track('toggle_flow', { on: want });
+            styleFlowBtn();
+            updateFlowOverlay();
+            showSysMsg(want ? '動線圖層：綠＝離校門近、紅＝遠、灰斜紋＝走不到' : '已關閉動線圖層');
+            return true;
+        }
+
         // 動線圖層：可達的通行格上距離色階（近綠遠紅）、走不到的通行格灰斜紋
         function updateFlowOverlay() {
             document.querySelectorAll('.flow-ov').forEach(n => n.remove());
@@ -1943,10 +2178,16 @@
             document.querySelectorAll('.tile.blocked').forEach(t => t.classList.remove('blocked'));
             let blockedCount = 0;
             const reach = computeReachability();
+            // 常駐摘要要用「有沒有校門」與「第一棟走不到的位置」，在這裡順手記下來
+            // （BFS 很貴，不讓摘要自己再算一次）
+            lastHasGate = !!reach;
+            lastBlockedFirst = null;
+            lastBuildingGroups = 0;
             const seen = Array(gridRows).fill(null).map(() => Array(gridCols).fill(false));
             for (let r = 0; r < gridRows; r++) {
                 for (let c = 0; c < gridCols; c++) {
                     if (seen[r][c] || !isBuildingType(gridData[r][c].type)) continue;
+                    lastBuildingGroups++;
                     const type = gridData[r][c].type;
                     const cells = [];
                     const stack = [[r, c]];
@@ -1965,6 +2206,7 @@
                     }
                     if (!hasAccess) {
                         blockedCount++;
+                        if (!lastBlockedFirst) lastBlockedFirst = [r, c];
                         cells.forEach(([br, bc]) => {
                             const el = tileAt(br, bc);
                             if (el) el.classList.add('blocked');
@@ -2043,51 +2285,30 @@
                 }
             }
             lastSpotStats = { activeIds, nearMap };
-            renderSpotStats(activeIds, nearMap);
+            // 順序：先算動線（會更新 lastHasGate／lastBlockedCount），摘要才不會慢一步
             updateAccessWarnings();
+            renderSpotStats(activeIds, nearMap);
             updateFlowOverlay();
             updateToolHint(currentTool, updateSuggestions());
             if (hlIds) applyHighlight();  // 地圖變動後重新套用定位（維持目前的命中集合，不退回模糊比對）
             scheduleAutosave();
         }
 
-        // ─── 佈局體檢報告 ───
-        function buildReport() {
-            const { activeIds, nearMap } = lastSpotStats;
-            const act = SPOTS.filter(s => activeIds.has(s.id));
-            // 屬性加成合計
-            const totals = {};
-            act.forEach(s => {
-                for (const m of s.bonus.matchAll(/(\S+?)\+(\d+)/g)) {
-                    totals[m[1]] = (totals[m[1]] || 0) + Number(m[2]);
-                }
-            });
-            // 使用率與設施統計
-            let builtCells = 0;
-            const typeSet = new Set();
-            for (let r = 0; r < gridRows; r++) {
-                for (let c = 0; c < gridCols; c++) {
-                    const t = gridData[r][c].type;
-                    if (t !== 'empty') { builtCells++; if (isBuildingType(t)) typeSet.add(t); }
-                }
-            }
-            let html = `<div class="mb-2"><b class="text-gray-800">整體：</b>已使用 ${builtCells}／${gridRows * gridCols} 格，設施 ${typeSet.size} 種。</div>`;
-            html += `<div class="mb-2"><b class="text-gray-800">成立景點：${act.length} 種</b>`;
-            html += act.length ? '<br>' + act.map(s => `・${s.name}（${s.bonus}）`).join('<br>') : '（尚無）';
-            html += '</div>';
-            const tKeys = Object.keys(totals);
-            if (tKeys.length) {
-                html += `<div class="mb-2"><b class="text-gray-800">屬性加成合計：</b>${tKeys.map(k => `${k}+${totals[k]}`).join('、')}</div>`;
-            }
-            const nears = SPOTS.filter(s => !activeIds.has(s.id) && nearMap.has(s.id));
-            if (nears.length) {
-                html += '<div class="mb-2"><b class="text-gray-800">差一項就成立：</b><br>' +
-                    nears.map(s => `・${s.name}：缺 ${[...nearMap.get(s.id).keys()].join(' 或 ')}`).join('<br>') + '</div>';
-            }
-            html += `<div class="mb-2"><b class="text-gray-800">動線警告：</b>${lastBlockedCount ? `⚠ 有 ${lastBlockedCount} 棟設施被完全包圍（紅框），學生無法進入` : '無，所有設施都有出入口 ✔'}</div>`;
-            document.getElementById('reportTitle').innerText = '📋 佈局體檢報告';
+        // ─── 共用 modal 外殼（景點明細／發展建議／手冊／比較）───
+        // 「📋 佈局體檢」已刪除：它與景點總覽重複，晶片還不可點；獨有的屬性加成合計與
+        // 使用格數搬進 buildSpotDetail()（＝點「N/29」就看得到）。
+        let reportOpener = null;
+        function openReport(title, html) {
+            reportOpener = document.activeElement;
+            document.getElementById('reportTitle').innerText = title;
             document.getElementById('reportBody').innerHTML = html;
             document.getElementById('reportModal').classList.remove('hidden');
+            document.getElementById('reportCloseBtn').focus();
+        }
+        function closeReport() {
+            document.getElementById('reportModal').classList.add('hidden');
+            if (reportOpener && reportOpener.focus) { try { reportOpener.focus(); } catch (e) {} }
+            reportOpener = null;
         }
 
         // ─── 發展建議：依攻略 Wiki 的設施解鎖條件，按遊戲進度分階段整理 ───
@@ -2183,9 +2404,7 @@
                     return `<div class="text-gray-600">${line}</div>`;
                 }).join('');
             });
-            document.getElementById('reportTitle').innerText = '📈 發展建議';
-            document.getElementById('reportBody').innerHTML = html;
-            document.getElementById('reportModal').classList.remove('hidden');
+            openReport('📈 發展建議', html);
         }
 
         // ─── 遊戲手冊（資料來源：カイロパーク攻略 Wiki，人名以日文版為準）───
@@ -2378,10 +2597,8 @@
             const nav = Object.entries(HANDBOOK).map(([k, s]) =>
                 `<button class="hb-tab px-2 py-0.5 rounded border text-[11px] font-bold transition ${k === section ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100'}" data-hb="${k}">${s.title}</button>`
             ).join('');
-            document.getElementById('reportTitle').innerText = '📖 遊戲手冊';
-            document.getElementById('reportBody').innerHTML =
-                `<div class="flex flex-wrap gap-1 mb-3">${nav}</div><div class="text-xs leading-relaxed text-gray-600">${HANDBOOK[section].html}</div>`;
-            document.getElementById('reportModal').classList.remove('hidden');
+            openReport('📖 遊戲手冊',
+                `<div class="flex flex-wrap gap-1 mb-3">${nav}</div><div class="text-xs leading-relaxed text-gray-600">${HANDBOOK[section].html}</div>`);
         }
 
         // 把任意地圖資料畫到 canvas（axis=0 表示不畫座標軸；diffSet 內的格子加紅框）
@@ -2464,8 +2681,7 @@
             const opts = ['__current__', ...Object.keys(maps)];
             const optHtml = sel => opts.map(k =>
                 `<option value="${k}" ${k === sel ? 'selected' : ''}>${k === '__current__' ? '目前地圖' : k}</option>`).join('');
-            document.getElementById('reportTitle').innerText = '🆚 存檔比較';
-            document.getElementById('reportBody').innerHTML = `
+            openReport('🆚 存檔比較', `
                 <div class="flex gap-2 mb-2 items-center text-xs">
                     <select id="cmpA" class="border border-gray-300 rounded p-1 flex-1">${optHtml('__current__')}</select>
                     <span class="text-gray-400 font-bold">vs</span>
@@ -2475,7 +2691,7 @@
                     <canvas id="cmpCanvasA" class="border border-gray-200 rounded"></canvas>
                     <canvas id="cmpCanvasB" class="border border-gray-200 rounded"></canvas>
                 </div>
-                <div id="cmpSummary" class="text-xs text-gray-600"></div>`;
+                <div id="cmpSummary" class="text-xs text-gray-600"></div>`);
             const getGrid = k => {
                 if (k === '__current__') return gridData;
                 const e = maps[k];
@@ -2516,37 +2732,91 @@
             document.getElementById('cmpA').addEventListener('change', render);
             document.getElementById('cmpB').addEventListener('change', render);
             render();
-            document.getElementById('reportModal').classList.remove('hidden');
         }
 
-        // 側欄統計面板：已成立的景點 + 只差一項就成立的景點
+        /* ─── 右軌常駐摘要（不可折疊）───
+           分層：進度永遠在（約一行）；「差一項」與「走不到」只有 >0 時才存在。
+           所以地圖乾淨時這塊幾乎不佔高度，有事做時才長高 —— 優先權由狀態決定，不由版位決定。
+           已成立的 29 個名稱徽章是參考資料不是行動 → 退到「明細」（點 24/29 開）。 */
+        const NEAR_CAP = 6;
+        let nearExpanded = false;
         function renderSpotStats(activeIds, nearMap) {
-            const el = document.getElementById('spotStats');
-            if (!el) return;
+            const cnt = document.getElementById('spotCount');
+            if (!cnt) return;
             const act = SPOTS.filter(s => activeIds.has(s.id));
             const nears = SPOTS.filter(s => !activeIds.has(s.id) && nearMap.has(s.id));
-            const summary = document.getElementById('spotStatsSummary');
-            if (summary) summary.innerText = `已成立 ${act.length}｜差一項 ${nears.length}`;
-            let html = '';
-            if (act.length) {
-                // 精簡徽章排版：效果與教師改為滑過顯示
-                html += '<div class="flex flex-wrap gap-1 mb-1">' + act.map(s =>
-                    `<span class="inline-flex items-center gap-1 bg-white border border-yellow-200 rounded px-1.5 py-0.5 whitespace-nowrap" title="${s.bonus}${s.teacher ? '／可招募：' + s.teacher : ''}"><span class="w-2 h-2 rounded-full ${s.dotColor} inline-block"></span>${s.name}</span>`
-                ).join('') + '</div>';
+            cnt.innerText = act.length;
+            document.getElementById('spotProg').style.width =
+                Math.round(act.length / SPOTS.length * 100) + '%';
+
+            const wrap = document.getElementById('nearWrap'), chips = document.getElementById('nearChips');
+            if (!nears.length) {
+                wrap.classList.add('hidden');
+                chips.innerHTML = '';
             } else {
-                html += '<div class="text-gray-400">尚無成立的景點</div>';
+                wrap.classList.remove('hidden');
+                const shown = nearExpanded ? nears : nears.slice(0, NEAR_CAP);
+                chips.innerHTML = shown.map(s => {
+                    const entries = [...nearMap.get(s.id).entries()];
+                    const [nm, id] = entries[0];
+                    const all = entries.map(e => e[0]).join(' 或 ');
+                    return `<button class="near-chip inline-flex items-center gap-1 px-2 py-1 rounded border border-gray-200 bg-white hover:bg-gray-100 text-[11px]" data-tool="${id}" title="${esc(s.name)}：缺 ${esc(all)}（點一下亮出可放置位置）"><b class="text-gray-800">${s.name}</b><span class="font-bold text-sky-700">缺 ${esc(nm)}</span></button>`;
+                }).join('') + (nears.length > NEAR_CAP
+                    ? `<button id="nearMoreBtn" class="text-[11px] font-bold text-gray-500 px-1.5 py-1">${nearExpanded ? '收起' : '還有 ' + (nears.length - NEAR_CAP) + ' 項 ›'}</button>`
+                    : '');
             }
+
+            /* 走不到是**錯誤**，不是進度，所以自己一行、不跟 24/29 搶。
+               沒有校門時要說「無法檢查」——把「沒檢查」講成「0 棟走不到」是把沒問題說謊。 */
+            const bb = document.getElementById('blockedBtn');
+            if (!lastHasGate && lastBuildingGroups > 0) {
+                bb.classList.remove('hidden');
+                bb.innerText = '⚠ 未設校門，無法檢查動線';
+            } else if (lastBlockedCount) {
+                bb.classList.remove('hidden');
+                bb.innerText = `⚠ ${lastBlockedCount} 棟走不到（點看動線）`;
+            } else {
+                bb.classList.add('hidden');
+            }
+        }
+
+        /* 景點明細：點「24/29」那個數字本身打開。
+           成立清單＋屬性加成合計＋使用格數（原「📋 佈局體檢」獨有的那些）都在這裡——
+           讓那個數字成為它自己的詳情入口，比多一顆按鈕更短。 */
+        function buildSpotDetail() {
+            const { activeIds, nearMap } = lastSpotStats;
+            const act = SPOTS.filter(s => activeIds.has(s.id));
+            const totals = {};
+            act.forEach(s => {
+                for (const m of s.bonus.matchAll(/(\S+?)\+(\d+)/g)) {
+                    totals[m[1]] = (totals[m[1]] || 0) + Number(m[2]);
+                }
+            });
+            let builtCells = 0;
+            const typeSet = new Set();
+            for (let r = 0; r < gridRows; r++) {
+                for (let c = 0; c < gridCols; c++) {
+                    const t = gridData[r][c].type;
+                    if (t !== 'empty') { builtCells++; if (isBuildingType(t)) typeSet.add(t); }
+                }
+            }
+            let html = `<div class="mb-2"><b class="text-gray-800">成立景點：${act.length}／29 種</b>`;
+            html += act.length
+                ? '<div class="flex flex-wrap gap-1 mt-1.5">' + act.map(s =>
+                    `<span class="inline-flex items-center gap-1 bg-white border border-gray-200 rounded px-1.5 py-0.5 whitespace-nowrap" title="${esc(s.bonus)}${s.teacher ? '／可招募：' + esc(s.teacher) : ''}"><span class="w-2 h-2 rounded-full ${s.dotColor} inline-block"></span>${s.name}<span class="text-gray-400">${s.bonus}</span></span>`
+                ).join('') + '</div>'
+                : '<div class="text-gray-400 mt-1">（尚無）</div>';
+            html += '</div>';
+            const tKeys = Object.keys(totals);
+            html += `<div class="mb-2"><b class="text-gray-800">屬性加成合計：</b>${tKeys.length ? tKeys.map(k => `${k}+${totals[k]}`).join('、') : '（尚無）'}</div>`;
+            const nears = SPOTS.filter(s => !activeIds.has(s.id) && nearMap.has(s.id));
             if (nears.length) {
-                html += '<div class="font-bold text-gray-500 mt-1.5 pt-1.5 border-t border-yellow-200">差一項就成立：</div>';
-                html += '<div class="text-[10px] text-gray-400 mb-0.5">（點設施名稱，地圖會亮出可放置位置）</div>';
-                html += nears.map(s => {
-                    const chips = [...nearMap.get(s.id).entries()].map(([nm, id]) =>
-                        `<button class="near-chip underline decoration-dotted text-sky-700 hover:text-sky-900 font-bold cursor-pointer" data-tool="${id}">${nm}</button>`
-                    ).join(' 或 ');
-                    return `<div class="text-gray-500">△ <b class="text-gray-700">${s.name}</b>：缺 ${chips}</div>`;
-                }).join('');
+                html += '<div class="mb-2"><b class="text-gray-800">差一項就成立：</b><br>' +
+                    nears.map(s => `・${s.name}：缺 ${[...nearMap.get(s.id).keys()].join(' 或 ')}`).join('<br>') + '</div>';
             }
-            el.innerHTML = html;
+            html += `<div class="mb-2"><b class="text-gray-800">畫布：</b>${townLabel()}，已使用 ${builtCells}／${gridRows * gridCols} 格，設施 ${typeSet.size} 種。</div>`;
+            html += `<div><b class="text-gray-800">動線：</b>${!lastHasGate ? '未設校門，無法檢查' : (lastBlockedCount ? `⚠ 有 ${lastBlockedCount} 棟設施被完全包圍（紅框），學生無法進入` : '所有設施都有出入口 ✔')}</div>`;
+            openReport('📊 景點明細', html);
         }
 
         function getFootprint(id) {
@@ -2711,11 +2981,229 @@
                 if (importGridData(parsed)) {
                     track('load_preset', { preset: key });
                     document.getElementById('saveName').value = preset.name;
+                    markClean(key);
                     showSysMsg(`已載入：${preset.name}`);
                 } else {
                     showSysMsg('預設圖格式錯誤', true);
                 }
             } catch (e) { showSysMsg('預設圖解析失敗', true); }
+        }
+
+        /* ─── 畫布來歷追蹤（dirty tracking）───
+           破壞性動作的守衛只在「真的有未儲存的變更」時才出現。
+           baseline＝最近一次明確落地（載入地形／讀取存檔／貼上載入／儲存成功／使用者選了直接繼續）
+           的內容快照；比對前一律正規化（只留 type＋elevation），因為 importGridData() 之後
+           assignBlockIds() 會補上 bid —— 拿原始字面比會變成「剛載入就已經 dirty」，
+           對話框每次都跳，使用者三次之後就不再讀它。
+           內容比對（而非布林旗標）的好處：Ctrl+Z 回到 baseline 會自然變回乾淨。 */
+        let currentTownKey = null;
+        let baseline = null;
+
+        function canonGrid(grid) {
+            return JSON.stringify((grid || []).map(row => (row || []).map(c =>
+                [(c && c.type) || 'empty', (c && c.elevation) || 1])));
+        }
+        function markClean(townKey) {
+            baseline = canonGrid(gridData);
+            if (townKey !== undefined) currentTownKey = townKey;
+            updateTownLabel();
+        }
+        function isDirty() { return baseline === null || canonGrid(gridData) !== baseline; }
+
+        // 內容與哪一鎮的原始地形完全相同（還原 autosave／貼上外部代碼時用來認出來歷）
+        function matchTown(grid) {
+            const rows = (grid || []).length, cols = ((grid || [])[0] || []).length;
+            const target = canonGrid(grid);
+            return Object.keys(PRESETS).find(k => {
+                const p = PRESETS[k];
+                if (!p.data || p.rows !== rows || p.cols !== cols) return false;
+                try { return canonGrid(JSON.parse(p.data)) === target; } catch (e) { return false; }
+            }) || null;
+        }
+
+        /* 城鎮鈕的字樣就是狀態，所以「取消切換」不可能讓控制項說謊，
+           而非五鎮的尺寸（貼上任意尺寸的分享碼）也一定看得見＝「自訂 R×C」。 */
+        function townLabel() {
+            const p = currentTownKey && PRESETS[currentTownKey];
+            if (p && p.rows === gridRows && p.cols === gridCols) return p.name;
+            return `自訂 ${gridRows}×${gridCols}`;
+        }
+        function updateTownLabel() {
+            const b = document.getElementById('townBtn');
+            if (b) b.innerText = '🗺 ' + townLabel() + ' ▾';
+        }
+
+        // ─── 破壞性動作的單一守衛（城鎮切換／貼上載入／讀取存檔／清空共用）───
+        let askState = null;
+        function guardDestructive(what, proceed) {
+            if (!isDirty()) { proceed(); return; }
+            document.getElementById('askBody').innerText =
+                what + '。目前未儲存的編輯不會保留（誤按可用 Ctrl+Z 還原）。';
+            document.getElementById('askName').value = suggestSaveName();
+            askState = { proceed, opener: document.activeElement };
+            document.getElementById('askModal').classList.remove('hidden');
+            document.getElementById('askSave').focus();  // 預設焦點＝最安全的那顆
+        }
+        function closeAsk(run) {
+            document.getElementById('askModal').classList.add('hidden');
+            const st = askState;
+            askState = null;
+            if (st && st.opener && st.opener.focus) { try { st.opener.focus(); } catch (e) {} }
+            if (run && st) st.proceed();
+        }
+        // 「存成新檔」就不能靜默蓋掉別人 → 撞名自動補「 2」「 3」…，而且名字顯示出來可改
+        function suggestSaveName() {
+            const base = document.getElementById('saveName').value.trim() || townLabel() || '我的地圖';
+            let maps = {};
+            try { maps = JSON.parse(localStorage.getItem('pa2_maps_v9')) || {}; } catch (e) {}
+            if (!maps[base]) return base;
+            for (let i = 2; i < 99; i++) if (!maps[base + ' ' + i]) return base + ' ' + i;
+            return base + ' ' + Date.now();
+        }
+
+        // 儲存（頂列的「儲存」與對話框的「儲存並繼續」共用）：撞名一定先問
+        function saveMapAs(name) {
+            if (!name) { showSysMsg('請先輸入地圖名稱', true); return false; }
+            try {
+                const maps = JSON.parse(localStorage.getItem('pa2_maps_v9')) || {};
+                if (maps[name] && !confirm(`已有存檔「${name}」，要覆蓋嗎？`)) return false;
+                maps[name] = { data: gridData, ts: Date.now() };
+                localStorage.setItem('pa2_maps_v9', JSON.stringify(maps));
+                track('save_map');
+                renderLoadPanel();
+                document.getElementById('saveName').value = name;
+                savePrefs({ lastSave: name });
+                markClean();   // 已經落地 → 之後切鎮不必再問
+                showSysMsg(`已儲存：${name}`);
+                return true;
+            } catch (e) { showSysMsg('儲存失敗！', true); return false; }
+        }
+
+        function clearMap() {
+            track('clear_map');
+            pushHistory();
+            for (let r = 0; r < gridRows; r++) {
+                for (let c = 0; c < gridCols; c++) {
+                    gridData[r][c] = { type: 'empty', elevation: 1 };
+                    updateTileVisuals(r, c);
+                }
+            }
+            checkSpots();
+            document.getElementById('saveName').value = '';
+            markClean(null);   // 空白畫布不屬於任何城鎮
+            showSysMsg(`已清成空白畫布（${gridRows}×${gridCols}）`);
+        }
+
+        /* 一個入口辨識三種輸入：完整分享連結、裸 `#m=` 短碼、舊版 JSON 存檔碼。
+           兩種格式繼續躺在程式裡，使用者只需要理解「一個分享」。 */
+        function loadFromText(raw) {
+            const text = (raw || '').trim();
+            if (!text) { showSysMsg('請先貼上分享連結或代碼', true); return false; }
+            if (text[0] === '[') {   // 舊版 JSON 存檔碼
+                try {
+                    const parsed = JSON.parse(text);
+                    pushHistory();
+                    if (importGridData(parsed)) {
+                        track('import_code', { fmt: 'json' });
+                        markClean(matchTown(gridData));
+                        showSysMsg('已載入（舊版存檔碼）');
+                        return true;
+                    }
+                } catch (e) {}
+                showSysMsg('存檔碼格式錯誤', true);
+                return false;
+            }
+            const m = /[#&?]m=([A-Za-z0-9\-_]+)/.exec(text);
+            const code = m ? m[1] : (/^[A-Za-z0-9\-_]+$/.test(text) ? text : null);
+            if (code) {
+                const grid = decodeMap(code);
+                if (grid) {
+                    pushHistory();
+                    if (importGridData(grid)) {
+                        track('import_code', { fmt: 'share' });
+                        markClean(matchTown(gridData));
+                        showSysMsg('已載入分享的地圖');
+                        return true;
+                    }
+                }
+            }
+            showSysMsg('無法辨識這段內容（支援分享連結、#m= 代碼、舊版 JSON 存檔碼）', true);
+            return false;
+        }
+
+        function loadSavedMap(name) {
+            try {
+                const maps = JSON.parse(localStorage.getItem('pa2_maps_v9')) || {};
+                const entry = maps[name];
+                const data = Array.isArray(entry) ? entry : (entry && entry.data); // 相容舊格式
+                if (!data) { showSysMsg('讀取失敗！', true); return; }
+                pushHistory();
+                if (importGridData(data)) {
+                    track('load_map');
+                    document.getElementById('saveName').value = name;
+                    savePrefs({ lastSave: name });
+                    markClean(matchTown(gridData));
+                    showSysMsg(`已讀取：${name}`);
+                }
+            } catch (e) { showSysMsg('讀取失敗！', true); }
+        }
+
+        // ─── 彈出面板：清單式，每一列都可點（取代「選一個下拉、再猜按哪顆動詞」）───
+        function esc(s) {
+            return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+        function renderTownPanel() {
+            const pop = document.getElementById('townPop');
+            if (!pop) return;
+            const rows = Object.entries(PRESETS).map(([key, p]) => {
+                const here = key === currentTownKey && p.rows === gridRows && p.cols === gridCols;
+                // 只換尺寸＝保留已畫內容（臨摹到一半才發現自己玩的是另一鎮）
+                const sizeBtn = (p.rows !== gridRows || p.cols !== gridCols)
+                    ? `<button class="town-size text-[10px] font-bold text-gray-500 hover:text-gray-800 shrink-0 px-1.5 py-2" data-town="${key}" title="只把畫布改成 ${p.rows}×${p.cols}，已畫的內容保留">只換尺寸</button>`
+                    : '';
+                return `<div class="flex items-center">
+                    <button class="pop-row town-row hover:bg-gray-100 flex-1 min-w-0" data-town="${key}">
+                        <span class="flex-1 min-w-0">
+                            <span class="font-black text-gray-800">${esc(p.name)}</span>
+                            <span class="text-gray-400"> ${p.rows}×${p.cols}</span>
+                            <span class="block text-[10px] text-gray-500 truncate">${esc(p.desc || '')}</span>
+                        </span>
+                        ${here ? '<span class="text-[10px] font-bold text-gray-500 shrink-0">重新載入</span>' : ''}
+                    </button>${sizeBtn}</div>`;
+            }).join('');
+            pop.innerHTML = rows + '<div class="pop-sep border-gray-200"></div>'
+                + `<button class="pop-row clear-row hover:bg-red-100 text-red-600 font-bold w-full">🧹 空白畫布（清空目前 ${gridRows}×${gridCols}）</button>`;
+        }
+
+        function renderLoadPanel() {
+            const pop = document.getElementById('loadPop');
+            if (!pop) return;
+            let maps = {};
+            try { maps = JSON.parse(localStorage.getItem('pa2_maps_v9')) || {}; } catch (e) {}
+            const names = Object.keys(maps);
+            const rows = names.length ? names.map(name => {
+                const e = maps[name];
+                const ts = e && !Array.isArray(e) && e.ts;
+                const d = ts ? new Date(ts) : null;
+                const when = d ? `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}` : '';
+                const n = esc(name);
+                return `<div class="flex items-center">
+                    <button class="pop-row save-row hover:bg-gray-100 flex-1 min-w-0" data-name="${n}">
+                        <span class="flex-1 min-w-0 truncate font-bold text-gray-800">${n}</span>
+                        <span class="text-[10px] text-gray-400 shrink-0">${when}</span>
+                    </button>
+                    <button class="save-ren text-[11px] text-gray-400 hover:text-gray-700 shrink-0 px-1.5 py-2" data-name="${n}" title="改名">✏</button>
+                    <button class="save-del text-[11px] text-gray-400 hover:text-gray-700 shrink-0 px-1.5 py-2" data-name="${n}" title="刪除">🗑</button>
+                </div>`;
+            }).join('') : '<div class="pop-row text-gray-400">還沒有存檔</div>';
+            // 貼上載入與「讀取」放在一起：它們是同一件事（把畫布整份換掉），走同一個守衛
+            pop.innerHTML = rows + '<div class="pop-sep border-gray-200"></div>'
+                + `<div class="px-2 pb-1">
+                    <div class="text-[11px] font-bold text-gray-500 mb-1">貼上並載入</div>
+                    <textarea id="pasteBox" rows="2" class="w-full text-[11px] border border-gray-300 rounded p-1.5 bg-white outline-none focus:border-blue-400" placeholder="分享連結、#m= 代碼或舊版 JSON 存檔碼"></textarea>
+                    <button id="pasteLoadBtn" class="mt-1 w-full text-[11px] font-bold bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 rounded py-1.5">載入</button>
+                </div>`;
         }
 
         function seedProgressSave() {
@@ -2924,38 +3412,6 @@
                 : '';
         }
 
-        function renderPresetOptions() {
-            const select = document.getElementById('presetSelect');
-            Object.entries(PRESETS).forEach(([key, p]) => {
-                const opt = document.createElement('option');
-                opt.value = key;
-                // 尚無地形資料的城鎮也可選：會以該鎮的正確尺寸開空白畫布
-                opt.innerText = p.data ? p.name : `${p.name}（${p.rows}×${p.cols} 空白）`;
-                opt.title = p.desc || '';
-                select.appendChild(opt);
-            });
-        }
-
-        function loadSavedMapsList() {
-            const select = document.getElementById('loadLocalSelect');
-            select.innerHTML = '<option value="">-- 讀取存檔 --</option>';
-            try {
-                const maps = JSON.parse(localStorage.getItem('pa2_maps_v9')) || {};
-                Object.keys(maps).forEach(name => {
-                    const opt = document.createElement('option');
-                    opt.value = name;
-                    const ts = maps[name] && !Array.isArray(maps[name]) && maps[name].ts;
-                    if (ts) {
-                        const d = new Date(ts);
-                        opt.innerText = `${name}（${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}）`;
-                    } else {
-                        opt.innerText = name;
-                    }
-                    select.appendChild(opt);
-                });
-            } catch (e) { console.error("讀取清單失敗"); }
-        }
-
         // 為預設圖/舊存檔中的多格建築自動標記棟別（貪婪：由左上往右下找完整 w×h 區塊）
         function assignBlockIds() {
             let maxBid = 0;
@@ -3154,7 +3610,21 @@
             const mapMain = document.querySelector('main');
             // Ctrl+滾輪:以游標為中心縮放;一般滾輪維持原生捲動(平移)
             mapMain.addEventListener('wheel', (e) => {
-                if (!e.ctrlKey) return;
+                if (!e.ctrlKey) {
+                    /* 漸進揭露：只在「這個手勢什麼都沒發生」時才提示 Ctrl+滾輪。
+                       放大後滾動＝平移，那是刻意保留的正確行為，在使用者做對事時提示另一個
+                       功能只會變成噪音；捲到邊界卻還在滾，才是真的卡住。 */
+                    if (prefs.zoomHint) return;
+                    const sc = mapScroller();
+                    if (!sc) return;
+                    const before = sc.scrollTop;
+                    setTimeout(() => {
+                        if (sc.scrollTop !== before) return;   // 有捲到＝正常平移，不打擾
+                        savePrefs({ zoomHint: 1 });
+                        showSysMsg('已到邊界：按住 Ctrl 再滾輪可以游標為中心縮放');
+                    }, 60);
+                    return;
+                }
                 e.preventDefault();
                 setZoom(zoomLevel * (e.deltaY < 0 ? 1.15 : 1 / 1.15), { x: e.clientX, y: e.clientY });
             }, { passive: false });
@@ -3189,21 +3659,11 @@
                 if (btn) selectTool(btn.dataset.tool);
             });
 
-            document.getElementById('rectBtn').addEventListener('click', () => {
-                rectMode = !rectMode;
-                track('toggle_rect', { on: rectMode });
-                const b = document.getElementById('rectBtn');
-                b.classList.toggle('bg-indigo-600', rectMode);
-                b.classList.toggle('text-white', rectMode);
-                showSysMsg(rectMode ? '矩形模式：拖曳框選範圍一次填滿（限 1×1 項目）' : '已關閉矩形模式');
-            });
-
-            document.getElementById('spotStatsToggle').addEventListener('click', () => {
-                const body = document.getElementById('spotStatsBody');
-                const open = !body.classList.toggle('hidden');
-                document.getElementById('spotStatsArrow').innerText = open ? '▾' : '▸';
-                savePrefs({ statsOpen: open });
-            });
+            /* 筆刷／矩形是「改變下一次點擊的後果」＝模式，做成互斥的分段控制，
+               與 💡建議／👣動線（改變地圖顯示什麼＝圖層）在外觀上分家。
+               Shift 的替代路徑寫在切換時的提示裡，不在按鈕上加鍵帽（那是往最擠的地方加裝飾）。 */
+            document.getElementById('brushBtn').addEventListener('click', () => setDrawMode(false));
+            document.getElementById('rectBtn').addEventListener('click', () => setDrawMode(true));
 
             document.getElementById('searchClearBtn').addEventListener('click', () => {
                 const inp = document.getElementById('paletteSearch');
@@ -3236,17 +3696,7 @@
                 showSysMsg(prefs.suggestOff ? '已隱藏地圖上的建議標示' : '已顯示建議標示');
             });
 
-            document.getElementById('flowBtn').addEventListener('click', () => {
-                if (!prefs.flowOn && !computeReachability()) {
-                    showSysMsg('地圖上沒有校門，無法計算動線', true);
-                    return;
-                }
-                savePrefs({ flowOn: !prefs.flowOn });
-                track('toggle_flow', { on: prefs.flowOn });
-                styleFlowBtn();
-                updateFlowOverlay();
-                showSysMsg(prefs.flowOn ? '動線圖層：綠＝離校門近、紅＝遠、灰斜紋＝走不到' : '已關閉動線圖層');
-            });
+            document.getElementById('flowBtn').addEventListener('click', () => toggleFlow());
 
             document.getElementById('exportImgBtn').addEventListener('click', () => { track('export_image'); exportImage(); });
             document.getElementById('shareBtn').addEventListener('click', () => {
@@ -3256,7 +3706,6 @@
                     .then(() => showSysMsg('分享連結已複製！對方開啟即載入此地圖'))
                     .catch(() => { prompt('請手動複製此連結：', url); });
             });
-            document.getElementById('reportBtn').addEventListener('click', () => { track('open_report'); buildReport(); });
             document.getElementById('devGuideBtn').addEventListener('click', () => { track('open_dev_guide'); buildDevGuide(); });
             document.getElementById('handbookBtn').addEventListener('click', () => buildHandbook('tips'));
             document.getElementById('compareBtn').addEventListener('click', () => { track('open_compare'); buildCompare(); });
@@ -3264,33 +3713,23 @@
                 const b = e.target.closest('.hb-tab');
                 if (b) buildHandbook(b.dataset.hb);
             });
-            document.getElementById('reportCloseBtn').addEventListener('click', () => document.getElementById('reportModal').classList.add('hidden'));
+            document.getElementById('reportCloseBtn').addEventListener('click', closeReport);
             document.getElementById('reportModal').addEventListener('click', (e) => {
-                if (e.target === document.getElementById('reportModal')) e.target.classList.add('hidden');
+                if (e.target === document.getElementById('reportModal')) closeReport();
             });
 
-            document.getElementById('renameLocalBtn').addEventListener('click', () => {
-                const name = document.getElementById('loadLocalSelect').value;
-                if (!name) { showSysMsg('請先選擇要改名的存檔！', true); return; }
-                const input = prompt(`將「${name}」改名為：`, name);
-                const newName = input && input.trim();
-                if (!newName || newName === name) return;
-                try {
-                    const maps = JSON.parse(localStorage.getItem('pa2_maps_v9')) || {};
-                    if (maps[newName]) { showSysMsg('已有同名存檔！', true); return; }
-                    maps[newName] = maps[name];
-                    delete maps[name];
-                    localStorage.setItem('pa2_maps_v9', JSON.stringify(maps));
-                    loadSavedMapsList();
-                    document.getElementById('loadLocalSelect').value = newName;
-                    document.getElementById('saveName').value = newName;
-                    if (prefs.lastSave === name) savePrefs({ lastSave: newName });
-                    showSysMsg(`已改名：${newName}`);
-                } catch (e) { showSysMsg('改名失敗！', true); }
+            // 常駐摘要：數字本身就是明細入口；「差一項」晶片點了就選取該設施並亮出位置
+            document.getElementById('spotSummaryBtn').addEventListener('click', () => { track('open_report'); buildSpotDetail(); });
+            document.getElementById('blockedBtn').addEventListener('click', () => {
+                if (!lastHasGate) { showSysMsg('先在地圖上放一個校門，才能計算動線', true); return; }
+                if (toggleFlow(true) && lastBlockedFirst) focusCell(lastBlockedFirst[0], lastBlockedFirst[1]);
             });
-
-            // 統計面板「差一項」的設施名稱可點：自動選取該設施，地圖亮出建議位置
-            document.getElementById('spotStats').addEventListener('click', (e) => {
+            document.getElementById('nearChips').addEventListener('click', (e) => {
+                if (e.target.closest('#nearMoreBtn')) {
+                    nearExpanded = !nearExpanded;
+                    renderSpotStats(lastSpotStats.activeIds, lastSpotStats.nearMap);
+                    return;
+                }
                 const btn = e.target.closest('.near-chip');
                 if (!btn) return;
                 if (btn.dataset.tool === 'slope') {
@@ -3301,7 +3740,21 @@
                 document.getElementById(`tool-${btn.dataset.tool}`)?.scrollIntoView({ block: 'nearest' });
                 showSysMsg(`藍框＝放「${items[btn.dataset.tool].name}」即成立景點的位置。三項條件必須在同一個 4×4 範圍內，較遠處的同種設施不算數。`);
             });
+
+            // 手機：建築面板標題列＝資訊卡的收合／展開（狀態存 body class，重繪時保留）
+            document.getElementById('thToggle').addEventListener('click', () => {
+                document.body.classList.toggle('th-open');
+                updateToolHint(currentTool, updateSuggestions());
+            });
+
             document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    // 決策對話框的 Esc＝取消（唯一什麼都不做的出口，與點背景一致）
+                    if (askState) { closeAsk(false); return; }
+                    if (!document.getElementById('reportModal').classList.contains('hidden')) { closeReport(); return; }
+                    closePops();
+                    return;
+                }
                 if (!(e.ctrlKey || e.metaKey)) return;
                 const k = e.key.toLowerCase();
                 if (k === 'z' && !e.shiftKey) { e.preventDefault(); undo(); }
@@ -3318,108 +3771,149 @@
                 fitGrid();
             });
 
-            document.getElementById('loadPresetBtn').addEventListener('click', () => loadPreset(document.getElementById('presetSelect').value));
-            document.getElementById('sizeSelect').addEventListener('change', (e) => changeGridSize(e.target.value));
-
-            document.getElementById('saveLocalBtn').addEventListener('click', () => {
-                const name = document.getElementById('saveName').value.trim() || "未命名";
-                try {
-                    const maps = JSON.parse(localStorage.getItem('pa2_maps_v9')) || {};
-                    maps[name] = { data: gridData, ts: Date.now() };
-                    localStorage.setItem('pa2_maps_v9', JSON.stringify(maps));
-                    track('save_map');
-                    loadSavedMapsList();
-                    document.getElementById('loadLocalSelect').value = name;
-                    savePrefs({ lastSave: name });
-                    showSysMsg(`已儲存：${name}`);
-                } catch (e) { showSysMsg('儲存失敗！', true); }
+            // ─── 城鎮面板（地形／尺寸／空白畫布的唯一入口）───
+            document.getElementById('townBtn').addEventListener('click', () => {
+                const pop = document.getElementById('townPop');
+                const willOpen = pop.classList.contains('hidden');
+                closePops();
+                if (willOpen) { renderTownPanel(); pop.classList.remove('hidden'); }
             });
-
-            document.getElementById('loadLocalBtn').addEventListener('click', () => {
-                const name = document.getElementById('loadLocalSelect').value;
-                if (!name) { showSysMsg('請選擇存檔！', true); return; }
-                try {
-                    const maps = JSON.parse(localStorage.getItem('pa2_maps_v9')) || {};
-                    const entry = maps[name];
-                    const data = Array.isArray(entry) ? entry : (entry && entry.data); // 相容舊格式
-                    if (data) {
-                        pushHistory();
-                        if (importGridData(data)) {
-                            track('load_map');
-                            document.getElementById('saveName').value = name;
-                            savePrefs({ lastSave: name });
-                            showSysMsg(`已讀取：${name}`);
-                        }
-                    }
-                } catch (e) { showSysMsg('讀取失敗！', true); }
-            });
-
-            document.getElementById('deleteLocalBtn').addEventListener('click', () => {
-                const name = document.getElementById('loadLocalSelect').value;
-                if (!name) { showSysMsg('請先選擇要刪除的存檔！', true); return; }
-                if (!confirm(`確定刪除存檔「${name}」？此動作無法復原。`)) return;
-                try {
-                    track('delete_map');
-                    const maps = JSON.parse(localStorage.getItem('pa2_maps_v9')) || {};
-                    delete maps[name];
-                    localStorage.setItem('pa2_maps_v9', JSON.stringify(maps));
-                    loadSavedMapsList();
-                    showSysMsg(`已刪除：${name}`);
-                } catch (e) { showSysMsg('刪除失敗！', true); }
-            });
-
-            document.getElementById('loadLocalSelect').addEventListener('change', (e) => {
-                if (e.target.value) document.getElementById('saveName').value = e.target.value;
-            });
-
-            document.getElementById('clearBtn').addEventListener('click', () => {
-                if (confirm('確定清空地圖？')) {
-                    track('clear_map');
-                    pushHistory();
-                    for (let r = 0; r < gridRows; r++) {
-                        for (let c = 0; c < gridCols; c++) {
-                            gridData[r][c] = { type: 'empty', elevation: 1 };
-                            updateTileVisuals(r, c);
-                        }
-                    }
-                    checkSpots();
-                    document.getElementById('saveName').value = "";
-                    document.getElementById('loadLocalSelect').value = "";
-                    showSysMsg('地圖已清空');
+            document.getElementById('townPop').addEventListener('click', (e) => {
+                const size = e.target.closest('.town-size');
+                if (size) {
+                    const p = PRESETS[size.dataset.town];
+                    closePops();
+                    if (p) changeGridSizeTo(p.rows, p.cols);
+                    return;
+                }
+                const row = e.target.closest('.town-row');
+                if (row) {
+                    const key = row.dataset.town, p = PRESETS[key];
+                    closePops();
+                    if (!p) return;
+                    // 點目前那一鎮＝重新載入該地形（可重複執行，用來把地形重置回原樣）
+                    guardDestructive(`切換到「${p.name}」會換成該鎮的地形`, () => loadPreset(key));
+                    return;
+                }
+                if (e.target.closest('.clear-row')) {
+                    closePops();
+                    guardDestructive('清成空白畫布會刪掉地圖上所有內容', clearMap);
                 }
             });
 
-            document.getElementById('saveCodeBtn').addEventListener('click', () => {
-                track('export_code');
-                const dataStr = JSON.stringify(gridData);
-                navigator.clipboard.writeText(dataStr).then(() => {
-                    showSysMsg('存檔碼已複製到剪貼簿！');
-                }).catch(() => {
-                    const io = document.getElementById('ioData');
-                    io.value = dataStr;
-                    io.classList.remove('hidden');
-                    io.select();
-                    document.execCommand('copy');
-                    io.classList.add('hidden');
-                    showSysMsg('存檔碼已複製！');
-                });
+            // ─── 讀取面板（存檔清單＋貼上載入，同一組破壞性讀取共用一個守衛）───
+            document.getElementById('loadBtn').addEventListener('click', () => {
+                const pop = document.getElementById('loadPop');
+                const willOpen = pop.classList.contains('hidden');
+                document.getElementById('townPop').classList.add('hidden');
+                if (willOpen) { renderLoadPanel(); pop.classList.remove('hidden'); }
+                else pop.classList.add('hidden');
+            });
+            document.getElementById('loadPop').addEventListener('click', (e) => {
+                const del = e.target.closest('.save-del');
+                if (del) {
+                    const name = del.dataset.name;
+                    if (!confirm(`確定刪除存檔「${name}」？此動作無法復原。`)) return;
+                    try {
+                        track('delete_map');
+                        const maps = JSON.parse(localStorage.getItem('pa2_maps_v9')) || {};
+                        delete maps[name];
+                        localStorage.setItem('pa2_maps_v9', JSON.stringify(maps));
+                        renderLoadPanel();
+                        showSysMsg(`已刪除：${name}`);
+                    } catch (err) { showSysMsg('刪除失敗！', true); }
+                    return;
+                }
+                const ren = e.target.closest('.save-ren');
+                if (ren) {
+                    const name = ren.dataset.name;
+                    const input = prompt(`將「${name}」改名為：`, name);
+                    const newName = input && input.trim();
+                    if (!newName || newName === name) return;
+                    try {
+                        const maps = JSON.parse(localStorage.getItem('pa2_maps_v9')) || {};
+                        if (maps[newName]) { showSysMsg('已有同名存檔！', true); return; }
+                        maps[newName] = maps[name];
+                        delete maps[name];
+                        localStorage.setItem('pa2_maps_v9', JSON.stringify(maps));
+                        renderLoadPanel();
+                        if (document.getElementById('saveName').value === name) {
+                            document.getElementById('saveName').value = newName;
+                        }
+                        if (prefs.lastSave === name) savePrefs({ lastSave: newName });
+                        showSysMsg(`已改名：${newName}`);
+                    } catch (err) { showSysMsg('改名失敗！', true); }
+                    return;
+                }
+                const row = e.target.closest('.save-row');
+                if (row) {
+                    const name = row.dataset.name;
+                    closePops();
+                    guardDestructive(`讀取「${name}」會換掉目前的畫布`, () => loadSavedMap(name));
+                    return;
+                }
+                if (e.target.closest('#pasteLoadBtn')) {
+                    const box = document.getElementById('pasteBox');
+                    const text = box ? box.value : '';
+                    if (!text.trim()) { showSysMsg('請先貼上分享連結或代碼', true); return; }
+                    closePops();
+                    guardDestructive('載入貼上的地圖會換掉目前的畫布', () => loadFromText(text));
+                }
             });
 
-            document.getElementById('loadCodeBtn').addEventListener('click', () => {
-                navigator.clipboard.readText().then(text => {
-                    try {
-                        const parsed = JSON.parse(text);
-                        if (Array.isArray(parsed)) pushHistory();
-                        if (importGridData(parsed)) { track('import_code'); showSysMsg('代碼匯入成功！'); }
-                        else showSysMsg('格式錯誤', true);
-                    } catch (e) { showSysMsg('無法解析剪貼簿內容', true); }
-                }).catch(() => {
-                     showSysMsg('無法存取剪貼簿，請允許權限。', true);
-                });
+            document.getElementById('saveLocalBtn').addEventListener('click', () => {
+                saveMapAs(document.getElementById('saveName').value.trim() || townLabel() || '未命名');
             });
+
+            // ─── 破壞性動作的對話框 ───
+            document.getElementById('askCancel').addEventListener('click', () => closeAsk(false));
+            document.getElementById('askDiscard').addEventListener('click', () => {
+                // 使用者明知會丟：這一步之後畫布視為「已落地」，不再重複追問
+                baseline = canonGrid(gridData);
+                closeAsk(true);
+            });
+            document.getElementById('askSave').addEventListener('click', () => {
+                if (saveMapAs(document.getElementById('askName').value.trim())) closeAsk(true);
+            });
+            document.getElementById('askName').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') { e.preventDefault(); document.getElementById('askSave').click(); }
+            });
+            document.getElementById('askModal').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('askModal')) closeAsk(false);
+            });
+
+            // ─── 手機：次要控制的 ⋯ 面板 ───
+            document.getElementById('moreBtn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                document.getElementById('townPop').classList.toggle('hidden', true);
+                document.body.classList.toggle('sheet-open');
+            });
+            // 點面板外面就收起（面板與觸發鈕以外的任何點擊）
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('#townBtn, #townPop')) document.getElementById('townPop').classList.add('hidden');
+                if (!e.target.closest('#loadBtn, #loadPop')) document.getElementById('loadPop').classList.add('hidden');
+                if (!e.target.closest('#moreBtn, #hdrExtra, #loadPop')) document.body.classList.remove('sheet-open');
+            });
+
+            // 首訪提示：關掉之後高度變了，要重算網格（fitGrid 只綁在 resize 上）
+            document.getElementById('introClose').addEventListener('click', () => {
+                document.getElementById('introTip').classList.add('hidden');
+                savePrefs({ introDone: 1 });
+                fitGrid();
+            });
+        }
+
+        // 面板／sheet 的統一收起
+        function closePops() {
+            const t = document.getElementById('townPop'), l = document.getElementById('loadPop');
+            if (t) t.classList.add('hidden');
+            if (l) l.classList.add('hidden');
+            document.body.classList.remove('sheet-open');
         }
     </script>
     <script src="../../../assets/shell.js?v=8"></script>
-    <script data-shell>Shell.mountBar();</script>
+    <!-- mountBar() 不像 Shell.mount() 會自己送 page_engage → 這裡補一行，
+         sim 才有「進來的人」這個分母（Shell.game 在 mountBar 裡才設，順序不能顛倒）。 -->
+    <script data-shell>Shell.mountBar();Shell.track('page_engage', { page: 'sim' });</script>
 </body>
 </html>
