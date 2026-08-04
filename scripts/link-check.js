@@ -293,8 +293,12 @@ section('5. sitemap.xml');
     else {
         const xml = fs.readFileSync(smPath, 'utf8');
         const locs = [...xml.matchAll(/<loc>([^<]*)<\/loc>/g)].map(m => m[1]);
-        // 依 gen-sitemap.js 的規則算出「應收錄」清單
-        const want = pages.map(p => BASE + (p.endsWith('index.html') ? p.slice(0, -'index.html'.length) : p)).sort();
+        // 依 gen-sitemap.js 的規則算出「應收錄」清單。
+        // 兩邊必須用同一份排除清單：`404.html` 回的是 404 狀態碼，收進 sitemap 只會讓
+        // Search Console 報「已提交但未收錄」。gen-sitemap.js 的 SKIP_FILES 也是這一組。
+        const SITEMAP_SKIP = new Set(['404.html']);
+        const want = pages.filter(p => !SITEMAP_SKIP.has(p))
+            .map(p => BASE + (p.endsWith('index.html') ? p.slice(0, -'index.html'.length) : p)).sort();
         const wantSet = new Set(want), gotSet = new Set(locs);
 
         ok(`sitemap 收錄 ${locs.length} 個 URL；可索引頁 ${pages.length} 頁`);

@@ -5,6 +5,8 @@ const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
 const BASE = 'https://ploglin.cc/';
+// 404 頁不進 sitemap：它回的是 404 狀態碼，收錄只會讓 GSC 報「已提交但未收錄」
+const SKIP_FILES = new Set(['404.html']);
 const SKIP_DIRS = new Set(['.git', '.idea', 'node_modules', 'assets', 'scripts', 'scratchpad', '.github']);
 
 const urls = [];
@@ -25,6 +27,7 @@ function walk(dir) {
             } else {
                 url = BASE + rel;
             }
+            if (SKIP_FILES.has(name)) continue;
             urls.push(url);
         }
     }
