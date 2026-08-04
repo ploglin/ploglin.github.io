@@ -53,14 +53,14 @@ const RELATED = {
             { href: '../db/events/', icon: '🎪', label: '行事活動資料庫', desc: '全年行事與活動表' }
         ],
         'challenges': [
-            { href: '../economy/', desc: '資金週轉與收支控管' },
             { href: '../ng-plus/', desc: '二周目繼承與結算' },
-            { href: '../db/tasks/', icon: '📝', label: '挑戰資料庫', desc: '全挑戰目標一覽表' }
+            { href: '../db/tasks/', icon: '📝', label: '挑戰資料庫', desc: '9 科 40 級逐級明細' },
+            { href: '../db/achievements/', icon: '🏆', label: '成就資料庫', desc: '全成就解除條件' }
         ],
         'glossary': [
             { href: '../#combo', icon: '🧩', label: '29 種景點 combo 總表', desc: '29 景點成立配方' },
             { href: '../db/facilities/', icon: '🏗️', label: '設施資料庫', desc: '全設施尺寸與解鎖' },
-            { href: '../db/spots/', icon: '🎯', label: '景點資料庫', desc: '全人氣景點條件表' }
+            { href: '../db/terms/', icon: '📖', label: '中日名詞資料庫', desc: '50 條日文名詞對照' }
         ],
         'layouts': [
             { href: 'health/', icon: '🏫', label: '健康鎮完美佈局', desc: '26×24 · 29 景點 · 164 棟' },
