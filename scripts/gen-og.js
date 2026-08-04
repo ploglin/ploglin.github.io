@@ -179,27 +179,38 @@ const imgFor = (p) => {
 
 const OG_IMG = /[ \t]*<meta\s+property="og:image"\s+content="[^"]*">\r?\n?/i;
 const OG_DIM = /[ \t]*<meta\s+property="og:image:(?:width|height)"\s+content="[^"]*">\r?\n?/gi;
-const st = { retarget: 0, added: 0, removed: 0, twitter: 0, noAnchor: [] };
+const st = { retarget: 0, added: 0, removed: 0, twitter: 0, eol: 0, noAnchor: [] };
+
+/* 行尾：repo 內 CRLF／LF 兩種都有（逐檔不同，見 layout-gen 的產出）。插入時若寫死
+   '\n'，CRLF 檔就變成混合行尾 —— 內容進 git 會被正規化成 LF（commit 的東西沒錯），
+   但工作區會永遠掛著一堆「M」而 `git diff` 是空的，誤導以後的人以為產生物被手改。
+   所以：取該檔的多數行尾，蓋章後把整檔統一。git 端的 blob 一位元都不會變。 */
+const dominantEol = (s) => {
+    let crlf = 0, lf = 0;
+    for (let i = 0; i < s.length; i++) if (s[i] === '\n') (i > 0 && s[i - 1] === '\r') ? crlf++ : lf++;
+    return crlf >= lf ? '\r\n' : '\n';
+};
 
 for (const p of pages) {
     const abs = path.join(ROOT, p);
     let s = fs.readFileSync(abs, 'utf8');
     const before = s;
+    const eol = dominantEol(s);
 
     if (NON_STATION.has(p)) {
         if (OG_IMG.test(s)) { s = s.replace(OG_IMG, '').replace(OG_DIM, ''); st.removed++; }
     } else {
-        const block = `<meta property="og:image" content="${imgFor(p)}">\n`
-            + `    <meta property="og:image:width" content="1200">\n`
+        const block = `<meta property="og:image" content="${imgFor(p)}">${eol}`
+            + `    <meta property="og:image:width" content="1200">${eol}`
             + `    <meta property="og:image:height" content="630">`;
         if (OG_IMG.test(s)) {
             const cur = /content="([^"]*)"/.exec(OG_IMG.exec(s)[0])[1];
             s = s.replace(OG_IMG, '').replace(OG_DIM, '');
             if (cur !== imgFor(p)) st.retarget++;
             // 重新插回標準位置，順序永遠是 image → width → height
-            s = insert(s, block, p);
+            s = insert(s, block, p, eol);
         } else {
-            s = insert(s, block, p);
+            s = insert(s, block, p, eol);
             st.added++;
         }
     }
@@ -210,13 +221,18 @@ for (const p of pages) {
         st.twitter++;
     }
 
+    // 統一行尾（含清掉前幾版蓋章留下的混合行尾）
+    const normalized = s.replace(/\r?\n/g, eol);
+    if (normalized !== s) st.eol++;
+    s = normalized;
+
     if (s !== before) fs.writeFileSync(abs, s, 'utf8');
 }
 
-function insert(s, block, p) {
+function insert(s, block, p, eol) {
     // 依序找 og:url → canonical → </title> 當插入點
     for (const re of [/(<meta\s+property="og:url"[^>]*>)/i, /(<link[^>]*rel="canonical"[^>]*>)/i, /(<\/title>)/i]) {
-        if (re.test(s)) return s.replace(re, `$1\n    ${block}`);
+        if (re.test(s)) return s.replace(re, `$1${eol}    ${block}`);
     }
     st.noAnchor.push(p);
     return s;
@@ -225,5 +241,6 @@ function insert(s, block, p) {
 console.log('\n【2】蓋 meta');
 console.log(`  新增 og:image ${st.added} 頁 · 改指向 ${st.retarget} 頁 · 移除（非攻略站頁）${st.removed} 頁`);
 console.log(`  twitter:card → summary_large_image ${st.twitter} 頁`);
+console.log(`  行尾統一 ${st.eol} 頁`);
 if (st.noAnchor.length) console.log('  ★ 找不到插入點：' + st.noAnchor.join(', '));
 console.log(`  掃過 ${pages.length} 頁`);

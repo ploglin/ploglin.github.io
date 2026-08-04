@@ -270,7 +270,11 @@ section('4. 麵包屑（Shell.mount 的 breadcrumb）');
     let checked = 0, items = 0;
     for (const p of pages) {
         const html = raw.get(p);
-        if (!/Shell\.mount\s*\(/.test(html)) { continue; }         // 模擬器走 mountBar，不在此列
+        // 全螢幕工具走 mountBar()，沒有麵包屑 —— 先排除它，再看有沒有 Shell.mount()。
+        // 順序反了會誤判：模擬器頁的註解裡只要出現「Shell.mount()」這串字（例如在說明
+        // 「mountBar() 不像 Shell.mount() 會自己送 page_engage」），就會被算成漏麵包屑。
+        if (/Shell\.mountBar\s*\(/.test(html)) { continue; }
+        if (!/Shell\.mount\s*\(/.test(html)) { continue; }
         const m = /breadcrumb\s*:\s*(\[[\s\S]*?\])\s*[,}]/.exec(html);
         if (!m) { if (!/page\s*:\s*['"]home['"]/.test(html)) noBc.push(p); continue; }
         let bc;
