@@ -58,8 +58,8 @@ kairosoft/<game>/            index.html = 內容豐富的攻略專頁(SEO 主力
   <script data-shell>Shell.mountBar();</script>
   ```
   `data-shell` 屬性不可省略——`school2/scripts/check.js` 靠「無屬性的 `<script>`」找主程式。
-- **快取**：改動 `shell.js` / `shell.css` / `db.js` / `home.js` 後，全站 `?v=N` 要一起加一號(目前 `?v=8`，含各頁對 `db.js`、首頁對 `games-index.js`／`home.js` 的引用)。改完 `grep -rn '?v=<舊號>'` 確認零殘留。
-  - **版號分兩軌，不要混**：`/assets/*` 是 29 款同吃的共用資產，必須同號；`kairosoft/<game>/assets/*` 是**單一遊戲自己的資產，自帶版號**（例：school2 專屬的 `guide.css`／`guide.js`，兩者必須同號、目前 `?v=6`）。改一款遊戲自己的樣式**不要**跟著 bump 全站 `?v`——那只會讓 29 款無謂 cache miss；反過來 bump 全站時也不要順手把本地版號一起改。`link-check.js` 第 6 節就是照這兩軌各自斷言的。
+- **快取**：改動 `shell.js` / `shell.css` / `db.js` / `home.js` 後，全站 `?v=N` 要一起加一號(目前 `?v=9`，含各頁對 `db.js`、首頁對 `games-index.js`／`home.js` 的引用)。改完 `grep -rn '?v=<舊號>'` 確認零殘留。
+  - **版號分兩軌，不要混**：`/assets/*` 是 29 款同吃的共用資產，必須同號；`kairosoft/<game>/assets/*` 是**單一遊戲自己的資產，自帶版號**（例：school2 專屬的 `guide.css`／`guide.js`，兩者必須同號、目前 `?v=7`）。改一款遊戲自己的樣式**不要**跟著 bump 全站 `?v`——那只會讓 29 款無謂 cache miss；反過來 bump 全站時也不要順手把本地版號一起改。`link-check.js` 第 6 節就是照這兩軌各自斷言的。
   - 新增一個只有某一款引入的 CSS/JS 檔**不需要動全站 `?v`**（沒改共用檔）。
 
 ## 導覽分層原則

@@ -77,7 +77,10 @@ body {
 }
 
 a { color: var(--brand); text-decoration: none; }
-a:hover { text-decoration: underline; }
+/* 包進 hover: hover：iOS 上 :hover 在點擊後會殘留不放，底線會卡在剛點過的連結上 */
+@media (hover: hover) {
+    a:hover { text-decoration: underline; }
+}
 
 img { max-width: 100%; height: auto; }
 
@@ -97,7 +100,9 @@ img { max-width: 100%; height: auto; }
 .site-header .bar {
     max-width: var(--maxw);
     margin: 0 auto;
-    padding: 10px 20px;
+    /* 5px 而非 10px：導覽升到 44px 命中區後，5+44+5+1 = 55px，正好等於下面
+       .game-bar 用的 `--hdr-h` fallback（:144）→ 桌機總高不增反減，資訊密度零損失。 */
+    padding: 5px 20px;
     display: flex;
     align-items: center;
     gap: 18px;
@@ -112,6 +117,7 @@ img { max-width: 100%; height: auto; }
     color: var(--ink);
     letter-spacing: -.01em;
     white-space: nowrap;
+    min-height: 44px;
 }
 .site-logo:hover { text-decoration: none; }
 .site-logo .mark {
@@ -127,7 +133,10 @@ img { max-width: 100%; height: auto; }
 
 .site-nav { display: flex; gap: 4px; margin-left: auto; flex-wrap: wrap; }
 .site-nav a {
-    padding: 7px 12px;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 12px;
     border-radius: 8px;
     color: var(--ink-soft);
     font-weight: 700;
@@ -135,7 +144,7 @@ img { max-width: 100%; height: auto; }
 }
 .site-nav a:hover { background: var(--brand-soft); color: var(--brand-strong); text-decoration: none; }
 .site-nav a.active { color: var(--brand-strong); background: var(--brand-soft); }
-.theme-btn { margin-left: 4px; width: 34px; height: 34px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--ink); font-size: 15px; cursor: pointer; display: grid; place-items: center; line-height: 1; flex-shrink: 0; }
+.theme-btn { margin-left: 4px; width: 44px; height: 44px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--ink); font-size: 15px; cursor: pointer; display: grid; place-items: center; line-height: 1; flex-shrink: 0; }
 .theme-btn:hover { background: var(--brand-soft); }
 
 /* ---------- 遊戲內功能列（店中店）---------- */
@@ -150,7 +159,10 @@ img { max-width: 100%; height: auto; }
 .gb-inner {
     max-width: var(--maxw);
     margin: 0 auto;
-    padding: 8px 20px;
+    /* 3px 而非 8px：.gb-tab 升到 44px 後，3+44+3+1 = 51px ＝ 改動前的高度。
+       `.gb-title`（30px）刻意**不**補 44px：它右邊 3px 就是「攻略總覽」，指向同一個
+       目標，是冗餘命中區；補了只會把整條列推到 59px。 */
+    padding: 3px 20px;
     display: flex;
     align-items: center;
     gap: 16px;
@@ -177,7 +189,8 @@ img { max-width: 100%; height: auto; }
 .gb-nav::-webkit-scrollbar { display: none; }
 .gb-tab {
     display: inline-flex; align-items: center; gap: 5px;
-    padding: 7px 12px; border-radius: 9px;
+    min-height: 44px;
+    padding: 0 12px; border-radius: 9px;
     font-size: 13.5px; font-weight: 800;
     color: var(--ink-soft);
     white-space: nowrap;
@@ -208,7 +221,8 @@ img { max-width: 100%; height: auto; }
 .gb-mitem + .gb-mh { margin-top: 4px; border-top: 1px solid var(--line); padding-top: 8px; }
 .gb-mitem {
     display: flex; align-items: center; gap: 8px;
-    padding: 8px 10px; border-radius: 8px;
+    min-height: 44px;
+    padding: 0 10px; border-radius: 8px;
     font-size: 13.5px; font-weight: 700; color: var(--ink-soft);
     white-space: nowrap;
 }
@@ -216,11 +230,11 @@ img { max-width: 100%; height: auto; }
 .gb-mitem.on { background: var(--brand-soft); color: var(--brand-strong); }
 
 @media (max-width: 720px) {
-    .gb-inner { padding: 7px 14px; gap: 10px; }
+    .gb-inner { padding: 3px 14px; gap: 10px; }
     .gb-name i { display: none; }
     .gb-name b { font-size: 14px; }
     .gb-emoji { width: 30px; height: 30px; font-size: 17px; }
-    .gb-tab { padding: 6px 10px; font-size: 13px; }
+    .gb-tab { padding: 0 10px; font-size: 13px; }
 }
 
 /* 深色模式：遊戲色系是淺色調，直接用會太亮 */
@@ -242,8 +256,16 @@ h1[id], h2[id], h3[id], [id].anchor-target { scroll-margin-top: calc(var(--hdr-h
     color: var(--muted);
     padding: 14px 0 0;
 }
-.breadcrumb a { color: var(--muted); }
+/* --muted 對 --bg 只有 3.45:1（13px 常規字需 4.5:1），而且 `.breadcrumb` 與
+   `.breadcrumb a` 都是 --muted → 可點的「首頁」與不可點的當前頁長得一模一樣。
+   改 --ink-soft 是 7.19:1，同時解決對比與「哪個字可以點」兩件事。
+   分隔符與當前頁留在 --muted 不動 → 自然分層。 */
+.breadcrumb a { color: var(--ink-soft); position: relative; }
 .breadcrumb a:hover { color: var(--brand); }
+/* 命中區用 ::after 疊出來，**不動版面**：麵包屑是一行內文字流，用 padding 撐高會把
+   26px 寬的「首頁」撐成 26×43 的怪比例，也擠不出 44px 寬。實測水平間距 17.9px，
+   左右各外擴 6px 之後彼此仍留 5.9px，不會互相搶點。 */
+.breadcrumb a::after { content: ''; position: absolute; inset: -12px -6px; }
 .breadcrumb .sep { margin: 0 7px; opacity: .5; }
 
 /* 店面區群組小標（遊戲首頁用） */
@@ -377,8 +399,14 @@ table.data tbody tr:last-child td { border-bottom: none; }
 .toc { background: var(--card-2); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 14px 18px; margin: 22px 0; }
 .toc .t { font-weight: 900; font-size: 14px; margin-bottom: 8px; color: var(--ink); }
 .toc ol { margin: 0; padding-left: 20px; }
-.toc li { margin: 4px 0; }
-.toc a { color: var(--ink-soft); font-size: 14px; }
+/* 44px 的列高必須看得見，否則放大的命中區對使用者不可見、不可驗證
+   （那正是行內連結被排除的同一個理由：「點哪裡去哪裡不確定」）。
+   → 列間距收 0、改 flex 撐 44px、列與列之間補一條淡分隔線。
+   `<ol>` 的數字標記在 a 改成 flex 之後仍與文字對齊（實測 liTop == aTop）。 */
+.toc li { margin: 0; }
+.toc a { display: flex; align-items: center; min-height: 44px; color: var(--ink-soft); font-size: 14px; }
+.toc li + li a { border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent); }
+.toc a:hover { color: var(--brand-strong); text-decoration: none; }
 
 /* ---------- 廣告位 ---------- */
 .ad-slot {
@@ -406,7 +434,7 @@ table.data tbody tr:last-child td { border-bottom: none; }
 }
 .site-footer .cols { display: flex; flex-wrap: wrap; gap: 28px 48px; justify-content: space-between; }
 .site-footer .fcol .h { font-weight: 900; color: var(--ink); margin-bottom: 8px; font-size: 13px; }
-.site-footer .fcol a { display: block; color: var(--ink-soft); padding: 3px 0; }
+.site-footer .fcol a { display: flex; align-items: center; min-height: 44px; color: var(--ink-soft); }
 .site-footer .fcol a:hover { color: var(--brand); }
 .site-footer .legal { margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12.5px; line-height: 1.6; }
 
@@ -424,13 +452,15 @@ table.data tbody tr:last-child td { border-bottom: none; }
 
 .back-hub {
     display: inline-flex; align-items: center; gap: 5px;
+    min-height: 44px;
     font-size: 13px; font-weight: 800; color: var(--brand-strong);
 }
 
 /* ---------- 資料庫 (db.js) ---------- */
 .db-nav { display: flex; flex-wrap: wrap; gap: 7px; margin: 16px 0 6px; }
 .db-chip {
-    font-size: 13px; font-weight: 800; padding: 6px 12px; border-radius: 999px;
+    display: inline-flex; align-items: center; min-height: 44px;
+    font-size: 13px; font-weight: 800; padding: 0 14px; border-radius: 999px;
     background: var(--card-2); color: var(--ink-soft); border: 1px solid var(--line);
 }
 .db-chip:hover { background: var(--brand-soft); color: var(--brand-strong); text-decoration: none; }
@@ -448,7 +478,8 @@ table.data tbody tr:last-child td { border-bottom: none; }
 /* 比較模式：晶片雲挑選 + 並排比較表 */
 .db-chipcloud { display: flex; flex-wrap: wrap; gap: 7px; margin: 8px 0 14px; }
 .db-pick {
-    font: inherit; font-size: 13px; font-weight: 700; padding: 6px 12px; border-radius: 999px;
+    display: inline-flex; align-items: center; min-height: 44px;
+    font: inherit; font-size: 13px; font-weight: 700; padding: 0 14px; border-radius: 999px;
     border: 1px solid var(--line); background: var(--card); color: var(--ink-soft); cursor: pointer;
 }
 .db-pick:hover { background: var(--brand-soft); color: var(--brand-strong); }
@@ -533,20 +564,77 @@ table.data tbody tr:last-child td { border-bottom: none; }
 .grid-scroll { padding: 4px; }
 
 /* ---------- 章節浮動導覽 (pagenav) ---------- */
-.pagenav { position: fixed; right: 16px; bottom: 16px; z-index: 60; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.pagenav { position: fixed; right: 16px; bottom: max(16px, env(safe-area-inset-bottom)); z-index: 60; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
 .pagenav-btn { width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--line); background: var(--card); color: var(--ink); font-size: 20px; cursor: pointer; box-shadow: var(--shadow-hover); display: grid; place-items: center; line-height: 1; }
 .pagenav-btn:hover { background: var(--brand); color: #fff; border-color: var(--brand); }
 .pagenav-menu { width: 240px; max-height: 62vh; overflow: auto; background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow-hover); padding: 8px; display: none; }
 .pagenav-menu.open { display: block; }
 .pagenav-menu .pagenav-h { font-weight: 900; font-size: 12px; color: var(--muted); padding: 4px 8px 6px; }
-.pagenav-menu a { display: block; padding: 7px 10px; border-radius: 8px; font-size: 13.5px; color: var(--ink-soft); line-height: 1.4; }
+.pagenav-menu a { display: flex; align-items: center; min-height: 44px; padding: 0 10px; border-radius: 8px; font-size: 13.5px; color: var(--ink-soft); line-height: 1.4; }
 .pagenav-menu a:hover { background: var(--brand-soft); color: var(--brand-strong); text-decoration: none; }
 
 @media (max-width: 640px) {
-    .site-nav { gap: 0; }
-    .site-nav a { padding: 7px 9px; font-size: 13px; }
+    .site-nav { gap: 2px; }
+    .site-nav a { padding: 0 9px; font-size: 13px; }
     .hero { padding: 34px 0 30px; }
     .section { padding: 30px 0; }
-    .pagenav-btn { width: 42px; height: 42px; font-size: 18px; }
     .pagenav-menu { width: min(240px, 72vw); }
 }
+
+/* ============================================================
+   觸控命中區與按下回饋
+   ------------------------------------------------------------
+   實測（探針：把頁面塞進 390px 寬的 iframe，走訪 a/button/summary/input/select
+   收 getBoundingClientRect）改動前每頁有 13–49 個互動元素高度 < 44px：站台導覽
+   36.1px、.site-logo 32px、.theme-btn 34px、.gb-tab 36.1px、.gb-mitem 38.9px、
+   .toc a 20px、頁尾欄連結 28.9px、.back-hub 22.1px。
+
+   ── 為什麼**不**包 `@media (pointer: coarse)` ──────────────────────────
+   ①觸控筆電接鍵盤時報 `pointer: fine`，條件式會測錯裝置；②44px 對滑鼠使用者也
+   更好（瞄準成本永遠 > 0）；③`kairosoft/school2/assets/guide.css` 的 `main.article`
+   那批已經一律用無條件 `min-height: 44px`，這裡開條件式例外只是多一個分支要驗兩次。
+   最關鍵的是「桌機會變胖」這個代價**不存在**：把 `.site-header .bar` 的 padding 從
+   10px 收到 5px，桌機 header 59 → 55px（正好等於 `--hdr-h` fallback），四個導覽卻
+   全部到 44px → 桌機淨賺。既然沒有代價，就沒有東西可以拿來交換條件式的兩個缺點。
+   （`sim/index.html` 那三個 `pointer: coarse` 區塊不必跟著改，也不算兩種做法並存：
+     全螢幕 app 的垂直空間**就是產品本身**，與文件外殼是不同的問題類別。）
+   下面用到的 `@media (max-width: 640px)` 是**視窗尺寸**查詢、不是輸入裝置查詢，
+   沒有「筆電報 fine」那個漏洞，而且是加進本檔既有的 ≤640px 分支，不是開新分支。
+
+   ── 界線：哪些**刻意不**保證 44px ────────────────────────────────────
+   `.prose p a`／`.prose li a`／`.legal a`／`figcaption a` —— **連續文字流裡的連結，
+   命中區交給瀏覽器的行盒；獨立控件才由我們保證 44px。**
+   ①`min-height` 對非替換的行內元素依規範根本不生效 → 要 44px 只能改 `display`，
+     而那必然改動行盒，直接踩「.prose 的字級/行高/margin 一格都不動」這條 L3 紅線；
+   ②實測 school2/start/ 的 lead 有 6 個連結、行距 28.9px，各撐 44px 會讓**相鄰行的
+     連結重疊 15px** —— 「點哪裡去哪裡不確定」比 19px 的精準目標更糟；
+   ③Apple HIG 的 44pt 是給控件，不是給連續文字裡的連結。
+   這不是取捨，是唯一正確答案。**不要「順手補上」。**
+   ============================================================ */
+
+/* 按下回饋：觸控沒有 hover，點下去到頁面反應之間必須有確認。
+   （本檔改動前 `:active` 0 處、`:focus-visible` 0 處。） */
+.site-nav a:active,
+.gb-tab:active,
+.gb-mitem:active,
+.toc a:active,
+.db-chip:active,
+.db-pick:active,
+.site-footer .fcol a:active,
+.pagenav-menu a:active { background: var(--brand-soft); }
+.theme-btn:active,
+.pagenav-btn:active { transform: scale(.94); }
+
+/* 鍵盤焦點：`:where()` 讓特異度為 0，任何既有規則都壓得過它 → 只在沒人管的地方生效 */
+:where(a, button, summary):focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+/* 遊戲功能列的分頁在 390px 只露得出 107px／內容 402px，而 `.gb-nav` 同時關掉了
+   scrollbar-width 與 ::-webkit-scrollbar → 沒有任何「右邊還有」的暗示，還會把某個
+   分頁裁在 emoji 中間（半個 emoji 讀起來像頁面壞了，不像「往左滑」）。
+   遮罩淡出是零成本的唯一暗示；scroll-snap 保證滑動一定停在完整的分頁上。 */
+.gb-nav {
+    scroll-snap-type: x proximity;
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 22px), transparent);
+            mask-image: linear-gradient(to right, #000 calc(100% - 22px), transparent);
+}
+.gb-tab { scroll-snap-align: start; }

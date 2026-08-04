@@ -1,14 +1,14 @@
 /* ============================================================
-   口袋學院物語2（school2）長頁閱讀排版 — guide.css?v=6
+   口袋學院物語2（school2）長頁閱讀排版 — guide.css?v=7
 
-   只有 school2 的攻略頁引入，**自帶版號** → 加這一行不需要動全站
-   `?v=8`（沒有改任何共用檔）。共用的 assets/shell.css / shell.js /
-   db.js 一位元都不動；本檔只用既有 token（--brand / --ink / --line…）
-   推導，深色模式因此免費。
+   只有 school2 的攻略頁引入，**自帶版號** → 改本檔只 bump 本地號，不必動共用軌的
+   `?v`（反之全站 bump 時也不要順手把本地號一起改；`link-check.js` 第 6 節照兩軌
+   各自斷言）。`guide.css` 與 `guide.js` 兩者必須同號。
+   本檔只用既有 token（--brand / --ink / --line…）推導，深色模式因此免費。
 
    引入方式（head，兩行）：
-       <link rel="stylesheet" href="../assets/guide.css?v=6">
-       <script src="../assets/guide.js?v=6" defer></script>
+       <link rel="stylesheet" href="../assets/guide.css?v=7">
+       <script src="../assets/guide.js?v=7" defer></script>
    （`defer` 會在 DOM 解析完、Shell.mount() 之後才跑 → 量得到 --hdr-h、
      也找得到 shell.js 注入的浮動 ☰ 目錄。）
 
@@ -939,19 +939,18 @@ main.article .db-cat-card .ic {
    是這批改動裡最刺眼的不一致，而且出現在 14 個 db 分類頁的第一屏 → 一起改。
    `.db-pick` 是比較模式下視覺全等的第二排晶片，同理一起改。
 
-   命中區 36px → 44px，**不設 `@media (pointer: coarse)`**：①觸控筆電接鍵盤時報
-   pointer: fine，條件式測錯裝置 ②44px 對滑鼠使用者也更好（瞄準成本永遠 >0），而
-   本檔別處（.path-rail a / .dbk-f / .sc-tools / .zone-group > summary / .ns-prev）
-   已經一律用無條件 min-height: 44px —— 這裡開一個條件式例外只是多一個分支要驗兩次。
-   晶片是 flex 容器（.db-nav / .db-chipcloud）的子元素、已被 blockify，但仍要
-   inline-flex ＋ align-items: center 才能讓文字在 44px 裡置中。
+   ── 命中區 44px 已上移共用軌（本節只留 8bit 邊框）────────────────────────
+   `display: inline-flex` / `align-items: center` / `min-height: 44px` / `padding: 0 14px`
+   這四行原本寫在這裡，於是**同一個元件在站上有兩種尺寸**：school2 的 db 頁 44px、
+   其餘 28 款 36.1px —— 而它是 111 個 db 頁第一屏的主要篩選控件，比 header 差 8px
+   更傷「並排要看得出是同一個站」。四行已搬到 `assets/shell.css` 的 `.db-chip`／
+   `.db-pick`（29 款一起），本節只保留 school2 專屬的 8bit 邊框三行。
+   兩處屬性不重疊、不會打架；留著重複才是兩個真相來源。
+   （不設 `@media (pointer: coarse)` 的三條理由也一併移到 shell.css 那一節，
+     那裡還多了第四條：桌機的高度代價可以用 `.bar` 的 padding 買回來 → 代價為負。）
    晶片刻意**不給階梯陰影**：一排 14 顆凸起是噪音；選中態靠 13d 的沉入表達。 */
 main.article .db-chip,
 main.article .db-pick {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    padding: 0 14px;
     border-width: 2px;
     border-color: var(--px-edge);
     border-radius: var(--radius-sm);

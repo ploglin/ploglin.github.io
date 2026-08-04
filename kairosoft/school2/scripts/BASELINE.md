@@ -38,7 +38,7 @@ node kairosoft/school2/scripts/check.js [--verbose] [--strict]
 | og:image | 15 / 174 頁有；**9 筆指向不存在的檔案**（WARN，見下） |
 | 麵包屑 | 162 頁 / **392 個節點**；層數＝目錄深度、每個非末項 href 可達、末項無 href，全對 |
 | sitemap.xml | **174 個 URL ＝ 174 個可索引頁**；0 漏收、0 多收、0 重複、0 壞檔 |
-| `?v=` 版號 | 只有 **`?v=8`**，**449 處 / 171 檔**（B1 前為 443 處 / 169 檔，即 `kairosoft/CLAUDE.md` 記載的數字） |
+| `?v=` 版號 | 共用軌**只有一個版號**（上鎖當時是 8，BV4 的 44px 命中區改了 `shell.css`／`shell.js` 之後是 9），**449 處 / 171 檔**（B1 前為 443 處 / 169 檔）。本地軌（school2 的 `guide.css`／`guide.js`）自帶版號、兩者同號，上鎖當時 6、BV4 之後 7 |
 | `data.js` 引用 | **114 處**，**0 處帶 `?v`**（現有慣例：13→15 個 school2 db 頁＋sim＋spot-check 都不帶） |
 
 ### 4 筆 WARN（都是既有狀態，不是本批造成）

@@ -360,6 +360,13 @@
         '.gb-mitem:hover{background:#e6f4ec;color:#0f5d38}' +
         '.gb-theme{display:inline-grid;place-items:center;width:32px;height:32px;min-width:32px;flex-shrink:0;padding:0;margin-left:2px;border:1px solid #dde5e0;border-radius:8px;background:none;color:#4b5b53;font-family:inherit;font-size:15px;line-height:1;cursor:pointer}' +
         '.gb-theme:hover{background:#fff}' +
+        /* .gb-home（回站台）與 .gb-theme（深淺色）是全螢幕工具裡**唯一的出口**，賭注最高，
+           但它們是 `h-screen flex` 版面的成員 → 每一 px 都是從地圖挖的。用 ::after 疊出
+           44px 命中區：視覺仍 32px、功能列高度一 px 都不動。
+           （這條列的分頁 33→44px 不在本批：airport/sim 等頁在 390px 還有橫向溢出的 P0，
+             先修那個。） */
+        '.gb-home,.gb-theme{position:relative}' +
+        '.gb-home::after,.gb-theme::after{content:"";position:absolute;inset:-6px}' +
         '@media(max-width:720px){.gb-name i{display:none}.gb-tab{padding:5px 9px;font-size:12.5px}}' +
         /* 深色：與 shell.css 同構的雙選擇器（系統偏好 ＋ 手動 data-theme="dark"），色板取自 shell.css 深色 token */
         '@media(prefers-color-scheme:dark){' + barDarkCss(':root:not([data-theme="light"])') + '}' +

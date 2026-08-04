@@ -134,7 +134,7 @@ section('1. 相對連結（href / src）');
 
                 const hash = url.indexOf('#');
                 const frag = hash < 0 ? '' : url.slice(hash + 1);
-                // 去掉查詢字串（?v=8 這類快取版號不屬於檔案路徑）
+                // 去掉查詢字串（?v=9 這類快取版號不屬於檔案路徑）
                 const pathPart = (hash < 0 ? url : url.slice(0, hash)).split('?')[0];
 
                 let target = p;
