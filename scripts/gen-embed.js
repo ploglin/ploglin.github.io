@@ -97,6 +97,78 @@ if (!GAME_DB || !GAME_DB.categories) {
 const CATS = {};
 GAME_DB.categories.forEach(c => { CATS[c.key] = c; });
 
+/* ---- 衍生分類（計算式檢視）---------------------------------------------
+   有些表不是 db 的某個分類，而是**從分類算出來的**：「想衝理系該蓋哪些景點」
+   是把 29 個景點的加成欄反轉，「樞紐設施」是把需要設施欄做反向索引。
+
+   這種表最容易靜默過期：手寫一次就與 data.js 脫鉤，而讀者看不出它舊了
+   （設施表的「校門（上下用）」就這樣停在改名前的字串很久）。所以做成衍生
+   分類——形狀與真分類相同（key/label/columns/rows），既有的 `db:` 蓋章、
+   參數解析、usedby 反向索引全部原樣適用，只是 `rows` 是算出來的。
+
+   `source` 指回真正的正本分類：figcaption 的「在資料庫開啟」與 usedby 都
+   歸到來源那一頁去，不會做出一個沒有資料庫頁的死連結。
+------------------------------------------------------------------------- */
+const ATTRS = ['文系', '理系', '體育', '頭腦', '運動', '人氣', '態度'];
+const HI = 3;        // 只列 +3 以上：+2 幾乎每個景點都有，列了等於沒篩
+
+function derive() {
+    const spots = CATS.spots;
+    if (!spots) return;
+    const col = (c, n) => c.columns.indexOf(n);
+    const iName = col(spots, '景點'), iReq = col(spots, '需要設施'), iBonus = col(spots, '加成');
+    if (iName < 0 || iReq < 0 || iBonus < 0) return;
+
+    // 加成欄長這樣：「體育+3 頭腦+3 態度+2」
+    const parseBonus = (s) => {
+        const out = {};
+        for (const m of String(s || '').matchAll(/([一-鿿]+)\+(\d+)/g)) out[m[1]] = +m[2];
+        return out;
+    };
+
+    /* ① 依屬性反查：屬性 → 該屬性加成 ≥3 的景點（值大的在前、同值依 data.js 列序） */
+    const byAttr = ATTRS.map(attr => {
+        const hits = spots.rows
+            .map(r => ({ name: r[iName], v: parseBonus(r[iBonus])[attr] || 0 }))
+            .filter(x => x.v >= HI)
+            .sort((a, b) => b.v - a.v);
+        if (!hits.length) return null;
+        const max = hits[0].v;
+        const fmt = (g) => g.map(x => x.name).join('・') + '（+' + g[0].v + '）';
+        const top = hits.filter(x => x.v === max), rest = hits.filter(x => x.v < max);
+        const groups = [];
+        if (top.length) groups.push(fmt(top));
+        for (const v of [...new Set(rest.map(x => x.v))]) groups.push(fmt(rest.filter(x => x.v === v)));
+        return [attr, groups.join('／'), String(hits.length)];
+    }).filter(Boolean);
+
+    CATS['spots-by-attr'] = {
+        key: 'spots-by-attr', source: 'spots', slug: spots.slug, label: spots.label,
+        intro: '把 29 個景點的加成欄反轉：想衝哪一項屬性，回頭找該補哪幾個景點（只列 +' + HI + ' 以上）。',
+        columns: ['想衝的屬性', '優先考慮的景點（加成高者在前）', '景點數'],
+        rows: byAttr,
+    };
+
+    /* ② 樞紐設施：設施 → 被幾個景點當條件。擺中央、四周各補一種＝最省格子 */
+    const use = new Map();
+    spots.rows.forEach(r => {
+        String(r[iReq] || '').split(/[・､、]/).map(s => s.trim()).filter(Boolean)
+            .forEach(f => (use.get(f) || use.set(f, []).get(f)).push(r[iName]));
+    });
+    const hub = [...use.entries()]
+        .filter(([, v]) => v.length >= HI)
+        .sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0], 'zh-Hant'))
+        .map(([f, v]) => [f, String(v.length), v.join('・')]);
+
+    CATS['spots-hub'] = {
+        key: 'spots-hub', source: 'spots', slug: spots.slug, label: spots.label,
+        intro: '被最多景點當條件的設施（≥' + HI + ' 個）：擺在中央、四周各補一種，就能用最少的格子疊出最多加成。',
+        columns: ['樞紐設施', '被幾個景點使用', '相關景點'],
+        rows: hub,
+    };
+}
+derive();
+
 /* ---- GAME_NAV（頁面中文名與圖示；同樣刻意複製而非共用） ------------------- */
 const NAV = (() => {
     const S = '/* <<< GAME_NAV：由 scripts/gen-game-nav.js 產生，勿手改 >>> */';
@@ -330,7 +402,10 @@ for (const file of files) {
         const h2 = h2s.length
             ? h2s[h2s.length - 1].replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').replace(/^\d{2}\s*/, '').trim()
             : '';
-        (usedBy[catKey] = usedBy[catKey] || []).push({ slug, anchor, h2 });
+        // 衍生分類歸到來源那一頁：db/spots 的「哪些攻略用到這張表」應該也列出
+        // 從它算出來的那幾張表，那正是讀者接下來會想去的地方
+        const idxKey = cat.source || catKey;
+        (usedBy[idxKey] = usedBy[idxKey] || []).push({ slug, anchor, h2 });
 
         touched++;
         return indent + '<!-- db:' + catKey + attrStr.replace(/\s+$/, '') + ' -->\n' +
@@ -364,6 +439,9 @@ function stampBlock(file, name, sectionLines) {
 const usedByReport = [];
 for (const catKey of Object.keys(CATS)) {
     const cat = CATS[catKey];
+    // 衍生分類與來源共用 slug（都指向 db/spots）→ 若不跳過，它會拿自己那份空清單
+    // 再蓋一次同一個檔，把來源剛蓋好的入口清單覆蓋成「還沒有」。
+    if (cat.source) continue;
     const file = path.join(SCHOOL2, 'db', cat.slug, 'index.html');
     if (!fs.existsSync(file)) continue;
     const list = usedBy[catKey] || [];
