@@ -237,35 +237,57 @@ main.article .prose h2 { position: relative; }
 .datablock table.data { min-width: 0; }
 .datablock--wide table.data { min-width: 640px; }
 
-/* ---------- 4b. 資料表要跳出 760px 的正文欄 ---------------------------------
-   760px 是給**正文**的（中文約 40 字/行是舒適上限），但資料表不是正文：
-   `.container-narrow` 扣掉左右 padding 只剩 720px 內容寬，7 欄的老師表放進去
-   名稱一定折行。所以 `.datablock` 在桌機往外「出血」到接近 --maxw(1120px)，
-   正文段落維持 760px 不動 —— 一頁裡「讀的欄窄、查的表寬」是刻意的。
+/* ---------- 4b. 欄寬模型：讀的欄窄、查的表寬，而且**左緣對齊** -------------
+   760px 是給**正文**的（中文約 40 字/行是舒適上限，行太長回行容易跳行），
+   但資料表不是正文：`.container-narrow` 扣掉左右 padding 只剩 720px，
+   7 欄的老師表放進去名稱一定折行。
 
-   兩段式，因為右側留白在 ≥1248px 時要讓給側邊目錄軌（`.toc-rail` 佔 200px
-   ＋ 28px gap ＋ 16px 邊距）：
-     900–1247px  → 左右對稱出血
-     ≥1248px     → **只往左出血**，右邊淨空給軌，否則表格會蓋住目錄
-   出血量一律用 min() 夾住，視窗不夠寬時自動退回 0，不會產生橫向捲軸。 */
-@media (min-width: 900px) {
-    .datablock {
-        --dbk-bleed: min(180px, calc((100vw - 760px) / 2 - 24px));
-        width: calc(100% + var(--dbk-bleed) * 2);
-        margin-left: calc(var(--dbk-bleed) * -1);
-    }
+   做法不是讓表格「往外出血」——那會造成表格左側凸出、與正文不對齊，看起來
+   像壞掉。正確做法是**把容器加寬，讓正文自己限寬**：
+     容器（main.article）→ 1080px
+     正文元素（p/ul/ol/callout/h2/h3/toc/lead…）→ 自己 max-width 760px、靠左
+     資料表與圖（.datablock / #dbApp / .table-wrap / figure / .mapwrap）→ 吃滿容器
+   於是兩者**左緣對齊**、表格只往右長，不會有任何東西凸出去。 */
+main.article { max-width: 1080px; }
+
+/* 正文限寬（只限直系子元素，表格內部的文字不受影響） */
+main.article > .lead,
+main.article > .meta,
+main.article > .toc,
+main.article > .callout,
+main.article > .path-rail,
+main.article > h1,
+main.article > .prose > h2,
+main.article > .prose > h3,
+main.article > .prose > h4,
+main.article > .prose > p,
+main.article > .prose > ul,
+main.article > .prose > ol,
+main.article > .prose > blockquote,
+main.article > .prose > .callout,
+main.article > .prose > .zone-group,
+main.article > .prose > .next-step {
+    max-width: 760px;
+    margin-right: auto;
 }
-@media (min-width: 1248px) {
-    .datablock {
-        --dbk-bleed: min(200px, calc((100vw - 760px) / 2 - 244px));
-        width: calc(100% + var(--dbk-bleed));
-        margin-left: calc(var(--dbk-bleed) * -1);
-    }
+/* 寬元素吃滿容器：這幾類是「查」的，不是「讀」的 */
+main.article > .prose > .datablock,
+main.article > .prose > .db-embed,
+main.article > .prose > .table-wrap,
+main.article > .prose > figure,
+main.article > .prose > .mapwrap,
+main.article > .prose > .kpi-row,
+main.article > #dbApp,
+main.article > .db-prose > .table-wrap {
+    max-width: none;
+    width: 100%;
 }
-/* 名稱欄不要折行：讀者是拿名字對照的，「森野熊」斷成兩行比橫向捲動更難讀。
-   欄寬不足時交給 `.table-wrap` 的橫捲處理（它本來就是雙軸捲動容器）。 */
+/* 名稱欄不要折行：讀者是拿名字對照的，「森野熊克斯」斷成兩行比橫向捲動更難讀。
+   欄寬不足時交給 `.table-wrap` 的橫捲（它本來就是雙軸捲動容器）。 */
 .datablock table.data thead th:first-child,
-.datablock table.data tbody td:first-child { white-space: nowrap; }
+.datablock table.data tbody td:first-child,
+#dbApp table thead th:first-child,
+#dbApp table tbody td:first-child { white-space: nowrap; }
 /* border-collapse 下 sticky th 的 border-bottom 會隨內容捲走，資料列會從
    標頭底下穿出來。用 1px inset 陰影補線（刻意只用一條 1px、不做階梯陰影：
    sticky 元素上的多層陰影會在捲動時每影格重繪整條表頭）。 */
@@ -364,7 +386,10 @@ main.article .prose h2 { position: relative; }
    內容由 guide.js 從 h2[id]／h3[id] 生成（純導覽，不是內容）。
 --------------------------------------------------------------------------- */
 .toc-rail { display: none; }
-@media (min-width: 1248px) {
+/* 容器由 760 加寬到 1080 之後，軌的斷點要跟著往上推：
+   1080（容器）＋ 28（gap）＋ 200（軌寬）＋ 32（左右邊距）≈ 1340 → 取 1360px。
+   斷點沒推的話，軌會在 1248–1360 之間貼在視窗外緣被裁掉。 */
+@media (min-width: 1360px) {
     main.article { position: relative; }
     main.article > .toc-rail {
         display: block;
