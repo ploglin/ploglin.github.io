@@ -1282,12 +1282,17 @@
                 }
             }
 
+            /* 定位模式下不畫建議框：搜尋／點選設施的目的是「看清楚這一種在哪、有幾棟」，
+               同時撒滿藍色的「這裡可以湊景點」虛線框會把畫面弄花，也違背聚光燈
+               （壓暗全圖只留命中）的用意。這裡只跳過**繪製**、照樣算完回傳，
+               所以右下資訊卡的「可立即完成／差一項」狀態不受影響。 */
+            const locating = !!hlIds;
             let count = 0, count2 = 0;
             for (let r = 0; r < gridRows; r++) {
                 for (let c = 0; c < gridCols; c++) {
                     if (suggest[r][c]) {
-                        const el = tileAt(r, c);
-                        if (el) { el.classList.add('suggest'); count++; }
+                        count++;
+                        if (!locating) { const el = tileAt(r, c); if (el) el.classList.add('suggest'); }
                     }
                 }
             }
@@ -1295,8 +1300,8 @@
                 for (let r = 0; r < gridRows; r++) {
                     for (let c = 0; c < gridCols; c++) {
                         if (suggest2[r][c]) {
-                            const el = tileAt(r, c);
-                            if (el) { el.classList.add('suggest2'); count2++; }
+                            count2++;
+                            if (!locating) { const el = tileAt(r, c); if (el) el.classList.add('suggest2'); }
                         }
                     }
                 }
@@ -1603,8 +1608,13 @@
                 renderRecent();
             }
             // 狀態一律顯示在右下資訊卡，不再每次選取都跳提示訊息
+            /* 順序很重要：先決定要不要進「定位模式」，再算建議框。
+               反過來的話 updateSuggestions() 讀到的還是上一次的狀態，藍框會先畫上去。
+               兩種模式刻意互斥：
+                 點到**已擺過**的設施 → 定位模式（聚光燈＋座標晶片，不畫建議框）
+                 點到**還沒擺**的設施 → 擺放模式（清掉聚光燈，畫建議框） */
+            highlightSelected(id);
             updateToolHint(id, updateSuggestions());
-            highlightSelected(id);  // 點選設施＝在地圖上定位同一種設施（只亮這一種）
         }
 
         // 右下角資訊卡：選取的建築能組成哪些景點、目前地圖上的狀態
@@ -2630,17 +2640,23 @@
             hlIds = ids.length ? new Set(ids) : null;
             applyHighlight();
         }
-        // 點選設施：只定位這一種。地圖上沒有這種設施時不開聚光燈（沒東西可看就別壓暗全圖）
+        /* 點選設施：只定位這一種。
+           地圖上**沒有**這種設施時，不但不開聚光燈，還要把前一次的定位收掉——
+           否則會卡在「亮著上一種設施、又不畫這一種的建議框」的混合狀態。 */
         function highlightSelected(id) {
             const it = items[id];
             if (!it || it.hidden || id === 'empty' || it.type === 'tool') return;
             const built = gridData.some(row => row.some(cell => cell.type === id));
-            if (!built) return;
+            if (!built) { if (hlIds) { hlIds = null; applyHighlight(); } return; }
             hlIds = new Set([id]);
             applyHighlight();
         }
         function applyHighlight() {
             document.querySelectorAll('.tile.found').forEach(t => t.classList.remove('found'));
+            // 進入定位模式就把建議框收掉（搜尋框那條路徑不會重跑 updateSuggestions，
+            // 不清的話上一次選工具留下的藍框會殘留在聚光燈裡）
+            if (hlIds) document.querySelectorAll('.tile.suggest, .tile.suggest2')
+                .forEach(t => t.classList.remove('suggest', 'suggest2'));
             const hits = document.getElementById('searchHits');
             if (!hits) return;
             if (!hlIds) {
