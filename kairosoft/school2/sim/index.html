@@ -2646,13 +2646,18 @@
                 const stateCol = section === 'spots' ? '這張圖' : (section === 'facilities' ? '這張圖' : '');
                 const order = c.rows.map((r, i) => ({ r, i }));
                 if (section === 'facilities') order.sort((a, b) => hbSizeKey(a.r[3]) - hbSizeKey(b.r[3]) || a.i - b.i);
-                const head = tab.cols.map(j => `<th ${HB_TH}>${esc(c.columns[j])}</th>`).join('')
+                /* 第一欄（名稱）不准折行：自動表格版面會把它壓到最窄，於是連「運動」
+                   「約會」這種兩字景點都被拆成上下兩行，整張表看起來像壞掉。名稱欄
+                   最長也只有五個字，nowrap 的代價遠小於可讀性。 */
+                const nw = (i) => i === 0 ? HB_TH.replace('class="', 'class="whitespace-nowrap ') : HB_TH;
+                const nwd = (i) => i === 0 ? HB_TD.replace('class="', 'class="whitespace-nowrap ') : HB_TD;
+                const head = tab.cols.map((j, i) => `<th ${nw(i)}>${esc(c.columns[j])}</th>`).join('')
                     + (stateCol ? `<th ${HB_TH}>${stateCol}</th>` : '');
                 const trs = order.map(({ r }) => {
                     const nm = section === 'facilities' ? String(r[0]).replace(/^\S+\s/, '') : r[0];
                     const st = section === 'spots' ? hbSpotState(nm) : (section === 'facilities' ? hbFacState(nm) : '');
                     return `<tr data-hbq="${esc(r.join(' ').toLowerCase())}">`
-                        + tab.cols.map(j => `<td ${HB_TD}>${esc(r[j] || '—')}</td>`).join('')
+                        + tab.cols.map((j, i) => `<td ${nwd(i)}>${esc(r[j] || '—')}</td>`).join('')
                         + (stateCol ? `<td ${HB_TD}>${st}</td>` : '') + `</tr>`;
                 }).join('');
                 /* 表格自捲、外殼不捲：#reportModal 的面板是 max-h-[85vh] overflow-y-auto，
