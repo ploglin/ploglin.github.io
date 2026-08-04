@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>口袋學院物語2 終盤攻略｜結算分數試算器、二周目繼承與隱藏要素</title>
+    <meta name="description" content="《口袋學院物語2》（名門ポケット学院2）第 5 章 終盤：11 年目 4 月結算的機制、周回會繼承什麼（設施等級與人氣景點辭典）與什麼會重置、13 項結算分數計分公式與頁內試算器、依單價排序的高分衝刺策略、10 項成就解除條件，以及開羅君三件套與最強「開羅」景點、天象館與宇宙火箭的太空線、※特殊老師與名門五人組、UFO 研究社等隱藏社團的解鎖組合與各種彩蛋。">
+    <meta name="keywords" content="口袋學院物語2,名門ポケット学院2,Pocket Academy 2,終盤,二周目,周回,結算分數,計分,繼承,隱藏要素,開羅君,天象館,特殊老師,隱藏社團,成就,試算器,開羅遊戲,Kairosoft">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://ploglin.cc/kairosoft/school2/endgame/">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏫</text></svg>">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="口袋學院物語2 終盤攻略｜結算分數試算器、二周目繼承與隱藏要素">
+    <meta property="og:description" content="11 年目 4 月結算、周回繼承規則、13 項計分公式與頁內試算器，加上開羅君、宇宙線、※特殊老師與隱藏社團。">
+    <meta property="og:locale" content="zh_TW">
+    <meta property="og:url" content="https://ploglin.cc/kairosoft/school2/endgame/">
+    <meta name="twitter:card" content="summary">
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": "口袋學院物語2 終盤攻略：結算分數試算器、二周目繼承與隱藏要素",
+        "inLanguage": "zh-Hant",
+        "about": { "@type": "VideoGame", "name": "口袋學院物語2", "alternateName": ["名門ポケット学院2", "Pocket Academy 2"] },
+        "author": { "@type": "Organization", "name": "開羅攻略站" },
+        "publisher": { "@type": "Organization", "name": "開羅攻略站" }
+    }
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../../assets/shell.css?v=8">
+    <link rel="stylesheet" href="../assets/guide.css?v=1">
+    <script src="../assets/guide.js?v=1" defer></script>
+    <style>
+        .calc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; margin: 14px 0; }
+        .calc-field { display: flex; flex-direction: column; gap: 4px; }
+        .calc-field label { font-size: 13px; font-weight: 800; color: var(--ink-soft); }
+        .calc-field .unit { font-weight: 600; color: var(--muted); }
+        .calc-field input { font: inherit; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); color: var(--ink); width: 100%; }
+        .calc-total { font-size: 15px; font-weight: 800; color: var(--ink-soft); margin: 18px 0 4px; }
+        .calc-total b { font-size: 40px; font-weight: 900; color: var(--brand-strong); display: block; line-height: 1.1; letter-spacing: -0.5px; }
+        .calc-hint { margin-top: 4px; }
+        .calc-hint .k { font-weight: 900; margin-right: 6px; }
+        td.num { text-align: right; font-variant-numeric: tabular-nums; }
+        th.num { text-align: right; }
+    </style>
+</head>
+<body>
+    <main class="container-narrow article">
+        <nav class="path-rail" aria-label="主線章節位置">
+            <ol>
+                <li><a href="../start/"><b>1</b>開局指南</a></li>
+                <li><a href="../layouts/"><b>2</b>佈局設計</a></li>
+                <li><a href="../training/"><b>3</b>育成</a></li>
+                <li><a href="../walkthrough/"><b>4</b>經營與升級</a></li>
+                <li><span class="cur" aria-current="step"><b>5</b>終盤</span></li>
+                <li><a href="../glossary/"><b>附</b>中日對照</a></li>
+            </ol>
+        </nav>
+
+        <h1>口袋學院物語2 終盤攻略：結算分數、二周目繼承與隱藏要素</h1>
+        <p class="lead">《口袋學院物語2》（名門ポケット学院2 / Pocket Academy 2）玩到 <strong>11 年目 4 月會強制結算</strong>，把這一輪的經營成果換算成一個「結算分數」，然後進入<strong>二周目（周回）</strong>。周回不是全部歸零——<strong>設施等級與人氣景點辭典會被繼承</strong>，其餘重置，所以一周目該做的是解鎖、二周目才是真正衝分。本篇是主線第 5 章：先講<a href="#settlement">結算時機</a>與<a href="#carry">繼承規則</a>，拆解<a href="#formula">13 項計分公式</a>並附一個<a href="#calc">頁內結算分數試算器</a>，再把只有終盤才浮現的<a href="#kairo">開羅君設施鏈</a>、<a href="#cosmo">宇宙線</a>、<a href="#teachers">※特殊老師</a>與<a href="#hidden-clubs">隱藏社團</a>一次講清楚——這些正是把分數推到頂的最後一哩路。</p>
+        <p class="meta">最後更新：2026 年 8 月 · 繁體中文原創整理</p>
+
+        <div class="toc">
+            <div class="t">本篇目錄</div>
+            <ol>
+                <li><a href="#settlement">結算是什麼：11 年目 4 月與周回</a></li>
+                <li><a href="#carry">繼承規則：帶得走與帶不走</a></li>
+                <li><a href="#formula">13 項結算分數計分公式</a></li>
+                <li><a href="#calc">結算分數試算器</a></li>
+                <li><a href="#strategy">高分衝刺策略與收尾清單</a></li>
+                <li><a href="#loop-plan">周回規劃：一周目解鎖、二周目衝分</a></li>
+                <li><a href="#achievements">成就：10 座獎盃的解除條件</a></li>
+                <li><a href="#kairo">開羅君設施鏈與最強「開羅」景點</a></li>
+                <li><a href="#cosmo">宇宙線：太空人、天象館與宇宙火箭</a></li>
+                <li><a href="#teachers">※特殊老師與名門五人組</a></li>
+                <li><a href="#hidden-clubs">隱藏系社團的解鎖組合</a></li>
+                <li><a href="#misc">其他彩蛋與小知識</a></li>
+                <li><a href="#faq">常見問題 FAQ</a></li>
+                <li><a href="#recap">本章重點</a></li>
+            </ol>
+        </div>
+
+        <div class="prose">
+            <h2 id="settlement"><span class="sec-num">01</span> 結算是什麼：11 年目 4 月與周回</h2>
+            <p class="sec-lead">一輪遊戲的壽命是固定的：11 年目 4 月自動結算。</p>
+            <p>本作一輪遊戲有固定壽命：從開局經營到<strong>第 11 年（11 年目）的 4 月會觸發結算</strong>。結算時，遊戲會把你當下的各項成果——資金、課題等級、發現的設施／職業／社團、畢業生分佈、平均學力、人氣景點、青春點、情侶對數——逐項換算成分數，加總成這一輪的<strong>結算分數</strong>。</p>
+            <p>結算之後不是遊戲結束，而是進入<strong>周回（二周目）</strong>，帶著部分成果重新開一輪。這代表本作的正確玩法是「跨輪累積」：第一輪把能永久解鎖的東西盡量開好，之後每一輪都在更高的起點上刷更高的分數。想衝排行或自我挑戰高分的玩家，理解這套計分權重就是關鍵。</p>
+            <p>要注意結算年（11 年）與<a href="../walkthrough/#ranks">常春藤的第 20 年門檻</a>之間的落差：<strong>一周目在結算前是升不上常春藤的</strong>。所以「升上常春藤」與「刷高結算分數」是兩個不同的目標——前者要跨輪累積年數與 16 種景點，後者要在 11 年內把高單價項目堆到最高。第一輪把它當成解鎖之旅就好，別因為升不上常春藤而以為自己玩壞了。</p>
+            <div class="callout tip"><span class="k">先記住兩個時間點</span>經營到 <strong>11 年目 4 月</strong>自動結算 → 換算結算分數 → 進入下一個周回。所以真正的衝刺期是<strong>第 10 年到 11 年目 3 月</strong>這段，該清的清單要在這之前排好；<a href="../walkthrough/#calendar">年度排程表</a>在第 10 年就要改成收尾模式。</div>
+
+            <h2 id="carry"><span class="sec-num">02</span> 繼承規則：帶得走與帶不走</h2>
+            <p class="sec-lead">帶走「解鎖狀態」，重置「當前局面」。</p>
+            <p>周回最重要的一件事，就是搞清楚哪些成果會被帶到下一輪、哪些會重置。依遊戲手冊，規則相當簡潔：</p>
+            <div class="callout key"><span class="k">周回繼承</span>進入二周目時，會<strong>繼承：設施等級、人氣景點辭典（景點圖鑑）</strong>；<strong>其餘一律重置</strong>。</div>
+            <ul>
+                <li><strong>設施等級（會繼承）：</strong>你在上一輪把設施升到的等級會保留，下一輪一開始蓋出來就是高等級，省下大量升級的時間與資金。這也是「一周目多花錢升級」不算浪費的原因。</li>
+                <li><strong>人氣景點辭典（會繼承）：</strong>上一輪成立過、被記進辭典的<strong>景點種類</strong>會保留。這代表湊齊 29 種景點是一周目最值得做的長期投資——一旦進了辭典，往後每一輪都不必再從頭試。</li>
+                <li><strong>其餘全部重置：</strong>資金、學生、老師、社團、課題等級、平均學力、青春點、情侶、當前地圖佈局……在新一輪都會歸零，要重新經營。</li>
+            </ul>
+            <p>換句話說，<strong>會繼承的是「解鎖狀態」（等級與圖鑑），會重置的是「當前局面」（人與錢）</strong>。這條界線決定了周回的分工，也解釋了一個常見的困惑：為什麼二周目的分數常常是一周目的好幾倍？因為你不再需要花時間「發現」東西，可以從第一年就直接照著已知的最優解鋪。</p>
+
+            <h2 id="formula"><span class="sec-num">03</span> 13 項結算分數計分公式</h2>
+            <p class="sec-lead">單價差 1000 倍，衝分順序完全由這張表決定。</p>
+            <p>結算分數由下列 <strong>13 個項目</strong>各自計分後加總。單價越高的項目，衝一單位帶來的分數越多——這張表就是所有高分策略的根據。表裡的「單價」是每一單位換算的分數，數量以結算當下的實際數值為準。</p>
+            <div class="table-wrap">
+            <table class="data">
+                <thead><tr><th>計分項目</th><th class="num">單價（每單位分數）</th><th>計算方式與備註</th></tr></thead>
+                <tbody>
+                    <tr><td>情侶</td><td class="num">×10000</td><td>成立中的情侶對數。與優勝社團並列全表最高單價。</td></tr>
+                    <tr><td>優勝社團</td><td class="num">×10000</td><td>取得優勝的社團數。與情侶並列全表最高單價。</td></tr>
+                    <tr><td>人氣景點</td><td class="num">×5000</td><td>成立中的<a href="../combo/">人氣景點</a>種數。高單價，且與景點辭典繼承直接相關。</td></tr>
+                    <tr><td>年收 1000 萬以上畢業生</td><td class="num">×3000</td><td>年收達 1000 萬（含）以上的畢業生人數，與下面 500 萬那項可疊算。</td></tr>
+                    <tr><td>發現職業</td><td class="num">×2000</td><td>已發現的畢業出路（職業）種類數，全 60 種。</td></tr>
+                    <tr><td>青春點</td><td class="num">×2000</td><td>累積的青春點，靠青春值設施與社團活動累積。</td></tr>
+                    <tr><td>發現社團</td><td class="num">×2000</td><td>已發現（解鎖）的社團種類數，全 15 個。</td></tr>
+                    <tr><td>課題 Lv 總和</td><td class="num">×1000</td><td>各科<a href="../walkthrough/#tasks">課題</a>已達成的等級加總，滿值 40 級。</td></tr>
+                    <tr><td>發現設施</td><td class="num">×1000</td><td>已發現（解鎖）的設施種類數，全 77 種。</td></tr>
+                    <tr><td>年收 500 萬以上畢業生</td><td class="num">×1000</td><td>年收達 500 萬（含）以上的畢業生人數。</td></tr>
+                    <tr><td>平均學力</td><td class="num">×200</td><td>全校平均學力分數，每 1 分 200，滿分 500。</td></tr>
+                    <tr><td>入學希望者</td><td class="num">×10</td><td>入學希望者人數。單價最低，靠自然累積即可。</td></tr>
+                    <tr><td>最終資金</td><td class="num">÷1000</td><td>結算當下的持有資金除以 1000。是全表唯一「除法」項。</td></tr>
+                </tbody>
+            </table>
+            </div>
+            <p>這張表已按單價由高到低排好，因為排序本身就是結論：<strong>最高與最低相差一千倍以上</strong>。一對情侶等於一萬分，而一萬分要靠囤資金換的話需要一千萬円——你不可能囤到那個數字。所以看到「最終資金 ÷1000」時要理解成「資金基本上不計分」，它只是把用不完的錢折算一點零頭。</p>
+            <div class="callout warn"><span class="k">看單價決定投報</span>13 項裡，<strong>情侶與優勝社團各 1 萬</strong>是最肥的兩項，其次是<strong>人氣景點 5000</strong>，再來是<strong>年收 1000 萬畢業生 3000</strong> 與<strong>發現職業／青春點／發現社團各 2000</strong>。入學希望者只有 ×10、資金只有 ÷1000，是靠經營自然帶出來的低單價項目，不必刻意堆。</div>
+
+            <h3 id="formula-detail">逐項怎麼衝：13 個項目的實作法</h3>
+            <p>知道單價之後，下一個問題是「這一項要怎麼多一單位」。下面十三段各自回答這件事，也標出各項的實際上限——上限很重要，因為已經滿的項目再投資也不會加分。點開你打算加碼的那幾項即可。</p>
+            <details class="zone-group">
+                <summary>情侶 ×10000 <span class="zg-n">最肥・上限視學生數</span></summary>
+                <div class="zg-body">
+                    <p>學生要先互相認識才會告白，而認識的機會來自<strong>在地圖上相遇</strong>。所以衝情侶其實是佈局題：把地圖排得<strong>集中、動線短</strong>，讓學生反覆經過同一批格子，相遇率就高。急件可以用<strong>天使弓箭</strong>（研究P 150／150／150）直接讓學生告白——單價一萬分，這筆 P 花得非常值得。反過來地獄弓箭會拆散情侶，等於自己扣一萬分，除了整理配對否則別用。</p>
+                </div>
+            </details>
+            <details class="zone-group">
+                <summary>優勝社團 ×10000 <span class="zg-n">最肥・上限 15</span></summary>
+                <div class="zg-body">
+                    <p>每個拿過優勝的社團一萬分，而且<strong>低預算社團與高預算社團同分</strong>——這是全表最容易被浪費的一項。電玩社 4 萬円、拼布同好會與 UFO 研究社各 6 萬円、戲劇社 8 萬円，全部各算一枚優勝，跟電腦社（42 萬円）一模一樣。打法是集中資源打一社、拿下再換下一社，別八社平均投資。這一項同時也是<a href="../walkthrough/#late">常春藤的 8 社優勝門檻</a>，一魚兩吃。</p>
+                </div>
+            </details>
+            <details class="zone-group">
+                <summary>人氣景點 ×5000 <span class="zg-n">上限 29</span></summary>
+                <div class="zg-body">
+                    <p>算的是<strong>結算當下成立中</strong>的景點種數，不是辭典裡登錄過的數量——所以結算前一定要回地圖確認辭典裡有的景點都還掛著（拆遷常常會不聲不響弄壞兩三個）。29 種全成立就是 145,000 分。景點種類一旦進辭典會永久繼承，是「一次投資、每輪收租」的項目；二周目照<a href="../layouts/">完美佈局</a>重排即可，本站五個鎮頁都附了可一鍵載入模擬器的分享碼。</p>
+                </div>
+            </details>
+            <details class="zone-group">
+                <summary>年收 1000 萬以上畢業生 ×3000 <span class="zg-n">可與 500 萬項疊算</span></summary>
+                <div class="zg-body">
+                    <p>一位年收 1000 萬的畢業生會<strong>同時</strong>計入這項（3000）與「500 萬以上」（1000），再加上他拉高的平均學力（×200），效益是複合的。做法是把該生的頭腦、人氣與五科成績用題本、特別授業、愛迪生頭帶堆滿，再用<strong>進路指導書</strong>卡住高年收志願。關鍵是<strong>時機</strong>：學生必須在結算前畢業才計入人數，所以第 10 年要清點還有哪幾位來得及畢業。</p>
+                </div>
+            </details>
+            <details class="zone-group">
+                <summary>發現職業 ×2000 <span class="zg-n">上限 60</span></summary>
+                <div class="zg-body">
+                    <p>「發現」是一次性的：某個出路只要被送出過一次就永久登錄。60 種全開＝120,000 分，是被嚴重低估的一項。要多開新職業，靠的是<strong>屬性分佈的多樣性</strong>而不是全部堆高——把不同學生往不同屬性偏（有人偏頭腦、有人偏運動、有人偏人氣），出路的種類才會散開。冷門出路多半綁特定前置（例如太空人要天象館），見<a href="../db/careers/">進路資料庫</a>。</p>
+                </div>
+            </details>
+            <details class="zone-group">
+                <summary>青春點 ×2000</summary>
+                <div class="zg-body">
+                    <p>青春點靠日常經營累積，來源是學生的社團活動與校內的<strong>青春值設施</strong>——櫻花樹、飲水處、長椅、巨石這類擺在操場與體育館周邊的東西。它同時也是社團強度的來源，所以「鋪青春值」這個動作一次餵三項：青春點（×2000）、優勝社團（×10000）、以及社團被發現（×2000）。是全表投報比最好的單一動作。</p>
+                </div>
+            </details>
+            <details class="zone-group">
+                <summary>發現社團 ×2000 <span class="zg-n">上限 15</span></summary>
+                <div class="zg-body">
+                    <p>同樣是一次性「發現」即登錄，而且<strong>發現後前置設施可以拆掉</strong>，社團仍在。所以標準做法是臨時湊齊組合、把社團解出來、再把地皮還給景點。15 個全發現＝30,000 分。最難的是 UFO 研究社（6 種設施）與電玩社（5 種），組合見<a href="#hidden-clubs">隱藏社團</a>那節。</p>
+                </div>
+            </details>
+            <details class="zone-group">
+                <summary>課題 Lv 總和 ×1000 <span class="zg-n">上限 40</span></summary>
+                <div class="zg-body">
+                    <p>10 科 × 4 級全滿＝40 級＝40,000 分，同時它還一路把學費疊高，是唯一「過程本身就有收益」的計分項。每月兩個名額不要空著，挑戰前存檔、失敗讀檔重來。唯一難卡的是進學菁英（要名門＋圖書室×5＋學力全國前 5），詳見<a href="../walkthrough/#tasks">第 4 章的課題逐科細解</a>。</p>
+                </div>
+            </details>
+            <details class="zone-group">
+                <summary>發現設施 ×1000 <span class="zg-n">上限 77</span></summary>
+                <div class="zg-body">
+                    <p>77 種全發現＝77,000 分。多數設施跟著學園規模自動開放，真正要特地去解的是<strong>條件型設施</strong>：天象館（名門＋太空人 1 人）、開羅君房間（常春藤＋吃醋景點＋金開羅君）這類。設施等級會繼承，但「發現」在新一輪要重新蓋出來才算成立中——蓋一次就好，不必留著。</p>
+                </div>
+            </details>
+            <details class="zone-group">
+                <summary>年收 500 萬以上畢業生 ×1000</summary>
+                <div class="zg-body">
+                    <p>門檻低得多，只要學生成績不至於太差就會有一批。它與 1000 萬那項的關係是<strong>加碼而非互斥</strong>，所以把全校學力整體拉高就會同時漲兩項。不必為它做特別操作——它是「把學校經營好」的自然結果。</p>
+                </div>
+            </details>
+            <details class="zone-group">
+                <summary>平均學力 ×200 <span class="zg-n">上限 500</span></summary>
+                <div class="zg-body">
+                    <p>滿分 500＝100,000 分，數字看起來不高但總量很可觀，而且它會連帶推高兩項畢業生分數。做法就是<a href="../walkthrough/#edup">教育P 循環</a>：多雇便宜老師賺 P、把 P 換成特別授業。附帶好處是每跨過 200／300／400／450／500 分會觸發學力事件，免費拉入學希望者。</p>
+                </div>
+            </details>
+            <details class="zone-group">
+                <summary>入學希望者 ×10 <span class="zg-n">不必刻意堆</span></summary>
+                <div class="zg-body">
+                    <p>單價最低的一項，一百人才 1,000 分。它是行事活動與學力事件的副產物，把學校經營好自然會有。<strong>不要為了這一項去辦行事</strong>——同一筆行事預算拿去養社團或促成情侶，換到的分數是它的上百倍。</p>
+                </div>
+            </details>
+            <details class="zone-group">
+                <summary>最終資金 ÷1000 <span class="zg-n">基本上不計分</span></summary>
+                <div class="zg-body">
+                    <p>一百萬円只換 1,000 分，是全表換算率最低的一項。結論很明確：<strong>錢在結算前應該花掉</strong>。把資金換成社團預算（衝優勝）、行事（拿道具與招生）、設施（衝發現數與景點），任何一種都比留在戶頭裡值錢。第 10 年開始就該進入「清空預算」模式。</p>
+                </div>
+            </details>
+
+            <h2 id="calc"><span class="sec-num">04</span> 結算分數試算器</h2>
+            <p class="sec-lead">填入現況，即時看出下一分該加在哪。</p>
+            <p>填入你結算當下的各項數值，下面會即時算出總分、逐項貢獻，以及「現在再 +1 最划算」的項目提示。所有計算都在你的瀏覽器裡完成，數字不會離開這個頁面，也不會被儲存。</p>
+            <div class="calc-grid" id="calcGrid"></div>
+            <p class="calc-total">預估結算分數：<b id="calcTotal">0</b></p>
+            <div class="callout tip calc-hint"><span class="k">下一分最划算</span><span id="calcNext">填入數值後，這裡會提示現在再加 1 單位哪一項增分最多。</span></div>
+            <div class="table-wrap">
+            <table class="data">
+                <thead><tr><th>計分項目</th><th class="num">數量</th><th class="num">單價</th><th class="num">貢獻分數</th></tr></thead>
+                <tbody id="calcBreakdown"></tbody>
+            </table>
+            </div>
+            <p>試算器的實際用法有兩種。第一種是<strong>結算前的模擬</strong>：把現況填進去，再試著把「優勝社團」加 1、看總分跳多少，就知道值不值得為那個社團再砸一筆預算。第二種是<strong>跨輪比較</strong>：把上一輪的結算數值留著，下一輪同樣填一次，就能看出繼承資產到底替你省了多少工。要注意「下一分最划算」的提示只看單價、不看難度——它會永遠指向情侶或優勝社團，那是正確的數學，但實際上你還要判斷哪一項現在推得動。</p>
+
+            <h2 id="strategy"><span class="sec-num">05</span> 高分衝刺策略與收尾清單</h2>
+            <p class="sec-lead">先吃高單價且未滿的項目，低單價交給經營自然帶。</p>
+            <p>把 13 項按單價排序後，衝分的優先順序就一目瞭然。原則是：<strong>先吃高單價、還沒到上限的項目，再用經營自然帶低單價項目</strong>。</p>
+            <ul>
+                <li><strong>最肥的兩項：情侶與優勝社團（各 ×10000）。</strong>把地圖排得集中、動線短提高相遇率，需要時用天使弓箭直接促成；社團則挑便宜的一個個打到優勝。這兩項幾乎沒有上限壓力，是分數暴衝的主力。</li>
+                <li><strong>次肥：人氣景點（×5000）。</strong>29 種全成立＝145,000 分，而且種類會永久進辭典。結算前務必回地圖確認每一種都還「成立中」。</li>
+                <li><strong>複合效益：年收 1000 萬畢業生（×3000）。</strong>拉高平均學力就能把畢業生往高年收段推，一位就同時吃 3000＋1000＋學力分三份。</li>
+                <li><strong>2000 分梯隊：發現職業（60 種）、青春點、發現社團（15 個）。</strong>三項合計潛在 15 萬分以上，而且「發現」型只要一次就永久登錄，成本低到不該放過。</li>
+                <li><strong>1000 分梯隊：課題 Lv 總和（40 級）、發現設施（77 種）、年收 500 萬畢業生。</strong>穩定的千分來源，都是把學校正常經營好就會累積的。</li>
+                <li><strong>低單價（不必刻意刷）：平均學力 ×200、入學希望者 ×10、最終資金 ÷1000。</strong>學力要顧但它本來就在主線上；資金換算率最低，結算前應該花光而不是囤著。</li>
+            </ul>
+            <div class="callout key"><span class="k">終盤 10 年目收尾清單</span>結算前（10 年目～11 年目 3 月）依序確認：① 能促成的<strong>情侶</strong>都告白成功了嗎？② 各<strong>社團</strong>是否卡在優勝門檻前、預算補到位？③ 辭典裡的<strong>人氣景點</strong>是否都在地圖上成立中？④ <strong>課題等級</strong>每月挑好挑滿了嗎？⑤ <strong>發現職業／設施／社團</strong>還有沒有差一兩種可以補發現？⑥ 高學力學生是否趕在結算前<strong>畢業</strong>以計入高年收人數？⑦ 帳上的錢花完了嗎（÷1000 是全表最差的換算率）？</div>
+
+            <h2 id="loop-plan"><span class="sec-num">06</span> 周回規劃：一周目解鎖、二周目衝分</h2>
+            <p class="sec-lead">兩輪的分工由繼承規則直接決定。</p>
+            <p>把繼承規則（設施等級＋景點辭典帶走、其餘重置）和計分表擺在一起，最有效率的兩輪分工就浮現了。</p>
+            <h3>一周目：解鎖為主，鋪好繼承資產</h3>
+            <ul>
+                <li><strong>盡量把設施等級升高：</strong>設施等級會繼承，一周目多花的升級成本，二周目起每一輪都在回收。</li>
+                <li><strong>盡量讓更多人氣景點進辭典：</strong>景點辭典繼承，是最值得在一周目慢慢湊齊的資產。對照<a href="../layouts/">完美佈局</a>把辭典開好開滿，本站五鎮方案有四張是 29／29。</li>
+                <li><strong>順手把「發現」型項目點掉：</strong>發現設施、發現職業、發現社團在本輪就算分，而且解鎖動作大多只要臨時湊一次條件。這是一周目分數最容易補的一塊。</li>
+                <li><strong>結算分數順其自然：</strong>一周目起點低、資金與人手都緊，分數不會高很正常，重點是把「解鎖狀態」堆起來，別為了首輪分數硬衝。</li>
+            </ul>
+            <h3>二周目起：局面重置、成果衝分</h3>
+            <ul>
+                <li><strong>設施一開場就是高等級：</strong>繼承的等級讓你更快站穩現金流、更快進入衝分節奏。</li>
+                <li><strong>景點快速重現：</strong>辭典裡有的景點照著佈局重排即可成立，省去一周目慢慢試的時間，直接吃 ×5000。</li>
+                <li><strong>火力集中在高單價項目：</strong>把重置後的資源優先投進情侶（×10000）、優勝社團（×10000）、人氣景點（×5000）。</li>
+                <li><strong>選圖可以換了：</strong>周回時建議挑<a href="../start/">百靈山丘</a>——開局資金比其他四張多 40 萬円，等於省下前期最痛苦的原始積累階段，而你已經知道要蓋什麼。</li>
+            </ul>
+
+            <h2 id="achievements"><span class="sec-num">07</span> 成就：10 座獎盃的解除條件</h2>
+            <p class="sec-lead">成就不影響分數，但正好標出「這遊戲認為重要的事」。</p>
+            <p>成就（獎盃）與結算分數是兩套獨立的系統——解成就不會加分。但它值得放在終盤這一章，因為<strong>成就清單等於官方替你圈出的重點</strong>：十座獎盃裡有五座跟課題等級有關、兩座跟情侶與社團優勝有關，剛好對應計分表上的高單價項目。也就是說照著計分表衝分，成就會自己跟著解開。</p>
+            <p>下表要注意兩欄：「獎盃等級」1（金）最難、3（銅）最容易；「備註」標了 Xbox 版追加的四座，那是課題等級 1～4 科的階梯式獎盃，主機版才有。</p>
+            <!-- db:achievements cols="成就,日文原名,獎盃等級,解除條件,備註" empty="—" caption="全 10 座成就獎盃的解除條件" -->
+            <figure class="db-embed" style="margin:0">
+            <div class="table-wrap">
+            <table class="data">
+                <thead><tr><th>成就</th><th>日文原名</th><th>獎盃等級</th><th>解除條件</th><th>備註</th></tr></thead>
+                <tbody>
+                    <tr><td>當上老師的開羅君</td><td>先生になったカイロくん</td><td>1（金）</td><td>雇用開羅君（カイロくん）</td><td>—</td></tr>
+                    <tr><td>這種學校我也想上！</td><td>こんな学校わたしも行きたい！</td><td>1（金）</td><td>長年經營學校</td><td>—</td></tr>
+                    <tr><td>優秀的學生真多呢</td><td>優秀な生徒さんがいっぱいですね</td><td>2（銀）</td><td>把 5 個科目的課題等級練到最高</td><td>—</td></tr>
+                    <tr><td>這裡是菁英升學名校</td><td>ここはエリート進学校</td><td>2（銀）</td><td>把 4 個科目的課題等級練到最高</td><td>Xbox 版追加</td></tr>
+                    <tr><td>事不過三</td><td>二度あることは三度ある</td><td>3（銅）</td><td>把 3 個科目的課題等級練到最高</td><td>Xbox 版追加</td></tr>
+                    <tr><td>表現非常好</td><td>大変よくできました</td><td>3（銅）</td><td>把 2 個科目的課題等級練到最高</td><td>Xbox 版追加</td></tr>
+                    <tr><td>一藝通百藝</td><td>一芸は道に通じます</td><td>3（銅）</td><td>把 1 個科目的課題等級練到最高</td><td>Xbox 版追加</td></tr>
+                    <tr><td>心動口袋學院</td><td>ときめきポケット学院</td><td>2（銀）</td><td>誕生第一對情侶</td><td>—</td></tr>
+                    <tr><td>謳歌青春的人們</td><td>青春を謳歌した者達</td><td>2（銀）</td><td>社團在比賽中優勝</td><td>—</td></tr>
+                    <tr><td>即將展開的心動學園生活</td><td>これから始まるワクワク学園生活</td><td>3（銅）</td><td>首次設置設施</td><td>—</td></tr>
+                </tbody>
+            </table>
+            </div>
+            <figcaption style="font-size:13px;color:var(--muted);margin-top:6px">全 10 座成就獎盃的解除條件　共 10 筆 · <a href="../db/achievements/">在資料庫開啟「成就」→</a></figcaption>
+            </figure>
+            <!-- db:end -->
+            <p>兩座金盃裡，「這種學校我也想上！」只要長年經營就會給，等於出席獎；真正要特地去做的是「<strong>當上老師的開羅君</strong>」——它要求<strong>雇用開羅君本人</strong>，而開羅君是條件最深的※特殊老師之一（見<a href="#teachers">下一節</a>）。想要金盃全收，那條老師鏈就必須走完。</p>
+
+            <h2 id="kairo"><span class="sec-num">08</span> 開羅君設施鏈與最強「開羅」景點</h2>
+            <p class="sec-lead">三件套湊一個 4×4，換全遊戲加成最高的景點。</p>
+            <p>開羅社（Kairosoft）的吉祥物「開羅君」在本作被做成一整條<strong>設施鏈</strong>：<strong>金開羅君</strong>（金のカイロ君）、<strong>開羅君像</strong>（カイロくん像）與<strong>開羅君房間</strong>（カイロ君部屋）三件互相牽連。三者同時落進一個 4×4 窗口，就成立全遊戲加成最誇張的「<strong>開羅</strong>」景點。</p>
+            <h3>三件套怎麼解鎖</h3>
+            <ul>
+                <li><strong>金開羅君：</strong>開羅君鏈的起點，也是後續設施的前置條件之一。一格建築，本身就帶濃厚彩蛋味。</li>
+                <li><strong>開羅君像：</strong>另一件開羅系裝飾，與金開羅君搭配才有意義。</li>
+                <li><strong>開羅君房間：</strong>整條鏈最難的一環。解鎖大致要<strong>推進到常春藤規模、成立「吃醋」（ヤキモチ）景點，並已擁有金開羅君</strong>——換句話說，它是把學園經營到接近極限後才會出現的獎勵。屬「教室與專科」類、佔 1×2 格。</li>
+            </ul>
+            <div class="callout warn"><span class="k">先有「吃醋」景點</span>吃醋（ヤキモチ）景點的成立設施是<strong>焚化爐＋餐廳＋家政室</strong>（理系+3 體育+2 頭腦+2 態度+2）。想解開開羅君房間，記得先在地圖上把這組湊出來、讓「吃醋」掛牌，再往常春藤衝。開羅相關設施的取得條件遊戲內給得很隱晦，站內資料以「常春藤＋吃醋景點＋金開羅君等」為準，實際仍以你遊戲進度出現的提示為主。</div>
+            <h3>為什麼「開羅」是全景點最強</h3>
+            <p>「開羅」景點的加成是<strong>文系+5、理系+5、人氣+3、態度+3</strong>——兩個主科同時 +5，是全 29 種人氣景點裡數值總和最高、也最全面的一個。相較之下同級的「非洲」是文系+5 理系+3 態度+2、「特盛」是體育+5 頭腦+4，都只有單邊爆發；開羅則是文理雙修還帶人氣與態度，等於一格景點把升學所需的四項屬性一次補滿。因此它常被當成「畢業製造機」的核心，也是景點辭典收集的壓軸。各景點的完整需求與加成可查<a href="../combo/">人氣景點 combo</a>，或直接用<a href="../sim/">佈局模擬器</a>邊擺邊看即時判定。</p>
+
+            <h2 id="cosmo"><span class="sec-num">09</span> 宇宙線：太空人、天象館與宇宙火箭</h2>
+            <p class="sec-lead">從畢業生開始的一條互鎖線：先有太空人，才有天象館。</p>
+            <p>另一條完全獨立的隱藏線是「太空」。它的特別之處是<strong>從畢業出路開始</strong>，而不是從設施開始——你得先送出一位太空人，才拿得到那間教室。</p>
+            <ul>
+                <li><strong>先送出太空人畢業生：</strong>最高年收段（2000～3000 萬円）的出路包含<strong>太空人（宇宙飛行士）</strong>與<strong>空間設計師</strong>等。其中<strong>太空人是天象館的解鎖前置</strong>——你得先培養出一位高頭腦、高進路的學生，讓他畢業成太空人。</li>
+                <li><strong>解鎖天象館：</strong>湊齊「<strong>名門學園規模＋太空人 1 人</strong>」後，天象館（プラネタリウム）才會開放建造。它是 1×2 格的專科教室，也是好幾個隱藏內容的鑰匙。</li>
+                <li><strong>宇宙火箭：</strong>另一件太空系設施（宇宙ロケット），與天象館搭配使用。</li>
+                <li><strong>湊「宇宙」景點：</strong><strong>宇宙火箭＋天象館＋多媒體教室</strong>同框即成立「宇宙」（コスモ）景點，加成理系+3 頭腦+2 人氣+2，是理科取向學園的好幫手。</li>
+            </ul>
+            <div class="callout tip"><span class="k">用遊戲內名「天象館」</span>本作把觀星設施的正式名稱定為「天象館」（プラネタリウム），全站一律沿用這個遊戲內名。它除了做「宇宙」景點，還是<strong>管樂社</strong>與<strong>UFO 研究社</strong>兩個隱藏社團的必備前置，值得早點解出來、留在地圖上。</div>
+            <p>這條線值得注意的是它的<strong>順序陷阱</strong>：想解天象館要先有太空人，而把學生養成太空人需要極高的頭腦與理科成績——也就是說「宇宙」景點永遠不可能是你的前幾個景點。實務上的做法是在名門學園階段就鎖定一位理科最強的學生，用學習題本與愛迪生頭帶把頭腦堆滿、用進路指導書把志願卡在太空人，等他畢業後天象館、宇宙景點、管樂社、UFO 研究社四樣會接連解開。</p>
+
+            <h2 id="teachers"><span class="sec-num">10</span> ※特殊老師與名門五人組</h2>
+            <p class="sec-lead">多數老師的門檻其實就是「成立某個景點」。</p>
+            <p>多數老師是一開始就在、或隨學園規模自然出現，但有一批要靠<strong>特殊條件</strong>才會加入。人氣景點提示裡標「<strong>※</strong>」的老師，指的正是這類需要對應景點或條件才招得到的角色。下表列出所有條件型招募的老師，依指導力上限由低到高排列——最後那三位（黑猩猩G、開羅君、蘇芙子公主）上限都是 500，是全遊戲最強的師資。</p>
+            <!-- db:teachers rows='{"col":"教師","in":["約翰班森","亞利安‧韓","甲賀麥克羅倫","馬棟","鴨田鴨子","中野阪助","足元藏助","森野熊克斯","面堂小手助","阿布法拉國王","段燕燕","安德烈‧勘助","黑猩猩G","開羅君","蘇芙子公主"]}' cols="教師,日文原名,指導力(上限),給與(初期→上限 萬円)=給與(萬円),出現條件" empty="—" caption="條件型招募的 15 位老師與其出現條件" -->
+            <figure class="db-embed" style="margin:0">
+            <div class="table-wrap">
+            <table class="data">
+                <thead><tr><th>教師</th><th>日文原名</th><th>指導力(上限)</th><th>給與(萬円)</th><th>出現條件</th></tr></thead>
+                <tbody>
+                    <tr><td>約翰班森</td><td>ジョンベンソン</td><td>320</td><td>28→48.3</td><td>名門學園</td></tr>
+                    <tr><td>亞利安‧韓</td><td>アリアン・ハーン</td><td>375</td><td>30→51.8</td><td>名門學園</td></tr>
+                    <tr><td>甲賀麥克羅倫</td><td>甲賀マクローレン</td><td>381</td><td>34→48.9</td><td>名門學園</td></tr>
+                    <tr><td>馬棟</td><td>チョンマゲ・タカシ</td><td>417</td><td>30→43.2</td><td>有望學園＋熱血景點</td></tr>
+                    <tr><td>鴨田鴨子</td><td>アヒル田カモ子</td><td>420</td><td>30→43.2</td><td>超大型＋家庭景點</td></tr>
+                    <tr><td>中野阪助</td><td>中野坂助</td><td>425</td><td>28→40.3</td><td>學習景點</td></tr>
+                    <tr><td>足元藏助</td><td>足元蔵助</td><td>453</td><td>30→51.8</td><td>怪談景點</td></tr>
+                    <tr><td>森野熊克斯</td><td>森野クマックス</td><td>460</td><td>30→43.2</td><td>超大型＋藝術景點＋森林×20</td></tr>
+                    <tr><td>面堂小手助</td><td>面堂コテ助</td><td>470</td><td>32→46</td><td>名門學園</td></tr>
+                    <tr><td>阿布法拉國王</td><td>アブファラ国王</td><td>481</td><td>30→51.8</td><td>購物景點</td></tr>
+                    <tr><td>段燕燕</td><td>田山ゆきみ</td><td>488</td><td>16→27.6</td><td>全國平均 200 分</td></tr>
+                    <tr><td>安德烈‧勘助</td><td>アンドレ・カンスケ</td><td>500</td><td>32→46</td><td>名門學園</td></tr>
+                    <tr><td>黑猩猩G</td><td>チンパンG</td><td>500</td><td>31→44.6</td><td>超大型＋運動／約會／好友／購物／怪談景點＋已招募森野熊克斯</td></tr>
+                    <tr><td>開羅君</td><td>カイロくん</td><td>500</td><td>?→46</td><td>名門學園＋藝術／家庭／購物／熱血景點＋已招募黑猩猩G</td></tr>
+                    <tr><td>蘇芙子公主</td><td>ソフ子姫</td><td>500</td><td>?→46</td><td>常春藤＋特盛／菜園／黃昏／時尚景點＋已招募開羅君</td></tr>
+                </tbody>
+            </table>
+            </div>
+            <figcaption style="font-size:13px;color:var(--muted);margin-top:6px">條件型招募的 15 位老師與其出現條件　共 15 筆 · <a href="../db/teachers/">在資料庫開啟「老師」→</a></figcaption>
+            </figure>
+            <!-- db:end -->
+            <p>這張表最重要的資訊藏在最後三列：<strong>那三位※老師是一條鏈，不是三個獨立條件</strong>。黑猩猩G 要「超大型＋五個景點之一＋<strong>已招募森野熊克斯</strong>」；開羅君要「名門＋四個景點之一＋<strong>已招募黑猩猩G</strong>」；蘇芙子公主要「常春藤＋四個景點之一＋<strong>已招募開羅君</strong>」。也就是說想拿到蘇芙子公主，必須依序走完<strong>森野熊克斯 → 黑猩猩G → 開羅君 → 蘇芙子公主</strong>四步，而起點的森野熊克斯又要求「超大型＋藝術景點＋森林 ×20」——那 20 棵森林是整條鏈最容易被忽略的一環，記得早點在空地上種起來。</p>
+            <div class="callout key"><span class="k">先湊景點，老師自己上門</span>很多老師的門檻其實就是「成立某個人氣景點」（中野阪助＝學習、足元藏助＝怪談、阿布法拉國王＝購物、馬棟＝有望＋熱血、鴨田鴨子＝超大型＋家庭），所以認真鋪景點不只是衝屬性，也是在解鎖師資。至於段燕燕，條件是「全國平均 200 分」而不是景點，但她的成長幅度是全表最誇張的（16→27.6 萬円薪水換 488 的指導力上限），出現就招。完整老師能力與育成見<a href="../training/">第 3 章 育成</a>。</div>
+
+            <h2 id="hidden-clubs"><span class="sec-num">11</span> 隱藏系社團的解鎖組合</h2>
+            <p class="sec-lead">七個要湊冷門設施組合的社團，不查攻略幾乎湊不出來。</p>
+            <p>常見社團（棒球、足球、網球、籃球、舞蹈、茶花道）一開始就有，田徑社與美術社只要一棟對應設施；但有一批<strong>隱藏社團</strong>要蓋齊多棟冷門設施才會被發現，組合往往橫跨環境、動物與專科教室。想拿<a href="../walkthrough/#late">常春藤的 8 社優勝</a>、或想把「發現社團 ×2000」吃滿的玩家尤其該補齊。</p>
+            <!-- db:clubs where="成立條件~＋" cols="社團,日文原名,成立條件=解鎖所需設施組合,必要預算(萬円)=預算(萬円),遠征期間(週)=遠征(週)" empty="—" caption="七個要多棟設施組合才會發現的隱藏社團" -->
+            <figure class="db-embed" style="margin:0">
+            <div class="table-wrap">
+            <table class="data">
+                <thead><tr><th>社團</th><th>日文原名</th><th>解鎖所需設施組合</th><th>預算(萬円)</th><th>遠征(週)</th></tr></thead>
+                <tbody>
+                    <tr><td>拼布同好會</td><td>キルト同好会</td><td>辦公室＋校長室＋彈跳床</td><td>6</td><td>2</td></tr>
+                    <tr><td>戲劇社</td><td>演劇部</td><td>多功能室＋多媒體教室＋體育館</td><td>8</td><td>2</td></tr>
+                    <tr><td>電腦社</td><td>コンピュータ部</td><td>電腦室＋圖書室＋焚化爐</td><td>42</td><td>3</td></tr>
+                    <tr><td>管樂社</td><td>吹奏楽部</td><td>家政室＋廣播室＋天象館</td><td>20</td><td>3</td></tr>
+                    <tr><td>政治研究社</td><td>政治研究部</td><td>多媒體教室＋養雞小屋＋巨石＋遊戲區</td><td>12</td><td>3</td></tr>
+                    <tr><td>電玩社</td><td>テレビゲーム部</td><td>理科室＋映山紅＋白楊樹＋飼育長頸鹿＋長椅</td><td>4</td><td>3</td></tr>
+                    <tr><td>UFO研究社</td><td>UFO研究部</td><td>天象館＋松樹＋飼育鼴鼠＋電腦室＋遊戲區＋理科室</td><td>6</td><td>3</td></tr>
+                </tbody>
+            </table>
+            </div>
+            <figcaption style="font-size:13px;color:var(--muted);margin-top:6px">七個要多棟設施組合才會發現的隱藏社團　共 7 筆 · <a href="../db/clubs/">在資料庫開啟「社團」→</a></figcaption>
+            </figure>
+            <!-- db:end -->
+            <p>其中 <strong>UFO 研究社</strong>要湊 6 種設施、還吃天象館，是最難發現的社團；<strong>電玩社</strong>雖然條件雜（理科室＋映山紅＋白楊樹＋飼育長頸鹿＋長椅）卻只要 4 萬円預算，性價比意外地高，是衝優勝數的首選。<strong>政治研究社</strong>與<strong>電玩社</strong>都用到「遊戲區」與動植物設施，可以順手一起規劃；<strong>管樂社</strong>與 <strong>UFO 研究社</strong>共用天象館，解出天象館後兩社一起補。</p>
+            <div class="callout tip"><span class="k">發現後就能拆</span>社團一旦被「發現」就永久登錄，之後拆掉前置設施社團仍在（與課題挑戰的邏輯相同）。所以可以先臨時湊齊組合把社團解出來，再把地圖空間還給景點——尤其電玩社與 UFO 研究社那些植物與動物設施佔地零散，解完就能收回。</div>
+
+            <h2 id="misc"><span class="sec-num">12</span> 其他彩蛋與小知識</h2>
+            <p class="sec-lead">五個不影響通關、但知道了會少走冤枉路的細節。</p>
+            <ul>
+                <li><strong>在意之樹（気になる木）：</strong>環境地形裡有一棵標著⭐的特殊樹，名字就叫「在意之樹」，純彩蛋性質的裝飾植栽，看到別漏放進景點辭典。</li>
+                <li><strong>開羅君工場出路：</strong>畢業出路最高段（2000～3000 萬円）藏著一個<strong>開羅君工場（カイロ君工場）</strong>——學生畢業居然能進開羅社的工廠，是全作最 meta 的彩蛋出路，和太空人、總統、石油王同級，也算一種「發現職業 ×2000」。</li>
+                <li><strong>農作物只有 9 種：</strong>種田選單看起來有空格，容易讓人以為還有沒解鎖的作物，其實<strong>農作物本來就只有 9 種</strong>，那些空格不是未解鎖，別再苦等第 10 種了。</li>
+                <li><strong>花壇是唯一有維持費的環境設施：</strong>缺錢時，花壇是環境類裡唯一會持續扣維持費的，先拆掉就能省一筆——這一條在<a href="../walkthrough/#money">收支結構</a>那節也提過，因為它是最常被忽略的固定支出。</li>
+                <li><strong>制服可中途更換：</strong>學校制服能隨時從選單（校內→學校）換樣式，不必開新檔。純外觀，不影響任何數值。</li>
+            </ul>
+
+            <h2 id="faq"><span class="sec-num">13</span> 常見問題 FAQ</h2>
+            <p class="sec-lead">結算、繼承與隱藏要素的七個短答。</p>
+            <h3>結算到底在第幾年？</h3>
+            <p>第 <strong>11 年目的 4 月</strong>自動結算。真正的衝刺期是第 10 年到 11 年目 3 月，收尾清單要在這之前排好。</p>
+            <h3>周回會繼承什麼？我的錢和學生會留著嗎？</h3>
+            <p>只繼承<strong>設施等級</strong>與<strong>人氣景點辭典</strong>兩樣，其餘（資金、學生、老師、社團、課題等級、平均學力、青春點、情侶、地圖佈局）<strong>全部重置</strong>。錢和學生不會留，所以結算前應該把錢花光。</p>
+            <h3>想拉高分數，最該優先衝哪一項？</h3>
+            <p>看單價。<strong>情侶與優勝社團各 1 萬分</strong>最肥，其次人氣景點 5000。把資源集中在這三項，比去囤資金（÷1000）或堆入學希望者（×10）划算得多。用上面的<a href="#calc">試算器</a>填入現況，它會直接告訴你「再 +1 最划算」的是哪項。</p>
+            <h3>年收 500 萬和 1000 萬兩項會重複算嗎？</h3>
+            <p>是加碼關係：一位年收 1000 萬的畢業生會同時計入「500 萬以上（×1000）」與「1000 萬以上（×3000）」，再加上他拉高的平均學力（×200）。所以把畢業生往高年收段推，效益是複合的。</p>
+            <h3>一周目分數很低是不是玩壞了？</h3>
+            <p>不是。一周目起點低、資金與人手都緊，而且結算在第 11 年、常春藤要第 20 年——<strong>一周目本來就升不上常春藤</strong>。一周目的任務是解鎖：把設施等級與景點辭典鋪好，二周目起才是靠繼承資產衝高分的時候。</p>
+            <h3>開羅君房間／天象館一直不解鎖怎麼辦？</h3>
+            <p>開羅君房間先確認三件事：學園是否已到<strong>常春藤</strong>、地圖上是否成立了「<strong>吃醋</strong>」景點（焚化爐＋餐廳＋家政室）、是否已擁有<strong>金開羅君</strong>。天象館幾乎都是卡在「<strong>太空人</strong>」這位畢業生——它要名門學園＋太空人 1 人，你得先培養高頭腦的學生讓他畢業成太空人。</p>
+            <h3>這些隱藏要素值得特地去湊嗎？</h3>
+            <p>看目標。只想穩定畢業與賺錢的話，前中期不必碰；但要衝<strong>景點辭典全收集</strong>、拿<strong>常春藤的 8 社優勝</strong>、或把<a href="#formula">結算分數</a>最大化，開羅／宇宙景點、隱藏社團與特殊老師就是必經之路——它們同時餵「人氣景點 ×5000」「發現社團 ×2000」「發現設施 ×1000」三個計分項。</p>
+
+            <h2 id="recap"><span class="sec-num">14</span> 本章重點</h2>
+            <p class="sec-lead">三句話帶走：結算年、繼承線、單價表。</p>
+            <ul>
+                <li><strong>11 年目 4 月結算，第 10 年就要進收尾模式。</strong>常春藤要第 20 年，所以一周目升不上去是正常的，別誤判成失誤。</li>
+                <li><strong>只有設施等級與景點辭典會繼承。</strong>一周目專心解鎖（設施、職業、社團的「發現」都是一次性的），二周目才靠繼承資產衝分。</li>
+                <li><strong>衝分順序完全由單價表決定。</strong>情侶與優勝社團各 1 萬、人氣景點 5000 是主力；資金 ÷1000 等於不計分，結算前該花光。</li>
+            </ul>
+
+            <p style="font-size:13px;color:var(--muted);margin-top:26px">資料來源：遊戲本體資料整理，繼承規則與 13 項結算分數公式取自本站<a href="../sim/">佈局模擬器</a>內建遊戲手冊「周回」段，並參考 Kairosoft Wiki（新・カイロパーク攻略）與繁中／日文社群攻略後重寫；譯名盡量對齊官方繁體中文。表格內容由建置期腳本自本站資料庫的同一份正本蓋章產生。開羅系設施等隱藏條件遊戲內給得隱晦，實際仍以你的遊戲進度提示為準，若有誤歡迎指正。</p>
+        </div>
+
+        <aside class="next-step">
+            <a class="ns-card" href="../combo/">
+                <span class="ns-ic">🎯</span>
+                <div>
+                    <div class="ns-t">接下來：人氣景點 combo 全 29 種 →</div>
+                    <div class="ns-why">結算分數最肥的可控項目就是景點種數（每種 5000 分）。主線讀完之後，把 29 種 combo 與 4×4 規則整套記熟，是下一輪拉開差距最快的方式。</div>
+                </div>
+            </a>
+            <p class="ns-prev">← 上一步：<a href="../walkthrough/">第 4 章 經營與升級</a>（年度排程、課題與規模門檻）</p>
+        </aside>
+        <!-- chapter:start -->
+        <!-- chapter:end -->
+        <!-- related:start -->
+        <section class="related">
+            <h2>延伸閱讀</h2>
+            <div class="db-cat-grid">
+                <a class="db-cat-card" href="../db/"><span class="ic">📚</span><span class="lb">資料庫</span></a>
+            </div>
+            <p style="margin-top:14px"><a class="back-hub" href="../">← 口袋學院物語2 攻略總覽</a></p>
+        </section>
+        <!-- related:end -->
+    </main>
+
+    <script src="../../../assets/shell.js?v=8"></script>
+    <script>
+    (function () {
+        // 13 項結算分數計分公式（單價 unit = 每一單位換算分數；op:'mul' 乘、'div' 除）
+        var ITEMS = [
+            { id: 'money',      name: '最終資金',            op: 'div', unit: 1000,  ph: '500000',  unitLabel: '÷1000' },
+            { id: 'challenge',  name: '課題 Lv 總和',        op: 'mul', unit: 1000,  ph: '25',      unitLabel: '×1000' },
+            { id: 'applicant',  name: '入學希望者',          op: 'mul', unit: 10,    ph: '200',     unitLabel: '×10' },
+            { id: 'facility',   name: '發現設施',            op: 'mul', unit: 1000,  ph: '60',      unitLabel: '×1000' },
+            { id: 'career',     name: '發現職業',            op: 'mul', unit: 2000,  ph: '40',      unitLabel: '×2000' },
+            { id: 'grad500',    name: '年收 500 萬以上畢業生', op: 'mul', unit: 1000,  ph: '30',      unitLabel: '×1000' },
+            { id: 'grad1000',   name: '年收 1000 萬以上畢業生', op: 'mul', unit: 3000,  ph: '10',      unitLabel: '×3000' },
+            { id: 'academic',   name: '平均學力',            op: 'mul', unit: 200,   ph: '400',     unitLabel: '×200' },
+            { id: 'spot',       name: '人氣景點',            op: 'mul', unit: 5000,  ph: '16',      unitLabel: '×5000' },
+            { id: 'youth',      name: '青春點',              op: 'mul', unit: 2000,  ph: '20',      unitLabel: '×2000' },
+            { id: 'couple',     name: '情侶',                op: 'mul', unit: 10000, ph: '3',       unitLabel: '×10000' },
+            { id: 'clubFound',  name: '發現社團',            op: 'mul', unit: 2000,  ph: '16',      unitLabel: '×2000' },
+            { id: 'clubWin',    name: '優勝社團',            op: 'mul', unit: 10000, ph: '8',       unitLabel: '×10000' }
+        ];
+
+        var grid = document.getElementById('calcGrid');
+        var totalEl = document.getElementById('calcTotal');
+        var nextEl = document.getElementById('calcNext');
+        var bodyEl = document.getElementById('calcBreakdown');
+
+        // 建立輸入欄
+        ITEMS.forEach(function (it) {
+            var wrap = document.createElement('div');
+            wrap.className = 'calc-field';
+            var lab = document.createElement('label');
+            lab.setAttribute('for', 'calc_' + it.id);
+            lab.innerHTML = it.name + ' <span class="unit">（' + it.unitLabel + '）</span>';
+            var inp = document.createElement('input');
+            inp.type = 'number';
+            inp.min = '0';
+            inp.id = 'calc_' + it.id;
+            inp.setAttribute('placeholder', it.ph);
+            inp.setAttribute('inputmode', 'numeric');
+            inp.setAttribute('aria-label', it.name);
+            inp.addEventListener('input', recompute);
+            wrap.appendChild(lab);
+            wrap.appendChild(inp);
+            grid.appendChild(wrap);
+        });
+
+        function score(it, qty) {
+            if (it.op === 'div') return qty / it.unit;
+            return qty * it.unit;
+        }
+
+        function fmt(n) {
+            return Math.round(n).toLocaleString('en-US');
+        }
+
+        var trackTimer = null;
+        function recompute() {
+            var total = 0;
+            var rows = '';
+            var best = null; // 再 +1 最划算：以「單位增分」排序（div 項每 +1 只加 1/unit，極小）
+            ITEMS.forEach(function (it) {
+                var raw = document.getElementById('calc_' + it.id).value;
+                var qty = parseFloat(raw);
+                if (!isFinite(qty) || qty < 0) qty = 0;
+                var s = score(it, qty);
+                total += s;
+                rows += '<tr><td>' + it.name + '</td><td class="num">' + fmt(qty) +
+                        '</td><td class="num">' + it.unitLabel +
+                        '</td><td class="num">' + fmt(s) + '</td></tr>';
+                // 每 +1 單位帶來的增分
+                var perUnit = (it.op === 'div') ? (1 / it.unit) : it.unit;
+                if (!best || perUnit > best.perUnit) best = { name: it.name, perUnit: perUnit, gain: (it.op === 'div' ? '+' + (1 / it.unit) : '+' + it.unit) };
+            });
+            totalEl.textContent = fmt(total);
+            bodyEl.innerHTML = rows;
+            if (best) {
+                nextEl.textContent = '目前再 +1 最划算的是：' + best.name + '（' + best.gain + ' 分）。';
+            }
+            // 追蹤（debounce）
+            if (window.Shell && Shell.track) {
+                clearTimeout(trackTimer);
+                trackTimer = setTimeout(function () {
+                    Shell.track('ngplus_calc', { score: Math.round(total) });
+                }, 800);
+            }
+        }
+
+        recompute();
+    })();
+    </script>
+    <script>Shell.mount({ page: 'endgame', game: { id: 'school2', type: 'guide' }, breadcrumb: [{ t: '口袋學院物語2', href: '../' }, { t: '終盤' }] });</script>
+</body>
+</html>
