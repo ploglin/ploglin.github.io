@@ -109,6 +109,7 @@ kairosoft/<game>/            index.html = 內容豐富的攻略專頁(SEO 主力
 社群爬蟲（FB／X／LINE／Discord）不執行 JS，**也不吃 SVG 當 `og:image`**。所以每款遊戲各有一張 1200×630 PNG（`kairosoft/<game>/og-image.png`），非遊戲頁用根目錄的 `og-image.png`。
 
 - 圖不是手繪的：`node scripts/gen-og.js` 用 headless Chrome 把 `games-index.js` 的 emoji／中日英名／`accent` 色系烤成卡片。**新增遊戲後重跑**（只烤某幾款：`node scripts/gen-og.js <id> …`）。
+- **頁面專屬圖優先於遊戲卡**：五鎮完美佈局頁用 `layouts/<town>-og.png`（左側文案＋右側 `*-thumb.svg` 地圖）——那一頁分享出去該看到的是「那張圖長什麼樣」。要再加別的頁面專屬圖就擴 `imgFor()`。卡上的數字**一律取正本**（名稱／景點數←`layout-gen/towns.js` 的 `spots.target`，湖岸是 23 不是 29；日文名／尺寸／特色←`db/data.js` 的 `towns` 分類），不要在產生器裡重抄。
 - `--stamp` 只做第二階段（不需 Chrome）：把每頁 `og:image` 指到該款的卡、補 `og:image:width/height`、把 `twitter:card` 升成 `summary_large_image`。**冪等**，新增頁面後重跑即補齊。
 - **寄居在同網域但與攻略站無關的一次性頁面**（`kindergarten/`、`travel/`、`privacy/wealth_navigator.html`）刻意不給 `og:image`——預覽卡寫「開羅攻略站」是錯的資訊。名單在 `gen-og.js` 的 `NON_STATION`，`link-check.js` 第 3 節的豁免名單**必須同一組**，改一邊要改兩邊。
 

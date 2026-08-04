@@ -69,7 +69,12 @@ const PLATEAU_FILL = '#d6d3d1';
 const SLOPE_FILL = '#bef264';
 const out = [];
 out.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Noto Sans TC',sans-serif" role="img" aria-label="口袋學院物語2 ${town.name}完美佈局地圖">`);
-out.push(`<title>口袋學院物語2 ${town.name}完美佈局（29 個人氣景點全成立）</title>`);
+/* 景點數不能寫死 29：分區優先架構下湖岸只湊到 23（towns.js 的 spots.target），
+   寫死會讓 lake-perfect.svg 的 <title>（＝螢幕閱讀器唸出來的名字）說謊。 */
+const spotTarget = (town.spots && town.spots.target) || 29;
+out.push(`<title>口袋學院物語2 ${town.name}完美佈局（${spotTarget === 29
+    ? '29 個人氣景點全成立'
+    : `29 個人氣景點中成立 ${spotTarget} 個`}）</title>`);
 out.push(`<rect width="${W}" height="${H}" fill="#f8fafc"/>`);
 
 /* 多格建築要畫成「一棟」而不是 w×h 個方格 —— 分格畫的話，每格之間那條白色描邊

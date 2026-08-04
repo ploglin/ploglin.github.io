@@ -115,6 +115,68 @@ function siteCard() {
 </div>`, '#e6f4ec');
 }
 
+/* ---------- 五鎮完美佈局卡 ----------
+   佈局頁分享出去時，該看到的是「那張圖長什麼樣」，不是通用的遊戲卡。
+   地圖用 *-thumb.svg 而不是 *-perfect.svg：後者 89–128KB 的逐格標字在 630px 高
+   的卡上完全讀不出來，縮圖版反而看得出佈局形狀（而那種色塊感正好對上 8bit 調性）。
+   資料一律取正本，不在這裡重抄：
+     名稱／景點數 → layout-gen/towns.js（spots.target，湖岸是 23 不是 29）
+     日文名／尺寸／特色 → db/data.js 的 towns 分類
+--------------------------------------------------------------------------- */
+const LAYOUT_DIR = path.join(KAIRO, 'school2', 'layouts');
+
+const TOWN_META = (() => {
+    const townsJs = path.join(KAIRO, 'school2', 'scripts', 'layout-gen', 'towns.js');
+    const dataJs = path.join(KAIRO, 'school2', 'db', 'data.js');
+    if (!fs.existsSync(townsJs) || !fs.existsSync(dataJs)) return {};   // 其他遊戲沒有這套，靜靜跳過
+    // towns.js 匯出 { TOWNS, select, current }。**不要對這個形狀做容錯**：抓不到就
+    // 整批五鎮卡靜靜變成 0 張，而「少產出」是不會有人發現的失敗（踩過一次）。
+    const mod = require(townsJs);
+    const w = {};
+    new Function('window', fs.readFileSync(dataJs, 'utf8'))(w);
+    const cat = (w.GAME_DB.categories || []).find(c => c.key === 'towns');
+    const col = (name) => cat.columns.indexOf(name);
+    const out = {};
+    for (const key of ['health', 'east', 'lake', 'valley', 'hill']) {
+        const t = (mod.TOWNS || {})[key];
+        if (!t) throw new Error(`towns.js 找不到 ${key}（export 形狀變了？keys=${Object.keys(mod)}）`);
+        const row = cat.rows.find(r => r[0] === t.name) || [];
+        out[key] = {
+            name: t.name,
+            spots: (t.spots && t.spots.target) || 29,
+            jp: row[col('日文原名')] || '',
+            size: row[col('尺寸')] || '',
+            note: (row[col('特色')] || '').split('・')[0],
+        };
+    }
+    return out;
+})();
+
+function townCard(key) {
+    const t = TOWN_META[key];
+    const svg = fs.readFileSync(path.join(LAYOUT_DIR, key + '-thumb.svg'), 'utf8').replace(/<\?xml[^>]*\?>/, '');
+    const pill = (s) => `<span style="display:inline-block;font-size:20px;font-weight:700;color:${TOKENS.brand};
+        background:#e6f4ec;border-radius:999px;padding:6px 16px;margin-right:8px">${s}</span>`;
+    return shell(`
+<div style="width:100%;height:100%;background:#fff;border-radius:28px;
+     box-shadow:0 8px 40px rgba(16,40,28,.10);display:flex;align-items:center;
+     padding:48px 56px;gap:48px;overflow:hidden">
+  <div style="flex:1;min-width:0">
+    <div style="font-size:21px;color:${TOKENS.muted};letter-spacing:.06em;font-weight:700">完美佈局</div>
+    <div style="font-size:64px;font-weight:900;letter-spacing:-.02em;line-height:1.1;margin-top:6px">${t.name}</div>
+    <div style="font-size:26px;color:${TOKENS.inkSoft};margin-top:10px">${t.jp}</div>
+    <div style="margin-top:26px">${pill(t.spots + ' 個人氣景點')}${pill(t.size)}</div>
+    <div style="font-size:23px;color:${TOKENS.inkSoft};margin-top:22px;line-height:1.5">
+      9 教室＋2 辦公室滿編 · 分區優先 · 0 假路面<br>${t.note}</div>
+    <div style="font-size:21px;color:${TOKENS.muted};margin-top:30px;font-weight:700">開羅攻略站 · ploglin.cc</div>
+  </div>
+  <div style="flex:0 0 auto;height:100%;display:flex;align-items:center">
+    <div style="height:100%;display:flex;align-items:center">${svg}</div>
+  </div>
+</div>
+<style>.card svg,div svg{height:100%;width:auto;display:block}</style>`, '#e6f4ec');
+}
+
 /* ---------- 烤圖 ---------- */
 const TMP = fs.mkdtempSync(path.join(os.tmpdir(), 'og-'));
 function shoot(html, outAbs) {
@@ -144,6 +206,12 @@ if (!STAMP_ONLY) {
         const size = shoot(gameCard(g), path.join(KAIRO, g.id, 'og-image.png')); bytes += size; n++;
         console.log(`  kairosoft/${g.id}/og-image.png  ${(size / 1024).toFixed(0)} KB`);
     }
+    if (!only.length || only.includes('school2')) {
+        for (const key of Object.keys(TOWN_META)) {
+            const size = shoot(townCard(key), path.join(LAYOUT_DIR, key + '-og.png')); bytes += size; n++;
+            console.log(`  kairosoft/school2/layouts/${key}-og.png  ${(size / 1024).toFixed(0)} KB`);
+        }
+    }
     console.log(`  共 ${n} 張，合計 ${(bytes / 1024 / 1024).toFixed(2)} MB`);
 }
 fs.rmSync(TMP, { recursive: true, force: true });
@@ -172,6 +240,11 @@ const pages = [];
 })(ROOT);
 
 const imgFor = (p) => {
+    // 頁面專屬圖優先：五鎮佈局頁分享出去要看到那張圖，而不是通用遊戲卡
+    const town = /^kairosoft\/school2\/layouts\/([^/]+)\/index\.html$/.exec(p);
+    if (town && fs.existsSync(path.join(LAYOUT_DIR, town[1] + '-og.png'))) {
+        return `${BASE}kairosoft/school2/layouts/${town[1]}-og.png`;
+    }
     const m = /^kairosoft\/([^/]+)\//.exec(p);
     if (m && fs.existsSync(path.join(KAIRO, m[1], 'og-image.png'))) return `${BASE}kairosoft/${m[1]}/og-image.png`;
     return BASE + 'og-image.png';
