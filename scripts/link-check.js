@@ -18,10 +18,9 @@ const SKIP_DIRS = new Set(['.git', '.idea', 'node_modules', 'assets', 'scripts',
    刻意不直接修：修它要動別款遊戲的檔案，不屬於本批範圍。
    比照 school2/scripts/check.js 的 ALLOW 慣例——每筆都要有理由與修法，
    每次跑都會印出來，所以不會被忘記；修好後把該筆刪掉即可。            */
-const KNOWN_ISSUES = {
-    'kairosoft/clothier/index.html#combo':
-        '既有壞錨點：頁面只有 #combo-female/#combo-male/#combo-cost。修法＝把 line 42 的 href 改成 #combo-female',
-};
+/* 已知且刻意容忍的問題。每筆寫「為什麼還沒修」與「修法」；修好就刪掉那一筆，
+   不要讓這張表變成永久的免死金牌（clothier 的 #combo 已於 2026-08-04 修掉並移除）。 */
+const KNOWN_ISSUES = {};
 
 /* ==================== 報告器 ==================== */
 let fails = 0, warns = 0;
