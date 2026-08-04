@@ -310,6 +310,40 @@ main.article > .db-prose > .table-wrap {
 .datablock table.data thead th[aria-sort="descending"]::after { content: ' ▼'; font-size: 9px; }
 
 
+/* ---------- 4c. 所有長表都要有黏住的表頭 -----------------------------------
+   `shell.css:372` 早就寫了 `table.data thead th { position: sticky; top: 0 }`，
+   但 `.table-wrap` 只有 `overflow-x: auto`、**永遠不會縱向捲動**，sticky 因此
+   沒有可貼的滾動容器 → 那行是死碼。只有 `.datablock`（有 max-height）例外。
+   於是資料庫分類頁（77 列設施、65 列學生、60 列進路）與城鎮頁的長表，
+   往下滑就看不到欄位定義了。
+
+   修法：把 `.datablock` 的那套（max-height ＋ 雙軸捲動 ＋ 補底線）套到 school2
+   底下**所有**表格容器，包含 `#dbApp` 裡由 db.js 產生的那些。
+   注意 max-height 只在內容超過時才生效 → 5 列的小表不會多出捲軸。
+
+   為什麼不改成「貼視窗」（top: 106px、用整頁捲動）：那需要移除 `.table-wrap`
+   的 overflow-x，但 9 欄的課題表與 8 欄的老師表在 1080px 下仍會超寬，
+   移掉橫捲會讓表格溢出容器、甚至讓整頁長出橫向捲軸。所以維持容器內捲。 */
+main.article .table-wrap,
+main.article #dbApp .table-wrap {
+    max-height: min(62vh, 520px);
+    overflow: auto;
+    overscroll-behavior: contain;
+}
+@supports (height: 100dvh) {
+    main.article .table-wrap,
+    main.article #dbApp .table-wrap { max-height: min(62dvh, 520px); }
+}
+/* 補 sticky th 被捲走的底線（border-collapse 下 border 不跟著黏），
+   並確保表頭底色不透，否則資料列會從標頭底下透出來。 */
+main.article table.data thead th,
+main.article #dbApp table thead th {
+    background: var(--card-2);
+    box-shadow: inset 0 -1px 0 var(--line);
+    z-index: 2;
+}
+
+
 /* ---------- 5. .zone-group：手風琴（只給查閱型內容，不給機制解說） --------- */
 .zone-group {
     border: 1px solid var(--line);
