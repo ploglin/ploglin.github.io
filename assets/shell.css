@@ -574,8 +574,42 @@ table.data tbody tr:last-child td { border-bottom: none; }
 .pagenav-menu a:hover { background: var(--brand-soft); color: var(--brand-strong); text-decoration: none; }
 
 @media (max-width: 640px) {
-    .site-nav { gap: 2px; }
+    /* `gap: 0 4px` 而**不是** `gap: 4px`：導覽是 flex-wrap 容器，單值 gap 會同時吃
+       row-gap，一旦哪天又折行就白白多出 4px 高。row-gap 明寫 0。
+       原本是 `gap: 0` → 相鄰目標水平間隔 0.0px，命中區放大到 44px 之後邊界不明，
+       誤觸成因只是從「目標太小」換成「不知道邊界在哪」。收字標後導覽收成單行、
+       四個 44px 方塊全部相鄰，這條因此比折行時更重要。 */
+    .site-nav { gap: 0 4px; }
     .site-nav a { padding: 0 9px; font-size: 13px; }
+
+    /* ── 手機收字標（擁有者 2026-08 裁決）────────────────────────────────
+       390px 下 header 內只有 335px 可分：字標 130px ＋ 導覽單行需 201px ＋ 主題鈕
+       48px ＝ 379px，一定折行。實測折行版 header 101px、字標版單行 55px。
+       收掉「開羅攻略站」五個字之後 🕹️ 綠磚仍然是回首頁的連結（apple.com 手機版
+       同一個手法）。
+
+       ── 為什麼是視覺隱藏而不是 display: none ─────────────────────────
+       綠磚是連結，可見文字收掉後那顆連結不能變成無名。這裡用視覺隱藏
+       （保留在無障礙樹）而**不是** `display: none` ＋ `aria-label`：
+       ①`display: none` 會把文字從無障礙樹整個移除 → 連結的可及名稱只剩 emoji
+         「🕹️」，螢幕閱讀器唸成「操縱桿 連結」；
+       ②改用 aria-label 要動 shell.js、而且會在桌機一併覆蓋可見文字 → 可見標籤與
+         可及名稱不一致，語音控制「點開羅攻略站」會找不到目標（WCAG 2.5.3）；
+       ③站名會因此在 CSS/JS 各存一份。視覺隱藏三者全避開，且零 JS 改動。
+       絕對定位的子元素**不是** flex item → `.site-logo` 的 gap: 9px 不計入，
+       容器寬度收成綠磚的 32px（實測值），不需要另外歸零 gap。
+       `clip-path: inset(50%)` 而非 `clip`：後者已廢棄；1px 見方＋overflow hidden
+       是為了讓仍有部分閱讀器需要的「元素有尺寸」條件成立。 */
+    .site-logo { position: relative; }
+    .site-logo > span:not(.mark) {
+        position: absolute;
+        width: 1px; height: 1px;
+        margin: -1px; padding: 0; border: 0;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
+
     .hero { padding: 34px 0 30px; }
     .section { padding: 30px 0; }
     .pagenav-menu { width: min(240px, 72vw); }
@@ -600,6 +634,8 @@ table.data tbody tr:last-child td { border-bottom: none; }
      全螢幕 app 的垂直空間**就是產品本身**，與文件外殼是不同的問題類別。）
    下面用到的 `@media (max-width: 640px)` 是**視窗尺寸**查詢、不是輸入裝置查詢，
    沒有「筆電報 fine」那個漏洞，而且是加進本檔既有的 ≤640px 分支，不是開新分支。
+   手機側的高度代價也已經清掉：≤640px 收字標之後 header 同樣是 55px（比改動前的
+   93.2px 還少 38px），做法與理由見上面 ≤640px 分支裡的「手機收字標」那一段。
 
    ── 界線：哪些**刻意不**保證 44px ────────────────────────────────────
    `.prose p a`／`.prose li a`／`.legal a`／`figcaption a` —— **連續文字流裡的連結，
