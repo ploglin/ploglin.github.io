@@ -266,6 +266,28 @@
             border-color: rgba(255, 255, 255, 0.98) transparent transparent transparent;
         }
 
+        /* 「📁 檔案」浮層入口只在窄螢幕出現；桌機沿用原本的並排工具列（版面零變更） */
+        #fileBtn { display: none; }
+        /* header 原本是 static，z-30 其實無效；補 relative 讓它成為浮層的定位基準，
+           同時讓 z-30 真的生效（aside 是 z-20，浮層才蓋得住面板與地圖） */
+        #appHeader { position: relative; }
+
+        /* 工具鈕（復原/重做/矩形/清空/視角/建議）命中區：視覺維持 30px 高，用 ::after
+           垂直外擴到 44px，**不動版面**。這頁 header 每長高 11px 就等於少一行地圖。
+           作法同 assets/shell.css 的麵包屑；水平方向桌機間距只有 8px 故不外擴。 */
+        #toolGroup > button, #fileBtn { position: relative; }
+        #toolGroup > button::after { content: ''; position: absolute; inset: -7px 0; }
+
+        /* 「匯出/匯入/圖片/分享」在桌機是有 title 的兩字鈕；觸控裝置永遠看不到 title，
+           所以浮層裡改用完整文案（.io-l），桌機維持原本的兩字（.io-s）。 */
+        .io-l { display: none; }
+
+        /* 最近使用色塊：44×44 命中區。hover 放大只給真的有指標裝置的環境，
+           否則 iOS 點完會殘留一顆放大的色塊。 */
+        @media (hover: hover) {
+            #recentRow .recent-chip:hover { transform: scale(1.1); }
+        }
+
         /* 窄螢幕（手機/直式平板）：地圖在上、建築面板在下 */
         @media (max-width: 768px) {
             #appBody { flex-direction: column; }
@@ -277,6 +299,79 @@
             }
             #toolHint { display: none; }
             #coordHint { bottom: calc(42vh + 0.5rem); }
+
+            /* 列1＝標題＋檔案鈕，列2＝6 顆工具鈕。#brandGroup 用 display:contents
+               攤平成 header 的直接項目，才能用 order 排這兩列（標題不可隱藏，是 SEO 主體）。
+               gap 用 1rem：兩列的 ::after 各外擴 7px，16px 間距才不會互相搶點。 */
+            #appHeader { gap: 1rem; padding-left: 0.75rem; padding-right: 0.75rem; }
+            #brandGroup { display: contents; }
+            #appHeader h1 { order: 1; }
+            #fileBtn { order: 2; display: inline-flex; align-items: center; gap: 0.25rem; }
+            #toolGroup { order: 3; flex-basis: 100%; justify-content: space-between; }
+            /* 窄螢幕的工具鈕間距被 space-between 拉到 ~30px，左右各外擴 7px 仍留 16px，
+               六顆因此兩維都 ≥44 而不佔任何版面。 */
+            #toolGroup > button::after { inset: -7px; }
+            #fileBtn::after { content: ''; position: absolute; inset: -7px; }
+            #fileBtnName { max-width: 6em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+            /* 檔案浮層：疊在地圖上方，展開時地圖高度全程不變（就地展開會在按下的瞬間
+               抽走約 130px 畫布，而 fitGrid 不會因此重算）。 */
+            #fileGroup {
+                display: none;
+                order: 4;
+                position: absolute;
+                top: 100%;
+                left: 0.75rem;
+                right: 0.75rem;
+                margin-top: 0.25rem;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.5rem;
+                padding: 0.75rem;
+                background: #ffffff;
+                border: 1px solid #e5e7eb;
+                border-radius: 0.75rem;
+                box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.25);
+                max-height: calc(100vh - 7rem);
+                overflow-y: auto;
+            }
+            body.file-open #fileGroup { display: flex; }
+            /* 座標提示是 z-40，會壓在浮層上；浮層開著時本來也沒有格子可指 */
+            body.file-open #coordHint { display: none; }
+
+            /* 浮層裡空間是免費的 → 所有控件實體做到 44px 高 */
+            #fileGroup input,
+            #fileGroup select,
+            #fileGroup button { min-height: 44px; }
+            #fgSave, #fgSlot, #fgIO {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+                width: auto;
+                margin: 0;
+                padding: 0;
+                background: transparent;
+                border: 0;
+            }
+            #fgSlot, #fgIO { border-top: 1px solid #e5e7eb; padding-top: 0.5rem; }
+            #saveName { flex: 1 1 auto; min-width: 0; width: auto; }
+            #loadLocalSelect { flex: 0 0 100%; width: auto; }
+            #fgSlot > button { flex: 1 1 0; }
+            /* 破壞性動作排最後並留間隔：放大命中區後最忌把「刪除」夾在兩顆建設性動作中間 */
+            #loadLocalBtn { order: 1; }
+            #renameLocalBtn { order: 2; }
+            #deleteLocalBtn { order: 3; margin-left: 0.5rem; }
+            #fgIO > button { flex: 1 1 40%; }
+            #fgIO .io-s { display: none; }
+            #fgIO .io-l { display: inline; }
+
+            /* 最近使用列不換行：44px 色塊若換成兩列，aside 頂端的 sticky 區會從 44px
+               漲到約 140px，吃掉只有 42vh 的面板將近一半（渲染端在窄螢幕只放 5 顆）。 */
+            #recentRow { flex-wrap: nowrap; }
+
+            /* iOS Safari 對 font-size < 16px 的輸入框對焦時會強制放大視埠，
+               在 body{overflow:hidden} 的全螢幕工具裡放大後很難回復。 */
+            #paletteSearch, #saveName, #loadLocalSelect { font-size: 16px; }
         }
 
         ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -288,10 +383,14 @@
 <body class="h-screen w-screen flex flex-col">
     <noscript>機場物語（空港ぐらし）佈局模擬器需要啟用 JavaScript 才能使用。這是一個免費的航廈地圖規劃工具，支援 45 組設施相性 combo 自動判定與放置建議。</noscript>
 
-    <header class="bg-white border-b border-gray-200 px-4 py-2.5 flex flex-wrap items-center justify-between shadow-sm z-30 shrink-0 gap-4">
-        <div class="flex items-center gap-3">
+    <!-- 檔案浮層的遮罩：手機上「點外面關閉」若靠冒泡處理，那一下會先被格子的 touchstart
+         吃掉而在地圖上畫一格；用 z-25 的透明遮罩（header z-30 之下、aside z-20 之上）吞掉它。 -->
+    <div id="fileBackdrop" class="hidden fixed inset-0 z-[25]"></div>
+
+    <header id="appHeader" class="bg-white border-b border-gray-200 px-4 py-2.5 flex flex-wrap items-center justify-between shadow-sm z-30 shrink-0 gap-4">
+        <div id="brandGroup" class="flex items-center gap-3">
             <h1 class="text-lg font-black text-green-700 tracking-tight">✈️ 機場物語 佈局模擬器</h1>
-            <div class="flex gap-2">
+            <div id="toolGroup" class="flex gap-2">
                 <button id="undoBtn" title="復原 (Ctrl+Z)" class="text-xs font-bold bg-gray-100 text-gray-600 px-2.5 py-1.5 rounded hover:bg-gray-200 transition border border-gray-300 opacity-40">↩</button>
                 <button id="redoBtn" title="重做 (Ctrl+Y)" class="text-xs font-bold bg-gray-100 text-gray-600 px-2.5 py-1.5 rounded hover:bg-gray-200 transition border border-gray-300 opacity-40">↪</button>
                 <button id="rectBtn" title="矩形填滿模式（也可按住 Shift 拖曳）" class="text-xs font-bold bg-gray-100 text-gray-600 px-2.5 py-1.5 rounded hover:bg-gray-200 transition border border-gray-300">▭ 矩形</button>
@@ -301,12 +400,17 @@
             </div>
         </div>
 
-        <div class="flex items-center gap-3">
-            <div class="flex items-center gap-1.5 bg-gray-50 p-1 rounded border border-gray-200">
-                <input type="text" id="saveName" class="w-28 text-xs border-gray-300 border p-1 rounded bg-white outline-none focus:border-green-400" placeholder="地圖名稱...">
+        <!-- 窄螢幕才出現：把 9 個檔案類控件收進浮層，畫圖時不佔地圖高度 -->
+        <button id="fileBtn" type="button" aria-expanded="false" aria-controls="fileGroup"
+                class="text-xs font-bold bg-gray-100 text-gray-600 px-2.5 py-1.5 rounded hover:bg-gray-200 transition border border-gray-300"
+                title="存檔、讀取、匯出與分享">📁 <span id="fileBtnName">檔案</span> <span id="fileBtnArrow">▾</span></button>
+
+        <div id="fileGroup" class="flex items-center gap-3">
+            <div id="fgSave" class="flex items-center gap-1.5 bg-gray-50 p-1 rounded border border-gray-200">
+                <input type="text" id="saveName" class="w-28 text-xs border-gray-300 border p-1 rounded bg-white outline-none focus:border-green-400" placeholder="地圖名稱…">
                 <button id="saveLocalBtn" class="bg-green-500 hover:bg-green-600 text-white text-xs font-bold py-1 px-2.5 rounded transition">儲存</button>
             </div>
-            <div class="flex items-center gap-1.5 bg-gray-50 p-1 rounded border border-gray-200">
+            <div id="fgSlot" class="flex items-center gap-1.5 bg-gray-50 p-1 rounded border border-gray-200">
                 <select id="loadLocalSelect" class="w-32 text-xs border-gray-300 border p-1 rounded bg-white outline-none focus:border-blue-400">
                     <option value="">-- 讀取存檔 --</option>
                 </select>
@@ -314,12 +418,12 @@
                 <button id="deleteLocalBtn" class="bg-red-500 hover:bg-red-600 text-white text-xs font-bold py-1 px-2.5 rounded transition">刪除</button>
                 <button id="renameLocalBtn" class="bg-gray-400 hover:bg-gray-500 text-white text-xs font-bold py-1 px-2.5 rounded transition">改名</button>
             </div>
-            
-            <div class="flex items-center gap-1.5 ml-2 border-l pl-3 border-gray-200">
-                <button id="saveCodeBtn" class="bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 text-xs font-bold py-1 px-2.5 rounded transition" title="複製存檔碼">匯出</button>
-                <button id="loadCodeBtn" class="bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 text-xs font-bold py-1 px-2.5 rounded transition" title="從剪貼簿載入">匯入</button>
-                <button id="exportImgBtn" class="bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 text-xs font-bold py-1 px-2.5 rounded transition" title="下載地圖 PNG 圖片">圖片</button>
-                <button id="shareBtn" class="bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 text-xs font-bold py-1 px-2.5 rounded transition" title="複製含地圖的分享連結">分享</button>
+
+            <div id="fgIO" class="flex items-center gap-1.5 ml-2 border-l pl-3 border-gray-200">
+                <button id="saveCodeBtn" class="bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 text-xs font-bold py-1 px-2.5 rounded transition" title="複製存檔碼"><span class="io-s">匯出</span><span class="io-l">複製存檔碼</span></button>
+                <button id="loadCodeBtn" class="bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 text-xs font-bold py-1 px-2.5 rounded transition" title="從剪貼簿載入"><span class="io-s">匯入</span><span class="io-l">從剪貼簿貼上</span></button>
+                <button id="exportImgBtn" class="bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 text-xs font-bold py-1 px-2.5 rounded transition" title="下載地圖 PNG 圖片"><span class="io-s">圖片</span><span class="io-l">下載 PNG 圖片</span></button>
+                <button id="shareBtn" class="bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 text-xs font-bold py-1 px-2.5 rounded transition" title="複製含地圖的分享連結"><span class="io-s">分享</span><span class="io-l">複製分享連結</span></button>
             </div>
         </div>
     </header>
@@ -341,8 +445,9 @@
             <div class="flex-1 overflow-y-auto p-3 flex flex-col gap-4">
                 <div class="sticky -top-3 -mt-1 -mx-1 px-1 pt-2 pb-1.5 bg-white z-10">
                     <div class="relative">
-                        <input id="paletteSearch" type="text" placeholder="🔍 搜尋設施名稱..." class="w-full text-xs border border-gray-300 rounded-lg pl-2.5 pr-7 py-1.5 outline-none focus:border-blue-400 bg-gray-50 focus:bg-white transition">
-                        <button id="searchClearBtn" class="absolute right-1.5 top-1/2 -translate-y-1/2 w-4 h-4 flex items-center justify-center text-gray-400 hover:text-gray-700 text-xs font-bold" title="清除搜尋">✕</button>
+                        <input id="paletteSearch" type="text" placeholder="🔍 搜尋設施名稱…" class="w-full min-h-[44px] text-xs border border-gray-300 rounded-lg pl-2.5 pr-11 py-1.5 outline-none focus:border-blue-400 bg-gray-50 focus:bg-white transition">
+                        <!-- 44×44 命中區；有輸入才出現，否則面板最上緣會多一塊「按了沒事」的死區 -->
+                        <button id="searchClearBtn" class="hidden absolute right-0 top-1/2 -translate-y-1/2 w-11 h-11 flex items-center justify-center text-gray-400 hover:text-gray-700 text-sm font-bold" title="清除搜尋">✕</button>
                     </div>
                     <div id="recentRow" class="flex gap-1 flex-wrap mt-1.5"></div>
                 </div>
@@ -602,6 +707,7 @@
         function savePrefs(patch) {
             Object.assign(prefs, patch);
             try { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); } catch (e) {}
+            if (patch.lastSave !== undefined) syncFileBtnName();
         }
 
         // 體檢報告用的最近一次計算結果
@@ -688,6 +794,25 @@
             b.classList.toggle('text-white', on);
         }
 
+        // 窄螢幕的檔案浮層。桌機（>768px）不會用到，呼叫也無副作用。
+        function setFilePanel(open) {
+            document.body.classList.toggle('file-open', open);
+            document.getElementById('fileBackdrop').classList.toggle('hidden', !open);
+            const btn = document.getElementById('fileBtn');
+            btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            btn.classList.toggle('bg-indigo-600', open);
+            btn.classList.toggle('text-white', open);
+            document.getElementById('fileBtnArrow').textContent = open ? '▴' : '▾';
+        }
+        function closeFilePanel() {
+            if (document.body.classList.contains('file-open')) setFilePanel(false);
+        }
+        // 手機把地圖名稱欄收進浮層後，「我在編哪一份」在工具列就看不到了 → 補在按鈕標籤上
+        function syncFileBtnName() {
+            const el = document.getElementById('fileBtnName');
+            if (el) el.textContent = prefs.lastSave ? `檔案 · ${prefs.lastSave}` : '檔案';
+        }
+
         let autosaveTimer;
         function scheduleAutosave() {
             clearTimeout(autosaveTimer);
@@ -736,6 +861,11 @@
             }
         }
         window.addEventListener('resize', fitGrid);
+        window.addEventListener('resize', () => {
+            // 跨過斷點時：浮層在桌機會回到並排狀態，遮罩必須跟著收掉才不會擋住整頁
+            if (!window.matchMedia('(max-width: 768px)').matches) closeFilePanel();
+            renderRecent(); // 最近使用列的顆數依寬度而定
+        });
 
         function updateCoordHint(r, c) {
             const cell = gridData[r][c];
@@ -841,6 +971,8 @@
             renderGrid();
             setupEventListeners();
             loadSavedMapsList();
+            syncFileBtnName();
+            toggleSearchClear(); // 瀏覽器可能還原上次的搜尋字串
 
             // 還原上次的操作偏好
             if (prefs.diamond) {
@@ -1100,8 +1232,9 @@
                 const rec = (prefs.recent || []).filter(x => x !== id);
                 rec.unshift(id);
                 savePrefs({ recent: rec.slice(0, 8) });
-                renderRecent();
             }
+            // 一律重畫：選到清除工具時沒有色塊會亮起，指示器才不會指錯筆
+            renderRecent();
             // 狀態一律顯示在右下資訊卡，不再每次選取都跳提示訊息
             updateToolHint(id, updateSuggestions());
         }
@@ -1589,14 +1722,24 @@
             });
         }
 
-        // 最近使用列（存進偏好，跨次記憶）
+        // 清除鈕只在有輸入時出現：44×44 的空按鈕會在面板最上緣造成一塊「按了沒事」的死區
+        function toggleSearchClear() {
+            const inp = document.getElementById('paletteSearch');
+            const btn = document.getElementById('searchClearBtn');
+            if (inp && btn) btn.classList.toggle('hidden', !inp.value);
+        }
+
+        // 最近使用列（存進偏好，跨次記憶）。色塊 44×44＝命中區，同時兼任「我正在用哪支筆」
+        // 的指示器：手機沒有 #toolHint、選取也不跳提示，這條 sticky 列是唯一常駐線索。
         function renderRecent() {
             const row = document.getElementById('recentRow');
             if (!row) return;
-            const list = (prefs.recent || []).filter(id => items[id] && !items[id].hidden);
+            // 窄螢幕只放 5 顆：44×5＋間距＋「最近：」約 232px，單列塞得下且不必橫捲
+            const cap = window.matchMedia('(max-width: 768px)').matches ? 5 : 8;
+            const list = (prefs.recent || []).filter(id => items[id] && !items[id].hidden).slice(0, cap);
             row.innerHTML = list.length
-                ? '<span class="text-[10px] text-gray-400 self-center">最近：</span>' + list.map(id =>
-                    `<button class="recent-chip w-7 h-7 rounded border border-gray-200 shadow-sm text-[14px] flex items-center justify-center hover:scale-110 transition" style="background:${items[id].color}" title="${items[id].name}" data-tool="${id}">${ITEM_ICONS[id] || items[id].short}</button>`
+                ? '<span class="text-[10px] text-gray-400 self-center shrink-0">最近：</span>' + list.map(id =>
+                    `<button class="recent-chip w-11 h-11 shrink-0 rounded border border-gray-200 shadow-sm text-[20px] flex items-center justify-center transition${id === currentTool ? ' ring-2 ring-blue-500' : ''}" style="background:${items[id].color}" title="${items[id].name}" data-tool="${id}">${ITEM_ICONS[id] || items[id].short}</button>`
                 ).join('')
                 : '';
         }
@@ -1680,9 +1823,9 @@
             document.getElementById('undoBtn').addEventListener('click', undo);
             document.getElementById('redoBtn').addEventListener('click', redo);
 
-            document.getElementById('paletteSearch').addEventListener('input', (e) => filterPalette(e.target.value));
+            document.getElementById('paletteSearch').addEventListener('input', (e) => { filterPalette(e.target.value); toggleSearchClear(); });
             document.getElementById('paletteSearch').addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') { e.target.value = ''; filterPalette(''); e.target.blur(); }
+                if (e.key === 'Escape') { e.target.value = ''; filterPalette(''); toggleSearchClear(); e.target.blur(); }
             });
             document.getElementById('recentRow').addEventListener('click', (e) => {
                 const btn = e.target.closest('.recent-chip');
@@ -1709,7 +1852,17 @@
                 const inp = document.getElementById('paletteSearch');
                 inp.value = '';
                 filterPalette('');
+                toggleSearchClear();
                 inp.focus();
+            });
+
+            // 檔案浮層：按鈕開關、遮罩與 Esc 關閉
+            document.getElementById('fileBtn').addEventListener('click', () => {
+                setFilePanel(!document.body.classList.contains('file-open'));
+            });
+            document.getElementById('fileBackdrop').addEventListener('click', closeFilePanel);
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeFilePanel();
             });
 
             document.getElementById('suggestBtn').addEventListener('click', () => {
@@ -1720,9 +1873,10 @@
                 showSysMsg(prefs.suggestOff ? '已隱藏地圖上的建議標示' : '已顯示建議標示');
             });
 
-            document.getElementById('exportImgBtn').addEventListener('click', () => { track('export_image'); exportImage(); });
+            document.getElementById('exportImgBtn').addEventListener('click', () => { track('export_image'); closeFilePanel(); exportImage(); });
             document.getElementById('shareBtn').addEventListener('click', () => {
                 track('share_map');
+                closeFilePanel();
                 const url = location.href.split('#')[0] + '#m=' + encodeMap();
                 navigator.clipboard.writeText(url)
                     .then(() => showSysMsg('分享連結已複製！對方開啟即載入此地圖'))
@@ -1752,6 +1906,7 @@
                     document.getElementById('saveName').value = newName;
                     if (prefs.lastSave === name) savePrefs({ lastSave: newName });
                     showSysMsg(`已改名：${newName}`);
+                    closeFilePanel();
                 } catch (e) { showSysMsg('改名失敗！', true); }
             });
 
@@ -1791,6 +1946,7 @@
                     document.getElementById('loadLocalSelect').value = name;
                     savePrefs({ lastSave: name });
                     showSysMsg(`已儲存：${name}`);
+                    closeFilePanel();
                 } catch (e) { showSysMsg('儲存失敗！', true); }
             });
 
@@ -1808,6 +1964,7 @@
                             document.getElementById('saveName').value = name;
                             savePrefs({ lastSave: name });
                             showSysMsg(`已讀取：${name}`);
+                            closeFilePanel();
                         }
                     }
                 } catch (e) { showSysMsg('讀取失敗！', true); }
@@ -1824,6 +1981,7 @@
                     localStorage.setItem(MAPS_KEY, JSON.stringify(maps));
                     loadSavedMapsList();
                     showSysMsg(`已刪除：${name}`);
+                    closeFilePanel();
                 } catch (e) { showSysMsg('刪除失敗！', true); }
             });
 
@@ -1850,6 +2008,7 @@
 
             document.getElementById('saveCodeBtn').addEventListener('click', () => {
                 track('export_code');
+                closeFilePanel();
                 const dataStr = JSON.stringify(gridData);
                 navigator.clipboard.writeText(dataStr).then(() => {
                     showSysMsg('存檔碼已複製到剪貼簿！');
@@ -1869,7 +2028,7 @@
                     try {
                         const parsed = JSON.parse(text);
                         if (Array.isArray(parsed)) pushHistory();
-                        if (importGridData(parsed)) { track('import_code'); showSysMsg('代碼匯入成功！'); }
+                        if (importGridData(parsed)) { track('import_code'); showSysMsg('代碼匯入成功！'); closeFilePanel(); }
                         else showSysMsg('格式錯誤', true);
                     } catch (e) { showSysMsg('無法解析剪貼簿內容', true); }
                 }).catch(() => {
