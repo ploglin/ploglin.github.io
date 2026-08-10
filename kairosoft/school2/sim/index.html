@@ -3910,8 +3910,8 @@
             applyHighlight();
         }
         /* 一次清掉所有「景點相關」的地圖覆蓋層。
-           原本這些清除散在 9 個地方，所以每次改都會漏一個 —— 這是結構性原因，
-           不是粗心。集中在一支之後，「定位模式要乾淨」只需要呼叫它。 */
+           散在 9 個呼叫點時，任何一次修改都會漏掉其中一處。集中成一支之後，
+           「定位模式要乾淨」只需要呼叫它。 */
         function clearSpotOverlays() {
             document.querySelectorAll('.tile.suggest, .tile.suggest2')
                 .forEach(t => t.classList.remove('suggest', 'suggest2'));

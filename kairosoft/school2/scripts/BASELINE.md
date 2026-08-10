@@ -71,17 +71,21 @@ node kairosoft/school2/scripts/check.js [--verbose] [--strict]
 
 ### 各頁可見字數（少→多）
 
-最少 **1,707**（`db/ranks/`）、最多 **25,497**（`layouts/lake/`）。門檻是 1,000，最薄的一頁還有 1.7 倍餘裕。
+最少 **1,707**（`db/ranks/`）、最多 **24,951**（`layouts/lake/`）。門檻是 1,000，最薄的一頁還有 1.7 倍餘裕。
 
 ```
 1707 db/ranks/        1745 db/towns/       1848 db/achievements/  2171 db/lessons/
-2227 db/             2301 db/clubs/        2369 db/items/         2500 db/careers/
-2701 db/spots/       2996 db/events/       3213 db/terms/         3238 ./
+2227 db/             2301 db/clubs/        2375 db/items/         2500 db/careers/
+2701 db/spots/       2999 db/events/       3213 db/terms/         3232 ./
 3345 glossary/       3723 db/facilities/   3954 db/teachers/      4152 db/students/
-5234 db/tasks/       7779 combo/           7883 layouts/         11689 start/
-12454 endgame/      17548 layouts/east/   19323 layouts/valley/  20714 layouts/health/
-21011 walkthrough/  22831 training/       23122 layouts/hill/     25497 layouts/lake/
+5234 db/tasks/       7734 layouts/          7777 combo/          11688 start/
+12449 endgame/      16606 layouts/east/   18840 layouts/valley/  19649 layouts/health/
+21006 walkthrough/  22805 layouts/hill/   22815 training/        24951 layouts/lake/
 ```
+
+> 2026-08-10 的批次讓六個 `layouts/` 頁與五個攻略頁掉了字：把「本站舊版怎麼錯、驗證器抓到什麼 bug、產生器怎麼跑」這類**開發過程自述**從對外頁面上拿掉，只留下對讀者有用的結論與誠實標注。少的字集中在 `layouts/*`（合計約 −5,900），其餘是註腳白話化。**這不是回歸。**
+>
+> 同一天的第二輪把剩下的殘留也清了（規範見 `kairosoft/CLAUDE.md`「對外文字的紀律」）：`layouts/*` 的「初版／第一版就踩坑」與「自動排版／景點骨架／排版器」等內部術語、`./` 與 `start/` 的「建置期蓋章產生」、`travel/20251009.html` 開頭四行 AI 生成過程註解與 12 組未轉換的 markdown 粗體、`guide.css`／`pixel.css` 註解裡的內部批次代號（BV1／BV2／BV3）。字數變動在個位到百位數，最大是 `layouts/health/` −26。同時新增根目錄 `_config.yml`，把兩份 `CLAUDE.md`、`scripts/`、本檔排除在 GitHub Pages 發布之外。
 
 ---
 

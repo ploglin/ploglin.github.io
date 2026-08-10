@@ -29,7 +29,7 @@
      .read-progress 頁內捲動進度線（由 guide.js 自動生成）
      .sc-*         景點檢查器 widget（自 spot-check/ 頁內 style 搬來）
 
-   ── 8bit 換皮（BV2）落在哪 ──────────────────────────────────
+   ── 8bit 換皮落在哪 ──────────────────────────────────
    §13 是「形狀語言」的總覆寫（callout／btn／db-* 等 shell.css 元件），
    本檔既有各節（§2 §5 §6 §6b §8 §10）則就地改自己的元件。分界很簡單：
    **shell.css 的元件在 §13，guide.css 自己的元件在原節**。
@@ -132,7 +132,7 @@ main.article h3[id] {
     width: 20px;
     height: 20px;
     flex: 0 0 auto;
-    /* 2px（不是 5px）：BV1 的 `--radius-sm: 2px` 換值救得到 .path-rail 的首尾段
+    /* 2px（不是 5px）：pixel.css 的 `--radius-sm: 2px` 換值救得到 .path-rail 的首尾段
        （:120/:122 走 token），救不到這 6 顆寫死 5px 的編號晶片。而 .path-rail 是
        進頁後視線的第二個落點（h1 之下），一秒內的畫面裡 6 顆圓角小方塊嵌在直角
        分段軌裡是最容易被看見的殘留。
@@ -285,7 +285,7 @@ main.article > .prose > .next-step,
 /* 這兩個原本漏了，兩處都造成「比它旁邊的正文寬 320px」的錯位：
    · .toc  —— 8 頁是 main.article 直系子（已限寬），但 4 個佈局頁的目錄包在
      .prose 裡 → 那 4 頁的目錄寬 1080px。目錄是「讀」的，本來就該在這張清單裡。
-   · .fig-cap —— 它是圖說（散文）。BV2 讓 .mapwrap 收成 fit-content（588/632px）
+   · .fig-cap —— 它是圖說（散文）。.mapwrap 收成 fit-content（588/632px）
      之後，1080px 的圖說會比它說明的那張圖寬 450px 以上，讀起來像跑掉了。 */
 main.article > .prose > .toc,
 main.article > .prose > .fig-cap {
@@ -293,7 +293,7 @@ main.article > .prose > .fig-cap {
     margin-right: auto;
 }
 /* 寬元素吃滿容器：這幾類是「查」的，不是「讀」的。
-   .mapwrap 刻意**不在**這張清單裡（BV2 移出）：它是一張有固定尺寸的圖，
+   .mapwrap 刻意**不在**這張清單裡：它是一張有固定尺寸的圖，
    圖框要收成 fit-content 剛好包住圖，理由見 §6b。 */
 main.article > .prose > .datablock,
 main.article > .prose > .db-embed,
@@ -314,7 +314,7 @@ main.article > .db-prose > .table-wrap {
 /* border-collapse 下 sticky th 的 border-bottom 會隨內容捲走，資料列會從
    標頭底下穿出來。用一條 inset 陰影補線（刻意只用一條、不做階梯陰影：
    sticky 元素上的多層陰影會在捲動時每影格重繪整條表頭）。
-   BV2 把它從 1px 改成 2px：同一個 .datablock 裡 .dbk-h 的分隔線已是 2px，表頭再用
+   從 1px 改成 2px 的理由：同一個 .datablock 裡 .dbk-h 的分隔線已是 2px，表頭再用
    1px 就是同一個盒子裡兩種線寬。這是**改既有那一層 inset 的粗細**，沒有新增任何
    陰影層、沒有新增 border → 重繪成本與 1px 完全相同，不觸犯「sticky th 不得加
    border/box-shadow」那條紅線。 */
@@ -372,7 +372,7 @@ main.article #dbApp table thead th {
 
 
 /* ---------- 5. .zone-group：手風琴（只給查閱型內容，不給機制解說） ---------
-   BV2：2px 硬邊（Tier 2「框住」——你穿過它閱讀，所以**不給階梯陰影**，理由見 §13）。
+   2px 硬邊（Tier 2「框住」——你穿過它閱讀，所以**不給階梯陰影**，理由見 §13）。
    邊色走 --px-edge-soft 而非滿的 --px-edge：一頁最多 15 個手風琴，全上滿會變黑格網。
 --------------------------------------------------------------------------- */
 .zone-group {
@@ -435,7 +435,7 @@ main.article #dbApp table thead th {
     gap: 10px;
     margin: 14px 0;
 }
-/* BV2：Tier 1「浮起」。這是全站最像 HUD 的一塊 —— 9 塊同規格的凸起磚排在 grid 裡
+/* Tier 1「浮起」。這是全站最像 HUD 的一塊 —— 9 塊同規格的凸起磚排在 grid 裡
    讀起來是**一台儀表板**，不是 9 個互相搶戲的物件，所以它是少數保留階梯陰影的容器。
    底色維持 --card-2（內凹底色是刻意的），不要跟著 .px-frame 的 --card 走。 */
 .kpi-row > div {
@@ -469,7 +469,7 @@ main.article #dbApp table thead th {
    只需要橫捲，不縮圖（縮到 375px 寬時格子只剩 14px，字全糊掉，不如讓它捲）。
    底色刻意跟 SVG 內的 `<rect fill="#f8fafc">` 同色，圖與框才連成一塊。
 
-   ── BV2：這裡是「SVG 深色模式」那一題的答案（實測後，不是假設）─────────────
+   ── 這裡是「SVG 深色模式」那一題的答案（實測後，不是假設）─────────────
    原本的假設是「SVG 裡寫死淺色，深色模式下會看不見」。**實測推翻了它**：10 個
    layouts/*.svg（5 張 perfect ＋ 5 張 thumb）每一張的第一個元素都是全畫布的
    `<rect fill="#f8fafc"/>` → 深色模式下 SVG 自成一塊淺色畫布，座標軸（#94a3b8）、
@@ -538,7 +538,7 @@ main.article #dbApp table thead th {
    不是導覽分層裡的「往上」或「往下」，所以做成同層的按鍵列而不是麵包屑。
    當前頁是 <span> 不是 <a>（沒有連到自己的連結），靠 .on 標實心。
 
-   BV2：藥丸（999px）改方角，並且用「凸起／沉入」把「你在哪一鎮」**多編碼一次**
+   藥丸（999px）改方角，並且用「凸起／沉入」把「你在哪一鎮」**多編碼一次**
    （原本只靠實心綠底）—— 未選中的 <a> 凸起（Tier 1，可操作物件），當前的 <span>
    沉入。這不是裝飾，是 8bit 分頁列的原生慣用語：選中的那一格是按進去的。
    gap 由 8px 改 10px：加了 3px 階梯陰影之後，窄螢幕換行時上下兩排只剩 5px 淨距。 */
@@ -631,10 +631,10 @@ main.article #dbApp table thead th {
    內誤觸就往後跳。
 --------------------------------------------------------------------------- */
 .next-step { margin: 32px 0 6px; border-top: 1px solid var(--line); padding-top: 18px; }
-/* BV2：Tier 1「浮起」，而且是全套。這是每一頁唯一的主 CTA（讀完這章要去哪），
+/* Tier 1「浮起」，而且是全套。這是每一頁唯一的主 CTA（讀完這章要去哪），
    是讀者當天在這一頁的最後一個動作 —— 沒有理由讓它停在 1px 邊。
    修掉的既有缺陷：原本靜止無陰影、hover 才 `box-shadow: var(--shadow-hover)`，
-   而且**沒有宣告 transition** → BV1 把 --shadow-hover 換成 `5px 5px 0 --px-edge`
+   而且**沒有宣告 transition** → 改成把 --shadow-hover 換成 `5px 5px 0 --px-edge`
    之後，滑過去的瞬間是一個 5px 實色塊**憑空瞬跳**出現。 */
 .next-step .ns-card {
     display: flex;
@@ -700,7 +700,7 @@ main.article #dbApp table thead th {
 
 
 /* ---------- 10. 景點檢查器 widget（自 spot-check/ 的頁內 style 搬來） -------
-   BV2：這是攻略首頁上唯一一個讀者會**輸入文字**的互動工具，是那一頁互動意圖最高的
+   這是攻略首頁上唯一一個讀者會**輸入文字**的互動工具，是那一頁互動意圖最高的
    區塊，而它上下都是 2px 硬邊直角的 callout／datablock，自己卻是一組 8–10px 圓角的
    軟盒子 → 第一眼會讀成「這個 widget 是外來的、或是舊版沒改到的」。
 --------------------------------------------------------------------------- */
@@ -769,9 +769,9 @@ main.article #dbApp table thead th {
 
 
 /* ============================================================================
-   13. 8bit 元件換皮：shell.css 元件的形狀語言覆寫（BV2）
+   13. 8bit 元件換皮：shell.css 元件的形狀語言覆寫
    ============================================================================
-   BV1 在 assets/pixel.css 建好了 token 層：`--px-edge`／`--px-drop`（用 color-mix
+   assets/pixel.css 建好了 token 層：`--px-edge`／`--px-drop`（用 color-mix
    從 --ink/--card 推導，淺深色都過對比）、`main.article { --radius: 2px;
    --shadow: 3px 3px 0 var(--px-drop); --shadow-hover: 5px 5px 0 var(--px-edge) }`。
    本節把那套語言真正套到元件上。**一律不改 assets/shell.css**（29 款共用），
@@ -859,7 +859,7 @@ main.article .datablock .table-wrap { border-width: 0; }
 
 
 /* ---- 13c. .btn（shell.css:414–423）—— Tier 1 ------------------------------
-   `border-radius: 10px` 是寫死的、不走 token → BV1 的 --radius 換值救不到它，
+   `border-radius: 10px` 是寫死的、不走 token → --radius 換值救不到它，
    是全站唯一還圓著的主要按鈕。inset 陰影換成階梯陰影是同一件事的兩種說法
    （inset＝「這是一顆實體鍵」，drop 也是，但屬於這套語言）。
    順手補 :focus-visible —— .btn 在 shell.css 完全沒有鍵盤焦點樣式。 */

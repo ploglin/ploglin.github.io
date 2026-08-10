@@ -1,0 +1,15 @@
+# GitHub Pages（Jekyll）建置設定。
+#
+# 唯一用途：把「只在開發時用得到」的檔案排除在對外網站之外。
+# 這些檔案要留在 repo 裡供開發與檢查器使用，但不該有對外網址——
+# 它們是建置規範、產生器原始碼與基線數字，不是攻略內容。
+#
+# 排除後這些路徑在 https://ploglin.cc/ 上會回 404，本機開發不受影響。
+# 新增同類文件時記得補進這張表。
+exclude:
+  - kairosoft/CLAUDE.md                   # 平台建置規範
+  - kairosoft/school2/CLAUDE.md           # 模擬器內部規範
+  - kairosoft/school2/scripts             # 檢查器、佈局產生器、BASELINE.md
+  - kairosoft/school2/sim/presets/README.md
+  - scripts                               # 全站產生器（gen-*.js、link-check.js）
+  - _config.yml
