@@ -278,8 +278,9 @@
 <rect x="20" y="152" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="21" y="153" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M20 174L42 152" stroke="#65a30d" stroke-width="1.6"/>
-<rect x="42" y="152" width="22" height="22" fill="#d6d3d1" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="42" y="152" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="43" y="153" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<path d="M42 174L64 152" stroke="#65a30d" stroke-width="1.6"/>
 <rect x="64" y="152" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="65" y="153" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M64 174L86 152" stroke="#65a30d" stroke-width="1.6"/>
@@ -297,8 +298,9 @@
 <rect x="174" y="152" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="175" y="153" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M174 174L196 152" stroke="#65a30d" stroke-width="1.6"/>
-<rect x="196" y="152" width="22" height="22" fill="#d6d3d1" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="196" y="152" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="197" y="153" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<path d="M196 174L218 152" stroke="#65a30d" stroke-width="1.6"/>
 <rect x="218" y="152" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="219" y="153" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M218 174L240 152" stroke="#65a30d" stroke-width="1.6"/>
@@ -323,8 +325,9 @@
 <rect x="372" y="152" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="373" y="153" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M372 174L394 152" stroke="#65a30d" stroke-width="1.6"/>
-<rect x="394" y="152" width="22" height="22" fill="#d6d3d1" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="394" y="152" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="395" y="153" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
+<path d="M394 174L416 152" stroke="#65a30d" stroke-width="1.6"/>
 <rect x="416" y="152" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="417" y="153" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M416 174L438 152" stroke="#65a30d" stroke-width="1.6"/>
@@ -342,7 +345,6 @@
 <rect x="20" y="174" width="22" height="22" fill="#fcd34d" stroke="#ffffff" stroke-width="0.6"/>
 <text x="31" y="189.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">兔</text>
 <rect x="42" y="174" width="22" height="22" fill="#166534" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="43" y="175" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <text x="53" y="189.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">意</text>
 <rect x="64" y="174" width="22" height="22" fill="#38bdf8" stroke="#ffffff" stroke-width="0.6"/>
 <text x="75" y="189.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">鴨</text>
@@ -354,7 +356,6 @@
 <rect x="152" y="174" width="44" height="44" fill="#ef4444" stroke="#ffffff" stroke-width="0.6"/>
 <text x="174" y="201.04" font-size="14" font-weight="700" text-anchor="middle" fill="#ffffff">教</text>
 <rect x="196" y="174" width="22" height="22" fill="#4ade80" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="197" y="175" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <text x="207" y="189.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">樹</text>
 <rect x="218" y="174" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="240" y="174" width="22" height="22" fill="#fbbf24" stroke="#ffffff" stroke-width="0.6"/>
@@ -370,7 +371,6 @@
 <rect x="372" y="174" width="22" height="22" fill="#fca5a5" stroke="#ffffff" stroke-width="0.6"/>
 <text x="383" y="189.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">豬</text>
 <rect x="394" y="174" width="22" height="22" fill="#166534" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="395" y="175" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <text x="405" y="189.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">意</text>
 <rect x="416" y="174" width="22" height="22" fill="#b45309" stroke="#ffffff" stroke-width="0.6"/>
 <text x="427" y="189.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">農</text>
@@ -399,12 +399,10 @@
 <rect x="240" y="196" width="22" height="22" fill="#365314" stroke="#ffffff" stroke-width="0.6"/>
 <text x="251" y="211.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">鱷</text>
 <rect x="262" y="196" width="22" height="22" fill="#166534" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="263" y="197" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <text x="273" y="211.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">意</text>
 <rect x="284" y="196" width="22" height="22" fill="#e5e7eb" stroke="#ffffff" stroke-width="0.6"/>
 <text x="295" y="211.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">貓</text>
 <rect x="306" y="196" width="22" height="22" fill="#4ade80" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="307" y="197" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <text x="317" y="211.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">樹</text>
 <rect x="328" y="196" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="350" y="196" width="22" height="22" fill="#93c5fd" stroke="#ffffff" stroke-width="0.6"/>
@@ -414,7 +412,6 @@
 <rect x="394" y="196" width="22" height="22" fill="#78350f" stroke="#ffffff" stroke-width="0.6"/>
 <text x="405" y="211.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">鼴</text>
 <rect x="416" y="196" width="22" height="22" fill="#4ade80" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="417" y="197" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <text x="427" y="211.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">樹</text>
 <rect x="438" y="196" width="22" height="22" fill="#4ade80" stroke="#ffffff" stroke-width="0.6"/>
 <text x="449" y="211.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">樹</text>
@@ -583,7 +580,6 @@
 <rect x="130" y="284" width="22" height="22" fill="#fcd34d" stroke="#ffffff" stroke-width="0.6"/>
 <text x="141" y="299.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">兔</text>
 <rect x="152" y="284" width="22" height="22" fill="#4ade80" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="153" y="285" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <text x="163" y="299.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">樹</text>
 <rect x="174" y="284" width="22" height="22" fill="#38bdf8" stroke="#ffffff" stroke-width="0.6"/>
 <text x="185" y="299.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">鴨</text>
@@ -599,7 +595,6 @@
 <rect x="284" y="284" width="22" height="22" fill="#d6d3d1" stroke="#ffffff" stroke-width="0.6"/>
 <text x="295" y="299.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">椅</text>
 <rect x="306" y="284" width="22" height="22" fill="#166534" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="307" y="285" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <text x="317" y="299.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">意</text>
 <rect x="328" y="284" width="22" height="22" fill="#4ade80" stroke="#ffffff" stroke-width="0.6"/>
 <text x="339" y="299.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">樹</text>
@@ -639,9 +634,7 @@
 <rect x="262" y="306" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="284" y="306" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="306" y="306" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="328" y="306" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="329" y="307" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
-<path d="M328 328L350 306" stroke="#65a30d" stroke-width="1.6"/>
+<rect x="328" y="306" width="22" height="22" fill="#bbf7d0" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="350" y="306" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="372" y="306" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="394" y="306" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
@@ -937,13 +930,11 @@
 <rect x="240" y="504" width="22" height="22" fill="#fb923c" stroke="#ffffff" stroke-width="0.6"/>
 <text x="251" y="519.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">福</text>
 <rect x="262" y="504" width="22" height="22" fill="#166534" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="263" y="505" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <text x="273" y="519.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">意</text>
 <rect x="284" y="504" width="44" height="44" fill="#fb7185" stroke="#ffffff" stroke-width="0.6"/>
 <text x="306" y="531.04" font-size="14" font-weight="700" text-anchor="middle" fill="#ffffff">家</text>
 <rect x="328" y="504" width="22" height="22" fill="#374151" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="350" y="504" width="22" height="22" fill="#166534" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="351" y="505" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <text x="361" y="519.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">意</text>
 <rect x="372" y="504" width="22" height="22" fill="#4b5563" stroke="#ffffff" stroke-width="0.6"/>
 <text x="383" y="519.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">焚</text>

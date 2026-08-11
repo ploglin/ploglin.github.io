@@ -61,6 +61,7 @@ node kairosoft/school2/scripts/check.js [--verbose] [--strict]
 | `sim/presets/*.json` ↔ 內嵌 `PRESET_*_DATA` | 四鎮 deep-equal 完全相同 |
 | sim ↔ `db/data.js` | `SPOTS`+`SPOT_JP` ↔ `db/spots` **29 列 × 5 欄 0 處不同**；`items`+`ITEM_ICONS`+`JP_NAMES` ↔ `db/facilities` **77 列 0 處不同**（3 列帶方向註記，已容許）；兩邊 id 集合相同 |
 | `typekeys.lock` | lock **79** → 現況 **79**，且現況以 lock 為前綴（append-only 守衛） |
+| 湖岸地形 | 18 格樹木高度依實機修正（2026-08-11）；原始斜坡 44 格 |
 | 分享碼往返 | 26×24 無前綴舊格式、26×26 帶 `RxC;` 前綴，往返一致 |
 | 站上分享碼 | **11 組**全部 decode→encode 往返一致（五鎮完美佈局＋入門三張＋湖岸分階段三張中途進度） |
 | 來源徽章 `SITE_LAYOUTS` | 表 11 筆 ↔ 站上 11 組，每組都認得出是哪一頁的哪一張 |

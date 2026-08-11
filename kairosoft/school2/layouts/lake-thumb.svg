@@ -86,15 +86,9 @@
 <rect x="154" y="42" width="8" height="8" fill="#bef264"/>
 <rect x="162" y="42" width="24" height="8" fill="#60a5fa"/>
 <rect x="186" y="42" width="8" height="8" fill="#4ade80"/>
-<rect x="2" y="50" width="8" height="8" fill="#bef264"/>
-<rect x="10" y="50" width="8" height="8" fill="#d6d3d1"/>
-<rect x="18" y="50" width="8" height="8" fill="#bef264"/>
+<rect x="2" y="50" width="24" height="8" fill="#bef264"/>
 <rect x="26" y="50" width="8" height="8" fill="#d6d3d1"/>
-<rect x="34" y="50" width="32" height="8" fill="#bef264"/>
-<rect x="66" y="50" width="8" height="8" fill="#d6d3d1"/>
-<rect x="74" y="50" width="64" height="8" fill="#bef264"/>
-<rect x="138" y="50" width="8" height="8" fill="#d6d3d1"/>
-<rect x="146" y="50" width="16" height="8" fill="#bef264"/>
+<rect x="34" y="50" width="128" height="8" fill="#bef264"/>
 <rect x="162" y="50" width="16" height="8" fill="#60a5fa"/>
 <rect x="178" y="50" width="8" height="8" fill="#4ade80"/>
 <rect x="186" y="50" width="8" height="8" fill="#15803d"/>
@@ -171,7 +165,7 @@
 <rect x="186" y="98" width="8" height="8" fill="#86efac"/>
 <rect x="2" y="106" width="32" height="8" fill="#60a5fa"/>
 <rect x="34" y="106" width="80" height="8" fill="#86efac"/>
-<rect x="114" y="106" width="8" height="8" fill="#bef264"/>
+<rect x="114" y="106" width="8" height="8" fill="#bbf7d0"/>
 <rect x="122" y="106" width="24" height="8" fill="#86efac"/>
 <rect x="146" y="106" width="8" height="8" fill="#3b82f6"/>
 <rect x="154" y="106" width="24" height="8" fill="#60a5fa"/>
