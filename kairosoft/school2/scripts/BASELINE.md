@@ -1,6 +1,6 @@
 # 基線（實測數字）
 
-量測時間：**2026-08-05**，school2 全站重整 ＋ 8bit 視覺化 ＋ 全站命中區這一輪完成後（`2d58d50`）。
+量測時間：**2026-08-11**，設施表補齊四組欄位＋全站金額換算為 G＋新增湖岸三份分階段專頁這一輪完成後。
 
 **這份基線的用途**：把「現狀」釘成數字。之後任何一次手改讓數字偏離，都會在下一次跑檢查時現形，
 而不是累積成「要先修 N 個 diff」才敢繼續。**數字有變動而不是刻意改的，就是回歸。**
@@ -24,19 +24,19 @@ node kairosoft/school2/scripts/check.js [--verbose] [--strict]
 
 | 項目 | 基線 |
 |---|---|
-| 掃描頁面 | **169** 頁（`.html`，跳過 `.git`/`.idea`/`node_modules`/`assets`/`scripts`/`scratchpad`/`.github`） |
-| 內部連結 | **2,047 條 0 壞**（頁面 1,400、靜態資源 647） |
-| 外部連結 | 270 條（只計數，不連網） |
+| 掃描頁面 | **172** 頁（`.html`，跳過 `.git`/`.idea`/`node_modules`/`assets`/`scripts`/`scratchpad`/`.github`） |
+| 內部連結 | **2,155 條 0 壞**（頁面 1,493、靜態資源 662） |
+| 外部連結 | 276 條（只計數，不連網） |
 | app 狀態片段 | 8 條（`sim/#m=…` 分享碼，不驗 id） |
 | 逸出 repo 的相對路徑 | 0 條 |
-| 錨點 | **584 條**（同頁 505、跨頁 **79**）→ **0 壞** |
+| 錨點 | **626 條**（同頁 535、跨頁 **91**）→ **0 壞** |
 | 同頁 id 重複 | 0 頁 |
-| canonical | **169 / 169**；全部等於 `https://ploglin.cc/` ＋ repo 相對目錄 |
-| og:url | **169 / 169**；全部等於 canonical 應有值 |
-| og:image | **166 / 169**，全部指向存在的檔案。缺的 3 頁是**刻意**的（見下「刻意的例外」） |
-| 麵包屑 | 157 頁 / **381 個節點**；層數＝目錄深度、每個非末項 href 可達、末項無 href，全對 |
-| sitemap.xml | **168 個 URL**；可索引頁 169 頁（差的 1 頁是 `404.html`，兩邊用同一份 `SKIP_FILES`）；0 漏收、0 多收、0 重複、0 壞檔 |
-| `?v=` 版號 | 共用軌（`/assets/*`）**只有一個版號**：**`?v=9`，467 處 / 166 檔**。本地軌（school2 的 `guide.css`／`guide.js`）自帶版號、兩者同號：**`?v=7`，55 處 / 28 檔** |
+| canonical | **172 / 172**；全部等於 `https://ploglin.cc/` ＋ repo 相對目錄 |
+| og:url | **172 / 172**；全部等於 canonical 應有值 |
+| og:image | **169 / 172**，全部指向存在的檔案。缺的 3 頁是**刻意**的（見下「刻意的例外」） |
+| 麵包屑 | 160 頁 / **393 個節點**；層數＝目錄深度、每個非末項 href 可達、末項無 href，全對 |
+| sitemap.xml | **171 個 URL**；可索引頁 172 頁（差的 1 頁是 `404.html`，兩邊用同一份 `SKIP_FILES`）；0 漏收、0 多收、0 重複、0 壞檔 |
+| `?v=` 版號 | 共用軌（`/assets/*`）**只有一個版號**：**`?v=9`，476 處 / 169 檔**。本地軌（school2 的 `guide.css`／`guide.js`）自帶版號、兩者同號：**`?v=7`，61 處 / 31 檔** |
 | `data.js` 引用 | **115 處**，**0 處帶 `?v`**（含 14 個 db 分類頁＋db 索引＋sim 速查表） |
 
 ### 刻意的例外（不是待辦）
@@ -62,30 +62,52 @@ node kairosoft/school2/scripts/check.js [--verbose] [--strict]
 | sim ↔ `db/data.js` | `SPOTS`+`SPOT_JP` ↔ `db/spots` **29 列 × 5 欄 0 處不同**；`items`+`ITEM_ICONS`+`JP_NAMES` ↔ `db/facilities` **77 列 0 處不同**（3 列帶方向註記，已容許）；兩邊 id 集合相同 |
 | `typekeys.lock` | lock **79** → 現況 **79**，且現況以 lock 為前綴（append-only 守衛） |
 | 分享碼往返 | 26×24 無前綴舊格式、26×26 帶 `RxC;` 前綴，往返一致 |
-| 站上分享碼 | **8 組**全部 decode→encode 往返一致 |
-| 來源徽章 `SITE_LAYOUTS` | 表 8 筆 ↔ 站上 8 組，每組都認得出是哪一頁的哪一張 |
+| 站上分享碼 | **11 組**全部 decode→encode 往返一致（五鎮完美佈局＋入門三張＋湖岸分階段三張中途進度） |
+| 來源徽章 `SITE_LAYOUTS` | 表 11 筆 ↔ 站上 11 組，每組都認得出是哪一頁的哪一張 |
 | 深色覆寫層 | 兩套選擇器（系統偏好 `:root:not([data-theme="light"])` 與手動 `:root[data-theme="dark"]`）**內容逐字一致**；淺色 utility 全部有深色映射 |
 | `DEV_GUIDE` | 10 組「×N」條件的 `cond` ↔ `needs` 自洽 |
 | sim 速查表 | 3 個分頁全部讀 `db/data.js` 正本、11 條交接連結覆蓋 14 個 db 分類、**手寫副本沒有復活** |
-| 每頁可見字數 | **28 頁全部 ≥1,000**（不含 `sim/`） |
+| 每頁可見字數 | **31 頁全部 ≥1,000**（不含 `sim/`） |
 
 ### 各頁可見字數（少→多）
 
-最少 **1,707**（`db/ranks/`）、最多 **24,951**（`layouts/lake/`）。門檻是 1,000，最薄的一頁還有 1.7 倍餘裕。
+最少 **1,752**（`db/ranks/`）、最多 **25,107**（`layouts/lake/`）。門檻是 1,000，最薄的一頁還有 1.75 倍餘裕。
 
 ```
-1707 db/ranks/        1745 db/towns/       1848 db/achievements/  2171 db/lessons/
-2227 db/             2301 db/clubs/        2375 db/items/         2500 db/careers/
-2701 db/spots/       2999 db/events/       3213 db/terms/         3232 ./
-3345 glossary/       3723 db/facilities/   3954 db/teachers/      4152 db/students/
-5234 db/tasks/       7734 layouts/          7777 combo/          11688 start/
-12449 endgame/      16606 layouts/east/   18840 layouts/valley/  19649 layouts/health/
-21006 walkthrough/  22805 layouts/hill/   22815 training/        24951 layouts/lake/
+1752 db/ranks/          1754 db/towns/          1848 db/achievements/   2171 db/lessons/
+2240 db/                2376 db/items/          2381 db/clubs/          2500 db/careers/
+2701 db/spots/          3108 db/events/         3202 db/terms/          3232 ./
+3345 glossary/          4037 db/teachers/       4152 db/students/       5071 db/tasks/
+6825 db/facilities/     7734 layouts/           7777 combo/             8163 layouts/lake/training/
+9658 layouts/lake/economy/                     11710 start/            12507 endgame/
+12850 layouts/lake/stages/                     16606 layouts/east/     18840 layouts/valley/
+19649 layouts/health/  20875 walkthrough/      22805 layouts/hill/     22902 training/
+25107 layouts/lake/
 ```
 
 > 2026-08-10 的批次讓六個 `layouts/` 頁與五個攻略頁掉了字：把「本站舊版怎麼錯、驗證器抓到什麼 bug、產生器怎麼跑」這類**開發過程自述**從對外頁面上拿掉，只留下對讀者有用的結論與誠實標注。少的字集中在 `layouts/*`（合計約 −5,900），其餘是註腳白話化。**這不是回歸。**
 >
 > 同一天的第二輪把剩下的殘留也清了（規範見 `kairosoft/CLAUDE.md`「對外文字的紀律」）：`layouts/*` 的「初版／第一版就踩坑」與「自動排版／景點骨架／排版器」等內部術語、`./` 與 `start/` 的「建置期蓋章產生」、`travel/20251009.html` 開頭四行 AI 生成過程註解與 12 組未轉換的 markdown 粗體、`guide.css`／`pixel.css` 註解裡的內部批次代號（BV1／BV2／BV3）。字數變動在個位到百位數，最大是 `layouts/health/` −26。同時新增根目錄 `_config.yml`，把兩份 `CLAUDE.md`、`scripts/`、本檔排除在 GitHub Pages 發布之外。
+>
+> 2026-08-11 這一輪做了三件會動到大量數字的事，全部是刻意的。
+>
+> **㈠ `db/facilities` 從 6 欄擴成 12 欄**（77 列），補上設置費、維持費、青春P、獲得研究P、屬性UP 與備註，
+> 並依日文攻略 wiki 修正原本大量標「—」的解鎖條件（草地→有望學園、道路→發展學園、水泥地→超大型、
+> 校長室→發展學園、巨石→有望學園＋映山紅×20 等）。新欄一律接在 index 6 之後，
+> 所以 `checks/consistency.js` 逐列比對的 0/1/3/5 欄未受影響。
+>
+> **㈡ 全站金額單位從萬円／円換算成遊戲內顯示的 G**（G ＝ 円 ÷ 100，依實機核對的
+> 便利商店 2,000／700 與餐廳 10,000／200 推得，另核對 14 筆設施、6 位老師薪水、5 筆課題費用）。
+> 影響設施、老師、挑戰、行事、社團、道具六張表共 223 列，以及各頁散文 84 行。
+> **唯一例外是進路年收**，那是劇情年薪不是遊戲貨幣，維持萬円。
+> 校門維持費依實機回報從換算值 300 修正為 **0**。
+> 連帶修掉七頁 `db:` 蓋章標記裡的舊欄名（曾讓 7 張表靜默消失，gen-embed 一度只蓋 19 張）。
+>
+> **㈢ 新增湖岸三份分階段專頁**（`layouts/lake/stages/` 建設 12,850 字、`economy/` 經營 9,658 字、
+> `training/` 育成 8,163 字），並在 `sim` 的 `SITE_LAYOUTS` 註冊三組中途進度分享碼
+> （第 4 階＝完美佈局本身，不重複註冊以免指紋撞號）。老師譯名六位改成實機用字
+> （面堂小手助→權大助、約翰班森→強畢森、安德烈‧勘助→安烈.康竹、甲賀麥克羅倫→甲賀心、
+> 亞利安‧韓→阿里安.哈恩、麥克斯‧歐巴→麥克斯.歐巴），共 58 處。**這不是回歸。**
 
 ---
 
