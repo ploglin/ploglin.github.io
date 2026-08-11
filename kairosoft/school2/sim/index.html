@@ -2206,7 +2206,9 @@
         // 不能手動放置或移動。空地才會顯示為斜坡；相差兩層（平地貼高地2）則是懸崖、無斜坡。
         function isSlopeIn(g, r, c) {
             const cell = g[r][c];
-            if (cell.type !== 'empty' || cell.elevation < 2) return false;
+            /* 鋪了走廊或道路的斜坡仍然是斜坡（實機確認 2026-08）——所以不要求該格是空地，
+               只排除建築與水面。「黃昏」吃的就是這個判定，因此為了上山把斜坡鋪掉不會犧牲景點。 */
+            if (cell.elevation < 2 || cell.type === 'pond' || isBuildingType(cell.type)) return false;
             return [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dr, dc]) => {
                 const nr = r + dr, nc = c + dc;
                 return nr >= 0 && nr < gridRows && nc >= 0 && nc < gridCols &&
@@ -2323,7 +2325,11 @@
         }
 
         // 可通行地形（供「設施是否被包圍」判定用）：空地、草地、走廊、道路、水泥地、斜面
-        const PASSABLE = new Set(['empty', 'grass', 'wood_path', 'asphalt', 'concrete', 'slope']);
+        /* 學生只走鋪面（實機確認 2026-08）：草地／木造走廊／道路／水泥地。
+           空地與「沒鋪面的斜坡」完全不能通行——高地不鋪上山口就上不去，
+           所以 slope 不在這個集合裡；鋪過的斜坡是以它的鋪面材質進來的。
+           建築只要有一面碰到可通行的格子就進得去（逐棟判、不是逐格判）。 */
+        const PASSABLE = new Set(['grass', 'wood_path', 'asphalt', 'concrete']);
         function isBuildingType(t) {
             const it = items[t];
             return !!it && (it.type === 'fac' || it.type === 'spec' || it.type === 'sports' || it.type === 'farm');
@@ -3340,13 +3346,13 @@
         const SITE_LAYOUTS = {
             '3286.MC4xLjMsMC4yw3LjEuNA':  { name: '健康鎮完美佈局',   page: 'layouts/health/index.html', from: '完美佈局：健康鎮',   town: 'health' },
             '3852.MjZ4MjY7MTIuMTMuMS4x': { name: '冬郵小鎮完美佈局', page: 'layouts/east/index.html',   from: '完美佈局：冬郵小鎮', town: 'winter' },
-            '2739.MjR4MjQ7MTMuxMy4yLjE': { name: '湖岸小鎮完美佈局', page: 'layouts/lake/index.html',   from: '完美佈局：湖岸小鎮', town: 'lake' },
+            '2770.MjR4MjQ7MTMuEzLjIuMQ': { name: '湖岸小鎮完美佈局', page: 'layouts/lake/index.html',   from: '完美佈局：湖岸小鎮', town: 'lake' },
             '3639.MjZ4MjY7Ny4xsMS4xLjE': { name: '溪谷小鎮完美佈局', page: 'layouts/valley/index.html', from: '完美佈局：溪谷小鎮', town: 'valley' },
             '3803.MjZ4MjY7MjcuzNi4xLjE': { name: '百靈山丘完美佈局', page: 'layouts/hill/index.html',   from: '完美佈局：百靈山丘', town: 'hill' },
             // 湖岸分階段頁的三張中途進度（第 4 階＝完美佈局本身，不重複註冊）
-            "1907.MjR4MjQ7MC4ysMC4yLjQ": { name: "湖岸小鎮 第 1 階（初期・農村學園）", page: 'layouts/lake/stages/index.html', from: "分階段攻略：湖岸小鎮 第1階", town: 'lake' },
-            "2142.MjR4MjQ7MC4yEzLjIuMQ": { name: "湖岸小鎮 第 2 階（前期・發展學園）", page: 'layouts/lake/stages/index.html', from: "分階段攻略：湖岸小鎮 第2階", town: 'lake' },
-            "2599.MjR4MjQ7MTMuxMy4yLjE": { name: "湖岸小鎮 第 3 階（中期・有望→超大型）", page: 'layouts/lake/stages/index.html', from: "分階段攻略：湖岸小鎮 第3階", town: 'lake' },
+            "2150.MjR4MjQ7MC4ywwLjIuNA": { name: "湖岸小鎮 第 1 階（初期・農村學園）", page: 'layouts/lake/stages/index.html', from: "分階段攻略：湖岸小鎮 第1階", town: 'lake' },
+            "2355.MjR4MjQ7MC4yxMy4yLjE": { name: "湖岸小鎮 第 2 階（前期・發展學園）", page: 'layouts/lake/stages/index.html', from: "分階段攻略：湖岸小鎮 第2階", town: 'lake' },
+            "2710.MjR4MjQ7MTMuEzLjIuMQ": { name: "湖岸小鎮 第 3 階（中期・有望→超大型）", page: 'layouts/lake/stages/index.html', from: "分階段攻略：湖岸小鎮 第3階", town: 'lake' },
             // 入門三張是「空白畫布上的幾個設施」，不是任何一鎮的地形 → 不設 town，
             // 城鎮鈕維持誠實的「自訂 26×24」。
             '120.MC4xLjI1MCw1LjEuMzIz': { name: '序盤 CP 值三景點', page: 'layouts/index.html', from: '佈局範例集：入門範例', town: null },

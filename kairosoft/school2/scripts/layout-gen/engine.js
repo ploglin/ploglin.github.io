@@ -23,7 +23,10 @@ const PRESET_JSON = grab('const ' + town.preset + ' = `', '`;');
 
 const gridRows = town.rows, gridCols = town.cols;
 const TYPE_KEYS = Object.keys(items);
-const PASSABLE = new Set(['empty', 'grass', 'wood_path', 'asphalt', 'concrete', 'slope']);
+/* 學生只走鋪面（實機確認 2026-08）：木造走廊／水泥地／道路／草地。
+   空地與『沒鋪面的斜坡』完全不能通行——高地沒鋪上山口就上不去。
+   注意 slope 不在這裡：斜坡要鋪成走廊或道路才走得過去，而鋪過之後仍然算斜坡（見 isSlopeIn）。 */
+const PASSABLE = new Set(['grass', 'wood_path', 'asphalt', 'concrete']);
 
 /* 地形自檢：presets 的形狀必須跟 towns.js 宣告的尺寸一致 */
 const PRESET_GRID = JSON.parse(PRESET_JSON);
@@ -43,7 +46,9 @@ function loadTerrain() {
 
 function isSlopeIn(g, r, c) {
     const cell = g[r][c];
-    if (cell.type !== 'empty' || cell.elevation < 2) return false;
+    /* 鋪了走廊或道路的斜坡仍然是斜坡（實機確認）——所以這裡不要求該格是空地，
+       只排除建築與水面。黃昏景點吃的就是這個判定。 */
+    if (cell.elevation < 2 || cell.type === 'pond' || isBuildingType(cell.type)) return false;
     return [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dr, dc]) => {
         const nr = r + dr, nc = c + dc;
         return nr >= 0 && nr < gridRows && nc >= 0 && nc < gridCols &&
@@ -211,7 +216,8 @@ function typesInWindow(g, wr, wc) {
     for (let dr = 0; dr < 4; dr++) for (let dc = 0; dc < 4; dc++) {
         const t = g[wr + dr][wc + dc].type;
         if (t !== 'empty') s.add(t);
-        else if (isSlopeIn(g, wr + dr, wc + dc)) s.add('slope');
+        /* 斜坡與該格材質並存：鋪成走廊的斜坡既是走廊也是斜坡（實機確認） */
+        if (isSlopeIn(g, wr + dr, wc + dc)) s.add('slope');
     }
     return s;
 }
