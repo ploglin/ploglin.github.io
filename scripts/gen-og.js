@@ -241,7 +241,8 @@ const pages = [];
 
 const imgFor = (p) => {
     // 頁面專屬圖優先：五鎮佈局頁分享出去要看到那張圖，而不是通用遊戲卡
-    const town = /^kairosoft\/school2\/layouts\/([^/]+)\/index\.html$/.exec(p);
+    // 鎮頁自己與它底下的專題子頁（例如 lake/stages/）都該分享出那張地圖
+    const town = /^kairosoft\/school2\/layouts\/([^/]+)\/(?:[^/]+\/)?index\.html$/.exec(p);
     if (town && fs.existsSync(path.join(LAYOUT_DIR, town[1] + '-og.png'))) {
         return `${BASE}kairosoft/school2/layouts/${town[1]}-og.png`;
     }

@@ -89,6 +89,23 @@ const RELATED = {
             { href: '../health/', icon: '🏫', label: '健康鎮完美佈局', desc: '尺寸最接近的標準圖' },
             { href: '../', icon: '🗺️', label: '佈局設計原則', desc: '五鎮共用的排法通則' }
         ],
+        // 湖岸的分階段子頁在 layouts/lake/stages/，再退一層。它的橫向去處是
+        // 「同一張圖的成品」與「它交叉引用的兩章經營內容」，不是別的城鎮。
+        'layouts/lake/stages': [
+            { href: '../', icon: '🏞️', label: '湖岸小鎮完美佈局', desc: '這份規劃的成品全圖' },
+            { href: '../../../walkthrough/', icon: '🧭', label: '經營與升級', desc: '收支、課題與年度排程' },
+            { href: '../economy/', icon: '💰', label: '湖岸分階段經營', desc: '收支、課題與行事窗口' }
+        ],
+        'layouts/lake/economy': [
+            { href: '../stages/', icon: '🧱', label: '湖岸分階段建設', desc: '這些錢要花在哪一格' },
+            { href: '../../../db/tasks/', icon: '📝', label: '挑戰資料庫', desc: '40 級逐級費用與學費' },
+            { href: '../training/', icon: '🎓', label: '湖岸分階段育成', desc: '老師、學生與社團' }
+        ],
+        'layouts/lake/training': [
+            { href: '../stages/', icon: '🧱', label: '湖岸分階段建設', desc: '這些人要在哪上課' },
+            { href: '../../../db/teachers/', icon: '🧑‍🏫', label: '老師資料庫', desc: '38 位的五科與成長' },
+            { href: '../../../training/', icon: '🎓', label: '育成', desc: '跨城鎮通用的養成系統' }
+        ],
         'layouts/valley': [
             { href: '../hill/', icon: '⛰️', label: '百靈山丘完美佈局', desc: '同樣 26×26 的丘陵地形' },
             { href: '../east/', icon: '🏞️', label: '冬郵小鎮完美佈局', desc: '同樣 26×26、可比對通道做法' },
