@@ -82,7 +82,7 @@ node kairosoft/school2/scripts/check.js [--verbose] [--strict]
 3345 glossary/          4037 db/teachers/       4152 db/students/       5071 db/tasks/
 6825 db/facilities/     7734 layouts/           7777 combo/             8163 layouts/lake/training/
 9658 layouts/lake/economy/                     11710 start/            12507 endgame/
-12850 layouts/lake/stages/                     16606 layouts/east/     18840 layouts/valley/
+15894 layouts/lake/stages/                     16606 layouts/east/     18840 layouts/valley/
 19649 layouts/health/  20875 walkthrough/      22805 layouts/hill/     22902 training/
 25107 layouts/lake/
 ```
@@ -105,7 +105,7 @@ node kairosoft/school2/scripts/check.js [--verbose] [--strict]
 > 校門維持費依實機回報從換算值 300 修正為 **0**。
 > 連帶修掉七頁 `db:` 蓋章標記裡的舊欄名（曾讓 7 張表靜默消失，gen-embed 一度只蓋 19 張）。
 >
-> **㈢ 新增湖岸三份分階段專頁**（`layouts/lake/stages/` 建設 12,850 字、`economy/` 經營 9,658 字、
+> **㈢ 新增湖岸三份分階段專頁**（`layouts/lake/stages/` 建設 15,894 字、`economy/` 經營 9,500 字、
 > `training/` 育成 8,163 字），並在 `sim` 的 `SITE_LAYOUTS` 註冊三組中途進度分享碼
 > （第 4 階＝完美佈局本身，不重複註冊以免指紋撞號）。老師譯名六位改成實機用字
 > （面堂小手助→權大助、約翰班森→強畢森、安德烈‧勘助→安烈.康竹、甲賀麥克羅倫→甲賀心、
@@ -164,7 +164,8 @@ node kairosoft/school2/scripts/check.js [--verbose] [--strict]
 | `TYPE_KEYS` 的順序 | 分享碼 ABI。重排會讓所有既存分享連結解出**別的建築** | `scripts/typekeys.lock`（只准 append） |
 | 26×24 分享碼無前綴 | 舊連結沒有 `RxC;` 前綴，加了就解不開 | check.js「26×24 維持無前綴舊格式」 |
 | 三個 localStorage key | `pa2_maps_v9`／`pa2_prefs_v1`／`pa2_autosave_v1`——改名等於清掉玩家的存檔 | 無自動守衛，靠 CLAUDE.md 明寫 |
-| 站上 8 組分享碼 | 佈局頁的「🧩 在模擬器開啟」按鈕；改了地圖就要重新產生 | check.js 往返檢查 ＋ `layout-gen/verify.js <town> page` |
+| 站上 11 組分享碼 | 佈局頁的「🧩 在模擬器開啟」按鈕；改了地圖就要重新產生 | check.js 往返檢查 ＋ `layout-gen/verify.js <town> page` |
+| sim 內嵌的 `LAKE_STAGES` 四段碼 | 分階段面板靠它載入；站上分享碼的掃描刻意跳過 `sim/`，而指紋是從碼**本身**算的（舊碼配舊名永遠自洽），沒有守衛就會靜默過期 | check.js「LAKE_STAGES ↔ 站上頁面的分享碼逐字相同」 |
 | canonical／og:url | 已被 Google 收錄，改動等於換網址 | link-check 第 3 節 |
 
 ---

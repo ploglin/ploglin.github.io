@@ -228,12 +228,12 @@ repo 裡有一批**只在開發時用得到**的檔案，靠根目錄 `_config.y
 - **`kairosoft/school2/scripts/check.js`**：入口不可換（`/pa2-check` 技能依賴），內部拆
   `scripts/checks/{parse,sim,consistency}.js`。除原有 8 組模擬器檢查外，另驗 `sim` 的
   `SPOTS`/`items`/`ITEM_ICONS`/`JP_NAMES` ↔ `db/data.js` 逐列相等、`sim/presets/*.json` ↔ 內嵌地形
-  deep-equal、`typekeys.lock`（分享碼 ABI 的 append-only 守衛）、站上 8 組分享碼往返一致、
+  deep-equal、`typekeys.lock`（分享碼 ABI 的 append-only 守衛）、站上 11 組分享碼往返一致、
   `DEV_GUIDE` 的 `cond`↔`needs` 自洽、每頁可見字數 ≥1,000。
   三個層級：**PASS / WARN / FAIL**；`--strict` 把 WARN 升為 FAIL、`--verbose` 印完整清單。
   新加的檢查一律先以 WARN 落地（不擋工作），確認穩定後再在 `checks/consistency.js` 的 `LEVEL` 表升成 `fail`。
 - 實測數字全部記在 **`kairosoft/school2/scripts/BASELINE.md`**（連結數/錨點數/各頁字數表/
-  8 組分享碼/TYPE_KEYS 長度/兩軌版號，以及「上線後不可逆項目 ↔ 守衛」與「已知後續項」）。數字有變動而不是刻意改的，就是回歸。
+  11 組分享碼/TYPE_KEYS 長度/兩軌版號，以及「上線後不可逆項目 ↔ 守衛」與「已知後續項」）。數字有變動而不是刻意改的，就是回歸。
   **做完會改動那些數字的批次要重跑兩支檢查器並更新它**——過期的基線比沒有基線更糟：真的回歸會被當成正常、正常又會被當成回歸。
 
 ## 頁面樣板規則

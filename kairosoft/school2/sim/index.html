@@ -486,7 +486,9 @@
             padding: 3px 6px;
         }
         @media (pointer: coarse) {
-            #originBtn, #diffBtn { min-height: 44px; }
+            #originBtn, #diffBtn, #stageLine { min-height: 44px; }
+            /* 「載入這一階」會換掉整張畫布，命中區不可以比側欄那幾列小 */
+            #reportBody .dg-load, #reportBody .dg-out, #reportBody .dg-tab { min-height: 44px; }
         }
 
         /* ==========================================================
@@ -621,16 +623,24 @@
         /* 窄螢幕（手機/直式平板）：地圖在上、建築面板在下 */
         @media (max-width: 768px) {
             #appBody { flex-direction: column; }
+            /* 52vh 不是美感選擇：42vh 時 A 標題 54＋B 摘要 199＋D 三顆鈕 56 ＝ 309px
+               已經超過 360×640 的 269px，D 那排（📈 發展／📖 速查表／🆚 比較）整條被
+               #appBody 的 overflow-hidden 裁到畫面外、手指永遠碰不到——正好違反它自己
+               「不進捲動流，手機 42vh 的面板裡也永遠摸得到」那句註解。
+               改 52vh 並把「差一項」的晶片限高一排（其餘走既有的「還有 N 項 ›」），
+               D 才回得到畫面內。動這個數字時 #coordHint 的 bottom 必須一起改。 */
             #appBody aside {
                 width: 100%;
-                max-height: 42vh;
+                max-height: 52vh;
                 border-left: none;
                 border-top: 2px solid #e5e7eb;
             }
             /* 浮動資訊卡在手機沒有位置（會與 coordHint 撞同一條線）→
                同一份內容搬進建築面板的標題列（見 #thToggle / #thBody），不是刪掉。 */
             #toolHint { display: none; }
-            #coordHint { bottom: calc(42vh + 0.5rem); }
+            #coordHint { bottom: calc(52vh + 0.5rem); }
+            /* 差一項的晶片在手機最多一排，其餘交給既有的「還有 N 項 ›」 */
+            #nearWrap #nearChips { max-height: 1.9rem; overflow: hidden; }
             #asideTitle { display: none; }
             #thToggle { display: flex; }
             #moreBtn { display: inline-flex; }
@@ -739,6 +749,7 @@
             :root:not([data-theme="light"]) .bg-yellow-100 { background-color:var(--sd-amber-chip) }
             :root:not([data-theme="light"]) .bg-amber-50 { background-color:var(--sd-amber-bg-2) }
             :root:not([data-theme="light"]) .bg-sky-50 { background-color:var(--sd-sky-bg) }
+            :root:not([data-theme="light"]) .bg-indigo-50 { background-color:var(--sd-sky-bg) }
             :root:not([data-theme="light"]) .bg-red-50 { background-color:var(--sd-red-bg) }
             /* utility 重映射：邊框 */
             :root:not([data-theme="light"]) .border-gray-100 { border-color:var(--sd-line-soft) }
@@ -864,6 +875,7 @@
         :root[data-theme="dark"] .bg-yellow-100 { background-color:var(--sd-amber-chip) }
         :root[data-theme="dark"] .bg-amber-50 { background-color:var(--sd-amber-bg-2) }
         :root[data-theme="dark"] .bg-sky-50 { background-color:var(--sd-sky-bg) }
+        :root[data-theme="dark"] .bg-indigo-50 { background-color:var(--sd-sky-bg) }
         :root[data-theme="dark"] .bg-red-50 { background-color:var(--sd-red-bg) }
         /* utility 重映射：邊框 */
         :root[data-theme="dark"] .border-gray-100 { border-color:var(--sd-line-soft) }
@@ -1043,6 +1055,10 @@
                 <!-- 差異列：數字本身就是圖層開關（同 blockedBtn「⚠N棟走不到（點看動線）」的慣例），
                      所以頂列不必多一顆按鈕。 -->
                 <button id="diffBtn" class="hidden w-full text-left text-[11px] font-bold text-gray-600 mt-2" aria-pressed="false"></button>
+                <!-- 分階段建設的入口。刻意只有一行：四階清單要 12 行，而這一欄在桌機只剩
+                     488px 給調色盤（≈30 個建築格）、手機只有 159px——常駐清單會吃掉六成。
+                     清單放進 📈 發展 的第二分頁（672px 寬，話講得完）。 -->
+                <button id="stageLine" class="hidden w-full text-left text-[11px] font-bold text-gray-600 mt-2"></button>
             </div>
 
             <div class="flex-1 overflow-y-auto p-3 flex flex-col gap-4">
@@ -1736,7 +1752,11 @@
                         for (let dc = 0; dc < 4; dc++) {
                             const t = gridData[wr + dr][wc + dc].type;
                             if (t !== 'empty') typesIn.add(t);
-                            else if (isSlope(wr + dr, wc + dc)) typesIn.add('slope');
+                            /* 斜坡與該格材質**並存**（實機確認 2026-08）：鋪了走廊或道路的斜坡
+                               仍然是斜坡，所以為了上山而鋪掉斜坡不會犧牲「黃昏」。
+                               這裡若寫成 else if，鋪面斜坡就會從 slope 名單裡消失，判定會比
+                               scripts/layout-gen/engine.js 少算景點（湖岸第 3 階曾因此 17 vs 18）。 */
+                            if (isSlope(wr + dr, wc + dc)) typesIn.add('slope');
                         }
                     }
                     relevantSpots.forEach(spot => {
@@ -2209,9 +2229,12 @@
             /* 鋪了走廊或道路的斜坡仍然是斜坡（實機確認 2026-08）——所以不要求該格是空地，
                只排除建築與水面。「黃昏」吃的就是這個判定，因此為了上山把斜坡鋪掉不會犧牲景點。 */
             if (cell.elevation < 2 || cell.type === 'pond' || isBuildingType(cell.type)) return false;
+            /* 邊界由 g 自己決定，不讀模組層的 gridRows／gridCols——階段面板要拿「不是目前
+               畫布」的格線來算景點，沿用全域尺寸會越界讀到 undefined。 */
+            const R = g.length, C = g[0].length;
             return [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dr, dc]) => {
                 const nr = r + dr, nc = c + dc;
-                return nr >= 0 && nr < gridRows && nc >= 0 && nc < gridCols &&
+                return nr >= 0 && nr < R && nc >= 0 && nc < C &&
                     g[nr][nc].elevation === cell.elevation - 1;
             });
         }
@@ -2489,7 +2512,11 @@
                         for (let dc = 0; dc < 4; dc++) {
                             const t = gridData[wr + dr][wc + dc].type;
                             if (t !== 'empty') typesIn.add(t);
-                            else if (isSlope(wr + dr, wc + dc)) typesIn.add('slope');
+                            /* 斜坡與該格材質**並存**（實機確認 2026-08）：鋪了走廊或道路的斜坡
+                               仍然是斜坡，所以為了上山而鋪掉斜坡不會犧牲「黃昏」。
+                               這裡若寫成 else if，鋪面斜坡就會從 slope 名單裡消失，判定會比
+                               scripts/layout-gen/engine.js 少算景點（湖岸第 3 階曾因此 17 vs 18）。 */
+                            if (isSlope(wr + dr, wc + dc)) typesIn.add('slope');
                         }
                     }
                     if (!typesIn.size) continue;
@@ -2511,8 +2538,10 @@
                             for (let dc = 0; dc < 4; dc++) {
                                 const nr = wr + dr, nc = wc + dc;
                                 const rawT = gridData[nr][nc].type;
-                                const t = rawT === 'empty' && isSlope(nr, nc) ? 'slope' : rawT;
-                                if (!reqTypes.includes(t)) continue;
+                                /* 同上：鋪面斜坡兩種身分都要試，否則指定範圍會漏畫斜坡那幾格 */
+                                const t = reqTypes.includes(rawT) ? rawT
+                                    : (isSlope(nr, nc) && reqTypes.includes('slope') ? 'slope' : null);
+                                if (!t) continue;
                                 coreGrid[nr][nc].add(spot.id);
                                 const it = items[t];
                                 const ring = it && ((it.w || 1) * (it.h || 1) >= 4) ? 2 : 1;
@@ -2545,6 +2574,7 @@
             // 差異要跟著每一筆編輯走（這就是「邊改邊看」的意思）；它自己會處理
             // 「定位中暫停」與「沒有可比基準」兩種退化狀態，並更新右軌那兩列文案。
             renderDiffOverlay();
+            updateStageLine();
             scheduleAutosave();
         }
 
@@ -2634,7 +2664,117 @@
             return n;
         }
 
-        function buildDevGuide() {
+        const DG_TABS = [{ key: 'unlock', label: '設施解鎖' }, { key: 'stages', label: '分階段建設' }];
+        let dgSection = 'unlock';
+
+        /* 這張圖是不是湖岸：origin 認得站上的分享碼，currentTownKey 認得剛載入的地形。 */
+        function isLakeCanvas() {
+            return !!((origin && origin.town === 'lake') || currentTownKey === 'lake');
+        }
+        /* 畫布目前載入的是哪一階。主詞是**畫布**不是玩家——模擬器永遠不知道你在遊戲裡
+           玩到第幾階，只知道畫布上是哪一張。所以文案一律不寫「你在第 N 階」。 */
+        function currentStage() {
+            if (!origin || !origin.name) return null;
+            return LAKE_STAGES.find(st => st.name === origin.name) || null;
+        }
+        function stageShort(st) { return st.label.replace('＝完美佈局', ''); }
+
+        /* 升級門檻那一行。四項門檻裡**只有景點種數算得出來**，其餘三項是遊戲內狀態。
+           所以：算得出來的給數字上色（達成綠、未達成灰），算不出來的整串灰、不給任何
+           狀態字符。規則一句話——有標記＝我查過了，沒標記＝我查不到，沒有第三種意思。
+           特別不用紅叉：紅色在這一欄是錯誤頻道（#blockedBtn），而「學生還沒滿 14 人」
+           是正常進度，不是錯誤。 */
+        function stageGateLine(rankName) {
+            const c = hbCat('ranks');
+            const r = c && c.rows ? c.rows.find(x => x[0] === rankName) : null;
+            if (!r) return '';
+            const have = lastSpotStats.activeIds.size;
+            const need = parseInt(r[3], 10) || 0;
+            const parts = [];
+            if (need) parts.push(`景點 ${need} 種 <span class="${have >= need ? 'text-green-600 font-bold' : 'text-gray-400'}">這張圖 ${have} 種</span>`);
+            if (r[2] && r[2] !== '—') parts.push(`學生 ${esc(r[2])} 人`);
+            if (r[4] && r[4] !== '—') parts.push(`第 ${esc(r[4])} 年`);
+            if (r[5] && r[5] !== '—') parts.push(`平均 ${esc(r[5])} 分`);
+            if (r[6] && r[6] !== '—' && !/遊戲初始/.test(r[6])) parts.push(esc(r[6]));
+            return `<div class="text-gray-500 ml-3 mt-0.5">↓ 升${esc(rankName)}：${parts.join(' · ')}`
+                + `<span class="text-gray-400">（學生數／年數／平均分要對照學校排名表）</span></div>`;
+        }
+
+        /* 側欄那一行的三態。它是讀數也是入口（同 #blockedBtn／#diffBtn 的慣例），
+           所以頂列不必再多一顆按鈕。非湖岸時整行隱藏——這一行講的是「這張圖是哪一階」，
+           對別的鎮沒有答案可講；分階段的入口本身永遠在 📈 發展 裡，不會消失。 */
+        function updateStageLine() {
+            const btn = document.getElementById('stageLine');
+            if (!btn) return;
+            if (!isLakeCanvas()) { btn.classList.add('hidden'); return; }
+            const st = currentStage();
+            btn.classList.remove('hidden');
+            btn.innerText = st ? `🧩 這張圖＝${stageShort(st)}（看四階段）`
+                : '🧩 湖岸有四階段建設順序（看順序）';
+        }
+
+        function buildStageTab() {
+            const cur = currentStage();
+            let html = `<div class="flex items-baseline justify-between gap-2 flex-wrap">`
+                + `<b class="text-gray-800">湖岸小鎮 · 四階段建設順序</b>`
+                + `<span class="text-gray-500">${cur ? '畫布目前：' + esc(stageShort(cur)) : '畫布不是任何一階的中途進度'}</span></div>`
+                + `<div class="text-[11px] text-gray-400 mt-1 mb-2">有數字的是模擬器從這張圖算出來的；其餘要看遊戲內的學校排名畫面。</div>`;
+            if (!isLakeCanvas()) {
+                html += `<div class="text-gray-500 bg-gray-50 rounded-lg px-3 py-2 mb-1">目前只有<b class="text-gray-700">湖岸小鎮</b>有分階段建設順序；其餘四鎮的完美佈局是成品圖，還沒拆成階段。下面四階仍然可以直接載入來看。</div>`;
+            }
+            html += LAKE_STAGES.map(st => {
+                const stat = stageStats(st);
+                const on = !!(cur && cur.n === st.n);
+                const num = stat.err ? '<span class="text-gray-400">分享碼解不開</span>'
+                    : `蓋完時 景點 <b class="text-gray-800">${stat.spots}</b> 種 · 加成 <b class="text-gray-800">${stat.bonus}</b> 點`;
+                return `<div class="mt-3 ${on ? 'bg-indigo-50 px-2 py-1.5 rounded-lg' : ''}"${on ? ' aria-current="true"' : ''}>`
+                    + `<div class="flex items-baseline justify-between gap-2">`
+                    + `<b class="text-gray-800">◆ ${esc(st.label)}</b>`
+                    + (on ? `<span class="shrink-0 text-[10px] font-bold bg-indigo-600 text-white rounded px-1.5 py-0.5">已載入</span>` : '')
+                    + `</div>`
+                    + `<div class="flex items-center justify-between gap-2 flex-wrap mt-1"><span class="text-gray-600">${num}</span>`
+                    + `<span class="flex gap-1 shrink-0">`
+                    + `<button type="button" class="dg-load px-3 py-2.5 rounded-lg border border-gray-200 bg-white text-xs font-bold text-gray-700 hover:bg-gray-100 transition" data-stage="${st.n}">🧩 載入這一階</button>`
+                    + `<a class="dg-out px-3 py-2.5 rounded-lg border border-gray-200 bg-white text-xs font-bold text-sky-600 hover:bg-gray-100 transition" data-out="stage${st.n}" href="${st.page}" target="_blank" rel="noopener">看施工順序 ↗</a>`
+                    + `</span></div>`
+                    + st.gates.map(stageGateLine).join('')
+                    + `</div>`;
+            }).join('');
+            html += `<div class="mt-4 pt-2 border-t border-gray-200 text-[11px] text-gray-500">同一套分階段的另外兩面：`
+                + `<a class="dg-out font-bold text-sky-600 hover:text-sky-900" data-out="economy" href="../layouts/lake/economy/" target="_blank" rel="noopener">分階段經營（收支・課題）↗</a> · `
+                + `<a class="dg-out font-bold text-sky-600 hover:text-sky-900" data-out="training" href="../layouts/lake/training/" target="_blank" rel="noopener">分階段育成（老師・學生）↗</a>`
+                + `<br>連結都開新視窗：這一頁的復原步驟只在記憶體裡，同分頁跳走會丟掉。</div>`;
+            return html;
+        }
+
+        /* 點某一階＝換掉整張畫布，所以完全走既有的 applySharedGrid：髒檢查守衛、
+           來源蓋章、徽章文案、埋點一次到位，不另寫一套（第 4 階的碼就是完美佈局的碼，
+           徽章因此會說「湖岸小鎮完美佈局」——面板那一列的標題也用同一個字串收尾）。 */
+        function loadStage(n) {
+            const st = LAKE_STAGES.find(x => x.n === n);
+            if (!st) return;
+            const g = decodeMap(st.code);
+            if (!g) { showSysMsg('這一階的分享碼解不開', true); return; }
+            track('stage_load', { n: n });
+            closeReport();
+            applySharedGrid(st.code, g);
+        }
+
+        function buildDevGuide(section, isSwitch) {
+            dgSection = section || dgSection || 'unlock';
+            const nav = `<div role="tablist" class="flex gap-1 mb-3">` + DG_TABS.map(t =>
+                `<button type="button" role="tab" aria-selected="${t.key === dgSection}" class="dg-tab flex-1 px-3 py-3 rounded-lg border text-xs font-bold transition ${t.key === dgSection ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-100'}" data-dg="${t.key}">${t.label}</button>`
+            ).join('') + `</div>`;
+            const body = dgSection === 'stages' ? buildStageTab() : buildUnlockTab();
+            if (isSwitch) {
+                document.getElementById('reportBody').innerHTML = nav + body;
+                track('dev_guide_tab', { section: dgSection });
+                return;
+            }
+            openReport('📈 發展進度', nav + body);
+        }
+
+        function buildUnlockTab() {
             let html = '<div class="text-[11px] text-gray-400 mb-2">依攻略 Wiki 的解鎖條件整理。「學園等級／學生數／屬性」是遊戲內狀態，請對照你目前的進度；「前置設施×N」會自動核對地圖上的數量。✅已建　⬜可規劃　🔒前置未滿足</div>';
             DEV_GUIDE.forEach(stage => {
                 html += `<div class="font-black text-gray-800 mt-2 mb-1">◆ ${stage.stage}</div>`;
@@ -2658,7 +2798,7 @@
                     return `<div class="text-gray-600">${line}</div>`;
                 }).join('');
             });
-            openReport('📈 發展建議', html);
+            return html;
         }
 
         /* ─── 速查表（景點／設施／中日對照）─────────────────────────────
@@ -3333,7 +3473,7 @@
               origin 只跟著載入動作走 —— 存了檔不代表你不再想跟原始範例比。 */
         const ORIGIN_KEY = 'pa2_origin_v1';
 
-        /* 站上 8 組分享碼 → 「這是哪一頁的哪一張」。
+        /* 站上 11 組分享碼 → 「這是哪一頁的哪一張」。
            sim 是純前端、讀不到別的檔，所以只能內嵌對照；為了不內嵌 17KB 的完整碼，
            key 是指紋＝「碼長.前 12 字.後 8 字」。
            **腐爛防線**在 scripts/checks/consistency.js：它會掃站上實際的分享碼、算同一個
@@ -3360,7 +3500,65 @@
             '84.MC4xLjI1MCw0LjEuMzQ2':  { name: '教室讀書區', page: 'layouts/index.html', from: '佈局範例集：入門範例', town: null }
         };
 
-        /* origin.kind：site（站上 8 組之一）／share（任意分享碼）／preset（五鎮地形）／
+        /* 湖岸分階段建設：四階的完整分享碼。指紋版的 SITE_LAYOUTS 只回答「這是哪一張」，
+           面板還要能**主動載入**，所以這裡存完整碼（四段合計約 9.7KB）。
+           第 4 階沒有自己的碼——它就是完美佈局本身，所以 code 取自 layouts/lake/index.html，
+           name 也刻意與來源徽章用同一個字串收尾，否則點「第 4 階」之後徽章會改口叫別的名字。
+           **腐爛防線**在 scripts/checks/consistency.js：站上分享碼的掃描刻意跳過 sim/，
+           所以這四段碼沒有守衛就會靜默過期（頁面重算、這裡不動，而指紋是從碼本身算的，
+           舊碼配舊名永遠自洽，沒有人會發現）。那條檢查逐字比對這裡與頁面上的四個 href。 */
+        const LAKE_STAGES = [
+            { n: 1, label: '第 1 階・初期（農村學園）', name: '湖岸小鎮 第 1 階（初期・農村學園）', gates: ['發展學園'], page: '../layouts/lake/stages/#stage1', code: 'MjR4MjQ7MC4yLjMsMTQuMi4xLDAuMi43LDcuMi4xLDMuMi4yLDMuMy41LDMuMi4xLDMwLjEuMSwxNi4xLjMsMC4yLjUsNy4yLjEsMC4yLjMsNS4yLjEsMy4yLjMsMC4yLjEsMC4zLjEsMTQuMy4xLDAuMy4zLDAuMi4xLDEyLjEuMSwxNi4xLjMsMTQuMi4xLDAuMi44LDMuMi4xLDAuMi4yLDE0LjIuMSwwLjIuMSwwLjMuMiw3LjMuMSwwLjMuMiwwLjIuMSwxNi4xLjQsMC4yLjgsNy4yLjEsMy4yLjEsMC4yLjQsMC4zLjEsNy4zLjEsMC4zLjMsMC4yLjEsMTYuMS40LDAuMi4yLDcuMi4xLDAuMi42LDMuMi4xLDAuMi4zLDE0LjMuMSwwLjMuNSwwLjIuMSwxNi4xLjQsMC4yLjksMy4yLjEsMC4yLjcsNy4zLjEsMC4yLjIsMTYuMS4zLDcuMS4xLDMuMi4zLDAuMi4xLDMuMi45LDAuMi4xLDMuMi4xLDAuMi4zLDMuMi4xLDAuMi4xLDE2LjEuMiw3LjEuMSwxMi4xLjEsMC4xLjEsMTQuMS4xLDAuMS4xLDcuMS4xLDAuMS40LDcuMS4xLDMuMS4xLDAuMS43LDE0LjEuMSwwLjEuMiwxNi4xLjIsMTIuMS4xLDc2LjEuMSwwLjEuMywxNC4xLjEsMC4xLjUsMy4xLjEsMC4xLjEsMTQuMS4xLDAuMS4xLDcuMS4xLDAuMS40LDcuMS4xLDAuMS4xLDE2LjEuMywxMi4xLjEsMTYuMS45LDMuMS4xLDAuMS45LDE2LjEuNCwxMi4xLjEsMTYuMS45LDMuMS4xLDAuMS4xLDE2LjEuMTEsMC4xLjIsMTYuMS41LDY5LjEuMSwzLjEuNCwwLjEuMSwxNi4xLjExLDAuMS4yLDE2LjEuNCwwLjEuMSw2OS4xLjEsNy4xLjEsMy4xLjEsMC4xLjEsMTQuMS4xLDcuMS4xLDY4LjEuMSwwLjEuMSwxNC4xLjEsNy4xLjEsMTkuMS4xLDAuMS4yLDcuMS4xLDE2LjEuMywwLjEuMiwxNi4xLjQsMC4xLjEsMy4xLjEzLDI1LjEuMSwxNi4xLjMsMC4xLjIsMTMuMS4xLDAuMS4xLDEzLjEuMSwxNi4xLjEsMjQuMS4xLDIwLjEuMSwzLjEuMiwxNi4xLjYsMC4xLjEsMTYuMS42LDcuMS4xLDMuMS4yLDU1LjEuMSw0LjEuMywzLjEuMywyMS4xLjEsMTYuMS42LDAuMS4xLDE2LjEuNSwwLjEuMywzLjEuMSw1NS4xLjEsNC4xLjMsMy4xLjMsNy4xLjEsMC4xLjEsMy4xLjEsMC4xLjIsNy4xLjEsMy4xLjIsNjEuMS4yLDMuMS4xLDAuMS4xLDMuMS4zLDAuMS4xLDMuMS4xLDEzLjEuMSwyNy4xLjEsMTMuMS4xLDE2LjEuMSw0Mi4xLjIsMy4xLjksNjEuMS4yLDMuMS4xLDAuMS4xLDMuMS4xLDQ0LjEuMiwwLjEuMSwzLjEuMSwxNi4xLjQsNDIuMS4yLDMuMS4yLDE5LjEuMSwzLjEuMSw0MS4xLjIsMy4xLjMsMC4xLjEsMjIuMS4xLDMuMS4xLDUuMS4xLDMuMS4xLDAuMS4xLDYuMS4xLDcuMS4xLDMuMS4xLDE2LjEuNCwzLjEuNCwyNy4xLjEsMTEuMS4xLDQxLjEuMiwzLjEuMSwwLjEuMSwzLjEuNCwwLjEuNiwxNi4xLjUsMy4xLjEsNy4xLjEsMS4xLjEsMTQuMS4xLDAuMS4xLDMuMS4zLDAuMS42LDMuMS4xLDAuMi4yLDMuMi4xLDAuMi4xLDE2LjEuNSwyMC4xLjEsMC4xLjEsMS4xLjEsNjguMS4xLDAuMS4xMCwzLjEuMSwwLjIuNCwxNi4xLjYsMTEuMS4xLDEuMS4xLDY3LjEuMSwwLjEuMiwxNC4xLjEsMC4xLjMsMTQuMS4xLDAuMS4zLDMuMS4xLDMuMi4xLDAuMi4zLDE2LjEuNiwxMS4xLjEsMS4xLjEsNjcuMS4xLDAuMS4xLDMuMS4xLDAuMS41LDMuMS4xLDAuMS4zLDAuMi40' },
+            { n: 2, label: '第 2 階・前期（發展學園）', name: '湖岸小鎮 第 2 階（前期・發展學園）', gates: ['有望學園'], page: '../layouts/lake/stages/#stage2', code: 'MjR4MjQ7MC4yLjMsMTQuMi4xLDAuMi43LDcuMi4xLDMuMi4yLDMuMy41LDMuMi4xLDMwLjEuMSwxNi4xLjMsMC4yLjUsNy4yLjEsMC4yLjMsNS4yLjEsMy4yLjMsMC4yLjEsMC4zLjEsMTQuMy4xLDAuMy4zLDAuMi4xLDEyLjEuMSwxNi4xLjMsMTQuMi4xLDAuMi44LDMuMi4xLDAuMi4yLDE0LjIuMSwwLjIuMSwwLjMuMiw3LjMuMSwwLjMuMiwwLjIuMSwxNi4xLjQsMC4yLjgsNy4yLjEsMy4yLjEsMC4yLjQsMC4zLjEsNy4zLjEsMC4zLjMsMC4yLjEsMTYuMS40LDAuMi4yLDcuMi4xLDAuMi42LDMuMi4xLDAuMi4zLDE0LjMuMSwwLjMuNSwwLjIuMSwxNi4xLjQsMC4yLjksMy4yLjEsMC4yLjcsNy4zLjEsMC4yLjIsMTYuMS4zLDcuMS4xLDMuMi4xOSwwLjIuMSwxNi4xLjIsNy4xLjEsMTIuMS4xLDY5LjEuMSwxNC4xLjEsMC4xLjEsNy4xLjEsNDEuMS40LDcuMS4xLDMuMS4xLDAuMS4yLDMuMS4xLDMxLjEuMSwwLjEuMSwzLjEuMSwwLjEuMSwxNC4xLjEsNjcuMS4xLDcuMS4xLDE2LjEuMiwxMi4xLjEsNzYuMS4xLDcuMS4zLDE0LjEuMSw0MS4xLjQsMjguMS4xLDMuMS4xLDAuMS4xLDE0LjEuMSwwLjEuMSw3LjEuMSwwLjEuMSwyMC4xLjEsMC4xLjIsNy4xLjIsMTYuMS4zLDEyLjEuMSwxNi4xLjksMy4xLjEsMC4xLjksMTYuMS40LDEyLjEuMSwxNi4xLjksMy4xLjEsMC4xLjEsMTYuMS4xMSwwLjEuMiwxNi4xLjUsNjkuMS4xLDMuMS40LDY5LjEuMSwxNi4xLjExLDAuMS4yLDE2LjEuNCwwLjEuMSw2OS4xLjEsNy4xLjEsMy4xLjEsMC4xLjEsMTQuMS4xLDcuMS4xLDY4LjEuMSwzNi4xLjEsMTQuMS4xLDcuMS4xLDE5LjEuMSwzNi4xLjEsMC4xLjEsNy4xLjEsMTYuMS4zLDAuMS4yLDE2LjEuNCwwLjEuMSwzLjEuMTMsMjUuMS4xLDE2LjEuMywwLjEuMiw0LjEuMywxNi4xLjEsMjQuMS4xLDIwLjEuMSwzLjEuMiwxNi4xLjYsNC4xLjEsMTYuMS42LDcuMS4xLDMuMS4yLDU1LjEuMSw0LjEuNCwzLjEuMiwyMS4xLjEsMTYuMS42LDQuMS4xLDE2LjEuNSwwLjEuMiw0My4xLjEsMy4xLjEsNTUuMS4xLDQuMS40LDMuMS4yLDcuMS4xLDMzLjEuMSwzLjEuMSw0MS4xLjQsNC4xLjEsNjEuMS4yLDY1LjEuMSw1OC4xLjEsMy4xLjMsNDMuMS4xLDMuMS4xLDEzLjEuMSwyNy4xLjEsMzYuMS4xLDE2LjEuMSw0Mi4xLjIsMy4xLjQsNDEuMS40LDQuMS4xLDYxLjEuMiwzLjEuMSw1OC4xLjEsMy4xLjEsNDQuMS4yLDAuMS4xLDMuMS4xLDE2LjEuNCw0Mi4xLjIsMy4xLjIsMTkuMS4xLDMuMS4xLDQxLjEuMiwzLjEuMiw0LjEuMSwwLjEuMSwyMi4xLjEsMy4xLjEsNS4xLjEsMy4xLjEsMzMuMS4xLDYuMS4xLDcuMS4xLDMuMS4xLDE2LjEuNCw0LjEuNCwyNy4xLjEsNC4xLjEsNDEuMS4yLDQuMS4xMiwxNi4xLjUsMzYuMS4xLDcuMS4xLDEuMS4xLDE0LjEuMSwwLjEuMSwzLjEuMywwLjEuMSw0LjEuMSw0Ni4xLjIsMy4xLjEsMC4xLjEsMy4xLjEsMC4yLjIsMy4yLjEsMC4yLjEsMTYuMS41LDIwLjEuMSwzLjEuMSwxLjEuMSw2OC4xLjEsMy4xLjIsMC4xLjEsMy4xLjEsMC4xLjEsNC4xLjEsNDYuMS4yLDMuMS4xLDAuMS4xLDMuMS4xLDAuMi4zLDEzLjIuMSwxNi4xLjYsMTEuMS4xLDEuMS4xLDY3LjEuMSwzLjEuMSwyMy4xLjEsMTQuMS4xLDUwLjEuMiw0LjEuMSwxNC4xLjEsMzAuMS4xLDAuMS4yLDMuMS4xLDMuMi4xLDAuMi4yLDEzLjIuMSwxNi4xLjYsMTEuMS4xLDEuMS4xLDY3LjEuMSwzLjEuMiwzMC4xLjEsNTAuMS4yLDU2LjEuMiwzLjEuMSwwLjEuMywwLjIuMywxMy4yLjE' },
+            { n: 3, label: '第 3 階・中期（有望→超大型）', name: '湖岸小鎮 第 3 階（中期・有望→超大型）', gates: ['超大型', '名門學園'], page: '../layouts/lake/stages/#stage3', code: 'MjR4MjQ7MTMuMi4xLDIyLjIuMSwxMy4yLjEsMTQuMi4xLDUuMi4zLDY1LjIuMSw2Ni4yLjEsNS4yLjEsMC4yLjEsNy4yLjEsMy4yLjIsMy4zLjUsMy4yLjEsMzAuMS4xLDE2LjEuMywxMy4yLjEsNS4yLjQsNy4yLjEsNS4yLjQsMy4yLjMsMC4yLjEsMC4zLjEsMTQuMy4xLDAuMy4zLDAuMi4xLDEyLjEuMSwxNi4xLjMsMTQuMi4xLDUuMi4xLDYzLjIuMiw2MS4yLjIsNjQuMi4yLDI0LjIuMSw1OS4yLjEsMy4yLjEsMC4yLjEsMTQuMi4xLDAuMi4xLDAuMy4yLDcuMy4xLDAuMy4yLDAuMi4xLDE2LjEuNCw1LjIuMiw2My4yLjIsNjEuMi4yLDY0LjIuMiw3LjIuMSw1OS4yLjEsMy4yLjEsMC4yLjMsMC4zLjEsNy4zLjEsMC4zLjMsMC4yLjEsMTYuMS40LDUuMi4yLDcuMi4xLDYwLjIuMiw1OS4yLjEsNjIuMi4yLDU3LjIuMiwzLjIuMSwwLjIuMiwxNC4zLjEsMC4zLjUsMC4yLjEsMTYuMS40LDUuMi4yLDMwLjIuMSw2MC4yLjIsNTkuMi4xLDYyLjIuMiw1Ny4yLjIsMC4yLjcsNy4zLjEsMC4yLjIsMTYuMS4zLDcuMS4xLDMuMi4zLDEuMi4xLDMuMi4xNSwwLjIuMSwxNi4xLjIsNy4xLjEsMTIuMS4xLDY5LjEuMSwxNC4xLjEsNzIuMS4xLDcuMS4xLDQxLjEuNCw3LjEuMSwxLjEuMSwwLjEuMSwzNy4xLjEsMy4xLjEsMzEuMS4xLDEuMS4yLDcwLjEuMSwxNC4xLjEsNjcuMS4xLDcuMS4xLDE2LjEuMiwxMi4xLjEsNzYuMS4xLDcuMS4zLDE0LjEuMSw0MS4xLjQsMjguMS4xLDEuMS4xLDAuMS4xLDE0LjEuMSw3NC4xLjEsNy4xLjEsMS4xLjEsMjAuMS4xLDcxLjEuMSwwLjEuMSw3LjEuMiwxNi4xLjMsMTIuMS4xLDE2LjEuOSwxLjEuMTAsMTYuMS40LDEuMS4xLDE2LjEuOSwxLjEuMSw3Mi4xLjEsMTYuMS4xMSwyNy4xLjEsMS4xLjEsMTYuMS41LDY5LjEuMSwxLjEuNCw2OS4xLjEsMTYuMS4xMSwxNS4xLjEsMS4xLjEsMTYuMS40LDEuMS4xLDY5LjEuMSw3LjEuMSw3Mi4xLjEsMS4xLjEsMTQuMS4xLDcuMS4xLDY4LjEuMSwzNi4xLjEsMTQuMS4xLDcuMS4xLDE5LjEuMSwzNi4xLjEsMS4xLjEsNy4xLjEsMTYuMS4zLDE5LjEuMSwxLjEuMSwxNi4xLjQsMS4xLjE0LDI1LjEuMSwxNi4xLjMsMS4xLjIsNC4xLjMsMTYuMS4xLDI0LjEuMSwyMC4xLjEsMy4xLjIsMTYuMS42LDQuMS4xLDE2LjEuNiw3LjEuMSwzLjEuMiw1NS4xLjEsNC4xLjQsMy4xLjIsMjEuMS4xLDE2LjEuNiw0LjEuMSwxNi4xLjUsNDIuMS4yLDQzLjEuMSwzLjEuMSw1NS4xLjEsNC4xLjQsMy4xLjIsNy4xLjEsMzMuMS4xLDMuMS4xLDQxLjEuNCw0LjEuMSw2MS4xLjIsNjUuMS4xLDU4LjEuMSwzLjEuMSw0Mi4xLjIsNDMuMS4xLDMuMS4xLDEzLjEuMSwyNy4xLjEsMzYuMS4xLDE2LjEuMSw0Mi4xLjIsMy4xLjQsNDEuMS40LDQuMS4xLDYxLjEuMiwxLjEuMSw1OC4xLjEsMy4xLjEsNDQuMS4yLDQ1LjEuMSwzLjEuMSwxNi4xLjQsNDIuMS4yLDMuMS4yLDE5LjEuMSwzLjEuMSw0MS4xLjIsMy4xLjIsNC4xLjEsNjYuMS4xLDIyLjEuMSwxLjEuMSw1LjEuMSwzLjEuMSwzMy4xLjEsNi4xLjEsNDUuMS4xLDMuMS4xLDE2LjEuNCw0LjEuNCwyNy4xLjEsNC4xLjEsNDEuMS4yLDQuMS4xMiwxNi4xLjUsMzYuMS4xLDcuMS4xLDEuMS4xLDcwLjEuMSwxLjEuMSwzNC4xLjIsMzUuMS4yLDQuMS4xLDQ2LjEuMiw0Ny4xLjIsMy4xLjEsMC4yLjIsMy4yLjEsMC4yLjEsMTYuMS41LDIwLjEuMSwxLjEuMiw2OC4xLjEsMS4xLjEsMzQuMS4yLDM1LjEuMiw0LjEuMSw0Ni4xLjIsNDcuMS4yLDMuMS4xLDAuMi4xLDEuMi4xLDAuMi4xLDEzLjIuMSwxNi4xLjYsMS4xLjIsNjcuMS4xLDEuMS4xLDIzLjEuMSwxNC4xLjEsNTAuMS4yLDQuMS4xLDE0LjEuMSwzMC4xLjEsNDkuMS4yLDMuMS4xLDMuMi4xLDEuMi4xLDAuMi4xLDEzLjIuMSwxNi4xLjYsMTEuMS4xLDcxLjEuMSw2Ny4xLjEsMS4xLjEsMy4xLjEsMzAuMS4xLDUwLjEuMiw1Ni4xLjIsMy4xLjEsNDkuMS4yLDMuMS4xLDAuMi4xLDEuMi4xLDAuMi4xLDEzLjIuMQ' },
+            { n: 4, label: '第 4 階・後期（名門→常春藤）＝完美佈局', name: '湖岸小鎮完美佈局', gates: ['常春藤'], page: '../layouts/lake/', code: 'MjR4MjQ7MTMuMi4xLDIyLjIuMSwxMy4yLjEsMTQuMi4xLDUuMi4zLDY1LjIuMSw2Ni4yLjEsNS4yLjEsMjguMi4xLDcuMi4xLDQxLjIuMiwzLjMuMSwzOC4zLjEsNTMuMy4yLDMuMy4xLDMuMi4xLDMwLjEuMSwxNi4xLjMsMTMuMi4xLDUuMi40LDcuMi4xLDUuMi40LDMuMi4yLDQxLjIuMiwzLjMuMSwxNC4zLjEsNy4zLjEsNDUuMy4xLDMuMy4xLDAuMi4xLDEyLjEuMSwxNi4xLjMsMTQuMi4xLDUuMi4xLDYzLjIuMiw2MS4yLjIsNjQuMi4yLDI0LjIuMSw1OS4yLjEsNDEuMi4yLDE0LjIuMSwzLjIuMSwzLjMuMSw0MS4zLjIsNDUuMy4xLDMuMy4xLDAuMi4xLDE2LjEuNCw1LjIuMiw2My4yLjIsNjEuMi4yLDY0LjIuMiw3LjIuMSw1OS4yLjEsNDEuMi4yLDMuMi4yLDMuMy4xLDQxLjMuMiwzLjMuMiwwLjIuMSwxNi4xLjQsNS4yLjIsNy4yLjEsNjAuMi4yLDU5LjIuMSw2Mi4yLjIsNTcuMi4yLDQxLjIuMiwzLjIuMSwxNC4zLjEsMy4zLjUsMC4yLjEsMTYuMS40LDUuMi4yLDMwLjIuMSw2MC4yLjIsNTkuMi4xLDYyLjIuMiw1Ny4yLjIsNDEuMi4yLDMuMi40LDM2LjIuMSw3LjMuMSwzLjIuMSwwLjIuMSwxNi4xLjMsNy4xLjEsMy4yLjMsMS4yLjEsMy4yLjE1LDAuMi4xLDE2LjEuMiw3LjEuMSwxMi4xLjEsNjkuMS4xLDE0LjEuMSw3Mi4xLjEsNy4xLjEsNDEuMS40LDcuMS4xLDEuMS4xLDc3LjEuMSwzNy4xLjEsNzguMS4xLDMxLjEuMSwxLjEuMiw3MC4xLjEsMTQuMS4xLDY3LjEuMSw3LjEuMSwxNi4xLjIsMTIuMS4xLDcuMS40LDE0LjEuMSw0MS4xLjQsMjguMS4xLDEuMS4xLDc2LjEuMSwxNC4xLjEsNzQuMS4xLDcuMS4xLDEuMS4xLDIwLjEuMSw3MS4xLjEsNzMuMS4xLDcuMS4yLDE2LjEuMywxMi4xLjEsMTYuMS45LDEuMS4xMCwxNi4xLjQsMS4xLjEsMTYuMS45LDEuMS4xLDcyLjEuMSwxNi4xLjExLDI3LjEuMSwxLjEuMSwxNi4xLjUsNjkuMS4xLDEuMS40LDY5LjEuMSwxNi4xLjExLDE1LjEuMSwxLjEuMSwxNi4xLjQsMS4xLjEsNjkuMS4xLDcuMS4xLDcyLjEuMSwxLjEuMSwxNC4xLjEsNy4xLjEsNjguMS4xLDM2LjEuMSwxNC4xLjEsNy4xLjEsMTkuMS4xLDM2LjEuMSwxLjEuMSw3LjEuMSwxNi4xLjMsMTkuMS4xLDEuMS4xLDE2LjEuNCwxLjEuMTQsMjUuMS4xLDE2LjEuMywxLjEuMiw0LjEuMywxNi4xLjEsMjQuMS4xLDIwLjEuMSwzLjEuMiwxNi4xLjYsNC4xLjEsMTYuMS42LDcuMS4xLDMuMS4yLDU1LjEuMSw0LjEuNCwzLjEuMiwyMS4xLjEsMTYuMS42LDQuMS4xLDE2LjEuNSw0Mi4xLjIsNDMuMS4xLDMuMS4xLDU1LjEuMSw0LjEuNCwzLjEuMiw3LjEuMSwzMy4xLjEsMy4xLjEsNDEuMS40LDQuMS4xLDYxLjEuMiw2NS4xLjEsNTguMS4xLDMuMS4xLDQyLjEuMiw0My4xLjEsMy4xLjEsMTMuMS4xLDI3LjEuMSwzNi4xLjEsMTYuMS4xLDQyLjEuMiwzLjEuNCw0MS4xLjQsNC4xLjEsNjEuMS4yLDEuMS4xLDU4LjEuMSwzLjEuMSw0NC4xLjIsNDUuMS4xLDMuMS4xLDE2LjEuNCw0Mi4xLjIsMy4xLjIsMTkuMS4xLDMuMS4xLDQxLjEuMiwzLjEuMiw0LjEuMSw2Ni4xLjEsMjIuMS4xLDEuMS4xLDUuMS4xLDMuMS4xLDMzLjEuMSw2LjEuMSw0NS4xLjEsMy4xLjEsMTYuMS40LDQuMS40LDI3LjEuMSw0LjEuMSw0MS4xLjIsNC4xLjEyLDE2LjEuNSwzNi4xLjEsNy4xLjEsMS4xLjEsNzAuMS4xLDEuMS4xLDM0LjEuMiwzNS4xLjIsNC4xLjEsNDYuMS4yLDQ3LjEuMiwzLjEuMSwwLjIuMiwzLjIuMSwwLjIuMSwxNi4xLjUsMjAuMS4xLDEuMS4yLDY4LjEuMSwxLjEuMSwzNC4xLjIsMzUuMS4yLDQuMS4xLDQ2LjEuMiw0Ny4xLjIsMy4xLjEsMC4yLjEsMS4yLjEsMzkuMi4xLDEzLjIuMSwxNi4xLjYsMS4xLjIsNjcuMS4xLDEuMS4xLDIzLjEuMSwxNC4xLjEsNTAuMS4yLDQuMS4xLDE0LjEuMSwzMC4xLjEsNDkuMS4yLDMuMS4xLDMuMi4xLDEuMi4xLDQwLjIuMSwxMy4yLjEsMTYuMS42LDExLjEuMSw3MS4xLjEsNjcuMS4xLDEuMS4xLDMuMS4xLDMwLjEuMSw1MC4xLjIsNTYuMS4yLDMuMS4xLDQ5LjEuMiw3My4xLjEsMC4yLjEsMS4yLjEsNTQuMi4xLDEzLjIuMQ' }
+        ];
+
+        /* 純函式版的景點掃描：只回傳成立的 id 集合，不碰 coreGrid／nearMap／DOM。
+           面板要算「第 3 階蓋完是幾種景點」，而 checkSpots() 只認目前的畫布。
+           判定規則必須與 checkSpots() 一致（含「斜坡與該格材質並存」）。 */
+        function spotsInGrid(g) {
+            const R = g.length, C = g[0].length, out = new Set();
+            for (let wr = 0; wr <= R - 4; wr++) {
+                for (let wc = 0; wc <= C - 4; wc++) {
+                    const typesIn = new Set();
+                    for (let dr = 0; dr < 4; dr++) {
+                        for (let dc = 0; dc < 4; dc++) {
+                            const t = g[wr + dr][wc + dc].type;
+                            if (t !== 'empty') typesIn.add(t);
+                            if (isSlopeIn(g, wr + dr, wc + dc)) typesIn.add('slope');
+                        }
+                    }
+                    if (!typesIn.size) continue;
+                    SPOTS.forEach(spot => { if (!out.has(spot.id) && reqSatisfied(spot.req, typesIn)) out.add(spot.id); });
+                }
+            }
+            return out;
+        }
+
+        /* 每一階「蓋完時」的成果。這些數字刻意**不寫死**——攻略頁的四階段總表已經有一份，
+           寫死就是第二份、就會漂移。解一次碼要掃 21×21 個視窗，所以算過就記住。 */
+        const stageStatsCache = {};
+        function stageStats(st) {
+            if (stageStatsCache[st.n]) return stageStatsCache[st.n];
+            let r = { spots: 0, bonus: 0, err: true };
+            try {
+                const g = decodeMap(st.code);
+                if (g) {
+                    const ids = spotsInGrid(g);
+                    let bonus = 0;
+                    ids.forEach(id => {
+                        const sp = SPOTS.find(x => x.id === id);
+                        if (sp && sp.bonus) String(sp.bonus).replace(/[+＋](\d+)/g, (m, v) => { bonus += +v; return m; });
+                    });
+                    r = { spots: ids.size, bonus: bonus, err: false };
+                }
+            } catch (e) {}
+            stageStatsCache[st.n] = r;
+            return r;
+        }
+
+        /* origin.kind：site（站上 11 組之一）／share（任意分享碼）／preset（五鎮地形）／
            save（具名存檔）／blank（空白畫布）／null（來源不明：舊使用者、清過 localStorage） */
         let origin = null;
         let originGrid = null;   // 原始地形只解碼一次進記憶體（不要每筆劃 decode 3.8KB）
@@ -3391,6 +3589,9 @@
             // 蓋章的當下一定要重畫圖層：載入途中 checkSpots() 已經拿**舊**的 origin 畫過一次，
             // 只更新文字的話地圖上會留著對照舊來源的色洗。
             renderDiffOverlay();
+            // 同理，「這張圖＝第幾階」也只有蓋完章才算得準（載入途中那次 checkSpots 讀到的
+            // 還是上一張圖的 origin，會停在舊的階數、換鎮之後也不會消失）。
+            updateStageLine();
         }
         function loadOriginStore() {
             try {
@@ -4369,9 +4570,17 @@
             // 預設分頁＝景點：模擬器的頭條數字是 N/29，預設分頁要和工具的主題一致
             document.getElementById('handbookBtn').addEventListener('click', () => buildHandbook('spots'));
             document.getElementById('compareBtn').addEventListener('click', () => { track('open_compare'); buildCompare(); });
+            document.getElementById('stageLine').addEventListener('click', () => {
+                track('open_dev_guide', { from: 'stage_line' });
+                buildDevGuide('stages');
+            });
             document.getElementById('reportBody').addEventListener('click', (e) => {
                 const b = e.target.closest('.hb-tab');
                 if (b) { buildHandbook(b.dataset.hb, true); return; }
+                const dg = e.target.closest('.dg-tab');
+                if (dg) { buildDevGuide(dg.dataset.dg, true); return; }
+                const ld = e.target.closest('.dg-load');
+                if (ld) { loadStage(+ld.dataset.stage); return; }
                 if (e.target.closest('#hbClearBtn')) {
                     // 觸控沒有 Esc，這顆 ✕ 是唯一的清除出口
                     const inp = document.getElementById('hbFilter');
