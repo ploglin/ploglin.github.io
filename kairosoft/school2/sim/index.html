@@ -1282,23 +1282,23 @@
         const SPOTS = [
             { id: 'undou', name: '運動', req: ['field', 'basketball', 'vending'], bonus: '體育+3 頭腦+3 態度+2', dotColor: 'bg-red-500', teacher: '黑猩猩G※' },
             { id: 'date', name: '約會', req: ['tennis', ['woods', 'sakura'], 'library'], bonus: '文系+2 理系+3 人氣+2 態度+2', dotColor: 'bg-pink-500', teacher: '黑猩猩G※' },
-            { id: 'nakayoshi', name: '好友', req: ['water', 'nurse', 'tea_room'], bonus: '文系+3 運動+2 人氣+2', dotColor: 'bg-yellow-400', teacher: '黑猩猩G※' },
-            { id: 'kaidan', name: '怪談', req: ['music', 'science', 'incinerator'], bonus: '理系+3 頭腦+3', dotColor: 'bg-violet-600', teacher: '足元藏助・黑猩猩G※' },
-            { id: 'benkyou', name: '學習', req: ['principal', 'library', 'av_room'], bonus: '文系+3 理系+3 態度+3', dotColor: 'bg-blue-500', teacher: '中野阪助' },
+            { id: 'nakayoshi', name: '友情', req: ['water', 'nurse', 'tea_room'], bonus: '文系+3 運動+2 人氣+2', dotColor: 'bg-yellow-400', teacher: '黑猩猩G※' },
+            { id: 'kaidan', name: '鬼故事', req: ['music', 'science', 'incinerator'], bonus: '理系+3 頭腦+3', dotColor: 'bg-violet-600', teacher: '足元藏助・黑猩猩G※' },
+            { id: 'benkyou', name: '讀書', req: ['principal', 'library', 'av_room'], bonus: '文系+3 理系+3 態度+3', dotColor: 'bg-blue-500', teacher: '中野阪助' },
             { id: 'geijutsu', name: '藝術', req: ['art', 'music', 'multi_room'], bonus: '理系+3 運動+3', dotColor: 'bg-purple-500', teacher: '森野熊克斯・開羅君※' },
-            { id: 'katei', name: '家庭', req: ['nurse', 'home_ec', 'toilet'], bonus: '文系+2 體育+2 人氣+3', dotColor: 'bg-rose-400', teacher: '鴨田鴨子・開羅君※' },
+            { id: 'katei', name: '家庭活動', req: ['nurse', 'home_ec', 'toilet'], bonus: '文系+2 體育+2 人氣+3', dotColor: 'bg-rose-400', teacher: '鴨田鴨子・開羅君※' },
             { id: 'kaimono', name: '購物', req: ['shop', 'convenience', 'cafeteria'], bonus: '體育+3 運動+3 態度+1', dotColor: 'bg-orange-500', teacher: '阿布法拉國王・黑猩猩G※・開羅君※' },
-            { id: 'tokumori', name: '特盛', req: ['pig', 'cow', 'cafeteria'], bonus: '體育+5 頭腦+4', dotColor: 'bg-amber-600', teacher: '蘇芙子公主※' },
+            { id: 'tokumori', name: '超大量', req: ['pig', 'cow', 'cafeteria'], bonus: '體育+5 頭腦+4', dotColor: 'bg-amber-600', teacher: '蘇芙子公主※' },
             { id: 'saien', name: '菜園', req: ['grass', 'farm', 'water'], bonus: '理系+2 運動+2 人氣+2 態度+2', dotColor: 'bg-emerald-600', teacher: '蘇芙子公主※' },
             { id: 'tasogare', name: '黃昏', req: [['woods', 'sakura'], 'slope', 'baseball'], bonus: '文系+3 體育+3 人氣+3 態度+3', dotColor: 'bg-orange-400', teacher: '蘇芙子公主※' },
-            { id: 'power', name: '力量', req: ['well', ['woods', 'sakura'], 'grass'], bonus: '文系+3 體育+3 頭腦+2 態度+2', dotColor: 'bg-lime-600' },
+            { id: 'power', name: '活力', req: ['well', ['woods', 'sakura'], 'grass'], bonus: '文系+3 體育+3 頭腦+2 態度+2', dotColor: 'bg-lime-600' },
             { id: 'oshare', name: '時尚', req: ['tennis', 'art', 'home_ec'], bonus: '文系+3 理系+3 人氣+2 態度+2', dotColor: 'bg-fuchsia-500', teacher: '蘇芙子公主※' },
             { id: 'jounetsu', name: '熱情', req: ['soccer', 'basketball', 'incinerator'], bonus: '理系+3 體育+3 人氣+2 態度+2', dotColor: 'bg-red-600' },
             { id: 'machibuse', name: '埋伏', req: ['board', 'rock', 'toilet'], bonus: '文系+3 體育+1 頭腦+2 人氣+2', dotColor: 'bg-stone-500' },
             { id: 'sawayaka', name: '清爽', req: ['azalea', 'grass', 'bench'], bonus: '文系+3 理系+3 人氣+2 態度+2', dotColor: 'bg-teal-400' },
-            { id: 'water_spot', name: '水岸', req: ['pond', 'toilet', 'well'], bonus: '文系+2 理系+3 頭腦+2', dotColor: 'bg-sky-500' },
+            { id: 'water_spot', name: '水之', req: ['pond', 'toilet', 'well'], bonus: '文系+2 理系+3 頭腦+2', dotColor: 'bg-sky-500' },
             { id: 'bio', name: '生物', req: ['science', 'computer', 'mole'], bonus: '理系+3 頭腦+2 運動+2 人氣+2', dotColor: 'bg-green-600' },
-            { id: 'yuwakashi', name: '燒水', req: ['incinerator', 'home_ec', 'water'], bonus: '文系+1 理系+1 人氣+1 態度+1', dotColor: 'bg-slate-400' },
+            { id: 'yuwakashi', name: '水壺', req: ['incinerator', 'home_ec', 'water'], bonus: '文系+1 理系+1 人氣+1 態度+1', dotColor: 'bg-slate-400' },
             { id: 'senkyo', name: '選舉', req: ['principal', 'office', 'tea_room'], bonus: '理系+2 體育+3 運動+2 人氣+2', dotColor: 'bg-indigo-500' },
             { id: 'yakimochi', name: '吃醋', req: ['incinerator', 'cafeteria', 'home_ec'], bonus: '理系+3 體育+2 頭腦+2 態度+2', dotColor: 'bg-amber-400' },
             { id: 'shibuya', name: '澀谷', req: ['soccer', 'club', 'convenience'], bonus: '文系+3 體育+1 人氣+2', dotColor: 'bg-cyan-600' },
@@ -1658,7 +1658,7 @@
             const warn = tileEl && tileEl.classList.contains('blocked') ? '　⚠ 被包圍，學生無法進入' : '';
             const elevName = cell.elevation === 3 ? '高地2層' : cell.elevation === 2 ? '高地1層' : '平地';
             /* 吸管是只活在程式碼裡的操作 → 停在有建築的格子上時，就地講一次
-               （觸控裝置沒有右鍵，講「長按」）。用過一次就不再顯示：一次性學習不該變成永久裝飾。
+               （觸控裝置沒有右鍵，講「長按」）。用過一次就不再顯示：一次性讀書不該變成永久裝飾。
                有 ⚠ 時讓警告贏——這條膠囊只有一行，教學不跟錯誤搶。 */
             let pick = '';
             if (!warn && !prefs.pickHint && cell.type !== 'empty') {
@@ -3357,7 +3357,7 @@
             // 城鎮鈕維持誠實的「自訂 26×24」。
             '120.MC4xLjI1MCw1LjEuMzIz': { name: '序盤 CP 值三景點', page: 'layouts/index.html', from: '佈局範例集：入門範例', town: null },
             '112.MC4xLjI1MCwzLjEuMzI0': { name: '樞紐共用：一區三景點', page: 'layouts/index.html', from: '佈局範例集：入門範例', town: null },
-            '84.MC4xLjI1MCw0LjEuMzQ2':  { name: '教室學習區', page: 'layouts/index.html', from: '佈局範例集：入門範例', town: null }
+            '84.MC4xLjI1MCw0LjEuMzQ2':  { name: '教室讀書區', page: 'layouts/index.html', from: '佈局範例集：入門範例', town: null }
         };
 
         /* origin.kind：site（站上 8 組之一）／share（任意分享碼）／preset（五鎮地形）／
