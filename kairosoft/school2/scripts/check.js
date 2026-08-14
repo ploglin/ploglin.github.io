@@ -74,6 +74,9 @@ require('./checks/sim.js')(ctx);
 console.log('\n── 跨檔一致性（B0 新增，WARN 層級） ' + '─'.repeat(18));
 require('./checks/consistency.js')(ctx);
 
+console.log('\n── 散文數字 ↔ 資料庫 ' + '─'.repeat(31));
+require('./checks/prose.js')(ctx);
+
 console.log('\n' + '='.repeat(52));
 if (fails) console.log(`共 ${fails} 項未通過` + (warns ? `、${warns} 項警告` : ''));
 else if (warns) console.log(`全部通過 ✔（另有 ${warns} 項 WARN；--strict 會把它們當 FAIL）`);
