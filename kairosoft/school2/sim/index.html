@@ -1718,9 +1718,10 @@
             document.querySelectorAll('.tile.fp-preview').forEach(t => t.classList.remove('fp-preview'));
             const fp = getFootprint(currentTool);
             if (fp.w === 1 && fp.h === 1) return;
+            const ptl = anchorTL(r, c, fp);
             for (let dr = 0; dr < fp.h; dr++) {
                 for (let dc = 0; dc < fp.w; dc++) {
-                    const el = tileAt(r + dr, c + dc);
+                    const el = tileAt(ptl.r + dr, ptl.c + dc);
                     if (el) el.classList.add('fp-preview');
                 }
             }
@@ -1780,7 +1781,9 @@
                         for (let ar = wr - fp.h + 1; ar < wr + 4; ar++) {
                             for (let ac = wc - fp.w + 1; ac < wc + 4; ac++) {
                                 if (ar >= 0 && ac >= 0 && canPlaceAllEmpty(ar, ac, fp.w, fp.h)) {
-                                    target[ar][ac] = true;
+                                    // 標在使用者實際會點的那一格（左下角），不是內部錨點
+                                    const br = ar + fp.h - 1;
+                                    if (br < gridRows) target[br][ac] = true;
                                 }
                             }
                         }
@@ -3258,6 +3261,14 @@
             return { w: it.w || 1, h: it.h || 1 };
         }
 
+        /* 遊戲把游標那一格當成建築的**左下角**，不是左上角。
+           內部的 gridData 一律以左上角定位（r 由上往下增加），所以點擊座標要往上位移
+           h−1 列。所有放置路徑（滑鼠、觸控、佔地預覽、建議框）都必須走這一個函式，
+           否則預覽的位置會與實際落點差一列——那比不做對位更糟。 */
+        function anchorTL(r, c, fp) {
+            return { r: r - fp.h + 1, c: c };
+        }
+
         function canPlaceAllEmpty(r, c, w, h) {
             if (r + h > gridRows || c + w > gridCols) return false;
             for (let dr = 0; dr < h; dr++) {
@@ -3315,25 +3326,27 @@
                 return;
             }
             const fp = getFootprint(currentTool);
-            if (r + fp.h > gridRows || c + fp.w > gridCols) {
+            // 游標那一格是左下角（同遊戲），內部仍以左上角定位
+            const tl = anchorTL(r, c, fp);
+            if (tl.r < 0 || tl.r + fp.h > gridRows || tl.c + fp.w > gridCols) {
                 showSysMsg(`超出地圖範圍，${items[currentTool].name} 需要 ${fp.w}×${fp.h} 的空間`, true);
                 return;
             }
             // 乾淨覆蓋：壓到既有多格建築時整棟拆除，絕不留下殘格
             // （殘格會保留舊 type，checkSpots() 仍把半棟建築當有效材料 → 景點數會算錯）
-            const razed = razeUnder(r, c, fp.w, fp.h);
+            const razed = razeUnder(tl.r, tl.c, fp.w, fp.h);
             const bid = fp.w * fp.h > 1 ? ++blockIdCounter : undefined;
             for (let dr = 0; dr < fp.h; dr++) {
                 for (let dc = 0; dc < fp.w; dc++) {
                     const cell = { type: currentTool, elevation: currentElevation };
                     if (bid) cell.bid = bid;
-                    gridData[r + dr][c + dc] = cell;
+                    gridData[tl.r + dr][tl.c + dc] = cell;
                 }
             }
             // 連同周圍一圈重繪：合併縫隙與鄰格的標籤顯示會受影響
             for (let dr = -1; dr <= fp.h; dr++) {
                 for (let dc = -1; dc <= fp.w; dc++) {
-                    const nr = r + dr, nc = c + dc;
+                    const nr = tl.r + dr, nc = tl.c + dc;
                     if (nr >= 0 && nr < gridRows && nc >= 0 && nc < gridCols) updateTileVisuals(nr, nc);
                 }
             }
