@@ -191,6 +191,28 @@
         window.addEventListener('resize', onScroll, { passive: true });
     })();
 
+    /* ---------- 4b. rank-rail：選中態跟著網址走 ----------------------
+       狀態刻意放在 hash 而不是 localStorage：使用者是「手機玩遊戲、電腦看網站」，
+       localStorage 不跨裝置，而 hash 可以書籤、可以貼給別人。
+       沒有 JS 時錨點照樣跳得到，這裡只補上高亮與把當前那顆捲到中央。 */
+    [].forEach.call(document.querySelectorAll('.rank-rail'), function (rail) {
+        var links = rail.querySelectorAll('.rk');
+        function sync() {
+            var h = location.hash || '';
+            var cur = null;
+            [].forEach.call(links, function (a) {
+                var on = h && a.getAttribute('href') === h;
+                a.classList.toggle('on', !!on);
+                if (on) { a.setAttribute('aria-current', 'true'); cur = a; }
+                else a.removeAttribute('aria-current');
+            });
+            if (cur) rail.scrollLeft = cur.offsetLeft - rail.clientWidth / 2 + cur.offsetWidth / 2;
+        }
+        if (rail.scrollWidth > rail.clientWidth + 2) rail.classList.add('can-x');
+        sync();
+        window.addEventListener('hashchange', sync);
+    });
+
     /* ---------- 5. path-rail 定位 ＋ details 內的錨點 ----------------- */
     [].forEach.call(document.querySelectorAll('.path-rail'), function (rail) {
         var cur = rail.querySelector('[aria-current="step"]');

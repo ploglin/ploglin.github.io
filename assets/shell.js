@@ -159,8 +159,8 @@
     /* <<< GAME_NAV：由 scripts/gen-game-nav.js 產生，勿手改 >>> */
     var GAME_NAV = {
         "school2": { e: "🏫", t: "口袋學院物語2", j: "名門ポケット学院2", a: "#e6f4ec",
-            main: [["","攻略總覽","📄"],["start/","開局指南","🚀"],["sim/","佈局模擬器","🧩"],["db/","資料庫","📚"]],
-            more: [["layouts/","佈局設計","🗺️","guide"],["training/","育成","🎓","guide"],["walkthrough/","經營與升級","🧭","guide"],["endgame/","終盤","🏁","guide"],["glossary/","中日對照","📖","guide"],["combo/","景點 combo 全解析","🎯","tool"]] },
+            main: [["","攻略總覽","📄"],["now/","你在第幾階","🧭"],["sim/","佈局模擬器","🧩"],["db/","資料庫","📚"]],
+            more: [["start/","開局指南","🚀","guide"],["layouts/","佈局設計","🗺️","guide"],["training/","育成","🎓","guide"],["walkthrough/","經營與升級","🧭","guide"],["endgame/","終盤","🏁","guide"],["glossary/","中日對照","📖","guide"],["combo/","景點 combo 全解析","🎯","tool"]] },
         "ooedo": { e: "🏯", t: "大江戶物語", j: "大江戸タウンズ", a: "#fdeee0",
             main: [["","攻略總覽","📄"],["sim/","佈局模擬器","🧩"],["db/","資料庫","📚"]],
             more: [] },

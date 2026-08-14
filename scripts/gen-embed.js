@@ -166,6 +166,82 @@ function derive() {
         columns: ['樞紐設施', '被幾個景點使用', '相關景點'],
         rows: hub,
     };
+
+    /* ③ 依學園規模歸階的解鎖表：設施／授業／行事／老師／課題／社團六張表的聯集。
+       db 裡本來就有一份完整的解鎖時間軸（六張表共 225 列，其中 171 列帶門檻），
+       只是分散在六個分類的六個不同欄名底下，從來沒有人把它接起來。
+
+       歸階規則（依序試，第一個命中就算）：
+         ㈠ 條件字串裡直接寫了規模 → 該規模
+         ㈡ 寫「學生 N 人」→ 用 ranks 的學生數門檻反查 N 落在哪一階
+         ㈢ 寫「第 N 年」→ 同理用年數門檻反查
+         ㈣ 一開始／—／遊戲初始狀態 → 農村學園
+         ㈤ 其餘（設施×N、屬性 N）→ 不綁規模，另成一組
+       ㈤ 那組刻意不硬塞進某一階：它們取決於你蓋了什麼，不是玩到第幾階，
+       猜一個階數放進去只會製造看起來精確的錯誤。 */
+    const RANKS = CATS.ranks;
+    if (!RANKS) return;
+    const rName = RANKS.rows.map(r => String(r[0]));
+    const numOr = (v) => { const n = parseInt(String(v).replace(/[,\s]/g, ''), 10); return isNaN(n) ? null : n; };
+    const iStu = RANKS.columns.findIndex(c => /學生數/.test(c));
+    const iYear = RANKS.columns.findIndex(c => /年數/.test(c));
+    // [{name, students, years}]，依 data.js 列序＝由低到高
+    const tiers = RANKS.rows.map(r => ({ name: String(r[0]), students: numOr(r[iStu]), years: numOr(r[iYear]) }));
+    const tierByThreshold = (val, key) => {
+        let hit = tiers[0].name;
+        for (const t of tiers) { if (t[key] != null && val >= t[key]) hit = t.name; }
+        return hit;
+    };
+
+    const SRC = [
+        ['facilities', '開放條件', '設施', '設置費(G)'],
+        ['lessons', '發現條件', '特別授業', '消費研究P'],
+        ['events', '出現條件', '行事活動', '必要預算(G)'],
+        ['teachers', '出現條件', '老師', '給與(初期→上限 G/月)'],
+        ['tasks', '發現條件', '課題挑戰', '挑戰費用(G)'],
+        ['clubs', '成立條件', '社團', '必要預算(G)'],
+    ];
+    const NO_GATE = /^(一開始|一開始就可建|遊戲初始狀態|—|-|)$/;
+    const rows = [];
+    for (const [key, condCol, kindLabel, costCol] of SRC) {
+        const cat = CATS[key];
+        if (!cat) continue;
+        const iCond = cat.columns.indexOf(condCol);
+        const iCost = cat.columns.indexOf(costCol);
+        if (iCond < 0) continue;
+        for (const r of cat.rows) {
+            const name = String(r[0]).replace(/^[^一-鿿A-Za-z0-9]+/, '').trim();
+            const cond = String(r[iCond] || '').trim();
+            /* 蓋不出來的不是「解鎖」：湖泊與進路室的設置費是「—」，
+               它們是地圖既有的東西，列進來只會讓表變長而沒有可行動的資訊。 */
+            if (key === 'facilities' && iCost >= 0 && !/^\d/.test(String(r[iCost] || '').trim())) continue;
+            let rank = rName.find(n => cond.includes(n));
+            if (!rank) {
+                const mStu = cond.match(/學生\s*(\d+)\s*人/);
+                const mYear = cond.match(/第\s*(\d+)\s*年/);
+                if (mStu) rank = tierByThreshold(+mStu[1], 'students');
+                else if (mYear) rank = tierByThreshold(+mYear[1], 'years');
+                else if (NO_GATE.test(cond)) rank = tiers[0].name;
+                else rank = '不綁規模';
+            }
+            // 附加條件＝把已經用掉的規模字樣拿掉之後還剩什麼
+            let extra = rank === '不綁規模' ? cond : cond.replace(rank, '').replace(/^[＋+・、,\s]+/, '').trim();
+            if (NO_GATE.test(extra)) extra = '—';
+            rows.push([rank, kindLabel, name, extra, iCost >= 0 ? String(r[iCost] || '—') : '—']);
+        }
+    }
+    const order = [...rName, '不綁規模'];
+    rows.sort((a, b) => order.indexOf(a[0]) - order.indexOf(b[0])
+        || SRC.findIndex(s => s[2] === a[1]) - SRC.findIndex(s => s[2] === b[1])
+        || a[2].localeCompare(b[2], 'zh-Hant'));
+
+    CATS['unlocks-by-rank'] = {
+        key: 'unlocks-by-rank', source: 'ranks', slug: RANKS.slug, label: RANKS.label,
+        intro: '把設施、特別授業、行事、老師、課題與社團六張表的解鎖條件合併，依學園規模歸階——'
+            + '「升上這一階之後多了什麼可以用」。附加條件欄是規模之外還要滿足的部分，要自己對照。',
+        columns: ['規模', '類型', '名稱', '附加條件', '費用／消耗'],
+        rows,
+    };
 }
 derive();
 

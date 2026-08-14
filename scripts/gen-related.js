@@ -38,6 +38,11 @@ const RELATED = {
             { href: '../sim/', icon: '🧩', label: '佈局模擬器', desc: '擺上去即時判定成立' },
             { href: '../db/facilities/', icon: '🏗️', label: '設施資料庫', desc: '77 種設施的佔地尺寸' }
         ],
+        'now': [
+            { href: '../db/ranks/', icon: '🏅', label: '學校排名資料庫', desc: '六階門檻的正本' },
+            { href: '../db/facilities/', icon: '🏗️', label: '設施資料庫', desc: '77 種的開放條件與費用' },
+            { href: '../layouts/lake/stages/', icon: '🗺️', label: '湖岸分階段建設', desc: '逐格座標與現金閘門' }
+        ],
         'start': [
             { href: '../db/towns/', icon: '🗾', label: '五城鎮資料庫', desc: '尺寸、開局資金與難度' },
             { href: '../sim/', icon: '🧩', label: '佈局模擬器', desc: '先在模擬器試排一次' },

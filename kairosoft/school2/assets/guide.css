@@ -560,6 +560,44 @@ main.article #dbApp table thead th {
 .town-pills .tp.on i { color: rgba(255, 255, 255, .8); }
 
 
+/* ---------- 6c. .rank-rail：學園規模選擇器（now/） -------------------------
+   形狀借 .town-pills 的 .tp（獨立方塊、有間隙），機制借 .path-rail 的橫捲。
+   為什麼不直接用 .path-rail：那是接合式分段軌，語意是「主線第幾站」；
+   規模是玩家自己的狀態，兩者並排出現會被讀成同一條軸。
+   為什麼不直接用 .town-pills：它 flex-wrap，六顆在 390px 會折成三排 ≈150px，
+   加上 106px 的 sticky 就吃掉第一屏一半。這裡改成不換行＋橫捲，單排 45px。
+   副標 <i> 不可省略——只有主標時高度約 31.5px，低於 44px 命中區。
+--------------------------------------------------------------------------- */
+.rank-rail {
+    margin: 14px 0 18px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+}
+.rank-rail::-webkit-scrollbar { display: none; }
+.rank-rail ol {
+    display: flex; gap: 10px; margin: 0; padding: 2px;
+    list-style: none; width: max-content;
+}
+.rank-rail li { margin: 0; scroll-snap-align: center; }
+.rank-rail .rk {
+    display: inline-flex; flex-direction: column; justify-content: center;
+    line-height: 1.25; min-height: 44px; padding: 6px 14px;
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--px-edge-soft); background: var(--card-2); color: var(--ink-soft);
+    font-weight: 800; font-size: 14px; text-decoration: none; white-space: nowrap;
+    box-shadow: var(--shadow);
+    transition: transform .1s steps(2, end), box-shadow .1s steps(2, end), border-color .1s steps(2, end);
+}
+.rank-rail .rk i { font-style: normal; font-size: 11px; font-weight: 700; color: var(--muted); }
+.rank-rail .rk:hover { border-color: var(--brand); color: var(--brand-strong); box-shadow: var(--shadow-hover); text-decoration: none; }
+.rank-rail .rk:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 0 var(--px-drop); }
+.rank-rail .rk.on { background: var(--brand); border-color: var(--brand); color: #fff; }
+.rank-rail .rk.on i { color: rgba(255, 255, 255, .8); }
+
+
 /* ---------- 7. .toc-rail：側邊目錄軌（≥1568px） ----------------------------
    幾何：文字欄維持置中的 760px（中文 40 字/行已是舒適上限），軌用絕對定位
    放進右側留白 → 正文不會相對於 1120px 置中的 header/game-bar 左偏。
@@ -889,6 +927,7 @@ main.article .btn.ghost { border: 2px solid var(--px-edge); box-shadow: var(--sh
    黑色 alpha 在兩邊都正確。這就是「theme-derived ≠ theme-correct」的那個例外。
    陰影只在左上內緣，不影響 #fff 文字的對比。 */
 main.article .town-pills .tp.on,
+main.article .rank-rail .rk.on,
 main.article .db-chip.active,
 main.article .db-pick.on,
 main.article .db-cmp-btn.on,

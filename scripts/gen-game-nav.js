@@ -21,10 +21,15 @@ const SHELL = path.join(ROOT, 'assets', 'shell.js');
       main 自然是 3 項，不受本表順序影響。 */
 const LABELS = {
     // ---- main：功能列直接顯示（順序即左到右）----
-    'start': { t: '開局指南', icon: '🚀', main: true },
+    /* now 放第 2 格：它是橫跨五章的進度索引，而讀者最常帶著的問題是
+       「我玩到這裡了，接下來做什麼」。start 降到 guide 群不是因為它不重要，
+       是因為它回答的是 now 的前兩段——兩個都掛在 main 等於門面上有兩個入口
+       都在說「你剛開始，看這裡」。 */
+    'now': { t: '你在第幾階', icon: '🧭', main: true },
     'sim': { t: '佈局模擬器', icon: '🧩', main: true },
     'db': { t: '資料庫', icon: '📚', main: true },
     // ---- more / group:'guide'（小標「主題攻略」）：主線其餘章節 ＋ 附錄，5 項 ----
+    'start': { t: '開局指南', icon: '🚀', group: 'guide' },
     'layouts': { t: '佈局設計', icon: '🗺️', group: 'guide' },
     'training': { t: '育成', icon: '🎓', group: 'guide' },
     'walkthrough': { t: '經營與升級', icon: '🧭', group: 'guide' },
