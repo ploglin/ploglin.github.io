@@ -214,6 +214,28 @@
         /* 菱形視角下整個 grid 轉 45°，徽章要反轉回來才讀得出數字 */
         body.diamond .found-num { transform: rotate(-45deg); }
         body.diamond .found-num:hover { transform: rotate(-45deg) scale(1.15); }
+        /* 教室位置標記：跟 .found-num（定位搜尋）用不同顏色區分，圓形＋青色，
+           不搶景點徽章（黃框／彩色圓點）的視覺重量，而且是 pointer-events:none——
+           純標示用，不像 .found-num 那樣可以點擊定位。 */
+        .tile.classroom-slot { outline: 2px dashed #0e7490; outline-offset: -2px; }
+        .classroom-num {
+            position: absolute;
+            top: -3px; left: -3px;
+            z-index: 17;
+            min-width: 16px; height: 16px;
+            padding: 0 3px;
+            border: 1px solid #fff;
+            border-radius: 50%;
+            background: #0e7490;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 900;
+            line-height: 14px;
+            text-align: center;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, .35);
+            pointer-events: none;
+        }
+        body.diamond .classroom-num { transform: rotate(-45deg); }
         /* 定位模式：景點相關的覆蓋層一律不顯示（JS 已在源頭 guard，這裡是保險） */
         body.locating .spot-indicators,
         body.locating .spot-area-ov,
@@ -806,6 +828,7 @@
             :root:not([data-theme="light"]) .axis-label { color:var(--sd-ink-soft);background-color:var(--sd-axis-bg) }
             :root:not([data-theme="light"]) #searchHits .sh-hint { color:var(--sd-muted) }
             :root:not([data-theme="light"]) .found-num { border-color:var(--sd-card);box-shadow:0 1px 2px rgba(0,0,0,.6) }
+            :root:not([data-theme="light"]) .classroom-num { border-color:var(--sd-card);box-shadow:0 1px 2px rgba(0,0,0,.6) }
             /* 差異三態：字符的白描邊在深色底上會發光成一團 → 改用卡片色描邊；
                「拆掉」的石板灰色洗在深色畫布上幾乎看不見 → 整體提亮一階。 */
             :root:not([data-theme="light"]) .diff-mark { text-shadow:0 0 2px var(--sd-card),0 0 2px var(--sd-card),0 0 2px var(--sd-card) }
@@ -932,6 +955,7 @@
         :root[data-theme="dark"] .axis-label { color:var(--sd-ink-soft);background-color:var(--sd-axis-bg) }
         :root[data-theme="dark"] #searchHits .sh-hint { color:var(--sd-muted) }
         :root[data-theme="dark"] .found-num { border-color:var(--sd-card);box-shadow:0 1px 2px rgba(0,0,0,.6) }
+        :root[data-theme="dark"] .classroom-num { border-color:var(--sd-card);box-shadow:0 1px 2px rgba(0,0,0,.6) }
         /* 差異三態：字符的白描邊在深色底上會發光成一團 → 改用卡片色描邊；
            「拆掉」的石板灰色洗在深色畫布上幾乎看不見 → 整體提亮一階。 */
         :root[data-theme="dark"] .diff-mark { text-shadow:0 0 2px var(--sd-card),0 0 2px var(--sd-card),0 0 2px var(--sd-card) }
@@ -2662,6 +2686,7 @@
             // 「定位中暫停」與「沒有可比基準」兩種退化狀態，並更新右軌那兩列文案。
             renderDiffOverlay();
             updateStageLine();
+            if (isLakeCanvas()) markClassroomSlots(); else clearClassroomMark();
             scheduleAutosave();
             try {
                 localStorage.setItem('pa2_state_v1', JSON.stringify({
@@ -2805,6 +2830,34 @@
                 : '🧩 湖岸有四階段建設順序（看順序）';
         }
 
+        /* 湖岸 9 間教室的固定座標（來自完美佈局，2×2，左上角格）。跟階段/景點無關，
+           位置是固定的，所以不做成要點按鈕才顯示的選用功能——checkSpots() 收尾時
+           直接判斷「畫布是不是湖岸」自動貼上／收掉，跟景點覆蓋層同一套重繪節奏。 */
+        const CLASS_SLOTS = [
+            { r: 18, c: 10 }, { r: 16, c: 10 }, { r: 7, c: 4 }, { r: 7, c: 6 },
+            { r: 16, c: 12 }, { r: 0, c: 12 }, { r: 2, c: 10 }, { r: 4, c: 10 }, { r: 2, c: 15 }
+        ];
+        function clearClassroomMark() {
+            document.querySelectorAll('.tile.classroom-slot').forEach(t => t.classList.remove('classroom-slot'));
+            document.querySelectorAll('.classroom-num').forEach(n => n.remove());
+        }
+        function markClassroomSlots() {
+            clearClassroomMark();
+            CLASS_SLOTS.forEach((slot, i) => {
+                for (let dr = 0; dr < 2; dr++) for (let dc = 0; dc < 2; dc++) {
+                    const el = tileAt(slot.r + dr, slot.c + dc);
+                    if (el) el.classList.add('classroom-slot');
+                }
+                const corner = tileAt(slot.r, slot.c);
+                if (corner) {
+                    const badge = document.createElement('div');
+                    badge.className = 'classroom-num';
+                    badge.textContent = String(i + 1);
+                    corner.appendChild(badge);
+                }
+            });
+        }
+
         function buildStageTab() {
             const cur = currentStage();
             let html = `<div class="flex items-baseline justify-between gap-2 flex-wrap">`
@@ -2814,6 +2867,10 @@
             if (!isLakeCanvas()) {
                 html += `<div class="text-gray-500 bg-gray-50 rounded-lg px-3 py-2 mb-1">目前只有<b class="text-gray-700">湖岸小鎮</b>有分階段建設順序；其餘四鎮的完美佈局是成品圖，還沒拆成階段。下面四階仍然可以直接載入來看。</div>`;
             }
+            html += `<div class="mt-2 mb-1 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">`
+                + `<b class="text-gray-800 text-xs">教室（9 間）不受學園規模限制</b>`
+                + `<div class="text-[11px] text-gray-600 mt-0.5">系統照學生人數與年級發新班級，人數到了隨時能蓋，不必等到下面標的那一階。位置是固定的，關掉這個視窗就會看到地圖上已經自動標出<span class="font-bold text-gray-700">青色虛線框＋數字 1–9</span>，不必另外點。</div>`
+                + `</div>`;
             html += LAKE_STAGES.map(st => {
                 const stat = stageStats(st);
                 const on = !!(cur && cur.n === st.n);
@@ -3603,9 +3660,9 @@
             '3639.MjZ4MjY7Ny4xsMS4xLjE': { name: '溪谷小鎮完美佈局', page: 'layouts/valley/index.html', from: '完美佈局：溪谷小鎮', town: 'valley' },
             '3803.MjZ4MjY7MjcuzNi4xLjE': { name: '百靈山丘完美佈局', page: 'layouts/hill/index.html',   from: '完美佈局：百靈山丘', town: 'hill' },
             // 湖岸分階段頁的三張中途進度（第 4 階＝完美佈局本身，不重複註冊）
-            "1987.MjR4MjQ7MC4ysMC4yLjQ": { name: "湖岸小鎮 第 1 階（初期・農村學園）", page: 'layouts/lake/stages/index.html', from: "分階段攻略：湖岸小鎮 第1階", town: 'lake' },
-            "2050.MjR4MjQ7MC4ywwLjIuNA": { name: "湖岸小鎮 第 2 階（前期・發展學園）", page: 'layouts/lake/stages/index.html', from: "分階段攻略：湖岸小鎮 第2階", town: 'lake' },
-            "2390.MjR4MjQ7NjEuwwLjIuNA": { name: "湖岸小鎮 第 3 階（中期・有望→超大型）", page: 'layouts/lake/stages/index.html', from: "分階段攻略：湖岸小鎮 第3階", town: 'lake' },
+            "2096.MjR4MjQ7MC4yLDAuMi40": { name: "湖岸小鎮 第 1 階（初期・農村學園）", page: 'layouts/lake/stages/index.html', from: "分階段攻略：湖岸小鎮 第1階", town: 'lake' },
+            "2324.MjR4MjQ7MC4yMTMuMi4x": { name: "湖岸小鎮 第 2 階（前期・發展學園）", page: 'layouts/lake/stages/index.html', from: "分階段攻略：湖岸小鎮 第2階", town: 'lake' },
+            "2599.MjR4MjQ7NjEuxMy4yLjE": { name: "湖岸小鎮 第 3 階（中期・有望→超大型）", page: 'layouts/lake/stages/index.html', from: "分階段攻略：湖岸小鎮 第3階", town: 'lake' },
             // 入門三張是「空白畫布上的幾個設施」，不是任何一鎮的地形 → 不設 town，
             // 城鎮鈕維持誠實的「自訂 26×24」。
             '120.MC4xLjI1MCw1LjEuMzIz': { name: '序盤 CP 值三景點', page: 'layouts/index.html', from: '佈局範例集：入門範例', town: null },
@@ -3621,9 +3678,9 @@
            所以這四段碼沒有守衛就會靜默過期（頁面重算、這裡不動，而指紋是從碼本身算的，
            舊碼配舊名永遠自洽，沒有人會發現）。那條檢查逐字比對這裡與頁面上的四個 href。 */
         const LAKE_STAGES = [
-            { n: 1, label: '第 1 階・初期（農村學園）', name: '湖岸小鎮 第 1 階（初期・農村學園）', gates: ['發展學園'], page: '../layouts/lake/stages/#stage1', code: 'MjR4MjQ7MC4yLjMsMTQuMi4xLDAuMi43LDcuMi4xLDAuMi4yLDAuMy41LDAuMi4xLDQwLjEuMSwxNi4xLjMsMC4yLjUsNy4yLjEsMC4yLjgsMC4zLjEsMTQuMy4xLDAuMy4zLDAuMi4xLDEyLjEuMSwxNi4xLjMsMTQuMi4xLDAuMi4xMSwxNC4yLjEsMC4yLjEsMC4zLjIsNy4zLjEsMC4zLjIsMC4yLjEsMTYuMS40LDAuMi44LDcuMi4xLDAuMi41LDAuMy4xLDcuMy4xLDAuMy4zLDAuMi4xLDE2LjEuNCwwLjIuMiw3LjIuMSwwLjIuMTAsMTQuMy4xLDAuMy41LDAuMi4xLDE2LjEuNCwwLjIuMTcsNy4zLjEsMC4yLjIsMTYuMS4zLDAuMS4xLDAuMi4yMCwxNi4xLjIsMC4xLjEsMTIuMS4xLDAuMS4xLDE0LjEuMSwwLjEuMSw3LjEuMSw0MS4xLjEsMC4xLjMsNy4xLjEsMS4xLjEsMC4xLjQsMS4xLjEsMC4xLjIsMTQuMS4xLDAuMS4xLDcuMS4xLDE2LjEuMiwxMi4xLjEsNzYuMS4xLDAuMS4zLDE0LjEuMSw0MS4xLjEsMC4xLjQsMS4xLjEsMC4xLjEsMTQuMS4xLDAuMS4xLDcuMS4xLDEuMS4xLDAuMS4zLDcuMS4yLDE2LjEuMywxMi4xLjEsMTYuMS45LDEuMS4xMCwxNi4xLjQsMS4xLjEsMTYuMS45LDEuMS4xLDAuMS4xLDE2LjEuMTEsMjcuMS4xLDEuMS4xLDE2LjEuNSwwLjEuNCwxLjEuMSwwLjEuMSwxNi4xLjExLDE1LjEuMSwxLjEuMSwxNi4xLjQsMS4xLjEsMC4xLjEsNy4xLjEsMC4xLjIsMS4xLjEsNy4xLjEsMC4xLjIsMTQuMS4xLDEuMS4xLDE5LjEuMSwzNi4xLjEsMS4xLjEsNy4xLjEsMTYuMS4zLDE5LjEuMSwxLjEuMSwxNi4xLjQsMS4xLjEsMC4xLjQsMS4xLjEsMC4xLjQsMS4xLjQsMjUuMS4xLDE2LjEuMywxLjEuMiw0LjEuMywxNi4xLjEsMjQuMS4xLDIwLjEuMSwzLjEuMiwxNi4xLjYsNC4xLjEsMTYuMS42LDcuMS4xLDMuMS4yLDU1LjEuMSw0LjEuNCwzLjEuMiwyMS4xLjEsMTYuMS42LDQuMS4xLDE2LjEuNSwwLjEuNCw1NS4xLjEsNC4xLjQsMy4xLjIsNy4xLjEsMzMuMS4xLDMuMS4xLDAuMS4yLDcuMS4xLDMuMS4xLDQuMS4xLDYxLjEuMiwwLjEuMiwzLjEuMSwwLjEuNCwxMy4xLjEsMjcuMS4xLDM2LjEuMSwxNi4xLjEsNDIuMS4yLDMuMS44LDQuMS4xLDYxLjEuMiwwLjEuMiwzLjEuMSwwLjEuNCwxNi4xLjQsNDIuMS4yLDMuMS4yLDE5LjEuMSwzLjEuMSw0MS4xLjIsMy4xLjIsNC4xLjEsMC4xLjMsNy4xLjEsMy4xLjEsMC4xLjIsNy4xLjEsMC4xLjEsMTYuMS40LDQuMS40LDI3LjEuMSw0LjEuMSw0MS4xLjIsNC4xLjEyLDE2LjEuNSwzNi4xLjEsMS4xLjIsNzAuMS4xLDEuMS4xLDAuMS40LDQuMS4xLDAuMS40LDMuMS4xLDAuMi40LDE2LjEuNSw3LjEuMSwyMC4xLjEsMS4xLjEsMjAuMS4xLDEuMS4xLDAuMS40LDQuMS4xLDAuMS40LDMuMS4xLDAuMi40LDE2LjEuNiwxMS4xLjEsMS4xLjEsNjcuMS4xLDEuMS4xLDAuMS4xLDE0LjEuMSwwLjEuMiw0LjEuMSwxNC4xLjEsMC4xLjMsMy4xLjEsMC4yLjQsMTYuMS42LDExLjEuMSw3MS4xLjEsNjcuMS4xLDEuMS4xLDAuMS40LDU2LjEuMiwwLjEuMyw3My4xLjEsMC4yLjQ' },
-            { n: 2, label: '第 2 階・前期（發展學園）', name: '湖岸小鎮 第 2 階（前期・發展學園）', gates: ['有望學園'], page: '../layouts/lake/stages/#stage2', code: 'MjR4MjQ7MC4yLjMsMTQuMi4xLDAuMi43LDcuMi4xLDAuMi4yLDAuMy41LDAuMi4xLDQwLjEuMSwxNi4xLjMsMC4yLjUsNy4yLjEsMC4yLjgsMC4zLjEsMTQuMy4xLDAuMy4zLDAuMi4xLDEyLjEuMSwxNi4xLjMsMTQuMi4xLDAuMi4xMSwxNC4yLjEsMC4yLjEsMC4zLjIsNy4zLjEsMC4zLjIsMC4yLjEsMTYuMS40LDAuMi44LDcuMi4xLDAuMi41LDAuMy4xLDcuMy4xLDAuMy4zLDAuMi4xLDE2LjEuNCwwLjIuMiw3LjIuMSwwLjIuMTAsMTQuMy4xLDAuMy41LDAuMi4xLDE2LjEuNCw1LjIuNCwwLjIuMSw1LjIuNCwwLjIuMSw0MS4yLjIsMy4yLjIsMC4yLjMsNy4zLjEsMC4yLjIsMTYuMS4zLDAuMS4xLDAuMi4zLDUuMi4xLDAuMi4xNiwxNi4xLjIsMC4xLjEsMTIuMS4xLDcuMS4xLDE0LjEuMSw2OS4xLjEsMS4xLjEsNDEuMS40LDMuMS4xLDEuMS4xLDc3LjEuMSwzNy4xLjEsMS4xLjMsMC4xLjIsMTQuMS4xLDAuMS4xLDcuMS4xLDE2LjEuMiwxMi4xLjEsNzYuMS4xLDcuMS4zLDcyLjEuMSw0MS4xLjQsMy4xLjEsMS4xLjEsNzguMS4xLDMxLjEuMSw3Ni4xLjEsNzQuMS4xLDEuMS4xLDAuMS4zLDcuMS4yLDE2LjEuMywxMi4xLjEsMTYuMS45LDEuMS4xMCwxNi4xLjQsMS4xLjEsMTYuMS45LDEuMS4xLDAuMS4xLDE2LjEuMTEsMjcuMS4xLDEuMS4xLDE2LjEuNSw3LjEuMiw2OS4xLjEsMS4xLjIsMC4xLjEsMTYuMS4xMSwxNS4xLjEsMS4xLjEsMTYuMS40LDEuMS4xLDY5LjEuMSw3LjEuMSw3Mi4xLjEsMS4xLjIsNy4xLjEsMC4xLjIsMTQuMS4xLDEuMS4xLDE5LjEuMSwzNi4xLjEsMS4xLjEsNy4xLjEsMTYuMS4zLDE5LjEuMSwxLjEuMSwxNi4xLjQsMS4xLjYsMC4xLjQsMS4xLjQsMjUuMS4xLDE2LjEuMywxLjEuMiw0LjEuMywxNi4xLjEsMjQuMS4xLDIwLjEuMSwzLjEuMiwxNi4xLjYsNC4xLjEsMTYuMS42LDcuMS4xLDMuMS4yLDU1LjEuMSw0LjEuNCwzLjEuMiwyMS4xLjEsMTYuMS42LDQuMS4xLDE2LjEuNSwwLjEuNCw1NS4xLjEsNC4xLjQsMy4xLjIsNy4xLjEsMzMuMS4xLDMuMS4xLDQxLjEuNCw0LjEuMSw2MS4xLjIsMC4xLjIsMy4xLjEsMC4xLjQsMTMuMS4xLDI3LjEuMSwzNi4xLjEsMTYuMS4xLDQyLjEuMiwzLjEuNCw0MS4xLjQsNC4xLjEsNjEuMS4yLDAuMS4yLDMuMS4xLDAuMS40LDE2LjEuNCw0Mi4xLjIsMy4xLjIsMTkuMS4xLDMuMS4xLDQxLjEuMiwzLjEuMiw0LjEuMSwwLjEuMyw3LjEuMSwzLjEuMSwwLjEuMiw3LjEuMSwwLjEuMSwxNi4xLjQsNC4xLjQsMjcuMS4xLDQuMS4xLDQxLjEuMiw0LjEuMTIsMTYuMS41LDM2LjEuMSwxLjEuMiw3MC4xLjEsMS4xLjEsMC4xLjQsNC4xLjEsMC4xLjQsMy4xLjEsMC4yLjQsMTYuMS41LDcuMS4xLDIwLjEuMSwxLjEuMSwyMC4xLjEsMS4xLjEsMC4xLjQsNC4xLjEsMC4xLjQsMy4xLjEsMC4yLjQsMTYuMS42LDExLjEuMSwxLjEuMSw2Ny4xLjEsMS4xLjEsMC4xLjEsMTQuMS4xLDAuMS4yLDQuMS4xLDE0LjEuMSwwLjEuMywzLjEuMSwwLjIuNCwxNi4xLjYsMTEuMS4xLDcxLjEuMSw2Ny4xLjEsMS4xLjEsMC4xLjQsNTYuMS4yLDAuMS4zLDczLjEuMSwwLjIuNA' },
-            { n: 3, label: '第 3 階・中期（有望→超大型）', name: '湖岸小鎮 第 3 階（中期・有望→超大型）', gates: ['超大型', '名門學園'], page: '../layouts/lake/stages/#stage3', code: 'MjR4MjQ7NjEuMi4yLDYzLjIuMiwwLjIuMSw2NC4yLjEsNjUuMi4xLDY2LjIuMSw1OS4yLjEsMC4yLjIsNy4yLjEsMC4yLjIsMC4zLjUsMC4yLjEsNDAuMS4xLDE2LjEuMyw2MS4yLjIsNjMuMi4yLDAuMi4xLDY0LjIuMSw1LjIuMiw1OS4yLjEsMC4yLjUsMC4zLjEsMTQuMy4xLDAuMy4zLDAuMi4xLDEyLjEuMSwxNi4xLjMsNS4yLjQsMC4yLjEsNS4yLjQsMC4yLjMsMTQuMi4xLDAuMi4xLDAuMy4yLDcuMy4xLDAuMy4yLDAuMi4xLDE2LjEuNCw1LjIuMSw2MC4yLjIsNTkuMi4xLDAuMi4xLDYyLjIuMiw1Ny4yLjIsMC4yLjUsMC4zLjEsNy4zLjEsMC4zLjMsMC4yLjEsMTYuMS40LDUuMi4xLDYwLjIuMiw1OS4yLjEsMC4yLjEsNjIuMi4yLDU3LjIuMiwwLjIuNCwxNC4zLjEsMC4zLjUsMC4yLjEsMTYuMS40LDUuMi40LDAuMi4xLDUuMi40LDAuMi4xLDQxLjIuMiwzLjIuMiwwLjIuMSwzLjIuMiwzLjMuMSwzLjIuMSwwLjIuMSwxNi4xLjMsMC4xLjEsMC4yLjMsNS4yLjEsMC4yLjE2LDE2LjEuMiwwLjEuMSwxMi4xLjEsNy4xLjEsMTQuMS4xLDY5LjEuMSwxLjEuMSw0MS4xLjQsMy4xLjEsMS4xLjEsNzcuMS4xLDM3LjEuMSwxLjEuMywyMS4xLjEsNTAuMS4yLDcuMS4yLDE2LjEuMiwxMi4xLjEsNzYuMS4xLDcuMS4zLDcyLjEuMSw0MS4xLjQsMy4xLjEsMS4xLjEsNzguMS4xLDMxLjEuMSw3Ni4xLjEsNzQuMS4xLDEuMS4xLDE5LjEuMSw1MC4xLjIsNzAuMS4xLDcuMS4xLDE2LjEuMywxMi4xLjEsMTYuMS45LDEuMS4xMCwxNi4xLjQsMS4xLjEsMTYuMS45LDEuMS4xLDcyLjEuMSwxNi4xLjExLDI3LjEuMSwxLjEuMSwxNi4xLjUsNy4xLjIsNjkuMS4xLDEuMS4yLDY5LjEuMSwxNi4xLjExLDE1LjEuMSwxLjEuMSwxNi4xLjQsMS4xLjEsNjkuMS4xLDcuMS4xLDcyLjEuMSwxLjEuMiw3LjEuMSw2OC4xLjEsMzYuMS4xLDEuMS4yLDE5LjEuMSwzNi4xLjEsMS4xLjEsNy4xLjEsMTYuMS4zLDE5LjEuMSwxLjEuMSwxNi4xLjQsMS4xLjE0LDI1LjEuMSwxNi4xLjMsMS4xLjIsNC4xLjMsMTYuMS4xLDI0LjEuMSwyMC4xLjEsMy4xLjIsMTYuMS42LDQuMS4xLDE2LjEuNiw3LjEuMSwzLjEuMiw1NS4xLjEsNC4xLjQsMy4xLjIsMjEuMS4xLDE2LjEuNiw0LjEuMSwxNi4xLjUsNDIuMS4yLDQzLjEuMSwzLjEuMSw1NS4xLjEsNC4xLjQsMy4xLjIsNy4xLjEsMzMuMS4xLDMuMS4xLDQxLjEuNCw0LjEuMSw2MS4xLjIsMC4xLjIsMy4xLjEsNDIuMS4yLDQzLjEuMSwzLjEuMSwxMy4xLjEsMjcuMS4xLDM2LjEuMSwxNi4xLjEsNDIuMS4yLDMuMS40LDQxLjEuNCw0LjEuMSw2MS4xLjIsMC4xLjIsMy4xLjEsNDQuMS4yLDQ1LjEuMSwzLjEuMSwxNi4xLjQsNDIuMS4yLDMuMS4yLDE5LjEuMSwzLjEuMSw0MS4xLjIsMy4xLjIsNC4xLjEsMC4xLjMsNy4xLjEsMy4xLjEsMzMuMS4xLDYuMS4xLDQ1LjEuMSwzLjEuMSwxNi4xLjQsNC4xLjQsMjcuMS4xLDQuMS4xLDQxLjEuMiw0LjEuMTIsMTYuMS41LDM2LjEuMSwxLjEuMiw3MC4xLjEsMS4xLjEsMzQuMS4yLDM1LjEuMiw0LjEuMSw0Ni4xLjIsNDcuMS4yLDMuMS4xLDAuMi40LDE2LjEuNSw3LjEuMSwyMC4xLjEsMS4xLjEsMjAuMS4xLDEuMS4xLDM0LjEuMiwzNS4xLjIsNC4xLjEsNDYuMS4yLDQ3LjEuMiwzLjEuMSwwLjIuNCwxNi4xLjYsMTEuMS4xLDEuMS4xLDY3LjEuMSwxLjEuMSwyMy4xLjEsMTQuMS4xLDUwLjEuMiw0LjEuMSwyMC4xLjEsMzAuMS4xLDQ5LjEuMiwzLjEuMSwwLjIuNCwxNi4xLjYsMTEuMS4xLDcxLjEuMSw2Ny4xLjEsMS4xLjEsMy4xLjEsMzAuMS4xLDUwLjEuMiw1Ni4xLjIsMy4xLjEsNDkuMS4yLDczLjEuMSwwLjIuNA' },
+            { n: 1, label: '第 1 階・初期（農村學園）', name: '湖岸小鎮 第 1 階（初期・農村學園）', gates: ['發展學園'], page: '../layouts/lake/stages/#stage1', code: 'MjR4MjQ7MC4yLjMsMTQuMi4xLDAuMi43LDcuMi4xLDMuMi4yLDAuMy4xLDMuMy4zLDAuMy4xLDMuMi4xLDAuMS4xLDE2LjEuMywwLjIuNSw3LjIuMSwwLjIuMyw1LjIuMSwzLjIuMywwLjIuMSwwLjMuMSwxNC4zLjEsMC4zLjMsMC4yLjEsMTIuMS4xLDE2LjEuMywxNC4yLjEsMC4yLjgsMy4yLjEsMC4yLjIsMTQuMi4xLDAuMi4xLDAuMy4yLDcuMy4xLDAuMy4yLDAuMi4xLDE2LjEuNCwwLjIuOCw3LjIuMSwzLjIuMSwwLjIuNCwwLjMuMSw3LjMuMSwwLjMuMywwLjIuMSwxNi4xLjQsMC4yLjIsNy4yLjEsMC4yLjYsMy4yLjEsMC4yLjMsMTQuMy4xLDAuMy41LDAuMi4xLDE2LjEuNCwwLjIuOSwzLjIuMSwwLjIuNyw3LjMuMSwwLjIuMiwxNi4xLjMsNy4xLjEsMy4yLjMsMC4yLjEsMy4yLjcsMC4yLjMsMy4yLjEsMC4yLjUsMTYuMS4yLDcuMS4xLDEyLjEuMSwwLjEuMSwxNC4xLjEsMC4xLjEsNy4xLjEsMC4xLjQsNy4xLjEsMy4xLjEsMC4xLjcsMTQuMS4xLDAuMS4yLDE2LjEuMiwxMi4xLjEsMC4xLjQsMTQuMS4xLDAuMS41LDMuMS4xLDAuMS4xLDE0LjEuMSwwLjEuMSw3LjEuMSwwLjEuNCw3LjEuMSwwLjEuMSwxNi4xLjMsMTIuMS4xLDE2LjEuOSwzLjEuMSwwLjEuOSwxNi4xLjQsMTIuMS4xLDE2LjEuOSwzLjEuMSwwLjEuMSwxNi4xLjExLDAuMS4yLDE2LjEuNSw2OS4xLjEsMy4xLjQsMC4xLjEsMTYuMS4xMSwwLjEuMiwxNi4xLjQsMC4xLjEsNjkuMS4xLDcuMS4xLDMuMS4xLDAuMS4xLDE0LjEuMSw3LjEuMSw2OC4xLjEsMC4xLjEsMTQuMS4xLDcuMS4xLDE5LjEuMSwwLjEuMiw3LjEuMSwxNi4xLjMsMC4xLjIsMTYuMS40LDAuMS4xLDMuMS4xMywyNS4xLjEsMTYuMS4zLDAuMS4yLDEzLjEuMSwwLjEuMSwxMy4xLjEsMTYuMS4xLDI0LjEuMSwyMC4xLjEsMy4xLjIsMTYuMS42LDAuMS4xLDE2LjEuNiw3LjEuMSwzLjEuMiw1NS4xLjEsNC4xLjMsMy4xLjMsMjEuMS4xLDE2LjEuNiwwLjEuMSwxNi4xLjUsMC4xLjMsMy4xLjEsNTUuMS4xLDQuMS4zLDMuMS4zLDcuMS4xLDAuMS4xLDMuMS4xLDAuMS4yLDcuMS4xLDMuMS4yLDYxLjEuMiwzLjEuMSwwLjEuMSwzLjEuMywwLjEuMSwzLjEuMSwxMy4xLjEsMjcuMS4xLDEzLjEuMSwxNi4xLjEsNDIuMS4yLDMuMS45LDYxLjEuMiwzLjEuMSwwLjEuMSwzLjEuMSw0NC4xLjIsMC4xLjEsMy4xLjEsMTYuMS40LDQyLjEuMiwzLjEuMiwxOS4xLjEsMy4xLjEsNDEuMS4yLDMuMS4zLDAuMS4xLDIyLjEuMSwzLjEuMSw1LjEuMSwzLjEuMSwwLjEuMSw2LjEuMSw3LjEuMSwzLjEuMSwxNi4xLjQsMy4xLjQsMjcuMS4xLDExLjEuMSw0MS4xLjIsMy4xLjEsMC4xLjEsMy4xLjQsMC4xLjYsMTYuMS41LDMuMS4xLDcuMS4xLDEuMS4xLDE0LjEuMSwwLjEuMSwzLjEuMywwLjEuNiwzLjEuMSwwLjIuMiwzLjIuMSwwLjIuMSwxNi4xLjUsMjAuMS4xLDAuMS4xLDEuMS4xLDAuMS4xMSwzLjEuMSwwLjIuNCwxNi4xLjYsMTEuMS4xLDEuMS4xLDY3LjEuMSwwLjEuMiwxNC4xLjEsMC4xLjMsMTQuMS4xLDAuMS4zLDMuMS4xLDMuMi4xLDAuMi4zLDE2LjEuNiwxMS4xLjEsMS4xLjEsNjcuMS4xLDAuMS4xLDMuMS4xLDAuMS41LDMuMS4xLDAuMS4zLDAuMi40' },
+            { n: 2, label: '第 2 階・前期（發展學園）', name: '湖岸小鎮 第 2 階（前期・發展學園）', gates: ['有望學園'], page: '../layouts/lake/stages/#stage2', code: 'MjR4MjQ7MC4yLjMsMTQuMi4xLDAuMi43LDcuMi4xLDMuMi4yLDAuMy4xLDMuMy4zLDAuMy4xLDMuMi4xLDAuMS4xLDE2LjEuMywwLjIuNSw3LjIuMSwwLjIuMyw1LjIuMSwzLjIuMywwLjIuMSwwLjMuMSwxNC4zLjEsMC4zLjMsMC4yLjEsMTIuMS4xLDE2LjEuMywxNC4yLjEsMC4yLjgsMy4yLjEsMC4yLjIsMTQuMi4xLDAuMi4xLDAuMy4yLDcuMy4xLDAuMy4yLDAuMi4xLDE2LjEuNCwwLjIuOCw3LjIuMSwzLjIuMSwwLjIuNCwwLjMuMSw3LjMuMSwwLjMuMywwLjIuMSwxNi4xLjQsMC4yLjIsNy4yLjEsMC4yLjYsMy4yLjEsMC4yLjMsMTQuMy4xLDAuMy41LDAuMi4xLDE2LjEuNCwwLjIuOSwzLjIuMSwwLjIuNyw3LjMuMSwwLjIuMiwxNi4xLjMsNy4xLjEsMy4yLjExLDAuMi4zLDMuMi4xLDAuMi41LDE2LjEuMiw3LjEuMSwxMi4xLjEsNjkuMS4xLDE0LjEuMSwwLjEuMSw3LjEuMSw0MS4xLjQsNy4xLjEsMy4xLjEsMC4xLjIsMy4xLjEsMS4xLjEsMC4xLjEsMy4xLjEsMC4xLjEsMTQuMS4xLDY3LjEuMSw3LjEuMSwxNi4xLjIsMTIuMS4xLDAuMS4xLDcuMS4zLDE0LjEuMSw0MS4xLjQsMy4xLjIsMC4xLjEsMTQuMS4xLDAuMS4xLDcuMS4xLDAuMS4xLDIwLjEuMSwwLjEuMiw3LjEuMiwxNi4xLjMsMTIuMS4xLDE2LjEuOSwzLjEuMSwwLjEuOSwxNi4xLjQsMTIuMS4xLDE2LjEuOSwzLjEuMSwwLjEuMSwxNi4xLjExLDAuMS4yLDE2LjEuNSw2OS4xLjEsMy4xLjQsNjkuMS4xLDE2LjEuMTEsMC4xLjIsMTYuMS40LDAuMS4xLDY5LjEuMSw3LjEuMSwzLjEuMSwwLjEuMSwxNC4xLjEsNy4xLjEsNjguMS4xLDM2LjEuMSwxNC4xLjEsNy4xLjEsMTkuMS4xLDM2LjEuMSwwLjEuMSw3LjEuMSwxNi4xLjMsMC4xLjIsMTYuMS40LDAuMS4xLDMuMS4xMywyNS4xLjEsMTYuMS4zLDAuMS4yLDQuMS4zLDE2LjEuMSwyNC4xLjEsMjAuMS4xLDMuMS4yLDE2LjEuNiw0LjEuMSwxNi4xLjYsNy4xLjEsMy4xLjIsNTUuMS4xLDQuMS40LDMuMS4yLDIxLjEuMSwxNi4xLjYsNC4xLjEsMTYuMS41LDAuMS4yLDQzLjEuMSwzLjEuMSw1NS4xLjEsNC4xLjQsMy4xLjIsNy4xLjEsMzMuMS4xLDMuMS4xLDQxLjEuNCw0LjEuMSw2MS4xLjIsNjUuMS4xLDU4LjEuMSwzLjEuMyw0My4xLjEsMy4xLjEsMTMuMS4xLDI3LjEuMSwzNi4xLjEsMTYuMS4xLDQyLjEuMiwzLjEuNCw0MS4xLjQsNC4xLjEsNjEuMS4yLDMuMS4xLDU4LjEuMSwzLjEuMSw0NC4xLjIsMC4xLjEsMy4xLjEsMTYuMS40LDQyLjEuMiwzLjEuMiwxOS4xLjEsMy4xLjEsNDEuMS4yLDMuMS4yLDQuMS4xLDAuMS4xLDIyLjEuMSwzLjEuMSw1LjEuMSwzLjEuMSwzMy4xLjEsNi4xLjEsNy4xLjEsMy4xLjEsMTYuMS40LDQuMS40LDI3LjEuMSw0LjEuMSw0MS4xLjIsNC4xLjEyLDE2LjEuNSwzNi4xLjEsNy4xLjEsMS4xLjEsMTQuMS4xLDAuMS4xLDMuMS4zLDAuMS4xLDQuMS4xLDQ2LjEuMiwzLjEuMSwwLjEuMSwzLjEuMSwwLjIuMiwzLjIuMSwwLjIuMSwxNi4xLjUsMjAuMS4xLDMuMS4xLDEuMS4xLDAuMS4xLDMuMS4yLDAuMS4xLDMuMS4xLDAuMS4xLDQuMS4xLDQ2LjEuMiwzLjEuMSwwLjEuMSwzLjEuMSwwLjIuMywxMy4yLjEsMTYuMS42LDExLjEuMSwxLjEuMSw2Ny4xLjEsMy4xLjEsMjMuMS4xLDE0LjEuMSw1MC4xLjIsNC4xLjEsMTQuMS4xLDMwLjEuMSwwLjEuMiwzLjEuMSwzLjIuMSwwLjIuMiwxMy4yLjEsMTYuMS42LDExLjEuMSwxLjEuMSw2Ny4xLjEsMy4xLjIsMzAuMS4xLDUwLjEuMiw1Ni4xLjIsMy4xLjEsMC4xLjMsMC4yLjMsMTMuMi4x' },
+            { n: 3, label: '第 3 階・中期（有望→超大型）', name: '湖岸小鎮 第 3 階（中期・有望→超大型）', gates: ['超大型', '名門學園'], page: '../layouts/lake/stages/#stage3', code: 'MjR4MjQ7NjEuMi4yLDEzLjIuMSwxNC4yLjEsNjQuMi4yLDY1LjIuMSw2Ni4yLjEsNTkuMi4xLDI0LjIuMSwwLjIuMSw3LjIuMSwzLjIuMiwwLjMuMSwzLjMuMywwLjMuMSwzLjIuMSwwLjEuMSwxNi4xLjMsMTMuMi4xLDYxLjIuMSw2My4yLjIsNjQuMi4xLDcuMi4xLDUuMi4yLDU5LjIuMSw1LjIuMSwzLjIuMywwLjIuMSwwLjMuMSwxNC4zLjEsMC4zLjMsMC4yLjEsMTIuMS4xLDE2LjEuMywxNC4yLjEsNS4yLjksMy4yLjEsMC4yLjEsMTQuMi4xLDAuMi4xLDAuMy4yLDcuMy4xLDAuMy4yLDAuMi4xLDE2LjEuNCw1LjIuMSw2MC4yLjIsNTkuMi4xLDMwLjIuMSw2Mi4yLjIsNTcuMi4xLDcuMi4xLDUuMi4xLDMuMi4xLDAuMi4zLDAuMy4xLDcuMy4xLDAuMy4zLDAuMi4xLDE2LjEuNCw1LjIuMSw2MC4yLjEsNy4yLjEsNTkuMi4xLDcuMi4xLDYyLjIuMiw1Ny4yLjIsNS4yLjEsMy4yLjEsMC4yLjIsMTQuMy4xLDAuMy41LDAuMi4xLDE2LjEuNCw1LjIuMTAsMC4yLjcsNy4zLjEsMC4yLjIsMTYuMS4zLDcuMS4xLDMuMi4zLDEuMi4xLDMuMi43LDAuMi4zLDMuMi4xLDAuMi41LDE2LjEuMiw3LjEuMSwxMi4xLjEsNjkuMS4xLDE0LjEuMSw3Mi4xLjEsNy4xLjEsNDEuMS40LDcuMS4xLDEuMS4xLDAuMS4xLDM3LjEuMSwzLjEuMSwxLjEuMyw3MC4xLjEsMTQuMS4xLDY3LjEuMSw3LjEuMSwxNi4xLjIsMTIuMS4xLDAuMS4xLDcuMS4zLDE0LjEuMSw0MS4xLjQsMy4xLjEsMS4xLjEsMC4xLjEsMTQuMS4xLDc2LjEuMSw3LjEuMSwxLjEuMSwyMC4xLjEsNzEuMS4xLDAuMS4xLDcuMS4yLDE2LjEuMywxMi4xLjEsMTYuMS45LDEuMS4xMCwxNi4xLjQsMS4xLjEsMTYuMS45LDEuMS4xLDcyLjEuMSwxNi4xLjExLDI3LjEuMSwxLjEuMSwxNi4xLjUsNjkuMS4xLDEuMS40LDY5LjEuMSwxNi4xLjExLDE1LjEuMSwxLjEuMSwxNi4xLjQsMS4xLjEsNjkuMS4xLDcuMS4xLDcyLjEuMSwxLjEuMSwxNC4xLjEsNy4xLjEsNjguMS4xLDM2LjEuMSwxNC4xLjEsNy4xLjEsMTkuMS4xLDM2LjEuMSwxLjEuMSw3LjEuMSwxNi4xLjMsMTkuMS4xLDEuMS4xLDE2LjEuNCwxLjEuMTQsMjUuMS4xLDE2LjEuMywxLjEuMiw0LjEuMywxNi4xLjEsMjQuMS4xLDIwLjEuMSwzLjEuMiwxNi4xLjYsNC4xLjEsMTYuMS42LDcuMS4xLDMuMS4yLDU1LjEuMSw0LjEuNCwzLjEuMiwyMS4xLjEsMTYuMS42LDQuMS4xLDE2LjEuNSw0Mi4xLjIsNDMuMS4xLDMuMS4xLDU1LjEuMSw0LjEuNCwzLjEuMiw3LjEuMSwzMy4xLjEsMy4xLjEsNDEuMS40LDQuMS4xLDYxLjEuMiw2NS4xLjEsNTguMS4xLDMuMS4xLDQyLjEuMiw0My4xLjEsMy4xLjEsMTMuMS4xLDI3LjEuMSwzNi4xLjEsMTYuMS4xLDQyLjEuMiwzLjEuNCw0MS4xLjQsNC4xLjEsNjEuMS4yLDEuMS4xLDU4LjEuMSwzLjEuMSw0NC4xLjIsNDUuMS4xLDMuMS4xLDE2LjEuNCw0Mi4xLjIsMy4xLjIsMTkuMS4xLDMuMS4xLDQxLjEuMiwzLjEuMiw0LjEuMSw2Ni4xLjEsMjIuMS4xLDEuMS4xLDUuMS4xLDMuMS4xLDMzLjEuMSw2LjEuMSw0NS4xLjEsMy4xLjEsMTYuMS40LDQuMS40LDI3LjEuMSw0LjEuMSw0MS4xLjIsNC4xLjEyLDE2LjEuNSwzNi4xLjEsNy4xLjEsMS4xLjEsNzAuMS4xLDEuMS4xLDM0LjEuMiwzNS4xLjIsNC4xLjEsNDYuMS4yLDQ3LjEuMiwzLjEuMSwwLjIuMiwzLjIuMSwwLjIuMSwxNi4xLjUsMjAuMS4xLDEuMS4yLDAuMS4xLDEuMS4xLDM0LjEuMiwzNS4xLjIsNC4xLjEsNDYuMS4yLDQ3LjEuMiwzLjEuMSwwLjIuMSwxLjIuMSwwLjIuMSwxMy4yLjEsMTYuMS42LDEuMS4yLDY3LjEuMSwxLjEuMSwyMy4xLjEsMTQuMS4xLDUwLjEuMiw0LjEuMSwxNC4xLjEsMzAuMS4xLDQ5LjEuMiwzLjEuMSwzLjIuMSwxLjIuMSwwLjIuMSwxMy4yLjEsMTYuMS42LDExLjEuMSw3MS4xLjEsNjcuMS4xLDEuMS4xLDMuMS4xLDMwLjEuMSw1MC4xLjIsNTYuMS4yLDMuMS4xLDQ5LjEuMiwzLjEuMSwwLjIuMSwxLjIuMSwwLjIuMSwxMy4yLjE' },
             { n: 4, label: '第 4 階・後期（名門→常春藤）＝完美佈局', name: '湖岸小鎮完美佈局', gates: ['常春藤'], page: '../layouts/lake/', code: 'MjR4MjQ7NjEuMi4yLDYzLjIuMiw2NC4yLjIsNjUuMi4xLDY2LjIuMSw1OS4yLjEsMjQuMi4xLDI4LjIuMSw3LjIuMSw0MS4yLjIsMC4zLjEsMzguMy4xLDUzLjMuMiwwLjMuMSwzLjIuMSw3LjEuMSwxNi4xLjMsNjEuMi4yLDYzLjIuMiw2NC4yLjIsNS4yLjIsNTkuMi4xLDUuMi4xLDMuMi4yLDQxLjIuMiwzLjMuMyw0NS4zLjEsMy4zLjEsMy4yLjEsMTIuMS4xLDE2LjEuMyw1LjIuMTAsNDEuMi4yLDE0LjIuMSwzLjIuMSwzLjMuMSw0MS4zLjIsNDUuMy4xLDMuMy4xLDMuMi4xLDE2LjEuNCw1LjIuMSw2MC4yLjIsNTkuMi4xLDMwLjIuMSw2Mi4yLjIsNTcuMi4yLDUuMi4xLDQxLjIuMiwzLjIuMiwzLjMuMSw0MS4zLjIsMTMuMy4xLDAuMy4xLDMuMi4xLDE2LjEuNCw1LjIuMSw2MC4yLjIsNTkuMi4xLDcuMi4xLDYyLjIuMiw1Ny4yLjIsNS4yLjEsNDEuMi4yLDMuMi4xLDE0LjMuMSwwLjMuMywxMy4zLjEsMC4zLjEsMy4yLjEsMTYuMS40LDUuMi4xMCw0MS4yLjIsMy4yLjUsMy4zLjEsMy4yLjIsMTYuMS4zLDcuMS4xLDAuMi4zLDUuMi4xLDAuMi41LDUuMi4xLDAuMi40LDMuMi4xLDAuMi41LDE2LjEuMiw3LjEuMSwxMi4xLjEsNy4xLjEsMTQuMS4xLDY5LjEuMSwxLjEuMSw0MS4xLjQsMy4xLjEsMS4xLjEsNzcuMS4xLDM3LjEuMSwxLjEuMywyMS4xLjEsNTAuMS4yLDcuMS4yLDE2LjEuMiwxMi4xLjEsNy4xLjQsNzIuMS4xLDQxLjEuNCwzLjEuMSwxLjEuMSw3OC4xLjEsMzEuMS4xLDc2LjEuMSw3NC4xLjEsMS4xLjEsMTkuMS4xLDUwLjEuMiw3MC4xLjEsNy4xLjEsMTYuMS4zLDEyLjEuMSwxNi4xLjksMS4xLjEwLDE2LjEuNCwxLjEuMSwxNi4xLjksMS4xLjEsNzIuMS4xLDE2LjEuMTEsMjcuMS4xLDEuMS4xLDE2LjEuNSw3LjEuMiw2OS4xLjEsMS4xLjIsNjkuMS4xLDE2LjEuMTEsMTUuMS4xLDEuMS4xLDE2LjEuNCwxLjEuMSw2OS4xLjEsNy4xLjEsNzIuMS4xLDEuMS4yLDcuMS4xLDY4LjEuMSwzNi4xLjEsMS4xLjIsMTkuMS4xLDM2LjEuMSwxLjEuMSw3LjEuMSwxNi4xLjMsMTkuMS4xLDEuMS4xLDE2LjEuNCwxLjEuMTQsMjUuMS4xLDE2LjEuMywxLjEuMiw0LjEuMywxNi4xLjEsMjQuMS4xLDIwLjEuMSwzLjEuMiwxNi4xLjYsNC4xLjEsMTYuMS42LDcuMS4xLDMuMS4yLDU1LjEuMSw0LjEuNCwzLjEuMiwyMS4xLjEsMTYuMS42LDQuMS4xLDE2LjEuNSw0Mi4xLjIsNDMuMS4xLDMuMS4xLDU1LjEuMSw0LjEuNCwzLjEuMiw3LjEuMSwzMy4xLjEsMy4xLjEsNDEuMS40LDQuMS4xLDYxLjEuMiw3LjEuMSw1OC4xLjEsMy4xLjEsNDIuMS4yLDQzLjEuMSwzLjEuMSwxMy4xLjEsMjcuMS4xLDM2LjEuMSwxNi4xLjEsNDIuMS4yLDMuMS40LDQxLjEuNCw0LjEuMSw2MS4xLjIsNy4xLjEsNTguMS4xLDMuMS4xLDQ0LjEuMiw0NS4xLjEsMy4xLjEsMTYuMS40LDQyLjEuMiwzLjEuMiwxOS4xLjEsMy4xLjEsNDEuMS4yLDMuMS4yLDQuMS4xLDY1LjEuMSw2Ni4xLjEsMjIuMS4xLDUuMS4xLDMuMS4xLDMzLjEuMSw2LjEuMSw0NS4xLjEsMy4xLjEsMTYuMS40LDQuMS40LDI3LjEuMSw0LjEuMSw0MS4xLjIsNC4xLjEyLDE2LjEuNSwzNi4xLjEsMS4xLjIsNzAuMS4xLDEuMS4xLDM0LjEuMiwzNS4xLjIsNC4xLjEsNDYuMS4yLDQ3LjEuMiwzLjEuMSwwLjIuNCwxNi4xLjUsNy4xLjEsMjAuMS4xLDEuMS4xLDIwLjEuMSwxLjEuMSwzNC4xLjIsMzUuMS4yLDQuMS4xLDQ2LjEuMiw0Ny4xLjIsMy4xLjEsMy4yLjIsMzkuMi4xLDcuMi4xLDE2LjEuNiwxMS4xLjEsMS4xLjEsNjcuMS4xLDEuMS4xLDIzLjEuMSwxNC4xLjEsNTAuMS4yLDQuMS4xLDIwLjEuMSwzMC4xLjEsNDkuMS4yLDMuMS4xLDAuMi4xLDEuMi4xLDQwLjIuMSw3LjIuMSwxNi4xLjYsMTEuMS4xLDcxLjEuMSw2Ny4xLjEsMS4xLjEsMy4xLjEsMzAuMS4xLDUwLjEuMiw1Ni4xLjIsMy4xLjEsNDkuMS4yLDczLjEuMSwwLjIuMSwxLjIuMSw1NC4yLjEsNy4yLjE' }
         ];
 
