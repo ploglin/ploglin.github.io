@@ -1,5 +1,5 @@
 /* ============================================================
-   口袋學院物語2（school2）長頁閱讀排版 — guide.css?v=7
+   口袋學院物語2（school2）長頁閱讀排版 — guide.css?v=8
 
    只有 school2 的攻略頁引入，**自帶版號** → 改本檔只 bump 本地號，不必動共用軌的
    `?v`（反之全站 bump 時也不要順手把本地號一起改；`link-check.js` 第 6 節照兩軌
@@ -7,8 +7,8 @@
    本檔只用既有 token（--brand / --ink / --line…）推導，深色模式因此免費。
 
    引入方式（head，兩行）：
-       <link rel="stylesheet" href="../assets/guide.css?v=7">
-       <script src="../assets/guide.js?v=7" defer></script>
+       <link rel="stylesheet" href="../assets/guide.css?v=8">
+       <script src="../assets/guide.js?v=8" defer></script>
    （`defer` 會在 DOM 解析完、Shell.mount() 之後才跑 → 量得到 --hdr-h、
      也找得到 shell.js 注入的浮動 ☰ 目錄。）
 
@@ -25,6 +25,8 @@
      .zone/.zone-list  分區條目（前者四鎮的 div 版、後者湖岸的 ul 版）
      .note         施工旁註（比正文小一級、左邊線）
      .town-pills   五鎮完美佈局的橫向切換藥丸列
+     .choice-card  兩選一決策卡（左右兩欄＋差價＋切換條件）
+     .num5/.rank-look  反查工具的小輸入控件（掛 db 分類頁）
      .toc-rail     ≥1568px 才出現的側邊目錄軌（由 guide.js 自動生成；出現時收掉浮動 ☰）
      .read-progress 頁內捲動進度線（由 guide.js 自動生成）
      .sc-*         景點檢查器 widget（自 spot-check/ 頁內 style 搬來）
@@ -773,6 +775,115 @@ main.article #dbApp table thead th {
 .sc-name { font-weight: 900; }
 .sc-miss { color: var(--brand-strong); font-weight: 800; }
 .sc-bonus { color: var(--muted); font-size: 12.5px; }
+
+
+/* ---------- 10b. .choice-card：兩選一決策卡（Tier 2，一頁最多 2～3 張） -----
+   左右兩欄各一個選項（名稱＋價格）、中間一條 vs 分隔線、底部一條跨欄的切換
+   條件。邊寬用滿的 --px-edge（不是 --px-edge-soft）——這是稀有元件，一頁不會
+   超過 2～3 張，不吃「8–15 個容器」那條要壓弱邊色的理由。
+   `.cc-rec` 標記本頁預設推薦的那一邊：**背景色差只是輔助**，主要靠 `.cc-tag`
+   的文字晶片——純色差會撞 WCAG 1.4.1，也會跟 §13d「填色＝選中/贏家」的站內
+   慣用語衝突（那條規則是「使用者選的」，這裡是「作者建議的預設」，兩種語意
+   混用同一個視覺信號會教壞讀者）。
+   手機（≤768px）疊成單欄：vs 分隔線跟著轉成一條橫線，DOM 順序不變——
+   不用 grid order 讓 `.cc-rec` 跳到前面，卡片內第一個孩子永遠是第一欄。 */
+.choice-card {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    margin: 18px 0;
+    border: 2px solid var(--px-edge);
+    border-radius: var(--radius-sm);
+    background: var(--card);
+    overflow: hidden;
+}
+.choice-card .cc-opt { padding: 14px 16px; }
+.choice-card .cc-opt.cc-rec { background: var(--brand-soft); }
+.choice-card .cc-vs {
+    display: grid;
+    place-items: center;
+    padding: 0 10px;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: .04em;
+    color: var(--muted);
+    border-left: 1px solid var(--line);
+    border-right: 1px solid var(--line);
+}
+.choice-card .cc-h {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 7px;
+    font-weight: 900;
+    font-size: 15px;
+    margin-bottom: 5px;
+}
+.choice-card .cc-cost { font-size: 13px; font-weight: 800; color: var(--brand-strong); font-variant-numeric: tabular-nums; }
+.choice-card .cc-tag {
+    font-size: 11px;
+    font-weight: 800;
+    padding: 1px 7px;
+    border-radius: 999px;
+    background: var(--brand);
+    color: #fff;
+}
+.choice-card .cc-b { margin: 0; font-size: 13.5px; color: var(--ink-soft); }
+.choice-card .cc-when {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding: 10px 16px;
+    font-size: 13.5px;
+    border-top: 1px solid var(--line);
+    background: var(--card-2);
+}
+@media (max-width: 768px) {
+    .choice-card { grid-template-columns: 1fr; }
+    .choice-card .cc-vs {
+        padding: 4px 0;
+        border-left: 0;
+        border-right: 0;
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+    }
+}
+
+
+/* ---------- 10c. 反查工具的兩個小控件（掛 db 分類頁） ----------------------
+   `.num5`：五科反查用的五個窄輸入框（52px×5＋4×6px gap＝284px，390px 螢幕
+   扣掉容器 padding 後還有餘裕，不必疊行）。`.rank-look`：單一數字輸入＋
+   即時結果句——比 `.sc-tools` 更輕，不需要按鈕，輸入即算。
+   兩者都借 `.sc-tools input` 的 44px／2px 邊／16px 字級契約（觸控命中區、
+   iOS 不因 <16px 字級自動放大）。 */
+.num5 { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 6px; }
+.num5 label { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 11px; font-weight: 800; color: var(--muted); }
+.num5 input {
+    width: 52px;
+    font: inherit;
+    font-size: 16px;
+    text-align: center;
+    min-height: 44px;
+    padding: 6px 4px;
+    border: 2px solid var(--px-edge);
+    border-radius: var(--radius-sm);
+    background: var(--card);
+    color: var(--ink);
+}
+.num5 input:focus-visible { outline: 2px solid var(--brand); outline-offset: 0; }
+.rank-look { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 12px 0 6px; }
+.rank-look input {
+    width: 90px;
+    font: inherit;
+    font-size: 16px;
+    text-align: center;
+    min-height: 44px;
+    padding: 6px 8px;
+    border: 2px solid var(--px-edge);
+    border-radius: var(--radius-sm);
+    background: var(--card);
+    color: var(--ink);
+}
+.rank-look input:focus-visible { outline: 2px solid var(--brand); outline-offset: 0; }
+.rank-look .rl-unit { font-size: 13px; font-weight: 700; color: var(--muted); }
 
 
 /* ---------- 11. 浮動 ☰ 目錄的第二層（h3，由 guide.js 補上） ---------------- */

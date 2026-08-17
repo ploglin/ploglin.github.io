@@ -20,8 +20,8 @@
   <meta name="twitter:card" content="summary_large_image">
   <link rel="stylesheet" href="../../../../assets/shell.css?v=9">
   <link rel="stylesheet" href="../../../../assets/pixel.css?v=9">
-  <link rel="stylesheet" href="../../assets/guide.css?v=7">
-  <script src="../../assets/guide.js?v=7" defer></script>
+  <link rel="stylesheet" href="../../assets/guide.css?v=8">
+  <script src="../../assets/guide.js?v=8" defer></script>
 </head>
 <body>
   <main class="container-narrow article">
@@ -37,6 +37,15 @@
         <li><strong>控制研究費。</strong>研究費會累加——每研究一項新設施，之後每一項的研究費再加上「該設施設置費 × 0.1」。序盤亂研究便宜裝飾會讓後期真正想要的貴設施更貴，所以研究順序要照景點需求排，不是照價格從低往高刷。</li>
         <li><strong>環境類看維持費與季節。</strong>花壇是環境類唯一有維持費的（10 G/月），缺錢時第一個拆；映山紅春季效果 +3，要吃這個加成就把社團遠征排在春天。</li>
       </ol>
+      <h3 id="upkeep-check">反查：勾你想留著或想蓋的設施，加總月維持費</h3>
+      <p>缺錢的時候不要憑印象拆房子，先勾你打算留著或想蓋的設施，看合計月維持費是多少——只列有維持費的項目，教室、辦公室與地形筆刷這類 0 G/月 的不影響這個數字。</p>
+      <div class="sc-tools">
+        <input id="ucQ" type="search" placeholder="🔎 搜尋設施" aria-label="搜尋設施">
+        <button id="ucClr" type="button">清除</button>
+      </div>
+      <p class="db-cnt" id="ucCnt"></p>
+      <div id="ucPick" class="db-chipcloud"></div>
+      <div class="sc-res" id="ucResult"></div>
       <h3>常見誤解</h3>
       <p><strong>誤解：設施靠研究就會出現在清單。</strong>設施的「發現」觸發條件是<strong>具備所需能力的學生使用公告欄</strong>，與公告欄和該設施的距離無關，兩者離很遠也會發現。社團的發現機制才要求「相關設施在公告欄為中心的 5×5 格內」且必須由<strong>老師</strong>使用公告欄。兩套機制不同，很多人卡在這裡。</p>
       <p><strong>誤解：小農場與飼育小屋只能蓋一座。</strong>它們的最大可持有數會隨使用狀況增加；農作物共 9 種，收穫到哪一種取決於周圍的環境設施。</p>
@@ -67,6 +76,54 @@
   <script src="../data.js"></script>
   <script src="../../../../assets/db.js?v=9"></script>
   <script>DB.mountCategory('facilities');</script>
+  <script>
+    /* 維持費反查：讀 db/data.js 的 facilities 分類，互動仿 index.html 的景點檢查器
+       （.sc-tools/.db-chipcloud/.db-pick，樣式見 assets/guide.css）。 */
+    (function () {
+      var GD = window.GAME_DB;
+      if (!GD) return;
+      var cat = GD.categories.filter(function (c) { return c.key === 'facilities'; })[0];
+      if (!cat) return;
+      var iName = cat.columns.indexOf('設施'), iFee = cat.columns.indexOf('維持費(G/月)');
+      var facs = cat.rows.map(function (r) {
+        var fee = parseInt(String(r[iFee]).replace(/[^\d]/g, ''), 10);
+        return { name: r[iName], fee: isNaN(fee) ? 0 : fee };
+      }).filter(function (f) { return f.fee > 0; }).sort(function (a, b) { return b.fee - a.fee; });
+
+      var picked = {};
+      var q = document.getElementById('ucQ'), pick = document.getElementById('ucPick'),
+          result = document.getElementById('ucResult'), cnt = document.getElementById('ucCnt');
+      if (!q || !pick || !result || !cnt) return;
+
+      function renderPick() {
+        var kw = (q.value || '').trim();
+        pick.innerHTML = '';
+        facs.forEach(function (f) {
+          if (kw && f.name.indexOf(kw) < 0) return;
+          var on = picked[f.name];
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'db-pick' + (on ? ' on' : '');
+          b.textContent = (on ? '✓ ' : '') + f.name + '（' + f.fee + ' G/月）';
+          b.addEventListener('click', function () { picked[f.name] = !picked[f.name]; renderPick(); renderResult(); });
+          pick.appendChild(b);
+        });
+        var n = Object.keys(picked).filter(function (k) { return picked[k]; }).length;
+        cnt.textContent = '已勾選 ' + n + ' 棟';
+      }
+      function renderResult() {
+        var chosen = facs.filter(function (f) { return picked[f.name]; });
+        var total = chosen.reduce(function (s, f) { return s + f.fee; }, 0);
+        result.innerHTML = '<p class="sc-h">合計月維持費：<span class="sc-name">' + total.toLocaleString() + ' G/月</span></p>' +
+          (chosen.length ? '<ul class="sc-list">' + chosen.map(function (f) {
+            return '<li><span class="sc-name">' + f.name + '</span> <span class="sc-bonus">' + f.fee + ' G/月</span></li>';
+          }).join('') + '</ul>' : '<p class="empty-hint">還沒勾選任何設施。</p>');
+      }
+      q.addEventListener('input', renderPick);
+      document.getElementById('ucClr').addEventListener('click', function () { picked = {}; renderPick(); renderResult(); });
+      renderPick(); renderResult();
+    })();
+  </script>
   <script src="../../../../assets/shell.js?v=9"></script>
   <script>Shell.mount({ page:'guide', game:{id:'school2', type:'database'}, breadcrumb:[{t:'口袋學院物語2', href:'../../'},{t:'資料庫', href:'../'},{t:'設施'}] });</script>
 </body>

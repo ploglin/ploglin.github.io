@@ -20,8 +20,8 @@
   <meta name="twitter:card" content="summary_large_image">
   <link rel="stylesheet" href="../../../../assets/shell.css?v=9">
   <link rel="stylesheet" href="../../../../assets/pixel.css?v=9">
-  <link rel="stylesheet" href="../../assets/guide.css?v=7">
-  <script src="../../assets/guide.js?v=7" defer></script>
+  <link rel="stylesheet" href="../../assets/guide.css?v=8">
+  <script src="../../assets/guide.js?v=8" defer></script>
 </head>
 <body>
   <main class="container-narrow article">
@@ -37,6 +37,14 @@
         <li><strong>用「年數」判斷要不要衝。</strong>如果距下一階的年數門檻還有 3 年以上，那幾年的資金該投在能複利的東西（課題等級、老師的上限指導力），而不是提前把景點湊滿——湊滿了也升不上去。</li>
         <li><strong>把規模當解鎖表用。</strong>貴設施、後段社團與 90～105 P 的特別授業都綁規模，所以「這一階要不要急著升」等價於「我現在缺哪個解鎖」。若下一階解鎖的東西你暫時用不到（例如 2,000 G 的水塘而你正缺錢），慢一年升級並沒有損失。</li>
       </ol>
+      <h3 id="stu-lookup">反查：學生 N 人時我在第幾階</h3>
+      <p>輸入目前的學生數，看它落在哪一階，再連到<a href="../../now/">你在第幾階</a>那一段看這一階新開了什麼、下一階還缺什麼。</p>
+      <div class="rank-look">
+        <span class="rl-unit">學生</span>
+        <input type="number" id="rlN" min="0" max="40" inputmode="numeric" placeholder="例如 16" aria-label="目前學生數">
+        <span class="rl-unit">人</span>
+      </div>
+      <p class="sc-res" id="rlResult"></p>
       <h3>常見誤解</h3>
       <p><strong>誤解一：學生越多越好。</strong>在校上限 36 人、每學年最多 3 間教室、1 班 4 人；超過門檻的學生不會加速升級，只會拉低平均分並增加教室與老師的維持成本，而教師數比教室數少 2 人以上還會讓學校人氣下滑。</p>
       <p><strong>誤解二：常春藤的「8 個社團優勝」可以最後補。</strong>優勝要先發現社團（讓老師使用公告欄）、把部室周圍青春P 堆到 30 以上，遠征還要 2～3 週而且一次只能一社，8 社的實際工期以年計。中期不開始輪，一定會卡在第 20 年之後。</p>
@@ -76,6 +84,38 @@
   <script src="../data.js"></script>
   <script src="../../../../assets/db.js?v=9"></script>
   <script>DB.mountCategory('ranks');</script>
+  <script>
+    /* 學生數反查規模：只讀 ranks 分類自己的「學生數」欄（與上面表格同一份資料），
+       不重算 unlocks-by-rank 的合併邏輯——精確的「新開了什麼」交給 now/ 的
+       靜態章節，這裡只回答「落在哪一階」。r1..r6 對應 now/ 六階 id，
+       是站上既有的固定對應（db/ranks 的 usedby 已經在用同一組 id）。 */
+    (function () {
+      var GD = window.GAME_DB;
+      if (!GD) return;
+      var cat = GD.categories.filter(function (c) { return c.key === 'ranks'; })[0];
+      if (!cat) return;
+      var iName = cat.columns.indexOf('規模'), iStu = cat.columns.indexOf('學生數');
+      var tiers = cat.rows.map(function (r, i) {
+        var n = parseInt(String(r[iStu]).replace(/[^\d]/g, ''), 10);
+        return { name: r[iName], stu: isNaN(n) ? 0 : n, id: 'r' + (i + 1) };
+      });
+      var input = document.getElementById('rlN'), result = document.getElementById('rlResult');
+      if (!input || !result) return;
+
+      function run() {
+        if (input.value === '') { result.innerHTML = ''; return; }
+        var n = +input.value;
+        var cur = tiers[0], next = null;
+        tiers.forEach(function (t) { if (n >= t.stu) cur = t; });
+        for (var i = 0; i < tiers.length; i++) { if (tiers[i] === cur && i + 1 < tiers.length) { next = tiers[i + 1]; break; } }
+        var h = '學生 ' + n + ' 人時，學生數這一欄至少已達<strong>「' + cur.name + '」</strong>——' +
+          '<a href="../../now/#' + cur.id + '">看這一階新開了什麼 →</a>';
+        if (next) h += '<br>再收 ' + Math.max(0, next.stu - n) + ' 人，學生數就達「' + next.name + '」的門檻（其他三欄仍要另外對照）。';
+        result.innerHTML = h;
+      }
+      input.addEventListener('input', run);
+    })();
+  </script>
   <script src="../../../../assets/shell.js?v=9"></script>
   <script>Shell.mount({ page:'guide', game:{id:'school2', type:'database'}, breadcrumb:[{t:'口袋學院物語2', href:'../../'},{t:'資料庫', href:'../'},{t:'學校排名'}] });</script>
 </body>

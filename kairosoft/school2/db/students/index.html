@@ -20,8 +20,8 @@
   <meta name="twitter:card" content="summary_large_image">
   <link rel="stylesheet" href="../../../../assets/shell.css?v=9">
   <link rel="stylesheet" href="../../../../assets/pixel.css?v=9">
-  <link rel="stylesheet" href="../../assets/guide.css?v=7">
-  <script src="../../assets/guide.js?v=7" defer></script>
+  <link rel="stylesheet" href="../../assets/guide.css?v=8">
+  <script src="../../assets/guide.js?v=8" defer></script>
 </head>
 <body>
   <main class="container-narrow article">
@@ -37,6 +37,16 @@
         <li><strong>用 85% 繼承做二輪培養。</strong>曾畢業的學生再次入學時，會繼承畢業時學力的 85%（各科 100 分畢業 → 再入學各科 85）。把一名學生練到高分、讓他畢業、再收回來，比從 150 分的新生重新開始快得多，這是拉高全校平均分最省力的手段。</li>
         <li><strong>挑有光環或有戀人的人上遠征。</strong>光環代表當下能力發揮超出平常，強度為黃 &lt; 藍 &lt; 紅 &lt; 彩虹，和異性交談時較容易出現；有戀人的社員能力也會上升。社團要拿優勝就從這裡挑人，而不是只看初期值。</li>
       </ol>
+      <h3 id="lookup">反查：看到五科數字，是哪一位學生？</h3>
+      <p>入學希望者出現時只顯示日文名與五科數字，還沒對上翻譯名的時候，把看到的五科數字填進來——下面會列出最接近的幾位，完全吻合會特別標出來。</p>
+      <div class="num5">
+        <label>國<input type="number" id="lkKok" min="0" max="100" inputmode="numeric" aria-label="國語"></label>
+        <label>數<input type="number" id="lkSu" min="0" max="100" inputmode="numeric" aria-label="數學"></label>
+        <label>英<input type="number" id="lkEi" min="0" max="100" inputmode="numeric" aria-label="英語"></label>
+        <label>理<input type="number" id="lkRi" min="0" max="100" inputmode="numeric" aria-label="理科"></label>
+        <label>社<input type="number" id="lkSha" min="0" max="100" inputmode="numeric" aria-label="社會"></label>
+      </div>
+      <div class="sc-res" id="lkResult"></div>
       <h3>常見誤解</h3>
       <p><strong>誤解：初期值高就一定強。</strong>學生類型（平凡、認真、浪人、行動派、花心、慢步調、彆扭、領袖型共 8 種）會影響行為，但本表<strong>沒有</strong>這一欄——原始資料沒有逐人記載原創學生的類型，本表不填。同理本表也不列「出現機率」：轉學生的出現含隨機成分而沒有逐人數據，填 65 列的機率就是編造。</p>
       <p><strong>誤解：改名後還能靠名字找回來。</strong>被改過名字的學生，只有原創學生會以同名再入學；用「天之神諭」（研究P 230／230／230）改名要考慮這一點。</p>
@@ -61,6 +71,53 @@
   <script src="../data.js"></script>
   <script src="../../../../assets/db.js?v=9"></script>
   <script>DB.mountCategory('students');</script>
+  <script>
+    /* 五科反查：讀 db/data.js 的 students 分類，不另存一份副本。
+       樣式在 assets/guide.css 的 §10c（.num5），互動仿 index.html 的景點檢查器。 */
+    (function () {
+      var GD = window.GAME_DB;
+      if (!GD) return;
+      var cat = GD.categories.filter(function (c) { return c.key === 'students'; })[0];
+      if (!cat) return;
+      var iName = cat.columns.indexOf('學生'), iStat = cat.columns.indexOf('五科初期值 國/數/英/理/社');
+      var rows = cat.rows.map(function (r) {
+        var m = {};
+        String(r[iStat]).split('/').forEach(function (tok) {
+          var mm = tok.match(/^(國|數|英|理|社)(\d+)$/);
+          if (mm) m[mm[1]] = +mm[2];
+        });
+        return { name: r[iName], kok: m['國'] || 0, su: m['數'] || 0, ei: m['英'] || 0, ri: m['理'] || 0, sha: m['社'] || 0 };
+      });
+      var ids = ['lkKok', 'lkSu', 'lkEi', 'lkRi', 'lkSha'];
+      var keys = ['kok', 'su', 'ei', 'ri', 'sha'];
+      var inputs = ids.map(function (id) { return document.getElementById(id); });
+      var result = document.getElementById('lkResult');
+      if (!inputs.every(Boolean) || !result) return;
+
+      function run() {
+        var vals = inputs.map(function (el) { return el.value === '' ? null : +el.value; });
+        if (vals.every(function (v) { return v === null; })) {
+          result.innerHTML = '<p class="empty-hint">填入看到的五科數字，越接近的學生會排在越前面。</p>';
+          return;
+        }
+        var filledAll = vals.every(function (v) { return v !== null; });
+        var scored = rows.map(function (s) {
+          var diff = 0;
+          keys.forEach(function (k, i) { if (vals[i] !== null) diff += Math.abs(s[k] - vals[i]); });
+          return { s: s, diff: diff };
+        }).sort(function (a, b) { return a.diff - b.diff; }).slice(0, 8);
+        var h = '<ul class="sc-list">' + scored.map(function (o) {
+          var tag = o.diff === 0 ? '<span class="sc-bonus">完全吻合</span>'
+            : '<span class="sc-bonus">' + (filledAll ? '五科合計差 ' : '已填欄位合計差 ') + o.diff + '</span>';
+          return '<li' + (o.diff === 0 ? ' class="ok"' : '') + '><span class="sc-name">' + o.s.name + '</span> ' +
+            '<span class="sc-bonus">國' + o.s.kok + '/數' + o.s.su + '/英' + o.s.ei + '/理' + o.s.ri + '/社' + o.s.sha + '</span> ' + tag + '</li>';
+        }).join('') + '</ul>';
+        result.innerHTML = h;
+      }
+      inputs.forEach(function (el) { el.addEventListener('input', run); });
+      run();
+    })();
+  </script>
   <script src="../../../../assets/shell.js?v=9"></script>
   <script>Shell.mount({ page:'guide', game:{id:'school2', type:'database'}, breadcrumb:[{t:'口袋學院物語2', href:'../../'},{t:'資料庫', href:'../'},{t:'學生名冊'}] });</script>
 </body>

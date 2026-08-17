@@ -69,22 +69,22 @@ node kairosoft/school2/scripts/check.js [--verbose] [--strict]
 | 深色覆寫層 | 兩套選擇器（系統偏好 `:root:not([data-theme="light"])` 與手動 `:root[data-theme="dark"]`）**內容逐字一致**；淺色 utility 全部有深色映射 |
 | `DEV_GUIDE` | 10 組「×N」條件的 `cond` ↔ `needs` 自洽 |
 | sim 速查表 | 3 個分頁全部讀 `db/data.js` 正本、11 條交接連結覆蓋 14 個 db 分類、**手寫副本沒有復活** |
-| 每頁可見字數 | **31 頁全部 ≥1,000**（不含 `sim/`） |
+| 每頁可見字數 | **32 頁全部 ≥1,000**（不含 `sim/`；新增 `now/`） |
 
-### 各頁可見字數（少→多）
+### 各頁可見字數（少→多，2026-08-17 3c 重整後）
 
-最少 **1,752**（`db/ranks/`）、最多 **25,107**（`layouts/lake/`）。門檻是 1,000，最薄的一頁還有 1.75 倍餘裕。
+最少 **1,695**（`db/towns/`）、最多 **25,632**（`training/`）。門檻是 1,000，最薄的一頁還有 1.7 倍餘裕。
 
 ```
-1752 db/ranks/          1754 db/towns/          1848 db/achievements/   2171 db/lessons/
-2240 db/                2376 db/items/          2381 db/clubs/          2500 db/careers/
-2701 db/spots/          3108 db/events/         3202 db/terms/          3232 ./
-3345 glossary/          4037 db/teachers/       4152 db/students/       5071 db/tasks/
-6825 db/facilities/     7734 layouts/           7777 combo/             8163 layouts/lake/training/
-9658 layouts/lake/economy/                     11710 start/            12507 endgame/
-15894 layouts/lake/stages/                     16606 layouts/east/     18840 layouts/valley/
-19649 layouts/health/  20875 walkthrough/      22805 layouts/hill/     22902 training/
-25107 layouts/lake/
+1695 db/towns/          1852 db/achievements/  1932 db/ranks/          2235 db/
+2249 db/lessons/        2330 db/items/         2383 db/clubs/         2491 db/careers/
+2635 db/spots/          3087 db/events/         3150 db/terms/         3339 glossary/
+3432 ./                 4058 db/teachers/       4133 db/students/      5020 db/tasks/
+7051 db/facilities/     7673 layouts/           7796 combo/            8836 layouts/lake/training/
+8903 layouts/lake/economy/                      9527 now/              11697 start/
+12508 endgame/          16813 layouts/east/     19037 layouts/valley/  19480 layouts/lake/stages/
+19851 layouts/health/   23023 layouts/hill/     23191 walkthrough/     23262 layouts/lake/
+25632 training/
 ```
 
 > 2026-08-10 的批次讓六個 `layouts/` 頁與五個攻略頁掉了字：把「本站舊版怎麼錯、驗證器抓到什麼 bug、產生器怎麼跑」這類**開發過程自述**從對外頁面上拿掉，只留下對讀者有用的結論與誠實標注。少的字集中在 `layouts/*`（合計約 −5,900），其餘是註腳白話化。**這不是回歸。**
@@ -169,6 +169,16 @@ node kairosoft/school2/scripts/check.js [--verbose] [--strict]
 > `SITE_LAYOUTS` 指紋表、`lake-perfect.svg`／`lake-thumb.svg`／`lake-og.png` 全部同步重產。
 > `layouts/lake/index.html` 與 `layouts/lake/stages/index.html` 裡引用北高地座標的散文段落
 > （工程要點、施工順序表）一併改寫成新版面的座標與門面說明。
+
+> 2026-08-17（3c）：把湖岸兩份分階段頁裡「其實是通用機制」的五塊內容上移到通用章節，湖岸頁瘦身並改連回去。
+> `training/index.html` 的 `#teachers` 新增老師升級成本表（Lv2～Lv5 消耗P、退職金規則）與全遊戲 CP 值排行；
+> `#recruit` 新增「看到這個→就做這件事」觸發表。`walkthrough/index.html` 的 `#tasks` 新增回本月數換算表；
+> `#events` 的 `db:events` 加回「研究類型」欄，並新增研究P 隨學生人數放大的說明。
+> `layouts/lake/training/index.html` 的 `#levelup`／`#who`／`#when` 三節、`layouts/lake/economy/index.html`
+> 的 `#tasks`／`#events` 兩節相應瘦身，只留湖岸專屬的部分並改連回通用章節。
+> 字數變化：`training/` 22,902→**25,632**、`walkthrough/` 20,875→**23,191**、
+> `layouts/lake/training/` 8,163→**8,836**（先減後增，淨增是因為原內容並非逐字搬移而是改寫）、
+> `layouts/lake/economy/` 9,658→**8,903**。`now/` 9,527 字為既有頁面、非本輪新增。**這不是回歸。**
 
 ---
 
