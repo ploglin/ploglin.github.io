@@ -56,6 +56,68 @@ function isSlopeIn(g, r, c) {
     });
 }
 
+/* 斜坡「轉角」：實機不能蓋任何東西的死格（跟一般斜坡不同，一般斜坡鋪走廊/道路仍可通行）。
+   規則與 sim/index.html 的 isSlopeCorner 同步维护，不共用同一份函式——理由同本檔開頭
+   isSlopeIn 的抄錄慣例：若日後 sim 改了判定，這裡不會悄悄跟著變而回報假的 PASS。
+   依 6 組實機座標（湖岸）反推：
+     ㈠ 垂直兩側同時矮一階 → 一定是轉角。
+     ㈡ 三側以上矮一階 → 細長尖刺，不算。
+     ㈢ 只有一側矮一階：貼著更高地形 → 只是階梯中繼站，不算；斜對角 ≥3 個比自己矮 → 算；
+        以上皆非但這一側已經是地形陣列的邊界：還要連通填色同高度地形，數它碰到幾邊
+        地圖邊界——只碰到 1 邊，代表這是完整收在地圖裡的一座小丘，端點算轉角；碰到
+        2 邊以上（卡在陣列角落的地形），代表這塊地形本來就沒被完整畫出來，不算
+        （實機核對：X22/Y2、X25/Y5、X8/Y25 是「地形延伸到超過地圖邊界」不算轉角，
+        X2/Y7、X2/Y11 是「剛好是一座小丘的邊界」才算）。 */
+function isSlopeCorner(g, r, c) {
+    if (!isSlopeIn(g, r, c)) return false;
+    const R = g.length, C = g[0].length;
+    const e = g[r][c].elevation;
+    const ortho = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+    const diffDirs = ortho.filter(([dr, dc]) => {
+        const nr = r + dr, nc = c + dc;
+        return nr >= 0 && nr < R && nc >= 0 && nc < C && g[nr][nc].elevation === e - 1;
+    });
+    if (diffDirs.length >= 3) return false;
+    if (diffDirs.length === 2) return true;
+    if (diffDirs.length !== 1) return false;
+    const all8 = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
+    const hasHigherNeighbor = all8.some(([dr, dc]) => {
+        const nr = r + dr, nc = c + dc;
+        return nr >= 0 && nr < R && nc >= 0 && nc < C && g[nr][nc].elevation === e + 1;
+    });
+    if (hasHigherNeighbor) return false;
+    const diag = [[-1, -1], [-1, 1], [1, -1], [1, 1]];
+    const diagLowerCount = diag.filter(([dr, dc]) => {
+        const nr = r + dr, nc = c + dc;
+        return nr >= 0 && nr < R && nc >= 0 && nc < C && g[nr][nc].elevation < e;
+    }).length;
+    if (diagLowerCount >= 3) return true;
+    const [dr0, dc0] = diffDirs[0];
+    const perp = (dr0 === 0) ? [[-1, 0], [1, 0]] : [[0, -1], [0, 1]];
+    const edgeCut = perp.some(([dr, dc]) => {
+        const nr = r + dr, nc = c + dc;
+        return nr < 0 || nr >= R || nc < 0 || nc >= C;
+    });
+    if (!edgeCut) return false;
+    const seen = new Set([r + ',' + c]);
+    const stack = [[r, c]];
+    const sides = new Set();
+    while (stack.length) {
+        const [cr, cc] = stack.pop();
+        if (cr === 0) sides.add('t'); if (cr === R - 1) sides.add('b');
+        if (cc === 0) sides.add('l'); if (cc === C - 1) sides.add('r');
+        for (const [dr, dc] of ortho) {
+            const nr = cr + dr, nc = cc + dc;
+            if (nr < 0 || nr >= R || nc < 0 || nc >= C) continue;
+            if (g[nr][nc].elevation !== e) continue;
+            const k = nr + ',' + nc;
+            if (seen.has(k)) continue;
+            seen.add(k); stack.push([nr, nc]);
+        }
+    }
+    return sides.size <= 1;
+}
+
 function canStep(g, r, c, nr, nc) {
     const a = g[r][c], b = g[nr][nc];
     if (a.elevation === b.elevation) return true;
@@ -333,7 +395,7 @@ function zoneMismatch(t, mat) {
 
 module.exports = {
     town, items, SPOTS, TYPE_KEYS, gridRows, gridCols, PASSABLE,
-    isBuildingType, loadTerrain, loadHealth: loadTerrain, isSlopeIn, canStep, computeReachability,
+    isBuildingType, loadTerrain, loadHealth: loadTerrain, isSlopeIn, isSlopeCorner, canStep, computeReachability,
     blockedBuildings, typesInWindow, spotOk, activeSpots, spotWindows, flowMetrics, GATEWAY,
     encodeMap, decodeMap, gameX, gameY,
     itemKind, zoneKind, zoneMismatch, ZONE_KIND_BY_MAT

@@ -102,6 +102,14 @@ const lostSlopes = baseSlopes.filter(([r, c]) => !E.isSlopeIn(g, r, c));
 check('原始地形的 ' + baseSlopes.length + ' 格斜坡未被蓋掉', lostSlopes.length === 0,
     lostSlopes.map(([r, c]) => 'X' + E.gameX(r) + '/Y' + E.gameY(c) + '=' + g[r][c].type).join('、'));
 
+/* 6.5) 斜坡轉角：實機不能蓋任何東西（含鋪面），連走廊/道路都不行——跟一般斜坡不同。
+        用原始地形推導轉角座標（轉角判定只看高度，不受佈局影響），逐格確認佈局沒有把它變成空地以外的東西。 */
+const cornerCells = [];
+for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++) if (E.isSlopeCorner(base, r, c)) cornerCells.push([r, c]);
+const violatedCorners = cornerCells.filter(([r, c]) => g[r][c].type !== 'empty');
+check('斜坡轉角（' + cornerCells.length + ' 格）沒有被放置任何東西', violatedCorners.length === 0,
+    violatedCorners.map(([r, c]) => 'X' + E.gameX(r) + '/Y' + E.gameY(c) + '=' + g[r][c].type).join('、'));
+
 /* 7) 水塘：實機確認水塘可以被建設覆蓋破壞、變回平地，所以「破壞」是合法手段，
       但必須節制且說得出所以然 —— 檢查破壞格數不超過該鎮的預算（towns.js 的
       pond.maxCarve），而且不能無中生有多挖水塘。破壞的座標一律列出來。 */
