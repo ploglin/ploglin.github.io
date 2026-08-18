@@ -663,9 +663,8 @@
 <rect x="328" y="372" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="329" y="373" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M328 394L350 372" stroke="#65a30d" stroke-width="1.6"/>
-<rect x="350" y="372" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="350" y="372" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="351" y="373" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
-<path d="M350 394L372 372" stroke="#65a30d" stroke-width="1.6"/>
 <rect x="372" y="372" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="373" y="373" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M372 394L394 372" stroke="#65a30d" stroke-width="1.6"/>
@@ -697,16 +696,16 @@
 <rect x="262" y="394" width="22" height="22" fill="#60a5fa" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="263" y="395" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <text x="273" y="409.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">池</text>
-<rect x="284" y="394" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="284" y="394" width="22" height="22" fill="#4ade80" stroke="#ffffff" stroke-width="0.6"/>
+<text x="295" y="409.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">樹</text>
 <rect x="306" y="394" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="307" y="395" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M306 416L328 394" stroke="#65a30d" stroke-width="1.6"/>
 <rect x="328" y="394" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="329" y="395" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M328 416L350 394" stroke="#65a30d" stroke-width="1.6"/>
-<rect x="350" y="394" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="350" y="394" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="351" y="395" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
-<path d="M350 416L372 394" stroke="#65a30d" stroke-width="1.6"/>
 <rect x="372" y="394" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="373" y="395" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M372 416L394 394" stroke="#65a30d" stroke-width="1.6"/>
@@ -739,7 +738,8 @@
 <rect x="262" y="416" width="22" height="22" fill="#60a5fa" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="263" y="417" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <text x="273" y="431.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">池</text>
-<rect x="284" y="416" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="284" y="416" width="22" height="22" fill="#4ade80" stroke="#ffffff" stroke-width="0.6"/>
+<text x="295" y="431.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">樹</text>
 <rect x="306" y="416" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="307" y="417" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M306 438L328 416" stroke="#65a30d" stroke-width="1.6"/>
@@ -782,7 +782,8 @@
 <rect x="262" y="438" width="22" height="22" fill="#60a5fa" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="263" y="439" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <text x="273" y="453.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff">池</text>
-<rect x="284" y="438" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="284" y="438" width="22" height="22" fill="#4ade80" stroke="#ffffff" stroke-width="0.6"/>
+<text x="295" y="453.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">樹</text>
 <rect x="306" y="438" width="22" height="22" fill="#bef264" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="307" y="439" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.1" stroke-dasharray="3 2"/>
 <path d="M306 460L328 438" stroke="#65a30d" stroke-width="1.6"/>
@@ -992,7 +993,7 @@
 <text x="75" y="585.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">兔</text>
 <rect x="86" y="570" width="22" height="22" fill="#93c5fd" stroke="#ffffff" stroke-width="0.6"/>
 <text x="97" y="585.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">飲</text>
-<rect x="108" y="570" width="22" height="22" fill="#bbf7d0" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="108" y="570" width="22" height="22" fill="#374151" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="130" y="570" width="22" height="22" fill="#ffffff" stroke="#ffffff" stroke-width="0.6"/>
 <text x="141" y="585.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">百</text>
 <rect x="152" y="570" width="22" height="22" fill="#d6d3d1" stroke="#ffffff" stroke-width="0.6"/>
@@ -1000,15 +1001,15 @@
 <rect x="174" y="570" width="22" height="22" fill="#374151" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="196" y="570" width="44" height="22" fill="#cbd5e1" stroke="#ffffff" stroke-width="0.6"/>
 <text x="218" y="586.04" font-size="14" font-weight="700" text-anchor="middle" fill="#1f2937">門</text>
-<rect x="328" y="570" width="22" height="22" fill="#bbf7d0" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="328" y="570" width="22" height="22" fill="#9ca3af" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="350" y="570" width="22" height="22" fill="#9ca3af" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="372" y="570" width="22" height="22" fill="#9ca3af" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="438" y="570" width="22" height="22" fill="#bbf7d0" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="438" y="570" width="22" height="22" fill="#9ca3af" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="460" y="570" width="22" height="22" fill="#9ca3af" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="482" y="570" width="22" height="22" fill="#9ca3af" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="504" y="570" width="22" height="22" fill="#9ca3af" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="526" y="570" width="22" height="22" fill="#9ca3af" stroke="#ffffff" stroke-width="0.6"/>
-<rect x="548" y="570" width="22" height="22" fill="#bbf7d0" stroke="#ffffff" stroke-width="0.6"/>
+<rect x="548" y="570" width="22" height="22" fill="#86efac" stroke="#ffffff" stroke-width="0.6"/>
 <rect x="570" y="570" width="22" height="22" fill="#d6d3d1" stroke="#ffffff" stroke-width="0.6"/>
 <text x="581" y="585.5" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1f2937">椅</text>
 <text x="15" y="35" font-size="10" text-anchor="end" fill="#94a3b8">2</text>
@@ -1040,9 +1041,9 @@
 <rect x="20" y="606" width="14" height="14" fill="#d97706" stroke="#94a3b8" stroke-width="0.6"/>
 <text x="39" y="617" font-size="11" fill="#334155">走廊 98 格</text>
 <rect x="160" y="606" width="14" height="14" fill="#374151" stroke="#94a3b8" stroke-width="0.6"/>
-<text x="179" y="617" font-size="11" fill="#334155">道路 59 格</text>
+<text x="179" y="617" font-size="11" fill="#334155">道路 60 格</text>
 <rect x="300" y="606" width="14" height="14" fill="#9ca3af" stroke="#94a3b8" stroke-width="0.6"/>
-<text x="319" y="617" font-size="11" fill="#334155">水泥地 38 格</text>
+<text x="319" y="617" font-size="11" fill="#334155">水泥地 40 格</text>
 <rect x="440" y="606" width="14" height="14" fill="#86efac" stroke="#94a3b8" stroke-width="0.6"/>
 <text x="459" y="617" font-size="11" fill="#334155">草地 80 格</text>
 <text x="20" y="637" font-size="10" fill="#64748b">四種鋪面中只有草地是景點材料；道路／走廊／水泥地對景點判定可互換。</text>
