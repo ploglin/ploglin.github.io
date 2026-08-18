@@ -361,6 +361,12 @@
                     <p class="note">工程要點：<strong>星空台的天象館只放得下在丘頂那兩格</strong>（X24/Y3–Y2），火箭與第二座多媒體教室要放丘下的台地平台，三件才進得了同一個窗口。丘頂其餘的格子全是天然坡道，蓋了就上不去。</p></li>
             </ol>
             <p>下面這張表是<strong>從成品反推</strong>的，不是手寫的規劃書：每個景點的<strong>階段</strong>＝它需要的材料裡「最晚解鎖的那一個」，<strong>所在分區</strong>＝它 4×4 判定窗口左上角落在哪個街廓。偶爾會看到階段與分區不對盤的組合——後期景點落在前期分區，是因為它跟前期景點共用了現成設施、只差最後一件材料。表上照實標。解鎖條件標「（推定）」的，代表遊戲內的「發展指南」沒有收錄，是依實機經驗推的。</p>
+            <div class="datablock">
+                <div class="dbk-h">
+                    <span class="dbk-t">階段 × 分區對照表</span>
+                    <span class="dbk-n">29 列</span>
+                    <input class="dbk-f" type="search" placeholder="🔎 篩選階段、景點或分區" aria-label="篩選階段對照表">
+                </div>
             <div class="table-wrap">
                 <table class="data">
                     <thead><tr><th>階段</th><th>景點</th><th>所在分區（代表窗口）</th><th>關鍵材料的解鎖條件</th></tr></thead>
@@ -399,11 +405,19 @@
                     </tbody>
                 </table>
             </div>
+            </div>
 
             <h2 id="spots">成立的人氣景點與座標</h2>
             <div class="callout key"><span class="k">29 是結果，不是目標</span>本圖的硬指標只有<strong>「0 棟建築走不到」與「0 格孤立路面」</strong>；景點數降級成「<strong>良好分區前提下的最大可成立數</strong>」。溪谷這張圖最後<em>剛好</em>29 個全成立，所以<strong>放棄清單是空的</strong>——但那是這張地形給得起，不是硬湊來的。分區與景點衝突時讓景點，少的是哪幾個、為什麼都列在這裡。</div>
             <p>過程中真的被放棄的東西，是<strong>「一個景點只用一組材料」這個奢望</strong>：溪谷的谷底只有三列深，一個 4×4 窗口塞不下三座 2×2，於是同一種專科教室得蓋兩座才餵得飽兩個景點（美術室 ×2、音樂室 ×2、理科室 ×2、電腦室 ×2、家政室 ×2、餐廳 ×3、足球場 ×3、網球場 ×3、棒球場 ×2）。要壓掉這些重複，就只能真的放棄景點——留下重複，理由見<a href="#honest">下方的限制與取捨</a>。</p>
             <p>座標是該景點 4×4 判定範圍的左上角，用遊戲內的顯示方式（X 由上而下、Y 由左而右）。</p>
+            <div class="datablock">
+                <div class="dbk-h">
+                    <span class="dbk-t">29 個景點完整表</span>
+                    <span class="dbk-n">29 列</span>
+                    <input class="dbk-f" type="search" placeholder="🔎 篩選景點或設施" aria-label="篩選景點表">
+                    <a class="dbk-open" href="../../db/spots/">在資料庫開啟 →</a>
+                </div>
             <div class="table-wrap">
                 <table class="data">
                     <thead><tr><th>景點</th><th>座標</th><th>需要設施</th><th>屬性加成</th></tr></thead>
@@ -441,6 +455,7 @@
                         <!-- gen:end -->
                     </tbody>
                 </table>
+            </div>
             </div>
             <p>屬性加成合計：<strong>文系 +49、理系 +49、人氣 +37、體育 +35、態度 +32、頭腦 +29、運動 +19</strong>（同一景點只計一次）。</p>
 
