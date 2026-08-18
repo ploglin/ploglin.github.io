@@ -318,7 +318,8 @@ module.exports = function consistencyChecks(ctx) {
             for (const town of Object.keys(townStages)) {
                 for (const st of townStages[town]) {
                     total++;
-                    const src = st.n === 4 ? `layouts/${town}/index.html` : `layouts/${town}/stages/index.html`;
+                    // 來源頁從 st.page 推導（不能用鎮鍵拼路徑：冬郵的鎮鍵是 winter、目錄是 east）
+                    const src = st.page.replace(/^\.\.\//, '').replace(/#.*$/, '') + 'index.html';
                     const codes = onPage.get(src) || [];
                     if (!codes.length) { bad.push(`${town} 第 ${st.n} 階：${src} 上一組分享碼都找不到`); continue; }
                     if (!codes.includes(st.code)) {

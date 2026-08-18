@@ -102,9 +102,24 @@ const RELATED = {
             { href: '../../../training/', icon: '🎓', label: '育成', desc: '跨城鎮通用的養成系統' }
         ],
         'layouts/east': [
+            { href: 'stages/', icon: '🧱', label: '冬郵小鎮分階段建設', desc: '四階段施工順序與中途碼' },
             { href: '../lake/', icon: '🏞️', label: '湖岸小鎮完美佈局', desc: '同樣 4 處水場要繞' },
-            { href: '../hill/', icon: '⛰️', label: '百靈山丘完美佈局', desc: '同樣 26×26、段差極少' },
             { href: '../', icon: '🗺️', label: '佈局設計原則', desc: '五鎮共用的排法通則' }
+        ],
+        'layouts/east/stages': [
+            { href: '../', icon: '🏞️', label: '冬郵小鎮完美佈局', desc: '這份規劃的成品全圖' },
+            { href: '../../../walkthrough/', icon: '🧭', label: '經營與升級', desc: '收支、課題與年度排程' },
+            { href: '../economy/', icon: '💰', label: '冬郵小鎮分階段經營', desc: '收支曲線與維持費排行' }
+        ],
+        'layouts/east/economy': [
+            { href: '../stages/', icon: '🧱', label: '冬郵小鎮分階段建設', desc: '這些錢要花在哪一格' },
+            { href: '../../../db/tasks/', icon: '📝', label: '挑戰資料庫', desc: '40 級逐級費用與學費' },
+            { href: '../training/', icon: '🎓', label: '冬郵小鎮分階段育成', desc: '老師、學生與社團' }
+        ],
+        'layouts/east/training': [
+            { href: '../stages/', icon: '🧱', label: '冬郵小鎮分階段建設', desc: '這些人要在哪上課' },
+            { href: '../../../db/teachers/', icon: '🧑‍🏫', label: '老師資料庫', desc: '38 位的五科與成長' },
+            { href: '../../../training/', icon: '🎓', label: '育成', desc: '跨城鎮通用的養成系統' }
         ],
         'layouts/lake': [
             { href: '../east/', icon: '🏞️', label: '冬郵小鎮完美佈局', desc: '同樣 4 處水場要繞' },
