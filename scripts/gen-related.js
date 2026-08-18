@@ -80,9 +80,26 @@ const RELATED = {
         // lake 24×24 三分之一水面、valley 26×26 多層、hill 26×26 斜面最少。
         // 排完每一鎮都至少被推薦一次（舊設定只推 health 與 east，lake/valley/hill 永遠不被推薦）。
         'layouts/health': [
+            { href: 'stages/', icon: '🧱', label: '健康鎮分階段建設', desc: '四階段施工順序與中途碼' },
             { href: '../hill/', icon: '⛰️', label: '百靈山丘完美佈局', desc: '同樣斜面最少、好排 4×4' },
-            { href: '../east/', icon: '🏞️', label: '冬郵小鎮完美佈局', desc: '段差只有 1 處且已設通道' },
             { href: '../', icon: '🗺️', label: '佈局設計原則', desc: '五鎮共用的排法通則' }
+        ],
+        // 健康鎮的分階段子頁在 layouts/health/stages/ 等，橫向去處是「同一張圖的成品」
+        // 與交叉引用的通用章節，不是別的城鎮（與 layouts/lake/* 同一套邏輯）。
+        'layouts/health/stages': [
+            { href: '../', icon: '🏫', label: '健康鎮完美佈局', desc: '這份規劃的成品全圖' },
+            { href: '../../../walkthrough/', icon: '🧭', label: '經營與升級', desc: '收支、課題與年度排程' },
+            { href: '../economy/', icon: '💰', label: '健康鎮分階段經營', desc: '收支曲線與維持費排行' }
+        ],
+        'layouts/health/economy': [
+            { href: '../stages/', icon: '🧱', label: '健康鎮分階段建設', desc: '這些錢要花在哪一格' },
+            { href: '../../../db/tasks/', icon: '📝', label: '挑戰資料庫', desc: '40 級逐級費用與學費' },
+            { href: '../training/', icon: '🎓', label: '健康鎮分階段育成', desc: '老師、學生與社團' }
+        ],
+        'layouts/health/training': [
+            { href: '../stages/', icon: '🧱', label: '健康鎮分階段建設', desc: '這些人要在哪上課' },
+            { href: '../../../db/teachers/', icon: '🧑‍🏫', label: '老師資料庫', desc: '38 位的五科與成長' },
+            { href: '../../../training/', icon: '🎓', label: '育成', desc: '跨城鎮通用的養成系統' }
         ],
         'layouts/east': [
             { href: '../lake/', icon: '🏞️', label: '湖岸小鎮完美佈局', desc: '同樣 4 處水場要繞' },

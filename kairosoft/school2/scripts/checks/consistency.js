@@ -293,42 +293,46 @@ module.exports = function consistencyChecks(ctx) {
         if (rows.length) ctx.info('來源徽章認得的佈局', rows);
     }
 
-    /* ========== 5c) sim 內嵌的 LAKE_STAGES 分享碼 ↔ 站上頁面的同一段碼 ==========
-       第 5 組（站上分享碼 roundtrip）掃描時**刻意跳過 sim/**，所以 sim 內嵌的四段完整碼
-       在那裡是看不見的。少了這一組，腐爛會完全靜默：重算湖岸佈局 → 攻略頁換了新碼、
+    /* ========== 5c) sim 內嵌的 TOWN_STAGES 分享碼 ↔ 站上頁面的同一段碼 ==========
+       第 5 組（站上分享碼 roundtrip）掃描時**刻意跳過 sim/**，所以 sim 內嵌的各段完整碼
+       在那裡是看不見的。少了這一組，腐爛會完全靜默：重算某鎮佈局 → 攻略頁換了新碼、
        sim 裡的舊碼原封不動，而指紋是從碼**本身**算出來的，舊碼配舊名永遠自洽，
-       來源徽章還會信心滿滿地叫它「第 2 階」。這裡逐字比對兩邊。
-       第 4 階沒有自己的碼（它就是完美佈局），所以它比對的是 layouts/lake/index.html。 */
+       來源徽章還會信心滿滿地叫它「第 2 階」。這裡逐鎮逐字比對兩邊。
+       各鎮第 4 階沒有自己的碼（它就是完美佈局），所以它比對的是 layouts/<town>/index.html。 */
     {
         const bad = [], rows = [];
-        let stages = null;
-        const m = /const LAKE_STAGES = (\[[\s\S]*?\n        \]);/.exec(html);
-        if (!m) bad.push('sim 內找不到 LAKE_STAGES（改名了？那分階段面板已經載不出任何一階）');
+        let townStages = null;
+        const m = /const TOWN_STAGES = (\{[\s\S]*?\n        \});/.exec(html);
+        if (!m) bad.push('sim 內找不到 TOWN_STAGES（改名了？那分階段面板已經載不出任何一階）');
         else {
-            try { stages = new Function('return ' + m[1])(); }
-            catch (e) { bad.push('LAKE_STAGES 解析失敗：' + e.message); }
+            try { townStages = new Function('return ' + m[1])(); }
+            catch (e) { bad.push('TOWN_STAGES 解析失敗：' + e.message); }
         }
-        if (stages) {
+        let total = 0;
+        if (townStages) {
             const onPage = new Map();          // page 相對路徑 → 該頁所有分享碼
             for (const { page, code } of siteCodes) {
                 if (!onPage.has(page)) onPage.set(page, []);
                 onPage.get(page).push(code);
             }
-            for (const st of stages) {
-                const src = st.n === 4 ? 'layouts/lake/index.html' : 'layouts/lake/stages/index.html';
-                const codes = onPage.get(src) || [];
-                if (!codes.length) { bad.push(`第 ${st.n} 階：${src} 上一組分享碼都找不到`); continue; }
-                if (!codes.includes(st.code)) {
-                    bad.push(`第 ${st.n} 階：sim 內嵌的碼（${st.code.length} 字元）在 ${src} 上找不到逐字相同的一段`
-                        + ` —— 面板會載入一張跟攻略文字對不上的圖`);
-                    continue;
+            for (const town of Object.keys(townStages)) {
+                for (const st of townStages[town]) {
+                    total++;
+                    const src = st.n === 4 ? `layouts/${town}/index.html` : `layouts/${town}/stages/index.html`;
+                    const codes = onPage.get(src) || [];
+                    if (!codes.length) { bad.push(`${town} 第 ${st.n} 階：${src} 上一組分享碼都找不到`); continue; }
+                    if (!codes.includes(st.code)) {
+                        bad.push(`${town} 第 ${st.n} 階：sim 內嵌的碼（${st.code.length} 字元）在 ${src} 上找不到逐字相同的一段`
+                            + ` —— 面板會載入一張跟攻略文字對不上的圖`);
+                        continue;
+                    }
+                    rows.push(`${town} 第 ${st.n} 階 ${st.name}：${st.code.length} 字元 ← ${src}`);
                 }
-                rows.push(`第 ${st.n} 階 ${st.name}：${st.code.length} 字元 ← ${src}`);
             }
         }
-        check('lakestages', `sim 的 LAKE_STAGES ↔ 站上頁面的分享碼逐字相同（${stages ? stages.length : 0} 階）`,
-            bad.length, bad.length ? bad : '四階的內嵌碼都與頁面上的同一段一致');
-        if (rows.length) ctx.info('分階段面板載得出來的四階', rows);
+        check('lakestages', `sim 的 TOWN_STAGES ↔ 站上頁面的分享碼逐字相同（${townStages ? Object.keys(townStages).length : 0} 鎮 ${total} 階）`,
+            bad.length, bad.length ? bad : '每一階的內嵌碼都與頁面上的同一段一致');
+        if (rows.length) ctx.info('分階段面板載得出來的各階', rows);
     }
 
     /* ================= 6) DEV_GUIDE 的 cond 與 needs 自洽 ================= */
