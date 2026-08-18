@@ -103,9 +103,18 @@ check('原始地形的 ' + baseSlopes.length + ' 格斜坡未被蓋掉', lostSlo
     lostSlopes.map(([r, c]) => 'X' + E.gameX(r) + '/Y' + E.gameY(c) + '=' + g[r][c].type).join('、'));
 
 /* 6.5) 斜坡轉角：實機不能蓋任何東西（含鋪面），連走廊/道路都不行——跟一般斜坡不同。
-        用原始地形推導轉角座標（轉角判定只看高度，不受佈局影響），逐格確認佈局沒有把它變成空地以外的東西。 */
-const cornerCells = [];
-for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++) if (E.isSlopeCorner(base, r, c)) cornerCells.push([r, c]);
+        用原始地形推導轉角座標（轉角判定只看高度，不受佈局影響），逐格確認佈局沒有把它變成空地以外的東西。
+        towns.js 的 terrainOverride（實機逐格核對）優先於演算法：slopes 從轉角集合剔除
+        （引擎的地圖邊界特例會誤判）、corners 額外加入（引擎認不出的凹角/樞紐格）。 */
+const ov = E.town.terrainOverride || {};
+const ovKey = ([x, y]) => (x - 2) + ',' + (gridCols + 1 - y);
+const ovSlopes = new Set((ov.slopes || []).map(ovKey));
+const ovCorners = new Set((ov.corners || []).map(ovKey));
+const cornerKeys = new Set();
+for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++) if (E.isSlopeCorner(base, r, c)) cornerKeys.add(r + ',' + c);
+for (const k of ovSlopes) cornerKeys.delete(k);
+for (const k of ovCorners) cornerKeys.add(k);
+const cornerCells = [...cornerKeys].map(k => k.split(',').map(Number));
 const violatedCorners = cornerCells.filter(([r, c]) => g[r][c].type !== 'empty');
 check('斜坡轉角（' + cornerCells.length + ' 格）沒有被放置任何東西', violatedCorners.length === 0,
     violatedCorners.map(([r, c]) => 'X' + E.gameX(r) + '/Y' + E.gameY(c) + '=' + g[r][c].type).join('、'));
