@@ -115,8 +115,13 @@ for (let r = 0; r < gridRows; r++) for (let c = 0; c < gridCols; c++) if (E.isSl
 for (const k of ovSlopes) cornerKeys.delete(k);
 for (const k of ovCorners) cornerKeys.add(k);
 const cornerCells = [...cornerKeys].map(k => k.split(',').map(Number));
-const violatedCorners = cornerCells.filter(([r, c]) => g[r][c].type !== 'empty');
-check('斜坡轉角（' + cornerCells.length + ' 格）沒有被放置任何東西', violatedCorners.length === 0,
+/* 「放置」指玩家動作。原生地形自帶的裝飾（樹林/櫻花/花壇等）可以長在轉角上
+   ——湖岸的原生樹就長在斜坡上，同理——所以與原生地形完全相同的格子不算違規；
+   佈局若把轉角上的原生物件「換」成別的東西，那才是實機做不到的動作。 */
+const violatedCorners = cornerCells.filter(([r, c]) =>
+    g[r][c].type !== 'empty' &&
+    !(g[r][c].type === base[r][c].type && g[r][c].elevation === base[r][c].elevation));
+check('斜坡轉角（' + cornerCells.length + ' 格）沒有被放置任何東西（原生物件不算）', violatedCorners.length === 0,
     violatedCorners.map(([r, c]) => 'X' + E.gameX(r) + '/Y' + E.gameY(c) + '=' + g[r][c].type).join('、'));
 
 /* 7) 水塘：實機確認水塘可以被建設覆蓋破壞、變回平地，所以「破壞」是合法手段，
