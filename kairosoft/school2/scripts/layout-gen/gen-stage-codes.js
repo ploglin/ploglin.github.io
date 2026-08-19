@@ -223,7 +223,21 @@ for (const n of [1, 2, 3, 4]) {
         blocked = blockedBuildings(g);
     }
     const code = n === 4 ? perfectCode : encodeMap(g);
-    const ok = !blocked || blocked.count === 0;
+    /* 原生建築沒得順延（它開局就在），若它在完美佈局裡只靠晚一階才有配額的校門連通，
+       那「這一階走不到」就是實機的真相，不是快照的缺陷——照實回報、不當失敗。
+       （例：溪谷的原生教室與飼育鱷魚都只靠第 2 階的南門接上。） */
+    let hardBlocked = blocked;
+    if (blocked && blocked.count > 0) {
+        const isOriginal = b => b.cells.every(([r, c]) => (starting[r][c] || {}).type === b.type);
+        const origBlocked = blocked.blocks.filter(isOriginal);
+        const rest = blocked.blocks.filter(b => !isOriginal(b));
+        if (origBlocked.length) {
+            console.log(`  第 ${n} 階原生建築暫時走不到（等下一階的校門，實機亦同）：` +
+                origBlocked.map(b => E.items[b.type].name + '@X' + E.gameX(b.cells[0][0]) + '/Y' + E.gameY(b.cells[0][1])).join('、'));
+        }
+        hardBlocked = { count: rest.length, blocks: rest };
+    }
+    const ok = !hardBlocked || hardBlocked.count === 0;
     if (!ok) allOk = false;
     // 逐階統計
     const spots = E.activeSpots(g);
@@ -255,6 +269,10 @@ for (const n of [1, 2, 3, 4]) {
     prevGrid = g;
 }
 
+if (process.env.STAGE_DEBUG) {
+    for (const r of results) fs.writeFileSync(path.join(__dirname, `stage-debug-${r.n}.txt`), r.code + '\n');
+    console.log('（STAGE_DEBUG：各階中間碼已寫到 stage-debug-N.txt）');
+}
 if (!allOk) { console.log('\n有階段出現被包圍的建築，需要人工介入。'); process.exit(1); }
 
 if (STATS) {

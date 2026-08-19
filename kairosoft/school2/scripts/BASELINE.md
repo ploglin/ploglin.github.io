@@ -24,19 +24,19 @@ node kairosoft/school2/scripts/check.js [--verbose] [--strict]
 
 | 項目 | 基線 |
 |---|---|
-| 掃描頁面 | **182** 頁（`.html`，跳過 `.git`/`.idea`/`node_modules`/`assets`/`scripts`/`scratchpad`/`.github`） |
-| 內部連結 | **2,431 條 0 壞**（頁面 1,719、靜態資源 712） |
-| 外部連結 | 296 條（只計數，不連網） |
-| app 狀態片段 | 20 條（`sim/#m=…` 分享碼，不驗 id） |
+| 掃描頁面 | **185** 頁（`.html`，跳過 `.git`/`.idea`/`node_modules`/`assets`/`scripts`/`scratchpad`/`.github`） |
+| 內部連結 | **2,511 條 0 壞**（頁面 1,784、靜態資源 727） |
+| 外部連結 | 302 條（只計數，不連網） |
+| app 狀態片段 | 23 條（`sim/#m=…` 分享碼，不驗 id） |
 | 逸出 repo 的相對路徑 | 0 條 |
-| 錨點 | **739 條**（同頁 606、跨頁 **133**）→ **0 壞** |
+| 錨點 | **768 條**（同頁 626、跨頁 **142**）→ **0 壞** |
 | 同頁 id 重複 | 0 頁 |
-| canonical | **182 / 182**；全部等於 `https://ploglin.cc/` ＋ repo 相對目錄 |
-| og:url | **182 / 182**；全部等於 canonical 應有值 |
-| og:image | **179 / 182**，全部指向存在的檔案。缺的 3 頁是**刻意**的（見下「刻意的例外」） |
-| 麵包屑 | 170 頁 / **431 個節點**；層數＝目錄深度、每個非末項 href 可達、末項無 href，全對 |
-| sitemap.xml | **181 個 URL**；可索引頁 182 頁（差的 1 頁是 `404.html`，兩邊用同一份 `SKIP_FILES`）；0 漏收、0 多收、0 重複、0 壞檔 |
-| `?v=` 版號 | 共用軌（`/assets/*`）**只有一個版號**：**`?v=9`，506 處 / 179 檔**。本地軌（school2 的 `guide.css`／`guide.js`）自帶版號、兩者同號：**`?v=8`，81 處** |
+| canonical | **185 / 185**；全部等於 `https://ploglin.cc/` ＋ repo 相對目錄 |
+| og:url | **185 / 185**；全部等於 canonical 應有值 |
+| og:image | **182 / 185**，全部指向存在的檔案。缺的 3 頁是**刻意**的（見下「刻意的例外」） |
+| 麵包屑 | 173 頁 / **443 個節點**；層數＝目錄深度、每個非末項 href 可達、末項無 href，全對 |
+| sitemap.xml | **184 個 URL**；可索引頁 185 頁（差的 1 頁是 `404.html`，兩邊用同一份 `SKIP_FILES`）；0 漏收、0 多收、0 重複、0 壞檔 |
+| `?v=` 版號 | 共用軌（`/assets/*`）**只有一個版號**：**`?v=9`，515 處 / 182 檔**。本地軌（school2 的 `guide.css`／`guide.js`）自帶版號、兩者同號：**`?v=8`，87 處** |
 | `data.js` 引用 | **115 處**，**0 處帶 `?v`**（含 14 個 db 分類頁＋db 索引＋sim 速查表） |
 
 ### 刻意的例外（不是待辦）
@@ -64,29 +64,29 @@ node kairosoft/school2/scripts/check.js [--verbose] [--strict]
 | 湖岸地形 | 18 格樹木高度依實機修正（2026-08-11）；原始斜坡 44 格 |
 | 分享碼往返 | 26×24 無前綴舊格式、26×26 帶 `RxC;` 前綴，往返一致 |
 | 移動規則 | 只走鋪面（草地／走廊／道路／水泥地）；空地與未鋪斜坡不可通行；鋪過的斜坡仍算斜坡 |
-| 站上分享碼 | **20 組**全部 decode→encode 往返一致（五鎮完美佈局＋入門三張＋湖岸／健康鎮／百靈山丘／冬郵各三張分階段中途進度） |
-| 來源徽章 `SITE_LAYOUTS` | 表 20 筆 ↔ 站上 20 組，每組都認得出是哪一頁的哪一張 |
+| 站上分享碼 | **23 組**全部 decode→encode 往返一致（五鎮完美佈局＋入門三張＋五鎮各三張分階段中途進度） |
+| 來源徽章 `SITE_LAYOUTS` | 表 23 筆 ↔ 站上 23 組，每組都認得出是哪一頁的哪一張 |
 | 深色覆寫層 | 兩套選擇器（系統偏好 `:root:not([data-theme="light"])` 與手動 `:root[data-theme="dark"]`）**內容逐字一致**；淺色 utility 全部有深色映射 |
 | `DEV_GUIDE` | 10 組「×N」條件的 `cond` ↔ `needs` 自洽 |
 | sim 速查表 | 3 個分頁全部讀 `db/data.js` 正本、11 條交接連結覆蓋 14 個 db 分類、**手寫副本沒有復活** |
-| 每頁可見字數 | **41 頁全部 ≥1,000**（不含 `sim/`；新增冬郵小鎮三個分階段子頁） |
+| 每頁可見字數 | **44 頁全部 ≥1,000**（不含 `sim/`；新增溪谷小鎮三個分階段子頁） |
 
-### 各頁可見字數（少→多，2026-08-18 冬郵小鎮分階段三頁上線後）
+### 各頁可見字數（少→多，2026-08-19 溪谷小鎮分階段三頁上線後）
 
 最少 **1,695**（`db/towns/`）、最多 **25,818**（`training/`）。門檻是 1,000，最薄的一頁還有 1.7 倍餘裕。
 
 ```
 1695 db/towns/                      1852 db/achievements/               2002 db/ranks/                      2235 db/
 2249 db/lessons/                    2330 db/items/                      2383 db/clubs/                      2491 db/careers/
-2635 db/spots/                      2959 layouts/east/training/         3002 layouts/hill/training/         3029 layouts/health/training/
-3087 db/events/                     3150 db/terms/                      3339 glossary/                      3383 layouts/health/economy/
-3432 ./                             3477 layouts/east/economy/          3611 layouts/hill/economy/          4058 db/teachers/
-4229 db/students/                   5020 db/tasks/                      6227 layouts/health/stages/         6395 layouts/east/stages/
-7016 layouts/hill/stages/           7109 db/facilities/                 7673 layouts/                       7796 combo/
-8675 layouts/lake/training/         8793 layouts/lake/economy/          9611 now/                           11697 start/
-12508 endgame/                      16837 layouts/east/                 19077 layouts/valley/               19081 layouts/health/
-19370 layouts/lake/stages/          22692 layouts/lake/                 23045 layouts/hill/                 23452 walkthrough/
-25818 training/
+2635 db/spots/                      2915 layouts/valley/training/       2959 layouts/east/training/         3002 layouts/hill/training/
+3029 layouts/health/training/       3087 db/events/                     3150 db/terms/                      3339 glossary/
+3383 layouts/health/economy/        3432 ./                             3448 layouts/valley/economy/        3477 layouts/east/economy/
+3611 layouts/hill/economy/          4058 db/teachers/                   4229 db/students/                   5020 db/tasks/
+6227 layouts/health/stages/         6297 layouts/valley/stages/         6395 layouts/east/stages/           7016 layouts/hill/stages/
+7109 db/facilities/                 7673 layouts/                       7796 combo/                         8675 layouts/lake/training/
+8793 layouts/lake/economy/          9611 now/                           11697 start/                        12508 endgame/
+16837 layouts/east/                 18728 layouts/valley/               19081 layouts/health/               19370 layouts/lake/stages/
+22692 layouts/lake/                 23045 layouts/hill/                 23452 walkthrough/                  25818 training/
 ```
 
 > 2026-08-10 的批次讓六個 `layouts/` 頁與五個攻略頁掉了字：把「本站舊版怎麼錯、驗證器抓到什麼 bug、產生器怎麼跑」這類**開發過程自述**從對外頁面上拿掉，只留下對讀者有用的結論與誠實標注。少的字集中在 `layouts/*`（合計約 −5,900），其餘是註腳白話化。**這不是回歸。**
@@ -244,6 +244,21 @@ node kairosoft/school2/scripts/check.js [--verbose] [--strict]
 > 「校門零維持」句同步改寫。5c 現在守 **4 鎮 16 階**。頁數 38→**41**、sitemap 178→**181**、
 > 站上分享碼 17→**20 組**。**這不是回歸。**
 
+> 2026-08-19：**溪谷小鎮動線修復＋分階段架構上線**（第四個複製鎮，五鎮分階段架構到此收齊）。
+> ㈠ **動線修復**——106→**0 棟**、走不到鋪面 126→**0**：`fix-connectivity.js` 補 86 格（11 格按鄰格
+> 語意定型）；跨在斜坡上的辦公室搬到 X9–10/Y19–18、被轉角封死的廣播室與社團教室各拆一棟
+> （皆為佈局重複棟，原生 6 棟一棟未動）、壓轉角的櫻花還原為原生草；舊規則時代「擦成空地」的
+> 三格原生鋪面（X4/Y5 道路、X9/Y20 與 X11/Y2 草地）**還原**——現行規則下原生鋪面斜坡本來就能走。
+> 棟數 141→**139**、完美佈局碼 →**3786** 字元（頁面/指紋/SVG/表同步）。
+> ㈡ **主頁大改**：「橡皮擦 6 格」章節照現行移動規則整段改寫（要動的只剩田埂路 X8/Y9 與竹林
+> X16/Y4 兩格）、斜坡教義更正（鋪過仍算斜坡、裸斜坡不可走）、斜坡數 136→**166**（規則改版重推導）、
+> build 節四階段化。㈢ **三個新頁** `layouts/valley/{stages,economy,training}/`（6,297／3,448／2,915 字）。
+> 溪谷故事：第 1 階臺地肩 13 棟（五鎮最小開局）、第 2 階南門 43 棟、原生教室與鱷魚第 1 階
+> 走不到是地圖真相（gen-stage-codes 新增「原生建築暫時走不到」豁免，照實回報不當失敗）。
+> ㈣ sim 加資料：`TOWN_STAGES.valley`、`TOWN_CLASS_SLOTS.valley`、`SITE_LAYOUTS` 三指紋。
+> 5c 現在守 **5 鎮 20 階**。頁數 41→**44**、sitemap 181→**184**、站上分享碼 20→**23 組**。
+> **五鎮分階段架構全部完成。這不是回歸。**
+
 ---
 
 ## 上線後不可逆的項目 ↔ 守衛
@@ -253,7 +268,7 @@ node kairosoft/school2/scripts/check.js [--verbose] [--strict]
 | `TYPE_KEYS` 的順序 | 分享碼 ABI。重排會讓所有既存分享連結解出**別的建築** | `scripts/typekeys.lock`（只准 append） |
 | 26×24 分享碼無前綴 | 舊連結沒有 `RxC;` 前綴，加了就解不開 | check.js「26×24 維持無前綴舊格式」 |
 | 三個 localStorage key | `pa2_maps_v9`／`pa2_prefs_v1`／`pa2_autosave_v1`——改名等於清掉玩家的存檔 | 無自動守衛，靠 CLAUDE.md 明寫 |
-| 站上 20 組分享碼 | 佈局頁的「🧩 在模擬器開啟」按鈕；改了地圖就要重新產生 | check.js 往返檢查 ＋ `layout-gen/verify.js <town> page` |
+| 站上 23 組分享碼 | 佈局頁的「🧩 在模擬器開啟」按鈕；改了地圖就要重新產生 | check.js 往返檢查 ＋ `layout-gen/verify.js <town> page` |
 | sim 內嵌的 `TOWN_STAGES` 各鎮四段碼 | 分階段面板靠它載入；站上分享碼的掃描刻意跳過 `sim/`，而指紋是從碼**本身**算的（舊碼配舊名永遠自洽），沒有守衛就會靜默過期 | check.js「TOWN_STAGES ↔ 站上頁面的分享碼逐字相同」 |
 | canonical／og:url | 已被 Google 收錄，改動等於換網址 | link-check 第 3 節 |
 
