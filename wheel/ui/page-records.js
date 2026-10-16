@@ -1,5 +1,6 @@
 // 中獎紀錄 #/e/:id/records（D.9）：依獎項 / 依時間、顯示作廢、作廢・恢復作廢・修改作廢原因與備註、查看稽核、跳到名單、
 // 撤回加碼、活動日誌、稽核資訊、匯出 CSV、列印（records?print=1）。
+// 手機（螢幕 ≤ 720 px）：表格改成每筆一張卡（無橫向捲動）；列印一律輸出原表格（兩種結構都輸出，CSS 依螢幕 / 列印切換）。
 import { h, html, raw, icon, popMenu, on, dialog, fmtTime } from './dom.js';
 import { ctx, edit } from './app-ctx.js';
 import { toast } from './toast.js';
@@ -10,6 +11,7 @@ import { voidDraws, editVoid, canRestore, restoreVoid, canRevertBonus, revertBon
 import { eligible } from '../core/pool.js';
 import { weightsUI } from './unlock.js';
 import { winnersCSV, auditCSV, fileName, download } from '../io/export.js';
+import { recordColumns, recordMeta } from './records-model.js';
 
 const view = { byPrize: true, showVoided: true };
 const ev = () => ctx.store.official;
@@ -34,9 +36,20 @@ export async function renderRecords(main, { route }) {
       { label: T.exportWinnersAll, fn: () => download(fileName(e, '中獎名單含作廢', 'csv'), winnersCSV(e, { includeVoided: true })) },
       { label: T.exportAudit, fn: () => download(fileName(e, '稽核', 'csv'), auditCSV(e)) },
     ]));
+    expBtn.classList.add('wh-only-d');
+    // 手機：匯出與列印收成一顆「匯出 ▾」
+    const expMenu = h('button', { type: 'button', class: 'btn btn-ghost wh-only-m', 'aria-haspopup': 'menu', disabled: !e.draws.length }, icon('download', 18), T.exportMenu, icon('chevronDown', 16));
+    expMenu.addEventListener('click', () => popMenu(expMenu, [
+      { label: T.exportWinners, fn: () => download(fileName(e, '中獎名單', 'csv'), winnersCSV(e)) },
+      { label: T.exportWinnersAll, fn: () => download(fileName(e, '中獎名單含作廢', 'csv'), winnersCSV(e, { includeVoided: true })) },
+      { label: T.exportAudit, fn: () => download(fileName(e, '稽核', 'csv'), auditCSV(e)) },
+      { sep: true },
+      { label: T.print, fn: () => window.print() },
+    ]));
     const head = h('div', { class: 'wh-page-head' },
-      h('h2', { class: 'wh-h2' }, `${T.recordsTitle} · 已確認 ${nC} · 作廢 ${nV} · 待確認 ${nP}`),
-      h('div', { class: 'wh-row-gap wh-noprint' }, expBtn, h('button', { type: 'button', class: 'btn btn-ghost', disabled: !e.draws.length, onclick: () => window.print() }, icon('printer', 18), T.print)));
+      h('h2', { class: 'wh-h2 wh-only-d' }, `${T.recordsTitle} · 已確認 ${nC} · 作廢 ${nV} · 待確認 ${nP}`),
+      h('div', { class: 'wh-mhead wh-only-m' }, h('h2', { class: 'wh-h2' }, T.recordsTitle), h('p', { class: 'wh-page-sub' }, T.recordsSub(nC, nV, nP))),
+      h('div', { class: 'wh-row-gap wh-noprint' }, expBtn, h('button', { type: 'button', class: 'btn btn-ghost wh-only-d', disabled: !e.draws.length, onclick: () => window.print() }, icon('printer', 18), T.print), expMenu));
 
     const radio = (val, label) => {
       const r = h('input', { type: 'radio', name: 'rec-view', checked: view.byPrize === val });
@@ -74,12 +87,22 @@ export async function renderRecords(main, { route }) {
       showPrize ? h('td', null, (prizeOf.get(d.prizeId) || {}).name || '') : null,
       h('td', { class: 'who' }, h('span', { class: 'nm' }, displayName(e, d.snapshot, dup))),
       h('td', null, d.snapshot.group ? h('span', { class: 'wh-pgroup' }, h('i', { class: 'sw', style: { background: gmap.has(d.snapshot.group) ? PALETTE[gmap.get(d.snapshot.group) % 8] : 'transparent' } }), d.snapshot.group) : '—'),
-      h('td', null, d.snapshot.code || '—'),
+      h('td', { class: 'col-code' }, d.snapshot.code || '—'),
       h('td', { class: 'num' }, fmtTime(d.drawnAt)),
       h('td', null, statusCell(d)),
       h('td', { class: 'wh-noprint' }, h('button', { type: 'button', class: 'icon-btn', 'data-act': 'more', 'aria-label': `${T.more}：第 ${d.seq} 抽 ${d.snapshot.name}`, 'aria-haspopup': 'menu' }, icon('more'))));
-    const thead = (showPrize) => h('thead', null, h('tr', null, h('th', null, T.colSeq), showPrize ? h('th', null, T.colPrize) : null, h('th', null, T.colWinner), h('th', null, T.colGroup), h('th', null, T.colCode), h('th', null, T.colTime), h('th', null, T.colStatus), h('th', { class: 'wh-noprint' }, h('span', { class: 'sr-only' }, '動作'))));
+    const thead = (showPrize) => h('thead', null, h('tr', null, h('th', null, T.colSeq), showPrize ? h('th', null, T.colPrize) : null, h('th', null, T.colWinner), h('th', null, T.colGroup), h('th', { class: 'col-code' }, T.colCode), h('th', null, T.colTime), h('th', null, T.colStatus), h('th', { class: 'wh-noprint' }, h('span', { class: 'sr-only' }, '動作'))));
     const visible = (d) => view.showVoided || d.status !== 'voided';
+    // 手機卡片：第一行「#序號 得獎者 …… 狀態」，第二行「（獎項 ·）群組 · 編號 · 時間 ⋯」；作廢保留刪除線並寫明狀態
+    const sw = (g) => (g ? h('i', { class: 'sw', style: { background: gmap.has(g) ? PALETTE[gmap.get(g) % 8] : 'transparent' } }) : null);
+    const card = (d, showPrize) => h('div', { class: 'wh-rcard' + (d.status === 'voided' ? ' is-voided' : d.status === 'pending' ? ' is-pending' : ''), 'data-id': d.id },
+      h('div', { class: 'wh-rcard-l1' },
+        h('span', { class: 'wh-rcard-seq' }, `#${d.seq}`),
+        h('span', { class: 'nm' }, displayName(e, d.snapshot, dup)),
+        h('span', { class: 'wh-rcard-st' }, statusCell(d))),
+      h('div', { class: 'wh-rcard-l2' },
+        h('span', { class: 'wh-rcard-meta' }, sw(d.snapshot.group), recordMeta(d, { showPrize, prizeName: (prizeOf.get(d.prizeId) || {}).name || '', time: fmtTime(d.drawnAt) }).join(' · ')),
+        h('button', { type: 'button', class: 'icon-btn', 'data-act': 'more', 'aria-label': `${T.more}：第 ${d.seq} 抽 ${d.snapshot.name}`, 'aria-haspopup': 'menu' }, icon('more'))));
 
     if (view.byPrize) {
       for (const pz of sortedPrizes(e)) {
@@ -92,7 +115,8 @@ export async function renderRecords(main, { route }) {
           b.reverted ? ` · ${T.bonusReverted}` : (canRevertBonus(e, pz.id, i) ? h('button', { type: 'button', class: 'link-btn wh-noprint', 'data-revert': `${pz.id}:${i}` }, T.revertBonus) : '')));
         const det = h('details', { class: 'wh-rec-prize', open: true },
           h('summary', null, h('b', null, pz.name), pz.description ? h('span', { class: 'wh-muted' }, ` · ${pz.description}`) : '', h('span', { class: 'wh-rec-count' }, `已抽 ${c.confirmed} / ${pz.quantity}`, doneMark), ...bonus),
-          list.length ? h('div', { class: 'wh-table-wrap' }, h('table', { class: 'wh-table wh-rec-table' }, thead(false), h('tbody', null, ...list.map(d => row(d, false))))) : h('p', { class: 'wh-muted wh-pad' }, '尚未抽出。'));
+          list.length ? h('div', { class: 'wh-table-wrap wh-rec-tw' }, h('table', { class: 'wh-table wh-rec-table' }, thead(false), h('tbody', null, ...list.map(d => row(d, false))))) : h('p', { class: 'wh-muted wh-pad' }, '尚未抽出。'),
+          list.length ? h('div', { class: 'wh-rec-cards' }, ...list.map(d => card(d, false))) : null);
         nodes.push(det);
       }
     } else {
@@ -100,12 +124,18 @@ export async function renderRecords(main, { route }) {
       // C.7-3：舞台上名單異動標示在兩抽之間
       const changes = e.log.filter(l => l.inStage && /^participant\./.test(l.type)).map(l => l.at);
       const body = [];
+      const cards = [];
       list.forEach((d, i) => {
         body.push(row(d, true));
+        cards.push(card(d, true));
         const nx = list[i + 1];
-        if (nx && changes.some(t => t > d.drawnAt && t < nx.drawnAt)) body.push(h('tr', { class: 'wh-rec-note' }, h('td', { colspan: 8 }, icon('warning', 14), T.rosterChanged(d.seq, nx.seq))));
+        if (nx && changes.some(t => t > d.drawnAt && t < nx.drawnAt)) {
+          body.push(h('tr', { class: 'wh-rec-note' }, h('td', { colspan: recordColumns(true).length }, icon('warning', 14), T.rosterChanged(d.seq, nx.seq))));
+          cards.push(h('p', { class: 'wh-rcard-note' }, icon('warning', 14), T.rosterChanged(d.seq, nx.seq)));
+        }
       });
-      nodes.push(h('div', { class: 'wh-table-wrap' }, h('table', { class: 'wh-table wh-rec-table' }, thead(true), h('tbody', null, ...body))));
+      nodes.push(h('div', { class: 'wh-table-wrap wh-rec-tw' }, h('table', { class: 'wh-table wh-rec-table' }, thead(true), h('tbody', null, ...body))));
+      if (cards.length) nodes.push(h('div', { class: 'wh-rec-cards wh-rec-time' }, ...cards));
     }
     nodes.push(extras(e));
     root.replaceChildren(...nodes);

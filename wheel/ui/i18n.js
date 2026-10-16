@@ -290,6 +290,14 @@ export const T = {
 
   // 舞台入口
   stageMissing: '舞台模組尚未就緒，請稍後重新整理。',
+
+  // 手機版（≤ 720 px）
+  filter: '篩選', filterTitle: '篩選與檢視', filterView: '檢視', filterStatus: '狀態', filterJump: '跳到群組', filterDone: '完成',
+  addMenu: '新增或匯入', addOne: '新增一人', importRoster: '匯入名單',
+  peopleSub: (n, g, ok, won, ex) => `${n} 人${g ? ` · ${g} 群組` : ''} · 可抽 ${ok} · 已得獎 ${won}${ex ? ` · 排除 ${ex}` : ''}`,
+  tagExcluded: '排除', tagWon: '得獎',
+  exportMenu: '匯出',
+  recordsSub: (c, v, p) => `已確認 ${c} · 作廢 ${v} · 待確認 ${p}`,
 };
 
 /** 文案 lint 用：本檔所有字串（含舞台文案） */

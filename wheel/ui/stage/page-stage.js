@@ -20,6 +20,7 @@ import { createTabSync, createScreenChannel, SCREEN_STALE_MS } from './sync.js';
 import {
   t, mainAction, buildPublicView, wheelPreview, poolSignature, spinTimeline, emptyPoolText, moveCardFocus,
   mainPressAction, barMainModel,
+  HANDHELD_QUERY, handMainModel, handSecondaryItems, handHint,
 } from './logic.js';
 import { renderVoidBar, focusVoidBar } from './void-bar.js';
 import { openModal } from './overlay.js';
@@ -27,7 +28,7 @@ import * as OV from './overlays.js';
 import { bonusSpec } from './dialog-bonus.js';
 import { quickListSpec } from './quick-list.js';
 import { renderSidebar } from './sidebar.js';
-import { buildControlsBar, renderControlsBar } from './controls-bar.js';
+import { buildControlsBar, renderControlsBar, renderMainBtn } from './controls-bar.js';
 import { attachKeys } from './hotkeys.js';
 import { ensureStageCss, appUrl, screenUrl, sessGet, sessSet, stripModeParam, prefersReducedMotion } from './env.js';
 import { fill } from './util.js';
@@ -63,6 +64,9 @@ class StageController {
     this.readOnly = false;
     this.fxSeq = 0;
     this.audio = createAudio(() => (this.ev ? this.ev.settings.sound : null));
+    // 掌上模式：手機直式（窄且觸控）＋沒有觀眾視窗。只影響這台手機的呈現，不寫回設定、不進公開畫面模型
+    try { this.mqHand = window.matchMedia(HANDHELD_QUERY); } catch { this.mqHand = null; }
+    this.handNoDock = sessGet('wheel_stage_nodock:' + this.eventId) === '1';   // 「投影用：隱藏操作區」
   }
 
   freshUi() {
@@ -78,7 +82,11 @@ class StageController {
 
   get ev() { return this.store ? this.store.event : null; }
   overlays() { return OV; }
-  get hostChrome() { const ev = this.ev; return this.audience.connected || !!(ev && !ev.settings.projectionMode); }
+  /** 掌上模式（不論 projectionMode 都走手機版面）；接上觀眾視窗就回到原本的主持畫面 */
+  get handheld() { return !!(this.mqHand && this.mqHand.matches) && !this.audience.connected; }
+  /** 掌上模式且底部操作區常駐（沒有切到「投影用：隱藏操作區」） */
+  get handDocked() { return this.handheld && !this.handNoDock; }
+  get hostChrome() { if (this.handheld) return false; const ev = this.ev; return this.audience.connected || !!(ev && !ev.settings.projectionMode); }
   /** 作廢條、說明等文字是否以「會投影出去」為前提（沒有觀眾視窗 = 主持畫面就是投影畫面） */
   get mirror() { return !this.audience.connected; }
   get reduced() {
@@ -178,6 +186,13 @@ class StageController {
       h('div', { class: 'ws-primary-row' }, this.mainBtn, this.voidBtn, this.revokeBtn, this.disarmBtn), this.hintEl, this.statusEl);
     this.colWrap.appendChild(this.primary);
 
+    // 掌上模式底部操作區（常駐）：上排依階段的次要鈕＋提示＋「功能」，下排全寬主鈕
+    this.handSec = h('div', { class: 'ws-hand-sec' });
+    this.handLabel = h('span', { class: 'ws-cb-main-label' });
+    this.handMain = h('button', { type: 'button', class: 'ws-hand-main', onclick: () => this.pressHandMain() }, this.handLabel);
+    this.handEl = h('div', { class: 'ws-hand', role: 'toolbar', 'aria-label': t('hand.dockLabel') }, this.handSec, this.handMain);
+    this.colWrap.appendChild(this.handEl);
+
     this.side = h('aside', { class: 'ws-side', 'aria-label': t('side.prizes') });
     this.controls = h('div', { class: 'ws-controls', role: 'toolbar', 'aria-label': t('bar.settings') });
     this.cbParts = buildControlsBar(this, this.controls);
@@ -206,6 +221,8 @@ class StageController {
     };
     this._vis = () => { if (document.visibilityState === 'visible') this.requestWakeLock(); };
     this._fs = () => this.render();
+    this._mqh = () => { if (this.ready) this.render(); };
+    if (this.mqHand && this.mqHand.addEventListener) this.mqHand.addEventListener('change', this._mqh);
     window.addEventListener('pointermove', this._mm, { passive: true });
     window.addEventListener('pointerdown', this._md, { passive: true });
     window.addEventListener('beforeunload', this._bu);
@@ -232,6 +249,7 @@ class StageController {
     window.removeEventListener('beforeunload', this._bu);
     document.removeEventListener('visibilitychange', this._vis);
     document.removeEventListener('fullscreenchange', this._fs);
+    if (this.mqHand && this.mqHand.removeEventListener && this._mqh) this.mqHand.removeEventListener('change', this._mqh);
     if (this.offTabs) this.offTabs();
     if (this.offStore) this.offStore();
     if (this.tabs) this.tabs.release();
@@ -364,7 +382,11 @@ class StageController {
     const ev = this.ev;
     if (!ev || this.dead || !this.ready) return;
     const chrome = this.hostChrome;
+    const hand = this.handheld;
     const el = this.el;
+    el.classList.toggle('is-handheld', hand);
+    el.classList.toggle('hand-nodock', hand && this.handNoDock);
+    this.view.setCompact(hand);
     el.classList.toggle('is-mirror', !chrome);
     el.classList.toggle('is-host', chrome);
     el.classList.toggle('is-extended', this.audience.connected);
@@ -381,6 +403,7 @@ class StageController {
     if (chrome) renderSidebar(this, this.side, ev, pv);
     else this.side.replaceChildren();
     renderControlsBar(this, this.controls, this.cbParts, ev, chrome, barMainModel(this.mainAct, this.mainState()));
+    if (this.handDocked) this.renderHandDock(ev, pv);
     this.renderVoid(ev);
     if (this.ui.modal) this.ui.modal.refresh();
     this.broadcast(pv);
@@ -463,8 +486,9 @@ class StageController {
     const dup = sameNameSet(ev);
     const names = d.ids.map(id => { const r = ev.draws.find(x => x.id === id); return r ? displayName(ev, r.snapshot, dup) : ''; }).filter(Boolean);
     renderVoidBar(this.voidBar, d, {
-      mirror: this.mirror, names, absentRule: ev.settings.rules.absentKeepsEligibility,
+      mirror: this.mirror, handheld: this.handDocked, names, absentRule: ev.settings.rules.absentKeepsEligibility,
       onReason: (n) => this.act('void.reason', n),
+      onNote: () => this.act('void.note'),
       onSubmit: () => this.act('void.submit'),
       onCancel: () => this.closeOverlay(),
       onNoteInput: (v) => { d.note = v; },
@@ -475,7 +499,69 @@ class StageController {
     if (this.dead || !this.ready) return;
     if (this.ui.modal) { this.ui.modal.focusDefault(); return; }
     if (this.ui.overlay === 'void') { focusVoidBar(this.voidBar); return; }
-    try { this.mainBtn.focus({ preventScroll: true }); } catch { /* */ }
+    try { (this.handDocked ? this.handMain : this.mainBtn).focus({ preventScroll: true }); } catch { /* */ }
+  }
+
+  // ================= 掌上模式：底部操作區 =================
+  renderHandDock(ev, pv) {
+    const st = ev.stage;
+    renderMainBtn({ main: this.handMain, label: this.handLabel }, handMainModel(this.mainAct, this.mainState()));
+    const cs = this.ui.cardSelect;
+    const selecting = !!(cs && cs.active && !cs.recall);
+    const items = handSecondaryItems({ phase: st.phase, cardSelect: selecting, revoke: this.revokeVisible(ev), overlay: this.ui.overlay });
+    let emptyText = '';
+    if (this.mainAct && this.mainAct.kind === 'empty') {
+      const prize = prizeById(ev, st.currentPrizeId);
+      if (prize) emptyText = emptyPoolText(buildPoolDetailed(ev, prize).stats);
+    }
+    const rs = st.phase === 'reveal' ? ops.currentRevealStyle(ev) : null;
+    const got = pv.reveal ? pv.reveal.cards.filter(c => c.fresh && c.state !== 'short').length : 0;
+    const hint = handHint({
+      phase: st.phase, cardSelect: selecting, revealDone: ops.isRevealDone(ev), style: rs ? rs.style : null,
+      autoLeft: this.ui.autoConfirmAt ? Math.max(0, Math.ceil((this.ui.autoConfirmAt - Date.now()) / 1000)) : 0,
+      shortfall: this.ui.shortfall && st.phase === 'reveal' ? { got, miss: this.ui.shortfall } : null,
+      emptyText,
+    });
+    // 次要列高度固定（48 px，即使沒有按鈕）：按鈕出現 / 消失時轉盤不跟著縮放
+    const key = JSON.stringify([items, hint, !!this.ui.overlay]);
+    if (this.handSec._key === key) return;
+    this.handSec._key = key;
+    const run = { cardExit: () => this.act('card.exit'), void: () => this.act('void.select'), revoke: () => this.act('void.last'), disarm: () => this.act('disarm') };
+    fill(this.handSec,
+      ...items.map(it => h('button', {
+        type: 'button', class: 'ws-hand-btn' + (it.tone === 'void' ? ' is-void' : ''), disabled: it.disabled,
+        onclick: () => { if (this.canPress()) run[it.id](); },
+      }, it.label)),
+      h('span', { class: 'ws-hand-hint', role: 'status' }, hint),
+      h('button', {
+        type: 'button', class: 'ws-hand-more', 'aria-haspopup': 'dialog', disabled: !!this.ui.overlay,
+        onclick: () => this.openHandMenu(),
+      }, icon('more', 22), h('span', {}, t('hand.more'))));
+  }
+
+  /** 掌上模式主鈕：單擊即動作（不收起、不計時隱藏）；浮層、選卡、寫入中、600 ms 冷卻內不動作（同 barMainModel） */
+  pressHandMain() {
+    if (!this.canPress()) return;
+    const m = handMainModel(this.mainAct, this.mainState());
+    if (m.disabled || !m.action) return;
+    this.audio.unlock();
+    this.cancelAutoConfirm();
+    this.act(m.action);
+  }
+
+  openHandMenu() {
+    if (!this.canPress() || this.ui.overlay) return;
+    this.openOverlay('hand_menu', OV.handMenu(this));
+  }
+
+  /** 「投影用：隱藏操作區」開關（只存在這個分頁）。隱藏後退回點螢幕叫出操作列的行為 */
+  setHandDock(show) {
+    this.handNoDock = !show;
+    sessSet('wheel_stage_nodock:' + this.eventId, show ? null : '1');
+    this.ui.controlsShown = false;
+    if (!show) this.toast(t('hand.hideDockNote'), 5000);
+    this.render();
+    this.focusPrimary();
   }
 
   broadcast(pv) {
@@ -510,7 +596,7 @@ class StageController {
   // ================= 投影模式：操作列與游標 =================
   /** e：pointer 事件（可為 null）；touch：觸控 / 觸控筆叫出（操作列停留較久，不處理游標） */
   onMouseMove(e, touch = false) {
-    if (this.dead) return;
+    if (this.dead || this.handDocked) return;      // 掌上模式操作區常駐：不叫出操作列、不藏游標
     if (!touch && e && e.clientX != null) {
       const pt = { x: e.clientX, y: e.clientY };
       this.lastPt = pt;

@@ -382,11 +382,65 @@ export function moveCardFocus(order, selectable, focus, key, cols) {
   return order[j];
 }
 
-/** 揭曉牆每列張數：2 列；格陣每列最多 6 張 */
-export function cardColumns(style, n) {
+/**
+ * 揭曉牆每列張數：2 列；格陣每列最多 6 張。
+ * handheld（掌上模式，只影響主持端這台手機）：single / chain 1 欄；wall 6 名以下 1 欄、7–12 名 2 欄；
+ * grid 2 欄（每頁仍是 24 張，資料與翻頁不變，畫面改成可捲動）。
+ */
+export function cardColumns(style, n, handheld = false) {
+  if (handheld) {
+    if (style === 'grid') return Math.max(1, Math.min(2, n));
+    if (style === 'wall') return n <= 6 ? 1 : 2;
+    return 1;
+  }
   if (style === 'wall') return Math.max(1, Math.ceil(n / 2));
   if (style === 'grid') return Math.max(1, Math.min(6, n));
   return Math.max(1, n);
+}
+
+// ---------- 掌上模式（手機直式且沒有觀眾視窗；只改這台手機的呈現，不進公開畫面模型、不寫回設定） ----------
+export const HANDHELD_QUERY = '(max-width: 700px) and (pointer: coarse)';
+
+/** 掌上模式揭曉卡姓名字級 { max, min }（px）：單人 72–96，其餘最小 28；375 寬下三字姓名不縮到看不見 */
+export function handNamePx(style, n) {
+  if (style === 'single') return { max: 96, min: 72 };
+  if (style === 'chain') return { max: 56, min: 28 };
+  if (style === 'wall') return n <= 6 ? { max: 48, min: 28 } : { max: 36, min: 28 };
+  return { max: 36, min: 28 };
+}
+
+/** 掌上模式底部主鈕：沿用 barMainModel 的階段文案；選卡模式改說「改為補抽 n 人」 */
+export function handMainModel(ma, s) {
+  const m = barMainModel(ma, s);
+  if (!s.cardSelect) return m;
+  const label = t('hand.voidPicked', { n: s.cardSelect.picked || 0 });
+  return { ...m, label, title: label };
+}
+
+/**
+ * 掌上模式主鈕上方的次要鈕（依階段出現）。s：{ phase, cardSelect: bool, revoke: bool, overlay }
+ * → [{ id: 'cardExit'|'void'|'revoke'|'disarm', label, tone: 'line'|'void', disabled }]
+ */
+export function handSecondaryItems(s) {
+  const out = [];
+  if (s.cardSelect) out.push({ id: 'cardExit', label: t('btn.cancel'), tone: 'line' });
+  else if (s.phase === 'reveal') out.push({ id: 'void', label: t('btn.void'), tone: 'void' });
+  if (s.revoke) out.push({ id: 'revoke', label: t('hand.revoke'), tone: 'line' });
+  if (s.phase === 'armed') out.push({ id: 'disarm', label: t('btn.disarm'), tone: 'line' });
+  return out.map(x => ({ ...x, disabled: !!s.overlay }));
+}
+
+/**
+ * 掌上模式次要列的一行提示（觸控文案，不含鍵位）。
+ * s：{ phase, cardSelect, revealDone, style, autoLeft（秒）, shortfall: {got, miss}|null, emptyText }
+ */
+export function handHint(s) {
+  if (s.autoLeft > 0) return t('hand.autoConfirmIn', { n: s.autoLeft });
+  if (s.cardSelect) return t('hand.pickHint');
+  if (s.phase === 'reveal' && s.shortfall) return t('hand.shortfall', s.shortfall);
+  if (s.emptyText) return s.emptyText;
+  if (s.phase === 'reveal') return s.revealDone ? t('hand.confirmHint') : s.style === 'grid' ? t('hand.pageHint') : t('hand.flipHint');
+  return '';
 }
 
 /** 候選 0 人的原因統計（C.7-2）→ 「已得獎 60 · 排除 5 …」 */

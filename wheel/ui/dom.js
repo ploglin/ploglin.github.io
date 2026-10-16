@@ -86,6 +86,7 @@ const P = {
   arrowUp: '<path d="M12 19V5M6 11l6-6 6 6"/>',
   arrowDown: '<path d="M12 5v14M6 13l6 6 6-6"/>',
   file: '<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/>',
+  filter: '<path d="M4 6h16M7 12h10M10 18h4"/>',
   copy: '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/>',
 };
 export function icon(name, size = 20, cls = '') {
@@ -294,6 +295,11 @@ export function inInput(target = document.activeElement) {
   if (!target) return false;
   const tag = target.tagName || '';
   return /^(INPUT|TEXTAREA|SELECT)$/.test(tag) || !!target.isContentEditable;
+}
+
+/** 設定頁手機版面（與 wheel.css 的 @media (max-width: 720px) 一致）；只用來決定要不要多畫手機專用的控制項 */
+export function isPhone() {
+  try { return window.matchMedia('(max-width: 720px)').matches; } catch { return false; }
 }
 
 /** 數字輸入停用滑鼠滾輪改值（B.3：籤數框） */

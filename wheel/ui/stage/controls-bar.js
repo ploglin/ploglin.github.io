@@ -53,6 +53,7 @@ const ACTIONS = {
   settings: (c) => c.openOverlay('stage_settings', c.overlays().stageSettings(c)),
   help: (c) => c.act('help'),
   exit: (c) => c.requestExit(),
+  handDock: (c) => c.setHandDock(true),
 };
 
 /** 左右段的內容描述（純資料，用來比對要不要重建） */
@@ -92,6 +93,11 @@ export function barSideItems(ctl, ev) {
     { gap: 48 },
     btn('exit', t('bar.exit'), null, null, true, 'ws-cb-exit', 'exit'),
   );
+  // 掌上模式隱藏了底部操作區（投影用）：這列才會出現；不放全螢幕、觀眾視窗、快捷鍵，多一顆「顯示操作區」
+  if (ctl.handheld) {
+    const drop = new Set(['fullscreen', 'screen', 'help']);
+    return { left, right: [btn('handDock', t('hand.showDock'), null, null, true, 'ws-cb-line'), ...right.filter(d => !d.gap && !drop.has(d.id))] };
+  }
   return { left, right };
 }
 

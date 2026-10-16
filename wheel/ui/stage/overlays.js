@@ -210,6 +210,46 @@ export function stageSettings(ctl) {
   };
 }
 
+// ---------- 掌上模式「⋯ 功能」底部選單 ----------
+// 不放全螢幕、觀眾視窗、快捷鍵；每一項先關掉選單再執行（多半會再開另一個浮層）。
+export function handMenu(ctl) {
+  const items = () => {
+    const ev = ctl.ev;
+    const ph = ev.stage.phase;
+    const can = (list) => list.includes(ph);
+    const reh = ctl.store.rehearsal;
+    const snd = !!(ev.settings.sound && ev.settings.sound.enabled);
+    return [
+      { id: 'prizes', label: t('hand.prizes'), on: can(['idle', 'armed', 'prize_done', 'all_done']), fn: () => ctl.act('prizeMenu', ph === 'armed' ? 'disarm' : undefined) },
+      { id: 'roster', label: t('hand.roster'), on: can(['idle', 'prize_done']), fn: () => ctl.act('quickList') },
+      { id: 'recent', label: t('hand.recent'), on: can(['idle', 'prize_done', 'all_done']), fn: () => ctl.act('recent') },
+      { id: 'bonus', label: t('hand.bonus'), on: can(['idle', 'prize_done', 'all_done']), fn: () => ctl.act('bonus') },
+      { id: 'sound', label: t('hand.sound'), side: snd ? t('settings.on') : t('settings.off'), on: true, fn: () => ctl.act('mute') },
+      reh ? { id: 'skip', label: t('hand.skip'), on: ph === 'spinning', fn: () => ctl.act('skip') } : null,
+      { id: 'settings', label: t('hand.settings'), on: true, fn: () => ctl.openOverlay('stage_settings', stageSettings(ctl)) },
+      { id: 'rehearsal', label: reh ? t('bar.rehearsalOnTitle') : t('bar.rehearsalOffTitle'), on: true, fn: () => ctl.toggleRehearsal() },
+      { id: 'dock', label: t('hand.hideDock'), side: t('settings.off'), on: true, fn: () => ctl.setHandDock(false) },
+      { id: 'exit', label: t('hand.exit'), on: true, fn: () => ctl.requestExit() },
+    ].filter(Boolean);
+  };
+  let key = '';
+  const build = (list) => [h('div', { class: 'ws-list' }, list.map(it => h('button', {
+    type: 'button', class: 'ws-list-item', 'data-nav': '1', disabled: !it.on,
+    onclick: () => { ctl.closeOverlay(); it.fn(); },
+  }, h('span', { class: 'ws-li-main' }, it.label), it.side ? h('span', { class: 'ws-li-side' }, it.side) : null)))];
+  const first = items();
+  key = JSON.stringify(first.map(it => [it.id, it.label, it.side, it.on]));
+  return {
+    title: t('hand.menuTitle'), className: 'ws-modal-list', body: build(first),
+    // 舞台每次重繪都會呼叫：內容沒變就不重建，免得手指按下時按鈕被換掉
+    refresh: (m) => {
+      const list = items();
+      const k = JSON.stringify(list.map(it => [it.id, it.label, it.side, it.on]));
+      if (k !== key) { key = k; m.setBody(build(list)); }
+    },
+  };
+}
+
 // ---------- ? 快捷鍵說明（鏡像模式不含作廢原因對照） ----------
 export function help(ctl) {
   const ev = ctl.ev;

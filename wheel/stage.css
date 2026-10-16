@@ -431,7 +431,122 @@ select.ws-input { padding-right: 32px; }
   .ws-voidbar { padding: 6px 16px; }
 }
 
+/* ---------- 掌上模式（.is-handheld：手機直式且沒有觀眾視窗，page-stage 依 matchMedia 動態切換） ----------
+   只改主持端這台手機的呈現：不論投影模式設定都走這套版面；投影 / 觀眾視窗的規則不受影響。
+   字級例外（D.13 之外，手機近距離操作）：標題 16 px、提示 15 px、群組 18 px。 */
+.ws-hand { display: none; }
+.wstage.is-handheld { touch-action: manipulation; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+.wstage.is-handheld input, .wstage.is-handheld textarea, .wstage.is-handheld select { -webkit-user-select: text; user-select: text; }
+.wstage.is-handheld .ws-input, .wstage.is-handheld .ws-vb-note { font-size: 18px; }
+.wstage.is-handheld .ws-side, .wstage.is-handheld .ws-primary { display: none; }
+
+/* 頂部：活動名＋彩排徽章（32 px，讓出安全區）；資訊列 64 px（sectors.js HAND_INFO_H） */
+.wstage.is-handheld .ws-top {
+  position: relative; flex: none; height: calc(32px + env(safe-area-inset-top)); align-items: center; justify-content: flex-start; gap: 8px;
+  padding: env(safe-area-inset-top) calc(12px + env(safe-area-inset-right)) 0 calc(12px + env(safe-area-inset-left));
+}
+.wstage.is-handheld .ws-title { font-size: 16px; max-width: none; min-width: 0; flex: 0 1 auto; }
+.wstage.is-handheld .ws-watermark { flex: none; font-size: 13px; line-height: 20px; padding: 0 8px; opacity: 1; letter-spacing: 0; color: var(--ws-yellow); border-color: var(--ws-yellow); }
+.wstage.is-handheld .ws-info { height: 64px; padding: 0 12px 2px; }
+.wstage.is-handheld .ws-prize { font-size: 28px; max-width: 100%; }
+.wstage.is-handheld .ws-sub { font-size: 18px; }
+.wstage.is-handheld .ws-wheelnote, .wstage.is-handheld .ws-sampled { font-size: 15px; }
+.wstage.is-handheld .ws-sampled { right: 12px; }
+
+/* 底部常駐操作區：次要列 48 px（高度固定，按鈕依階段出現）＋全寬主鈕 64 px */
+.wstage.is-handheld:not(.hand-nodock) .ws-hand {
+  display: flex; flex-direction: column; gap: 8px; flex: none;
+  padding: 8px calc(12px + env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) calc(12px + env(safe-area-inset-left));
+  background: rgba(11, 16, 32, .72); border-top: 1px solid var(--ws-line);
+}
+.ws-hand-sec { display: flex; align-items: center; gap: 8px; height: 48px; min-width: 0; }
+.ws-hand-btn {
+  flex: none; min-height: 48px; padding: 0 16px; border-radius: 12px; cursor: pointer;
+  background: transparent; color: var(--ws-ink); border: 2px solid var(--ws-line); font-size: 18px; font-weight: 700; white-space: nowrap;
+}
+.ws-hand-btn.is-void { color: var(--ws-red); border-color: var(--ws-red); }
+.ws-hand-btn[disabled] { opacity: .4; cursor: default; }
+.ws-hand-hint { flex: 1; min-width: 0; font-size: 15px; color: var(--ws-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ws-hand-more {
+  flex: none; min-height: 48px; min-width: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; padding: 0 12px;
+  border-radius: 12px; border: 0; background: rgba(255, 255, 255, .08); color: var(--ws-ink); font-size: 17px; cursor: pointer;
+}
+.ws-hand-more[disabled] { opacity: .4; cursor: default; }
+.ws-hand-main {
+  display: block; width: 100%; min-height: 64px; padding: 0 16px; border: 0; border-radius: 16px; cursor: pointer;
+  background: var(--ws-yellow); color: var(--ws-dark); font: inherit; font-size: 24px; font-weight: 800;
+}
+.ws-hand-main.is-confirm { background: var(--ws-green); }
+.ws-hand-main.is-secondary { background: transparent; color: var(--ws-yellow); box-shadow: inset 0 0 0 2px var(--ws-yellow); }
+.ws-hand-main.is-void { background: var(--ws-red); color: var(--ws-dark); }
+.ws-hand-main[aria-disabled="true"] { opacity: .4; cursor: default; }
+.wstage.is-handheld .ws-toast { bottom: calc(144px + env(safe-area-inset-bottom)); font-size: 16px; }
+.wstage.is-handheld.hand-nodock .ws-toast { bottom: calc(24px + env(safe-area-inset-bottom)); }
+
+/* 「投影用：隱藏操作區」：退回點螢幕叫出的操作列，手機上改成上下堆疊 */
+.wstage.is-handheld:not(.hand-nodock) .ws-controls { display: none; }
+.wstage.is-handheld .ws-controls { left: 8px; right: 8px; display: flex; flex-direction: column; align-items: stretch; gap: 8px; }
+.wstage.is-handheld .ws-cb-left, .wstage.is-handheld .ws-cb-right { justify-self: auto; }
+.wstage.is-handheld .ws-cb-mid { order: 3; }
+.wstage.is-handheld .ws-cb-main { width: 100%; max-width: none; min-width: 0; }
+
+/* 揭曉卡：可捲動的直式清單（單人卡 72–96 px、其餘最小 28 px，見 logic.handNamePx） */
+.wstage.is-handheld .ws-reveal { justify-content: flex-start; overflow-y: auto; -webkit-overflow-scrolling: touch; gap: 10px; padding: 8px 12px 12px; }
+.wstage.is-handheld .ws-reveal > :first-child { margin-top: auto; }
+.wstage.is-handheld .ws-reveal > :last-child { margin-bottom: auto; }
+.wstage.is-handheld .ws-cards, .wstage.is-handheld .ws-cards.ws-single, .wstage.is-handheld .ws-cards.ws-chain { width: 100%; gap: 10px; }
+.wstage.is-handheld .ws-card { padding: 12px 16px; border-width: 3px; border-radius: 14px; gap: 2px; }
+.wstage.is-handheld .ws-single .ws-card { padding: 24px 16px; border-width: 4px; }
+.wstage.is-handheld .ws-name { text-overflow: ellipsis; }
+.wstage.is-handheld .ws-single .ws-name { letter-spacing: .06em; }
+.wstage.is-handheld .ws-group { font-size: 18px; }
+.wstage.is-handheld .ws-code { font-size: 16px; }
+.wstage.is-handheld .ws-vlabel { font-size: 22px; }
+.wstage.is-handheld .ws-pageno { font-size: 18px; }
+.wstage.is-handheld .ws-card.is-focus { outline-width: 4px; outline-offset: 2px; }
+/* 1 欄：姓名靠左、群組靠右（單人卡除外） */
+.wstage.is-handheld .ws-cards.ws-col1:not(.ws-single) .ws-card { flex-direction: row; align-items: baseline; justify-content: space-between; gap: 12px; text-align: left; }
+.wstage.is-handheld .ws-col1:not(.ws-single) .ws-name { flex: 1; width: auto; min-width: 0; }
+.wstage.is-handheld .ws-col1:not(.ws-single) .ws-group { flex: none; max-width: 45%; }
+.wstage.is-handheld .ws-upcoming { gap: 16px; padding: 0 12px; }
+.wstage.is-handheld .ws-up-cards { width: 100%; gap: 8px; }
+.wstage.is-handheld .ws-up-card { padding: 8px; font-size: 24px; border-width: 2px; border-radius: 12px; }
+.wstage.is-handheld .ws-up-text { font-size: 22px; }
+.wstage.is-handheld .ws-up-big { font-size: 36px; }
+.wstage.is-handheld .ws-recall { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+/* 作廢條（掌上版）：原因 2 欄 × 3（44 px）、備註／取消／確定（48 px） */
+.ws-voidbar.ws-voidbar-hand {
+  flex-direction: column; align-items: stretch; flex-wrap: nowrap; gap: 10px; font-size: 18px; background: #10172c; border-radius: 18px 18px 0 0;
+  padding: 12px calc(12px + env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) calc(12px + env(safe-area-inset-left));
+}
+.ws-voidbar-hand .ws-vb-title { font-size: 18px; }
+.ws-vb-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.ws-voidbar-hand .ws-vb-reason { min-height: 44px; padding: 0 8px; border: 2px solid var(--ws-line); border-radius: 10px; font-size: 18px; }
+.ws-voidbar-hand .ws-vb-reason.is-sel { border-color: var(--ws-yellow); color: var(--ws-yellow); background: rgba(249, 220, 92, .1); }
+.ws-voidbar-hand .ws-vb-rule { font-size: 14px; }
+.ws-voidbar-hand .ws-vb-note { flex: none; width: 100%; min-width: 0; height: 44px; }
+.ws-vb-row { display: flex; gap: 8px; }
+.ws-voidbar-hand .ws-vb-btn { flex: 1; min-height: 48px; padding: 0 8px; background: transparent; color: var(--ws-ink); font-size: 18px; cursor: pointer; }
+.ws-voidbar-hand .ws-vb-btn.is-primary { flex: 1.4; background: var(--ws-ink); color: var(--ws-dark); }
+
+/* 浮層改底部抽屜（高度用 dvh、讓出底部安全區） */
+.wstage.is-handheld .ws-modal-back { align-items: flex-end; padding: 0; }
+.wstage.is-handheld .ws-modal {
+  width: 100%; max-height: 85vh; max-height: 85dvh; border-radius: 18px 18px 0 0; border-bottom: 0;
+  padding-bottom: env(safe-area-inset-bottom); animation: ws-sheet .22s ease both;
+}
+.wstage.is-handheld .ws-modal-head { padding: 12px 10px 4px 16px; }
+.wstage.is-handheld .ws-modal-title { font-size: 22px; }
+.wstage.is-handheld .ws-modal-body { font-size: 18px; padding: 4px 16px 8px; }
+.wstage.is-handheld .ws-modal-actions { padding: 10px 16px 14px; }
+.wstage.is-handheld .ws-modal-actions .ws-btn { flex: 1 1 auto; }
+.wstage.is-handheld .ws-list-item { font-size: 20px; }
+.wstage.is-handheld .ws-quick-list { max-height: 40vh; }
+.wstage.is-handheld .ws-qadd { flex-wrap: wrap; }
+
 /* ---------- 動態 ---------- */
+@keyframes ws-sheet { from { opacity: 0; transform: translateY(32px); } to { opacity: 1; transform: none; } }
 @keyframes ws-fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes ws-pop { from { opacity: 0; transform: scale(.86) rotateX(30deg); } to { opacity: 1; transform: none; } }
 @keyframes ws-rise { from { opacity: 0; transform: translateY(24px) scale(.96); } to { opacity: 1; transform: none; } }

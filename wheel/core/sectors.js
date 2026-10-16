@@ -3,15 +3,16 @@ import { clamp, groupOrder, PALETTE } from './model.js';
 import { randomUnit } from './rng.js';
 
 export const INFO_H = 110;       // 資訊區高
+export const HAND_INFO_H = 64;   // 掌上模式（手機直式、只在主持端）資訊區高
 export const BUTTON_H = 88;      // 一般模式主按鈕區
 export const SIDEBAR_W = 360;
 export const MIN_TEXT_ARC = 20;  // 文字處弧寬下限（px），低於此改等分 / 降級
 export const TEXT_R = 0.66;      // 文字所在半徑比例
 
-/** Dpx = min(主區寬, 主區高 − 110 − 主按鈕區) × 0.92 */
-export function wheelDiameter({ width, height, projection = true, sidebar = false }) {
+/** Dpx = min(主區寬, 主區高 − 110 − 主按鈕區) × 0.92；infoH 只給掌上模式另算（HAND_INFO_H），投影一律 110 */
+export function wheelDiameter({ width, height, projection = true, sidebar = false, infoH = INFO_H }) {
   const mainW = width - (sidebar ? SIDEBAR_W : 0);
-  const mainH = height - INFO_H - (projection ? 0 : BUTTON_H);
+  const mainH = height - infoH - (projection ? 0 : BUTTON_H);
   return Math.floor(Math.max(0, Math.min(mainW, mainH)) * 0.92);
 }
 

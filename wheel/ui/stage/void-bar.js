@@ -1,20 +1,24 @@
 // 底部作廢條（D.7）：取代對話框。鏡像版不列原因（只在條尾顯示圈數字小代號）、條尾是「確定」「取消」兩顆按鈕（不寫鍵位）；
 // 延伸版列出 1–6 原因，條尾保留鍵位文字。
+// 掌上版（opts.handheld）：6 個原因 2 欄 × 3 的按鈕，下方「備註」「取消」「確定」三顆大按鈕，不寫鍵位。
 import { h } from '../dom.js';
 import { voidBarModel, t } from './logic.js';
 import { fill } from './util.js';
 
 /**
  * bar：容器元素；d：{ ids, confirmed, reason, note, noteOpen }
- * opts：{ mirror, names, absentRule, onReason(n), onSubmit(), onCancel(), onNoteInput(v) }
+ * opts：{ mirror, handheld, names, absentRule, onReason(n), onSubmit(), onCancel(), onNoteInput(v), onNote() }
  */
 export function renderVoidBar(bar, d, opts) {
-  if (!d) { bar.hidden = true; bar.replaceChildren(); bar._key = ''; return; }
-  const m = voidBarModel({ mirror: opts.mirror, confirmed: d.confirmed, names: opts.names, reason: d.reason, absentRule: opts.absentRule });
-  const key = JSON.stringify([m, d.noteOpen]);
+  if (!d) { bar.hidden = true; bar.replaceChildren(); bar._key = ''; bar.classList.remove('ws-voidbar-hand'); return; }
+  const hand = !!opts.handheld;
+  const m = voidBarModel({ mirror: hand ? false : opts.mirror, confirmed: d.confirmed, names: opts.names, reason: d.reason, absentRule: opts.absentRule });
+  const key = JSON.stringify([m, d.noteOpen, hand]);
   bar.hidden = false;
   if (bar._key === key) return;
   bar._key = key;
+  bar.classList.toggle('ws-voidbar-hand', hand);
+  if (hand) { renderHand(bar, d, m, opts); return; }
   const parts = [h('span', { class: 'ws-vb-title' }, m.title)];
   if (m.reasons) {
     parts.push(h('span', { class: 'ws-vb-reasons' }, m.reasons.map(r => h('button', {
@@ -45,6 +49,29 @@ export function renderVoidBar(bar, d, opts) {
     h('button', { type: 'button', class: 'ws-vb-act', onclick: () => opts.onSubmit() }, enterTxt.act),
     h('span', {}, ' · '),
     h('button', { type: 'button', class: 'ws-vb-act', onclick: () => opts.onCancel() }, escTxt)));
+  fill(bar, ...parts);
+}
+
+/** 掌上版：原因 2 欄 × 3（44 px）＋備註／取消／確定（48 px）；仍是「作廢 → 確定」兩步 */
+function renderHand(bar, d, m, opts) {
+  const parts = [
+    h('div', { class: 'ws-vb-title' }, m.title),
+    h('div', { class: 'ws-vb-grid', role: 'group', 'aria-label': m.title }, m.reasons.map(r => h('button', {
+      type: 'button', class: 'ws-vb-reason' + (r.selected ? ' is-sel' : ''), 'aria-pressed': r.selected ? 'true' : 'false',
+      onclick: () => opts.onReason(r.n),
+    }, r.label))),
+  ];
+  if (m.rule) parts.push(h('div', { class: 'ws-vb-rule' }, m.rule));
+  if (d.noteOpen) {
+    const inp = h('input', { type: 'text', class: 'ws-vb-note', maxlength: '200', placeholder: t('void.notePlaceholder'), value: d.note || '' });
+    inp.addEventListener('input', () => opts.onNoteInput(inp.value));
+    inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); opts.onSubmit(); } });
+    parts.push(inp);
+  }
+  parts.push(h('div', { class: 'ws-vb-row' },
+    d.noteOpen ? null : h('button', { type: 'button', class: 'ws-vb-btn', onclick: () => opts.onNote && opts.onNote() }, t('hand.noteBtn')),
+    h('button', { type: 'button', class: 'ws-vb-btn', onclick: () => opts.onCancel() }, t('btn.cancel')),
+    h('button', { type: 'button', class: 'ws-vb-act ws-vb-btn is-primary', onclick: () => opts.onSubmit() }, t('void.confirmBtn'))));
   fill(bar, ...parts);
 }
 

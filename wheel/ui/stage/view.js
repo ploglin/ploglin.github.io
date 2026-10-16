@@ -3,8 +3,8 @@
 import { h } from '../dom.js';
 import { WheelCanvas } from './wheel-canvas.js';
 import { Confetti } from './confetti.js';
-import { t, spinTimeline, segmentAt, recoverRotation, cardColumns } from './logic.js';
-import { rotationAt, sectorAtPointer, wheelDiameter } from '../../core/sectors.js';
+import { t, spinTimeline, segmentAt, recoverRotation, cardColumns, handNamePx } from './logic.js';
+import { rotationAt, sectorAtPointer, wheelDiameter, HAND_INFO_H } from '../../core/sectors.js';
 import { fill } from './util.js';
 
 function fitName(el, maxPx, minPx = 24) {
@@ -30,6 +30,8 @@ export class StageView {
     this.keys = {};
     this.lastFx = null;
     this.lastAnnounce = '';
+    this.compact = false;        // 掌上模式（只由主持端設定；觀眾視窗永遠 false）
+    this.fit = null;
 
     this.titleEl = h('div', { class: 'ws-title' });
     this.wmEl = h('div', { class: 'ws-watermark', 'aria-hidden': 'true' }, t('stage.watermark'));
@@ -79,11 +81,20 @@ export class StageView {
     clearTimeout(this._bannerT); clearTimeout(this._marqT);
   }
 
-  /** 依主區尺寸算轉盤直徑（C.3）：主按鈕區不在 main 內，所以這裡一律以投影模式公式計算 */
+  /** 掌上模式切換：資訊區較矮、揭曉卡改直式；清掉 setOnce 快取讓下一次 render 重畫，下一幀重算直徑 */
+  setCompact(on) {
+    on = !!on;
+    if (this.compact === on) return;
+    this.compact = on;
+    this.keys = {};
+    requestAnimationFrame(() => this.layout());
+  }
+
+  /** 依主區尺寸算轉盤直徑（C.3）：主按鈕區不在 main 內，所以這裡一律以投影模式公式計算（掌上模式資訊區改用 HAND_INFO_H） */
   layout() {
     const w = this.main.clientWidth, hgt = this.main.clientHeight;
     if (!w || !hgt) return;
-    const D = wheelDiameter({ width: w, height: hgt, projection: true, sidebar: false });
+    const D = wheelDiameter({ width: w, height: hgt, projection: true, sidebar: false, infoH: this.compact ? HAND_INFO_H : undefined });
     if (D !== this.D) {
       this.D = D;
       this.wheel.setSize(D);
@@ -215,7 +226,7 @@ export class StageView {
     this.setOnce('up', `${u.style}|${u.n}|${u.redraw}`, () => {
       const kids = [];
       if (u.style === 'wall') {
-        const cols = cardColumns('wall', u.n);
+        const cols = cardColumns('wall', u.n, this.compact);
         const grid = h('div', { class: 'ws-up-cards', style: { '--cols': cols } });
         for (let i = 0; i < u.n; i++) grid.appendChild(h('div', { class: 'ws-up-card' }, t('stage.hidden')));
         kids.push(grid);
@@ -241,15 +252,17 @@ export class StageView {
   /** 揭曉卡片；decor = { select: {focus, picked:Set, selectable:Set}, hostChrome }。選卡模式中可選的卡片可點擊（交給 onCardClick） */
   renderReveal(r, decor) {
     const sel = decor && decor.select;
-    const key = JSON.stringify([r, sel ? [sel.focus, [...sel.picked], sel.selectable ? [...sel.selectable] : null] : null, decor && decor.hostChrome]);
+    const key = JSON.stringify([r, sel ? [sel.focus, [...sel.picked], sel.selectable ? [...sel.selectable] : null] : null, decor && decor.hostChrome, this.compact]);
     if (this.keys.reveal === key) return;
     this.keys.reveal = key;
     let cards = r.cards;
     if (r.style === 'grid') cards = cards.slice(r.page * r.perPage, (r.page + 1) * r.perPage);
-    const cols = cardColumns(r.style, cards.length);
+    const cols = cardColumns(r.style, cards.length, this.compact);
     this.cardCols = cols;
     this.cardOrder = cards.map(c => c.slot);
-    const box = h('div', { class: `ws-cards ws-${r.style}`, style: { '--cols': cols, '--name-px': r.namePx + 'px' } });
+    // 掌上模式另用手機字級（只影響主持端這台手機；公開畫面模型的 namePx 不變）
+    this.fit = this.compact ? handNamePx(r.style, cards.length) : { max: r.namePx, min: Math.min(r.style === 'grid' ? 24 : 28, r.namePx) };
+    const box = h('div', { class: `ws-cards ws-${r.style}${this.compact && cols === 1 ? ' ws-col1' : ''}`, style: { '--cols': cols, '--name-px': this.fit.max + 'px' } });
     for (const c of cards) {
       const cls = ['ws-card', 'is-' + c.state];
       if (sel && sel.focus === c.slot) cls.push('is-focus');
@@ -271,16 +284,31 @@ export class StageView {
     if (r.style === 'grid' && r.pages > 1) kids.push(h('div', { class: 'ws-pageno' }, t('stage.pageOf', { p: r.page + 1, n: r.pages })));
     fill(this.revealEl, ...kids);
     requestAnimationFrame(() => this.fitCards());
+    if (this.compact) this.scrollReveal(r);
     // aria-live：揭曉的名字
     const shown = r.cards.filter(c => c.state === 'shown' && c.fresh).map(c => c.name);
     const ann = shown.length && this.pv && this.pv.prize ? t('stage.announce', { prize: this.pv.prize.name, names: shown.join('、') }) : '';
     if (ann && ann !== this.lastAnnounce) { this.lastAnnounce = ann; this.liveEl.textContent = ann; }
   }
 
+  /** 掌上模式揭曉區可捲動：翻頁回到頂端；新翻開的卡片捲進畫面（選卡時不動，免得勾選中跳走） */
+  scrollReveal(r) {
+    const pageKey = r.seqLabel + '|' + r.style + ':' + r.page;     // 換批次或翻頁都從頂端開始
+    const shownN = r.cards.filter(c => c.state === 'shown').length;
+    if (this._scrollPage !== pageKey) { this._scrollPage = pageKey; this._shownN = shownN; this.revealEl.scrollTop = 0; return; }
+    if (shownN <= (this._shownN || 0) || r.style === 'grid') { this._shownN = shownN; return; }
+    this._shownN = shownN;
+    requestAnimationFrame(() => {
+      const shown = this.revealEl.querySelectorAll('.ws-card.is-shown');
+      const last = shown[shown.length - 1];
+      if (last && last.scrollIntoView) last.scrollIntoView({ block: 'nearest' });
+    });
+  }
+
   fitCards() {
     const r = this.pv && this.pv.reveal; if (!r) return;
-    const minPx = r.style === 'grid' ? 24 : 28;
-    for (const n of this.revealEl.querySelectorAll('.ws-name')) fitName(n, r.namePx, Math.min(minPx, r.namePx));
+    const f = this.fit || { max: r.namePx, min: Math.min(r.style === 'grid' ? 24 : 28, r.namePx) };
+    for (const n of this.revealEl.querySelectorAll('.ws-name')) fitName(n, f.max, f.min);
   }
 
   // ---------- 轉動播放 ----------

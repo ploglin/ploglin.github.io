@@ -7,7 +7,7 @@ export function ensureStageCss() {
   if (l) return { link: l, added: false };
   l = document.createElement('link');
   l.rel = 'stylesheet';
-  l.href = new URL('stage.css?v=2', WHEEL_BASE).href;
+  l.href = new URL('stage.css?v=3', WHEEL_BASE).href;
   l.dataset.wstage = '1';
   document.head.appendChild(l);
   return { link: l, added: true };

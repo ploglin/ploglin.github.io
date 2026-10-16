@@ -1,6 +1,9 @@
 // 名單管理 #/e/:id/participants（D.3）
 // 依群組分組（預設）/ 清單檢視、群組清單與統計、籤數（編輯入口只在解鎖時出現、唯讀顯示依資料，見 core/unlock.js weightView）、排除＋原因、批次操作（toast 6 s 復原）、去重、匯出、拖放匯入。
-import { h, html, raw, icon, on, popMenu, dialog, promptDialog, noWheel } from './dom.js';
+// 手機（≤ 720 px）：每人一行（勾選｜姓名＋小字｜狀態標籤｜⋯），列內不放可改值的控制項，改值一律點姓名開編輯面板；
+// 群組清單與統計收進「篩選」面板與頁標題下的小字；新增 / 匯入收成右下浮動 ＋；批次列固定在底部分頁列上方。
+// 手機專用節點以 .wh-only-m 標示（桌機不顯示），桌機專用以 .wh-only-d 標示（手機不顯示）。
+import { h, html, raw, icon, on, popMenu, dialog, promptDialog, noWheel, isPhone } from './dom.js';
 import { ctx, edit, editWithUndoToast } from './app-ctx.js';
 import { toast } from './toast.js';
 import { T, excludeReasonLabel, EXCLUDE_REASON_CHOICES } from './i18n.js';
@@ -72,10 +75,14 @@ export async function renderParticipants(main, { layout, route }) {
     for (const id of [...state.selected]) if (!ids.has(id)) state.selected.delete(id);
     root.classList.toggle('wh-noweight', !d.w.show);   // 不顯示籤數：格線用不含籤數欄的版本
     renderSide(layout.side, e, d, rerender);
+    batchClass();
     if (!e.participants.length) { root.replaceChildren(emptyRoster()); return; }
-    root.replaceChildren(header(e, d), toolbar(), listView(e, d), batchBar(e, d));
+    root.replaceChildren(header(e, d), toolbar(), listView(e, d), batchBar(e, d), fab());
     if (focusSel) { const f = root.querySelector(focusSel); if (f) f.focus(); }
   }
+
+  /** 手機：有勾選時 toast 要再往上讓出批次列（CSS 看 html.wh-batch-on） */
+  function batchClass() { document.documentElement.classList.toggle('wh-batch-on', state.selected.size > 0); }
 
   // ---------- 頁首 ----------
   function header(e, d) {
@@ -91,35 +98,85 @@ export async function renderParticipants(main, { layout, route }) {
         rerender();
       } },
     ]));
+    more.classList.add('wh-more-btn');
+    more.lastChild.replaceWith(h('span', { class: 'wh-more-t' }, T.more));
+    const excluded = e.participants.filter(p => p.excluded).length;
     return h('div', { class: 'wh-page-head' },
-      h('h2', { class: 'wh-h2' }, `${T.tabParticipants} · ${e.participants.length} 人${nGroups ? ` · ${nGroups} 群組` : ''}`),
+      h('h2', { class: 'wh-h2 wh-only-d' }, `${T.tabParticipants} · ${e.participants.length} 人${nGroups ? ` · ${nGroups} 群組` : ''}`),
+      h('div', { class: 'wh-mhead wh-only-m' },
+        h('h2', { class: 'wh-h2' }, T.tabParticipants),
+        h('p', { class: 'wh-page-sub' }, T.peopleSub(e.participants.length, nGroups, e.participants.length - excluded, d.won.size, excluded))),
       h('div', { class: 'wh-row-gap' },
-        h('button', { type: 'button', class: 'btn btn-ghost', onclick: () => openImportDialog({ onDone: rerender }) }, icon('upload', 18), T.import),
-        h('button', { type: 'button', class: 'btn btn-primary', onclick: () => personDialog(null, rerender) }, icon('plus', 18), T.addPerson),
+        h('button', { type: 'button', class: 'btn btn-ghost wh-only-d', onclick: () => openImportDialog({ onDone: rerender }) }, icon('upload', 18), T.import),
+        h('button', { type: 'button', class: 'btn btn-primary wh-only-d', onclick: () => personDialog(null, rerender) }, icon('plus', 18), T.addPerson),
         more));
+  }
+
+  /** 手機：右下浮動 ＋（新增一人 / 匯入）；有勾選時讓位給批次列 */
+  function fab() {
+    const b = h('button', { type: 'button', class: 'wh-fab wh-only-m', 'aria-label': T.addMenu, 'aria-haspopup': 'menu', hidden: state.selected.size > 0 }, icon('plus', 26));
+    b.addEventListener('click', () => popMenu(b, [
+      { label: T.addOne, fn: () => personDialog(null, rerender) },
+      { label: T.importRoster, fn: () => openImportDialog({ onDone: rerender }) },
+    ]));
+    return b;
+  }
+
+  /** 手機：篩選面板（檢視切換、狀態篩選、跳到群組） */
+  function openFilter() {
+    const e = ev(); const d = derive(e);
+    const seg = h('div', { class: 'wh-seg', role: 'group', 'aria-label': T.filterView });
+    const paintSeg = () => seg.replaceChildren(...[['group', T.viewByGroup], ['list', T.viewList]].map(([k, l]) => h('button', {
+      type: 'button', class: state.view === k ? 'on' : '', 'aria-pressed': String(state.view === k),
+      onclick: () => { state.view = k; paintSeg(); rerender(); },
+    }, l)));
+    paintSeg();
+    const radios = h('div', { class: 'wh-choice-col', role: 'radiogroup', 'aria-label': T.filterStatus },
+      ...FILTERS().map(([k, l]) => {
+        const r = h('input', { type: 'radio', name: 'wh-pf', value: k, checked: state.filter === k });
+        r.addEventListener('change', () => { state.filter = k; rerender(); });
+        return h('label', { class: 'wh-check-inline' }, r, h('span', null, l));
+      }));
+    const items = [...d.groups.map(g => [g, d.counts.get(g)]), ...(d.ungrouped ? [['', d.ungrouped]] : [])];
+    let closeFn = null;
+    const jump = items.length > 1 || d.groups.length ? h('ul', { class: 'wh-glist wh-glist-sheet' }, ...items.map(([g, n]) => h('li', null,
+      h('button', { type: 'button', class: 'wh-gitem', onclick: () => { if (closeFn) closeFn(null); jumpToGroup(g, rerender); } },
+        h('i', { class: 'sw', style: { background: color(d, g) } }), h('span', { class: 'gname' }, g || T.ungrouped), h('span', { class: 'gcount' }, String(n)))))) : null;
+    const body = h('div', { class: 'wh-filter' },
+      h('div', { class: 'field' }, h('span', { class: 'wh-label' }, T.filterView), seg),
+      h('fieldset', { class: 'field' }, h('legend', { class: 'wh-label' }, T.filterStatus), radios),
+      jump ? h('div', { class: 'field' }, h('span', { class: 'wh-label' }, T.filterJump), jump) : null);
+    dialog({ title: T.filterTitle, body, actions: [{ label: T.filterDone, value: null, kind: 'primary', focus: true }], onOpen(box, close) { closeFn = close; } });
   }
 
   function toolbar() {
     const s = h('input', { type: 'search', class: 'input', placeholder: T.searchPeople, 'aria-label': T.searchPeople, value: state.q });
     let t = null;
     s.addEventListener('input', () => { clearTimeout(t); t = setTimeout(() => { state.q = s.value; rerender('.wh-toolbar input[type=search]'); }, 150); });
-    const seg = h('div', { class: 'wh-seg', role: 'group', 'aria-label': '檢視' },
+    const seg = h('div', { class: 'wh-seg wh-only-d', role: 'group', 'aria-label': '檢視' },
       ...[['group', T.viewByGroup], ['list', T.viewList]].map(([k, l]) => h('button', { type: 'button', class: state.view === k ? 'on' : '', 'aria-pressed': String(state.view === k), onclick: () => { state.view = k; rerender(); } }, l)));
     const sel = h('select', { class: 'input wh-select', 'aria-label': '狀態' },
-      ...[['all', T.filterAll], ['eligible', T.filterEligible], ['excluded', T.filterExcluded], ['winners', T.filterWinners], ['samename', T.filterSameName]]
-        .map(([k, l]) => h('option', { value: k, selected: state.filter === k }, l)));
+      ...FILTERS().map(([k, l]) => h('option', { value: k, selected: state.filter === k }, l)));
     sel.addEventListener('change', () => { state.filter = sel.value; rerender(); });
-    return h('div', { class: 'wh-toolbar' }, h('div', { class: 'wh-search-wrap' }, icon('search', 18), s), seg, h('label', { class: 'wh-inline-field' }, h('span', null, '狀態'), sel));
+    const filtered = state.filter !== 'all';
+    const fbtn = h('button', { type: 'button', class: 'btn btn-ghost wh-filter-btn wh-only-m' + (filtered ? ' is-on' : ''), 'aria-haspopup': 'dialog', onclick: openFilter },
+      icon('filter', 18), h('span', null, T.filter), filtered ? h('i', { class: 'wh-dot', 'aria-hidden': 'true' }) : null);
+    return h('div', { class: 'wh-toolbar' }, h('div', { class: 'wh-search-wrap' }, icon('search', 18), s), seg, h('label', { class: 'wh-inline-field wh-only-d' }, h('span', null, '狀態'), sel), fbtn);
   }
 
   // ---------- 列 ----------
   function rowHTML(p, d, showGroup) {
     const won = d.won.get(p.id);
     const reason = p.excluded ? html`<select class="input wh-reason" data-reason aria-label="${T.excludeReason}：${p.name}">${[...EXCLUDE_REASON_CHOICES, ...(p.excludeReason === 'imported-zero' ? ['imported-zero'] : [])].map(r => html`<option value="${r}" ${raw(p.excludeReason === r ? 'selected' : '')}>${excludeReasonLabel(r, d.w.show)}</option>`)}</select>` : '';
-    const dupTag = d.sameName.has(p.id) ? html`<span class="wh-tag">同名異組</span>` : '';
+    const dupTag = d.sameName.has(p.id) ? html`<span class="wh-tag wh-only-d">同名異組</span>` : '';
+    // 手機：姓名下一行小字（清單檢視含群組）、右側狀態小標籤（排除 / 得獎 / ×n 籤數，籤數依 weightView）
+    const sub = [showGroup ? (p.group || T.ungrouped) : '', p.code || ''].filter(Boolean).join(' · ');
+    const tags = [p.excluded ? html`<span class="wh-tag wh-tag-warn">${T.tagExcluded}</span>` : '', won ? html`<span class="wh-tag wh-tag-accent">${T.tagWon}</span>` : '',
+      d.w.show && p.weight > 1 ? html`<span class="wh-tag">×${p.weight}</span>` : ''];
     return html`<div class="wh-prow${p.excluded ? ' is-excluded' : ''}${state.selected.has(p.id) ? ' is-selected' : ''}" data-id="${p.id}" role="row">
       <label class="wh-check" title="選取"><input type="checkbox" data-sel ${raw(state.selected.has(p.id) ? 'checked' : '')} aria-label="選取 ${p.name}"></label>
-      <button type="button" class="wh-pname" data-act="edit" aria-label="${T.edit} ${p.name}"><span class="nm">${p.name}</span>${p.code ? html`<small>${p.code}</small>` : ''}${dupTag}</button>
+      <button type="button" class="wh-pname" data-act="edit" aria-label="${T.edit} ${p.name}"><span class="nm">${p.name}</span>${p.code ? html`<small class="wh-only-d">${p.code}</small>` : ''}${dupTag}${sub ? html`<small class="wh-psub wh-only-m">${sub}</small>` : ''}</button>
+      <span class="wh-pstat wh-only-m">${tags}</span>
       ${showGroup ? html`<span class="wh-pgroup"><i class="sw" style="background:${color(d, p.group)}"></i>${p.group || T.ungrouped}</span>` : ''}
       ${d.w.edit ? html`<label class="wh-weight"><span>${T.weight}</span><input type="number" class="input" data-weight min="1" max="1000" step="1" inputmode="numeric" value="${p.weight}" aria-label="${T.weight}：${p.name}"></label>`
         : d.w.show ? html`<span class="wh-weight wh-weight-ro" aria-label="${T.weight}：${p.name} ${p.weight}"><span>${T.weight}</span><b>×${p.weight}</b></span>` : ''}
@@ -159,8 +216,8 @@ export async function renderParticipants(main, { layout, route }) {
       sec.insertAdjacentHTML('beforeend', html`<div class="wh-group-head">
         <button type="button" class="wh-group-toggle" data-act="toggle" aria-expanded="${String(open)}">${icon(open ? 'chevronDown' : 'chevronRight', 18)}<i class="sw" style="background:${color(d, g)}"></i><b>${g || T.ungrouped}</b>${wNote ? html`<span class="wh-tag">${wNote}</span>` : ''}</button>
         <div class="wh-group-acts">
-          ${d.w.edit ? html`<button type="button" class="btn btn-ghost btn-sm" data-act="g-weight">${T.groupSetWeight}</button>` : ''}
-          <button type="button" class="btn btn-ghost btn-sm" data-act="g-exclude" aria-haspopup="menu">${T.groupExcludeAll}</button>
+          ${d.w.edit ? html`<button type="button" class="btn btn-ghost btn-sm wh-only-d" data-act="g-weight">${T.groupSetWeight}</button>` : ''}
+          <button type="button" class="btn btn-ghost btn-sm wh-only-d" data-act="g-exclude" aria-haspopup="menu">${T.groupExcludeAll}</button>
           <button type="button" class="icon-btn" data-act="g-more" aria-label="${T.more}：${g || T.ungrouped}" aria-haspopup="menu">${icon('more')}</button>
         </div></div>`.s);
       if (open) sec.insertAdjacentHTML('beforeend', html`<div class="wh-prows">${people.map(p => rowHTML(p, d, false))}</div>`.s);
@@ -177,16 +234,30 @@ export async function renderParticipants(main, { layout, route }) {
     if (!n) return bar;
     const ids = () => [...state.selected];
     const b = (label, fn, extra = {}) => { const x = h('button', { type: 'button', class: 'btn btn-ghost btn-sm', ...extra }, label); x.addEventListener('click', () => fn(x)); return x; };
+    const doRestore = () => setExcluded(ids(), false, null, '');
+    const doMove = (x) => groupMenu(x, d, (g) => moveTo(ids(), g));
+    const doTag = async () => { const t = await promptDialog(T.batchTag, '標籤'); if (t) addTag(ids(), t); };
+    const doDelete = () => removePeople(ids());
+    // 手機單行：已選 n [排除][設籤數][⋯][✕]；取消排除、移到群組、加標籤、刪除收進 ⋯（CSS order 排序）
+    const more = b(T.more, (x) => popMenu(x, [
+      { label: T.batchRestore, fn: doRestore },
+      { label: T.batchMove, fn: () => doMove(x) },
+      { label: T.batchTag, fn: doTag },
+      { sep: true },
+      { label: T.batchDelete, danger: true, fn: doDelete },
+    ]), { class: 'icon-btn wh-batch-more wh-only-m', 'aria-label': T.more, 'aria-haspopup': 'menu' });
+    more.replaceChildren(); more.insertAdjacentHTML('beforeend', icon('more').s);
     bar.append(
       h('b', { class: 'wh-batch-n' }, T.batchSelected(n)),
-      d.w.edit ? b(T.batchWeight, (x) => weightMenu(x, (w) => setWeight(ids(), w, '')), { 'aria-haspopup': 'menu' }) : null,
-      b(T.batchExclude, (x) => reasonMenu(x, (r) => setExcluded(ids(), true, r, '')), { 'aria-haspopup': 'menu' }),
-      b(T.batchRestore, () => setExcluded(ids(), false, null, '')),
-      b(T.batchMove, (x) => groupMenu(x, d, (g) => moveTo(ids(), g)), { 'aria-haspopup': 'menu' }),
-      b(T.batchTag, async () => { const t = await promptDialog(T.batchTag, '標籤'); if (t) addTag(ids(), t); }),
-      h('span', { class: 'wh-batch-gap' }),
-      b(T.batchDelete, () => removePeople(ids()), { class: 'btn btn-danger btn-sm' }),
-      h('button', { type: 'button', class: 'icon-btn', 'aria-label': T.selectNone, onclick: () => { state.selected.clear(); rerender(); } }, icon('close')));
+      d.w.edit ? b(T.batchWeight, (x) => weightMenu(x, (w) => setWeight(ids(), w, '')), { class: 'btn btn-ghost btn-sm wh-batch-w', 'aria-haspopup': 'menu' }) : null,
+      b(T.batchExclude, (x) => reasonMenu(x, (r) => setExcluded(ids(), true, r, '')), { class: 'btn btn-ghost btn-sm wh-batch-x', 'aria-haspopup': 'menu' }),
+      b(T.batchRestore, doRestore, { class: 'btn btn-ghost btn-sm wh-only-d' }),
+      b(T.batchMove, doMove, { class: 'btn btn-ghost btn-sm wh-only-d', 'aria-haspopup': 'menu' }),
+      b(T.batchTag, doTag, { class: 'btn btn-ghost btn-sm wh-only-d' }),
+      h('span', { class: 'wh-batch-gap wh-only-d' }),
+      b(T.batchDelete, doDelete, { class: 'btn btn-danger btn-sm wh-only-d' }),
+      more,
+      h('button', { type: 'button', class: 'icon-btn wh-batch-close', 'aria-label': T.selectNone, onclick: () => { state.selected.clear(); rerender(); } }, icon('close')));
     return bar;
   }
 
@@ -292,7 +363,13 @@ export async function renderParticipants(main, { layout, route }) {
       reasonMenu(el, (r) => setExcluded(ids, true, r, nameOf(g)));
     } else if (act === 'g-more') {
       const ids = evt.participants.filter(p => (p.group || '') === g).map(p => p.id);
+      // 手機：「設籤數」「排除全組」兩顆按鈕收進這個選單
+      const phoneItems = isPhone() ? [
+        ...(weightsUI(evt).edit ? [{ label: T.groupSetWeight, fn: () => groupWeightDialog(g) }] : []),
+        { label: T.groupExcludeAll, fn: () => reasonMenu(el, (r) => setExcluded(ids, true, r, nameOf(g))) },
+      ] : [];
       popMenu(el, [
+        ...phoneItems,
         { label: T.groupRestoreAll, fn: () => setExcluded(ids, false, null, nameOf(g)) },
         { label: '全選本組', fn: () => { ids.forEach(id => state.selected.add(id)); rerender(); } },
         ...(g ? [{ label: T.groupRename, fn: () => renameGroup(g) }] : []),
@@ -310,6 +387,9 @@ export async function renderParticipants(main, { layout, route }) {
     el.closest('[data-id]').classList.toggle('is-selected', el.checked);
     const old = root.querySelector('.wh-batch');
     if (old) old.replaceWith(batchBar(ev(), derive(ev())));
+    const f = root.querySelector('.wh-fab');
+    if (f) f.hidden = state.selected.size > 0;
+    batchClass();
   });
   on(root, 'change', '[data-weight]', (e, el) => {
     if (!weightsUI(ev()).edit) return;
@@ -361,7 +441,16 @@ export async function renderParticipants(main, { layout, route }) {
   }
 
   rerender();
-  return () => { layout.side.replaceChildren(); };
+  return () => { layout.side.replaceChildren(); document.documentElement.classList.remove('wh-batch-on'); };
+}
+
+const FILTERS = () => [['all', T.filterAll], ['eligible', T.filterEligible], ['excluded', T.filterExcluded], ['winners', T.filterWinners], ['samename', T.filterSameName]];
+
+/** 跳到某群組（左欄群組清單與手機篩選面板共用） */
+function jumpToGroup(g, rerender) {
+  state.view = 'group'; state.collapsed.delete(g); state.q = ''; state.filter = 'all';
+  rerender();
+  setTimeout(() => { const s = document.getElementById('grp-' + encodeURIComponent(g || '_')); if (s) { s.scrollIntoView({ block: 'start', behavior: 'smooth' }); const t = s.querySelector('[data-act=toggle]'); if (t) t.focus({ preventScroll: true }); } }, 60);
 }
 
 // ---------- 左欄：群組清單與統計 ----------
@@ -371,11 +460,7 @@ function renderSide(side, e, d, rerender) {
   const winners = d.won.size;
   const items = [...d.groups.map(g => [g, d.counts.get(g)]), ...(d.ungrouped ? [['', d.ungrouped]] : [])];
   const list = h('ul', { class: 'wh-glist' }, ...items.map(([g, n]) => h('li', null,
-    h('button', { type: 'button', class: 'wh-gitem', onclick: () => {
-      state.view = 'group'; state.collapsed.delete(g); state.q = ''; state.filter = 'all';
-      rerender();
-      setTimeout(() => { const s = document.getElementById('grp-' + encodeURIComponent(g || '_')); if (s) { s.scrollIntoView({ block: 'start', behavior: 'smooth' }); const t = s.querySelector('[data-act=toggle]'); if (t) t.focus({ preventScroll: true }); } }, 60);
-    } }, h('i', { class: 'sw', style: { background: color(d, g) } }), h('span', { class: 'gname' }, g || T.ungrouped), h('span', { class: 'gcount' }, String(n))))));
+    h('button', { type: 'button', class: 'wh-gitem', onclick: () => jumpToGroup(g, rerender) }, h('i', { class: 'sw', style: { background: color(d, g) } }), h('span', { class: 'gname' }, g || T.ungrouped), h('span', { class: 'gcount' }, String(n))))));
   const stat = (label, n) => h('div', { class: 'wh-stat' }, h('span', null, label), h('b', null, String(n)));
   side.replaceChildren(
     items.length > 1 || d.groups.length ? h('div', { class: 'wh-side-block' }, h('h3', { class: 'wh-side-h' }, T.groupsTitle), list) : '',
@@ -394,6 +479,9 @@ export function personDialog(p, after) {
     : [...(hasDraw ? [] : [{ label: T.del, value: 'delete', kind: 'danger' }]), { label: T.cancel, value: null, kind: 'ghost' }, { label: T.save, value: 'save', kind: 'primary' }];
   const listId = 'grp-list-' + Math.random().toString(36).slice(2);
   const wOn = weightsUI(e).edit;   // 未解鎖：不出現籤數欄，存檔時保留原籤數
+  // 手機：列內不再有排除勾選與原因下拉，改在編輯面板裡設定（桌機維持原樣，不畫這組欄位）
+  const exclOn = !isNew && isPhone();
+  const reasons = p ? [...EXCLUDE_REASON_CHOICES, ...(p.excludeReason === 'imported-zero' ? ['imported-zero'] : [])] : [];
   dialog({
     title: isNew ? T.personTitleAdd : T.personTitleEdit,
     body: html`<form class="wh-form" data-pf onsubmit="return false">
@@ -406,6 +494,8 @@ export function personDialog(p, after) {
       </div>
       <label class="field"><span>${T.fTags}</span><input class="input" name="tags" autocomplete="off" value="${p ? (p.tags || []).join('、') : ''}"></label>
       <label class="field"><span>${T.fNote}</span><input class="input" name="note" autocomplete="off" value="${p ? p.note || '' : ''}"></label>
+      ${exclOn ? html`<div class="field wh-excl-field"><label class="wh-check-inline"><input type="checkbox" name="excluded" ${raw(p.excluded ? 'checked' : '')}><span>${T.exclude}</span></label>
+        <select class="input" name="excludeReason" aria-label="${T.excludeReason}" ${raw(p.excluded ? '' : 'disabled')}>${reasons.map(r => html`<option value="${r}" ${raw((p.excludeReason || 'other') === r ? 'selected' : '')}>${excludeReasonLabel(r, weightsUI(e).show)}</option>`)}</select></div>` : ''}
       <datalist id="${listId}">${groups.map(g => html`<option value="${g}">`)}</datalist>
       ${hasDraw ? html`<p class="wh-hint">已有抽獎紀錄的人不能刪除，可改用排除。</p>` : ''}
     </form>`,
@@ -415,6 +505,7 @@ export function personDialog(p, after) {
       const name = f.elements.name;
       noWheel(box);
       setTimeout(() => name.focus(), 0);
+      if (exclOn) f.elements.excluded.addEventListener('change', () => { f.elements.excludeReason.disabled = !f.elements.excluded.checked; });
       const read = () => ({
         name: name.value.trim(), group: f.elements.group.value.trim(), code: f.elements.code.value.trim(),
         weight: wOn ? clampWeight(f.elements.weight.value) : (p ? p.weight : 1), note: f.elements.note.value.trim(),
@@ -443,6 +534,11 @@ export function personDialog(p, after) {
             q.name = v.name; q.weight = v.weight;
             for (const k of ['group', 'code', 'note']) { if (v[k]) q[k] = v[k]; else delete q[k]; }
             if (v.tags.length) q.tags = v.tags; else delete q.tags;
+            if (exclOn) {
+              const flag = f.elements.excluded.checked;
+              if (flag) { q.excluded = true; q.excludeReason = f.elements.excludeReason.value || 'other'; }
+              else if (q.excluded) { q.excluded = false; delete q.excludeReason; delete q.excludeNote; }
+            }
           });
         }
         close(null); after();
