@@ -19,11 +19,13 @@ function localTime(iso) {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 }
 
-/** 名單 CSV（長表）：姓名,群組,編號,籤數,排除,排除原因,標籤,備註 */
-export function participantsCSV(event) {
-  const rows = [['姓名', '群組', '編號', '籤數', '排除', '排除原因', '標籤', '備註']];
+/** 名單 CSV（長表）：姓名,群組,編號,籤數,排除,排除原因,標籤,備註（weights = false 時不輸出籤數欄，見 core/unlock.js weightView） */
+export function participantsCSV(event, { weights = true } = {}) {
+  const wOn = weights;
+  const label = (r) => (r === 'imported-zero' && !wOn ? '匯入時標為不抽' : (EXCLUDE_LABEL[r] || ''));
+  const rows = [['姓名', '群組', '編號', ...(wOn ? ['籤數'] : []), '排除', '排除原因', '標籤', '備註']];
   for (const p of event.participants) {
-    rows.push([p.name, p.group || '', p.code || '', p.weight, p.excluded ? '是' : '', p.excluded ? (EXCLUDE_LABEL[p.excludeReason] || '') : '', (p.tags || []).join('、'), p.note || '']);
+    rows.push([p.name, p.group || '', p.code || '', ...(wOn ? [p.weight] : []), p.excluded ? '是' : '', p.excluded ? label(p.excludeReason) : '', (p.tags || []).join('、'), p.note || '']);
   }
   return toCSV(rows);
 }

@@ -22,6 +22,11 @@ import { renderParticipants } from './ui/page-participants.js';
 import { renderPrizes } from './ui/page-prizes.js';
 import { renderSettings } from './ui/page-settings.js';
 import { renderRecords } from './ui/page-records.js';
+import { initUnlock, consumeUnlockToast, revokeWeights } from './ui/unlock.js';
+import { leavesPeople } from './core/unlock.js';
+
+// 最早同步執行：清掉網址上的 #unlock=…（在路由的 hashchange 監聽與 GA 之前），見 ui/unlock.js
+initUnlock();
 
 const PAGES = { participants: renderParticipants, prizes: renderPrizes, settings: renderSettings, records: renderRecords };
 
@@ -89,6 +94,7 @@ function initThemeToggle() {
 async function render() {
   const seq = ++renderSeq;
   const route = parseHash();
+  if (leavesPeople(ctx.route, route)) revokeWeights();   // 解鎖只給一次名單頁
   ctx.route = route;
   if (route.name !== 'stage' && route.name !== 'screen') {
     if (cleanup) { try { cleanup(); } catch (e) { console.error(e); } cleanup = null; }
@@ -114,6 +120,7 @@ async function render() {
     document.title = '線上轉盤抽獎｜尾牙春酒抽獎工具';
     root.replaceChildren();
     cleanup = await renderHome(root);
+    if (seq === renderSeq) consumeUnlockToast();
     return;
   }
 

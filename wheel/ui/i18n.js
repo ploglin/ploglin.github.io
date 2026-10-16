@@ -22,6 +22,8 @@ export const PRIZE_STATUS_LABEL = { pending: '待抽', active: '進行中', done
 export const DRAW_STATUS_LABEL = { pending: '待確認', confirmed: '已確認', voided: '作廢' };
 
 export const EXCLUDE_REASON_LABEL = { probation: '試用期', staff: '工作人員', manager: '主管自願', 'imported-zero': '匯入籤數 0', other: '其他' };
+/** 排除原因顯示文字：不顯示籤數時（showWeights = false），「匯入籤數 0」改說「匯入時標為不抽」 */
+export function excludeReasonLabel(r, showWeights = true) { return r === 'imported-zero' && !showWeights ? '匯入時標為不抽' : (EXCLUDE_REASON_LABEL[r] || ''); }
 /** 名單頁可選的排除原因（imported-zero 只由匯入產生） */
 export const EXCLUDE_REASON_CHOICES = ['probation', 'staff', 'manager', 'other'];
 
@@ -127,6 +129,7 @@ export const T = {
   toastDeleted: (n) => `已刪除 ${n} 人`,
   toastImported: (n, g) => `已匯入 ${n} 人${g ? `、${g} 個群組` : ''}`,
   setWeightByGroup: '依群組設籤數',
+  ticketsOn: '已啟用籤數：在名單頁可為每個人或整個群組設定籤數',
   dedupeTitle: '檢查重複',
   dedupeNone: '沒有發現重複的人。',
   dedupeL1: '完全相同（同編號，或同姓名同群組）',

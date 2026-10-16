@@ -7,7 +7,7 @@ import { h, icon, kbd, inInput } from '../dom.js';
 import { openDB } from '../../store/db.js';
 import { createStore, LockedError } from '../../store/store.js';
 import * as ops from '../../core/stage-ops.js';
-import { resolveKey, canToggleRehearsal, FORWARD_KEYS } from '../../core/state.js';
+import { resolveKey, canToggleRehearsal, FORWARD_KEYS, COOLDOWN_MS } from '../../core/state.js';
 import { prizeById, VOID_REASONS, addLog, displayName, sameNameSet, participantById } from '../../core/model.js';
 import { revealCards } from '../../core/draw.js';
 import { buildPool, buildPoolDetailed } from '../../core/pool.js';
@@ -19,6 +19,7 @@ import { createAudio } from './audio.js';
 import { createTabSync, createScreenChannel, SCREEN_STALE_MS } from './sync.js';
 import {
   t, mainAction, buildPublicView, wheelPreview, poolSignature, spinTimeline, emptyPoolText, moveCardFocus,
+  mainPressAction, barMainModel,
 } from './logic.js';
 import { renderVoidBar, focusVoidBar } from './void-bar.js';
 import { openModal } from './overlay.js';
@@ -26,14 +27,18 @@ import * as OV from './overlays.js';
 import { bonusSpec } from './dialog-bonus.js';
 import { quickListSpec } from './quick-list.js';
 import { renderSidebar } from './sidebar.js';
-import { renderControlsBar } from './controls-bar.js';
+import { buildControlsBar, renderControlsBar } from './controls-bar.js';
 import { attachKeys } from './hotkeys.js';
 import { ensureStageCss, appUrl, screenUrl, sessGet, sessSet, stripModeParam, prefersReducedMotion } from './env.js';
 import { fill } from './util.js';
 
 const REVOKE_WINDOW_MS = 30000;
 const CONTROLS_HIDE_MS = 3000;
+const CONTROLS_HIDE_TOUCH_MS = 5000;
 const CURSOR_HIDE_MS = 2000;
+/** 點操作列主鈕收起後，這段時間內滑鼠移動不叫出操作列；之後還要離開收起時的位置超過 SHOW_MOVE_PX 才叫出 */
+const SUPPRESS_SHOW_MS = 800;
+const SHOW_MOVE_PX = 24;
 
 export function mountStage(root, opts = {}) {
   const c = new StageController(root, opts);
@@ -160,6 +165,7 @@ class StageController {
     this.view = new StageView(this.colWrap, { role: 'host' });
     this.view.onTick = () => this.audio.tick();
     this.view.onResize = () => { if (this.ready) this.render(); };
+    this.view.onCardClick = (slot) => this.cardClick(slot);
 
     this.stripEl = h('div', { class: 'ws-strip' }, t('stage.rehearsalStrip'));
     this.statusEl = h('div', { class: 'ws-status' });
@@ -174,6 +180,8 @@ class StageController {
 
     this.side = h('aside', { class: 'ws-side', 'aria-label': t('side.prizes') });
     this.controls = h('div', { class: 'ws-controls', role: 'toolbar', 'aria-label': t('bar.settings') });
+    this.cbParts = buildControlsBar(this, this.controls);
+    this.barMainBtn = this.cbParts.main;
     this.voidBar = h('div', { class: 'ws-voidbar', hidden: true });
     this.layer = h('div', { class: 'ws-layer' });
     this.toastEl = h('div', { class: 'ws-toast', role: 'status', 'aria-live': 'polite', hidden: true });
@@ -186,15 +194,19 @@ class StageController {
   }
 
   bindWindow() {
-    this._mm = () => this.onMouseMove();
-    this._md = () => this.audio.unlock();
+    // 只看真的滑鼠移動；觸控 / 觸控筆改由 pointerdown 叫出操作列（不會觸發任何舞台動作）
+    this._mm = (e) => { if (!e || !e.pointerType || e.pointerType === 'mouse') this.onMouseMove(e); };
+    this._md = (e) => {
+      this.audio.unlock();
+      if (e && (e.pointerType === 'touch' || e.pointerType === 'pen') && !this.controls.contains(e.target)) this.onMouseMove(e, true);
+    };
     this._bu = (e) => {
       if (this.allowUnload || !this.store || !this.store.sandbox) return;
       if (sandboxDrawCount(this.store.sandbox) > 0) { e.preventDefault(); e.returnValue = t('rehearsal.unloadWarn'); return e.returnValue; }
     };
     this._vis = () => { if (document.visibilityState === 'visible') this.requestWakeLock(); };
     this._fs = () => this.render();
-    window.addEventListener('mousemove', this._mm, { passive: true });
+    window.addEventListener('pointermove', this._mm, { passive: true });
     window.addEventListener('pointerdown', this._md, { passive: true });
     window.addEventListener('beforeunload', this._bu);
     document.addEventListener('visibilitychange', this._vis);
@@ -215,7 +227,7 @@ class StageController {
     this.audio.destroy();
     if (this.view) this.view.destroy();
     if (this.detachKeys) this.detachKeys();
-    window.removeEventListener('mousemove', this._mm);
+    window.removeEventListener('pointermove', this._mm);
     window.removeEventListener('pointerdown', this._md);
     window.removeEventListener('beforeunload', this._bu);
     document.removeEventListener('visibilitychange', this._vis);
@@ -233,7 +245,7 @@ class StageController {
   }
 
   clearTimers() {
-    for (const k of ['intro', 'flip', 'spinEnd', 'autoConfirm', 'revoke', 'ctrlHide', 'cursor', 'marq', 'flash', 'toast']) {
+    for (const k of ['intro', 'flip', 'spinEnd', 'autoConfirm', 'revoke', 'ctrlHide', 'cursor', 'marq', 'flash', 'toast', 'cool']) {
       clearTimeout(this.t[k]); clearInterval(this.t[k]); this.t[k] = null;
     }
     this.audio.drumStop();
@@ -368,7 +380,7 @@ class StageController {
     this.renderPrimary(ev, pv, chrome);
     if (chrome) renderSidebar(this, this.side, ev, pv);
     else this.side.replaceChildren();
-    renderControlsBar(this, this.controls, ev, pv, chrome);
+    renderControlsBar(this, this.controls, this.cbParts, ev, chrome, barMainModel(this.mainAct, this.mainState()));
     this.renderVoid(ev);
     if (this.ui.modal) this.ui.modal.refresh();
     this.broadcast(pv);
@@ -377,7 +389,7 @@ class StageController {
   selectDecor() {
     const cs = this.ui.cardSelect;
     if (!cs || cs.recall || !cs.active) return null;
-    return { focus: cs.focus, picked: new Set(cs.picked) };
+    return { focus: cs.focus, picked: new Set(cs.picked), selectable: cs.selectable };
   }
 
   revokeVisible(ev) {
@@ -394,8 +406,12 @@ class StageController {
     this.mainAct = ma;
     fill(this.mainBtn, h('span', {}, ma.label), chrome && ma.key ? kbd(ma.key === 'Space' && ev.settings.clickerMode ? 'Space / PageDown' : ma.key) : null);
     this.mainBtn.setAttribute('aria-label', ma.label + (ma.key ? `（${ma.key}）` : ''));
-    this.mainBtn.setAttribute('aria-disabled', ma.disabled ? 'true' : 'false');
+    // 浮層 / 選卡 / 寫入中 / 600 ms 冷卻 → 停用樣式（點了也不會做事）；冷卻結束時重繪一次解除
+    this.mainBtn.setAttribute('aria-disabled', mainPressAction(ma, this.mainState()) ? 'false' : 'true');
     this.mainBtn.classList.toggle('is-confirm', ma.kind === 'confirm');
+    clearTimeout(this.t.cool); this.t.cool = null;
+    const coolLeft = this.ui.phaseAt + COOLDOWN_MS - Date.now();
+    if (coolLeft > 0) this.t.cool = setTimeout(() => { this.t.cool = null; this.render(); }, coolLeft + 10);
 
     const showVoid = chrome && st.phase === 'reveal';
     this.voidBtn.hidden = !showVoid;
@@ -492,14 +508,28 @@ class StageController {
   }
 
   // ================= 投影模式：操作列與游標 =================
-  onMouseMove() {
+  /** e：pointer 事件（可為 null）；touch：觸控 / 觸控筆叫出（操作列停留較久，不處理游標） */
+  onMouseMove(e, touch = false) {
     if (this.dead) return;
-    document.body.classList.remove('ws-cursor-hidden');
-    clearTimeout(this.t.cursor);
+    if (!touch && e && e.clientX != null) {
+      const pt = { x: e.clientX, y: e.clientY };
+      this.lastPt = pt;
+      if (Date.now() < (this.suppressShowUntil || 0)) return;     // 剛點完主鈕：游標維持隱藏、操作列不浮出
+      if (this.moveAnchor) {
+        if (Math.hypot(pt.x - this.moveAnchor.x, pt.y - this.moveAnchor.y) <= SHOW_MOVE_PX) return;
+        this.moveAnchor = null;
+      }
+    }
     const ev = this.ev;
     const mirror = !this.hostChrome;
+    if (!touch) {
+      document.body.classList.remove('ws-cursor-hidden');
+      clearTimeout(this.t.cursor);
+      if (ev && mirror) this.t.cursor = setTimeout(() => { if (!this.hostChrome) document.body.classList.add('ws-cursor-hidden'); }, CURSOR_HIDE_MS);
+    }
     if (ev && mirror) {
-      this.t.cursor = setTimeout(() => { if (!this.hostChrome) document.body.classList.add('ws-cursor-hidden'); }, CURSOR_HIDE_MS);
+      this.hideMs = touch ? CONTROLS_HIDE_TOUCH_MS : CONTROLS_HIDE_MS;
+      if (touch) { this.moveAnchor = null; this.suppressShowUntil = 0; }
       if (!this.ui.controlsShown) { this.ui.controlsShown = true; this.render(); }
       this.scheduleHideControls();
     }
@@ -510,7 +540,21 @@ class StageController {
     this.t.ctrlHide = setTimeout(() => {
       if (this.overBar || this.ui.modal) { this.scheduleHideControls(); return; }
       if (this.ui.controlsShown) { this.ui.controlsShown = false; this.render(); }
-    }, CONTROLS_HIDE_MS);
+    }, this.hideMs || CONTROLS_HIDE_MS);
+  }
+
+  /** 點完操作列主鈕（開轉、確認、下一獎…）：立刻收起並藏游標；H 鎖定時不收 */
+  collapseControls() {
+    if (this.ui.controlsSticky || this.hostChrome) return;
+    clearTimeout(this.t.ctrlHide); this.t.ctrlHide = null;
+    clearTimeout(this.t.cursor); this.t.cursor = null;
+    this.ui.controlsShown = false;
+    this.ui.flashUntil = 0;
+    this.overBar = false;
+    document.body.classList.add('ws-cursor-hidden');
+    this.suppressShowUntil = Date.now() + SUPPRESS_SHOW_MS;
+    this.moveAnchor = this.lastPt || null;
+    this.render();
   }
 
   flashControls(ms) {
@@ -575,17 +619,71 @@ class StageController {
     if (this.dead || !this.ready || !this.ev) return;
     this.audio.unlock();
     if (this.readOnly || !this.msgEl.hidden) return;
-    if (this.t.autoConfirm) { clearTimeout(this.t.autoConfirm); this.t.autoConfirm = null; this.ui.autoConfirmAt = 0; this.render(); }
+    if (this.t.autoConfirm) { this.cancelAutoConfirm(); this.render(); }
     const r = resolveKey(this.ctx(), k);
     if (r.prevent && e) { e.preventDefault(); e.stopPropagation(); }
     if (r.action) this.act(r.action, r.arg);
   }
 
-  /** 點主按鈕 = 依目前主動作送一次 Space / Enter（同樣受冷卻與 phase 規則約束） */
+  /** 主動作的判斷依據（隱藏主按鈕與操作列主鈕共用） */
+  mainState() {
+    const ev = this.ev;
+    const cs = this.ui.cardSelect;
+    return {
+      phase: ev ? ev.stage.phase : null,
+      overlay: this.ui.overlay,
+      busy: this.ui.busy,
+      now: Date.now(),
+      phaseAt: this.ui.phaseAt,
+      rehearsal: !!(this.store && this.store.rehearsal),
+      clickerMode: !!(ev && ev.settings.clickerMode),
+      cardSelect: cs && cs.active && !cs.recall ? { picked: cs.picked.length } : null,
+    };
+  }
+
+  canPress() { return !this.dead && this.ready && !!this.ev && !this.readOnly && this.msgEl.hidden; }
+
+  cancelAutoConfirm() {
+    if (!this.t.autoConfirm) return;
+    clearTimeout(this.t.autoConfirm); this.t.autoConfirm = null; this.ui.autoConfirmAt = 0;
+  }
+
+  /** 點主按鈕：依主動作種類直接呼叫對應動作（不模擬按鍵；浮層、選卡、寫入中、600 ms 冷卻內一律不動作） */
   pressMain() {
-    const ma = this.mainAct;
-    if (!ma || ma.disabled || !ma.key) return;
-    this.onKey({ key: ma.key === 'Enter' ? 'Enter' : ' ', code: ma.key === 'Enter' ? 'Enter' : 'Space', shiftKey: false, ctrlKey: false, metaKey: false, altKey: false, repeat: false, inInput: false }, null);
+    if (!this.canPress()) return;
+    const a = mainPressAction(this.mainAct, this.mainState());
+    if (!a) return;
+    this.audio.unlock();
+    this.cancelAutoConfirm();
+    this.act(a);
+  }
+
+  /** 點操作列中段主鈕 */
+  pressBarMain() {
+    if (!this.canPress()) return;
+    const m = barMainModel(this.mainAct, this.mainState());
+    if (m.disabled || !m.action) return;
+    this.audio.unlock();
+    this.cancelAutoConfirm();
+    this.act(m.action);
+    if (m.collapse) this.collapseControls();
+    else this.scheduleHideControls();             // 揭曉下一張 / 下一頁、選卡：不收，重新計時以便連點
+    this.focusPrimary();
+  }
+
+  /** 操作列右段的次要鈕（作廢 / 取消選卡）：做完不收起，重新計時 */
+  barSecondary(action) {
+    if (!this.canPress()) return;
+    this.act(action);
+    this.scheduleHideControls();
+  }
+
+  /** 選卡模式中點卡片 = 移到那張並勾選 / 取消勾選 */
+  cardClick(slot) {
+    const cs = this.ui.cardSelect;
+    if (!this.canPress() || !cs || !cs.active || cs.recall || this.ui.overlay || !cs.selectable.has(slot)) return;
+    cs.focus = slot;
+    this.cardAction('card.toggle');
   }
 
   act(action, arg) {
@@ -623,7 +721,7 @@ class StageController {
   async simple(fn) {
     if (this.ui.busy) return;
     this.ui.busy = true;
-    try { await this.commit(fn); } catch { /* 已顯示 */ } finally { this.ui.busy = false; }
+    try { await this.commit(fn); } catch { /* 已顯示 */ } finally { this.ui.busy = false; this.render(); }
   }
 
   toggleFullscreen() {

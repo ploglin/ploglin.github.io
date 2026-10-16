@@ -1,12 +1,13 @@
 // 名單管理 #/e/:id/participants（D.3）
-// 依群組分組（預設）/ 清單檢視、群組清單與統計、籤數、排除＋原因、批次操作（toast 6 s 復原）、去重、匯出、拖放匯入。
+// 依群組分組（預設）/ 清單檢視、群組清單與統計、籤數（編輯入口只在解鎖時出現、唯讀顯示依資料，見 core/unlock.js weightView）、排除＋原因、批次操作（toast 6 s 復原）、去重、匯出、拖放匯入。
 import { h, html, raw, icon, on, popMenu, dialog, promptDialog, noWheel } from './dom.js';
 import { ctx, edit, editWithUndoToast } from './app-ctx.js';
 import { toast } from './toast.js';
-import { T, EXCLUDE_REASON_LABEL, EXCLUDE_REASON_CHOICES } from './i18n.js';
+import { T, excludeReasonLabel, EXCLUDE_REASON_CHOICES } from './i18n.js';
 import { openImportDialog } from './dialog-import.js';
 import { PALETTE, groupOrder, sameNameSet, clampWeight, createParticipant } from '../core/model.js';
 import { findDuplicates, normalize } from '../core/dedupe.js';
+import { weightsUI } from './unlock.js';
 import { participantsCSV, participantsWideCSV, fileName, download } from '../io/export.js';
 
 // 檢視狀態（同一活動內切頁後保留）
@@ -39,7 +40,7 @@ function derive(e) {
   const byName = new Map();
   for (const p of e.participants) { const k = normalize(p.name); if (!byName.has(k)) byName.set(k, new Set()); byName.get(k).add(p.group || ''); }
   const sameName = new Set(e.participants.filter(p => byName.get(normalize(p.name)).size > 1).map(p => p.id));
-  return { gmap, groups, counts, ungrouped, won, hasDraw, sameName, dup: sameNameSet(e) };
+  return { gmap, groups, counts, ungrouped, won, hasDraw, sameName, dup: sameNameSet(e), w: weightsUI(e) };
 }
 
 function color(d, g) { return d.gmap.has(g) ? PALETTE[d.gmap.get(g) % PALETTE.length] : 'transparent'; }
@@ -69,6 +70,7 @@ export async function renderParticipants(main, { layout, route }) {
     // 清掉已不存在的選取
     const ids = new Set(e.participants.map(p => p.id));
     for (const id of [...state.selected]) if (!ids.has(id)) state.selected.delete(id);
+    root.classList.toggle('wh-noweight', !d.w.show);   // 不顯示籤數：格線用不含籤數欄的版本
     renderSide(layout.side, e, d, rerender);
     if (!e.participants.length) { root.replaceChildren(emptyRoster()); return; }
     root.replaceChildren(header(e, d), toolbar(), listView(e, d), batchBar(e, d));
@@ -80,7 +82,7 @@ export async function renderParticipants(main, { layout, route }) {
     const nGroups = d.groups.length;
     const more = h('button', { type: 'button', class: 'btn btn-ghost', 'aria-haspopup': 'menu' }, icon('more', 18), T.more);
     more.addEventListener('click', () => popMenu(more, [
-      { label: T.exportLong, fn: () => download(fileName(e, '名單', 'csv'), participantsCSV(e)) },
+      { label: T.exportLong, fn: () => download(fileName(e, '名單', 'csv'), participantsCSV(e, { weights: weightsUI(e).show })) },
       { label: T.exportWide, fn: () => download(fileName(e, '名單寬表', 'csv'), participantsWideCSV(e)) },
       { sep: true },
       { label: T.dedupe, fn: () => openDedupe(rerender) },
@@ -113,13 +115,14 @@ export async function renderParticipants(main, { layout, route }) {
   // ---------- 列 ----------
   function rowHTML(p, d, showGroup) {
     const won = d.won.get(p.id);
-    const reason = p.excluded ? html`<select class="input wh-reason" data-reason aria-label="${T.excludeReason}：${p.name}">${[...EXCLUDE_REASON_CHOICES, ...(p.excludeReason === 'imported-zero' ? ['imported-zero'] : [])].map(r => html`<option value="${r}" ${raw(p.excludeReason === r ? 'selected' : '')}>${EXCLUDE_REASON_LABEL[r]}</option>`)}</select>` : '';
+    const reason = p.excluded ? html`<select class="input wh-reason" data-reason aria-label="${T.excludeReason}：${p.name}">${[...EXCLUDE_REASON_CHOICES, ...(p.excludeReason === 'imported-zero' ? ['imported-zero'] : [])].map(r => html`<option value="${r}" ${raw(p.excludeReason === r ? 'selected' : '')}>${excludeReasonLabel(r, d.w.show)}</option>`)}</select>` : '';
     const dupTag = d.sameName.has(p.id) ? html`<span class="wh-tag">同名異組</span>` : '';
     return html`<div class="wh-prow${p.excluded ? ' is-excluded' : ''}${state.selected.has(p.id) ? ' is-selected' : ''}" data-id="${p.id}" role="row">
       <label class="wh-check" title="選取"><input type="checkbox" data-sel ${raw(state.selected.has(p.id) ? 'checked' : '')} aria-label="選取 ${p.name}"></label>
       <button type="button" class="wh-pname" data-act="edit" aria-label="${T.edit} ${p.name}"><span class="nm">${p.name}</span>${p.code ? html`<small>${p.code}</small>` : ''}${dupTag}</button>
       ${showGroup ? html`<span class="wh-pgroup"><i class="sw" style="background:${color(d, p.group)}"></i>${p.group || T.ungrouped}</span>` : ''}
-      <label class="wh-weight"><span>${T.weight}</span><input type="number" class="input" data-weight min="1" max="1000" step="1" inputmode="numeric" value="${p.weight}" aria-label="${T.weight}：${p.name}"></label>
+      ${d.w.edit ? html`<label class="wh-weight"><span>${T.weight}</span><input type="number" class="input" data-weight min="1" max="1000" step="1" inputmode="numeric" value="${p.weight}" aria-label="${T.weight}：${p.name}"></label>`
+        : d.w.show ? html`<span class="wh-weight wh-weight-ro" aria-label="${T.weight}：${p.name} ${p.weight}"><span>${T.weight}</span><b>×${p.weight}</b></span>` : ''}
       <span class="wh-excl"><label class="wh-check-inline"><input type="checkbox" data-excl ${raw(p.excluded ? 'checked' : '')} aria-label="${T.exclude}：${p.name}"><span>${T.exclude}</span></label>${reason}</span>
       <span class="wh-won">${won ? won.join('、') : raw('<span class="wh-muted">—</span>')}</span>
       <button type="button" class="icon-btn" data-act="row-more" aria-label="${T.more}：${p.name}" aria-haspopup="menu">${icon('more')}</button>
@@ -130,12 +133,14 @@ export async function renderParticipants(main, { layout, route }) {
     const wrap = h('div', { class: 'wh-plist' });
     if (state.view === 'list') {
       const people = e.participants.filter(p => matches(p, d));
+      const wOn = d.w.show;
+      if (!wOn && state.sort.key === 'weight') state.sort = { key: 'name', dir: 1 };
       const k = state.sort.key, dir = state.sort.dir;
       const val = (p) => k === 'name' ? p.name : k === 'group' ? (d.gmap.has(p.group) ? String(d.gmap.get(p.group)).padStart(5, '0') : 'zzzz') + p.name
         : k === 'weight' ? String(p.weight).padStart(5, '0') : k === 'excluded' ? (p.excluded ? '1' : '0') : k === 'won' ? (d.won.has(p.id) ? '0' : '1') : (p.code || '');
       people.sort((a, b) => val(a).localeCompare(val(b), 'zh-Hant') * dir);
       const th = (key, label) => html`<button type="button" class="wh-sort${k === key ? ' on' : ''}" data-sort="${key}" aria-label="依${label}排序">${label}${k === key ? icon(dir > 0 ? 'chevronUp' : 'chevronDown', 14) : ''}</button>`;
-      wrap.insertAdjacentHTML('beforeend', html`<div class="wh-prow wh-prow-head wh-prow-list" role="row"><span></span>${th('name', '姓名')}${th('group', '群組')}${th('weight', T.weight)}${th('excluded', T.exclude)}${th('won', T.won)}<span></span></div>`.s);
+      wrap.insertAdjacentHTML('beforeend', html`<div class="wh-prow wh-prow-head wh-prow-list" role="row"><span></span>${th('name', '姓名')}${th('group', '群組')}${wOn ? th('weight', T.weight) : ''}${th('excluded', T.exclude)}${th('won', T.won)}<span></span></div>`.s);
       wrap.insertAdjacentHTML('beforeend', html`<div class="wh-prows wh-prows-list">${people.map(p => rowHTML(p, d, true))}</div>`.s);
       if (!people.length) wrap.appendChild(h('p', { class: 'wh-muted wh-pad' }, '沒有符合的人。'));
       return wrap;
@@ -147,13 +152,14 @@ export async function renderParticipants(main, { layout, route }) {
       if (!people.length && (state.q || state.filter !== 'all')) continue;
       any = true;
       const open = !state.collapsed.has(g);
+      const wOn = d.w.show;
       const ws = new Set(e.participants.filter(p => (p.group || '') === g).map(p => p.weight));
-      const wNote = ws.size === 1 && [...ws][0] > 1 ? `籤數 ×${[...ws][0]}` : '';
+      const wNote = wOn && ws.size === 1 && [...ws][0] > 1 ? `籤數 ×${[...ws][0]}` : '';
       const sec = h('section', { class: 'wh-group', 'data-group': g, id: 'grp-' + encodeURIComponent(g || '_') });
       sec.insertAdjacentHTML('beforeend', html`<div class="wh-group-head">
         <button type="button" class="wh-group-toggle" data-act="toggle" aria-expanded="${String(open)}">${icon(open ? 'chevronDown' : 'chevronRight', 18)}<i class="sw" style="background:${color(d, g)}"></i><b>${g || T.ungrouped}</b>${wNote ? html`<span class="wh-tag">${wNote}</span>` : ''}</button>
         <div class="wh-group-acts">
-          <button type="button" class="btn btn-ghost btn-sm" data-act="g-weight">${T.groupSetWeight}</button>
+          ${d.w.edit ? html`<button type="button" class="btn btn-ghost btn-sm" data-act="g-weight">${T.groupSetWeight}</button>` : ''}
           <button type="button" class="btn btn-ghost btn-sm" data-act="g-exclude" aria-haspopup="menu">${T.groupExcludeAll}</button>
           <button type="button" class="icon-btn" data-act="g-more" aria-label="${T.more}：${g || T.ungrouped}" aria-haspopup="menu">${icon('more')}</button>
         </div></div>`.s);
@@ -173,7 +179,7 @@ export async function renderParticipants(main, { layout, route }) {
     const b = (label, fn, extra = {}) => { const x = h('button', { type: 'button', class: 'btn btn-ghost btn-sm', ...extra }, label); x.addEventListener('click', () => fn(x)); return x; };
     bar.append(
       h('b', { class: 'wh-batch-n' }, T.batchSelected(n)),
-      b(T.batchWeight, (x) => weightMenu(x, (w) => setWeight(ids(), w, '')), { 'aria-haspopup': 'menu' }),
+      d.w.edit ? b(T.batchWeight, (x) => weightMenu(x, (w) => setWeight(ids(), w, '')), { 'aria-haspopup': 'menu' }) : null,
       b(T.batchExclude, (x) => reasonMenu(x, (r) => setExcluded(ids(), true, r, '')), { 'aria-haspopup': 'menu' }),
       b(T.batchRestore, () => setExcluded(ids(), false, null, '')),
       b(T.batchMove, (x) => groupMenu(x, d, (g) => moveTo(ids(), g)), { 'aria-haspopup': 'menu' }),
@@ -230,7 +236,7 @@ export async function renderParticipants(main, { layout, route }) {
       { label: '自訂…', fn: async () => { const v = await promptDialog(T.batchWeight, `${T.weight}（1–1000）`, { type: 'number', min: 1, max: 1000, value: 2 }); if (v) fn(clampWeight(v)); } }]);
   }
   function reasonMenu(anchor, fn) {
-    popMenu(anchor, EXCLUDE_REASON_CHOICES.map(r => ({ label: `${T.exclude}：${EXCLUDE_REASON_LABEL[r]}`, fn: () => fn(r) })));
+    popMenu(anchor, EXCLUDE_REASON_CHOICES.map(r => ({ label: `${T.exclude}：${excludeReasonLabel(r)}`, fn: () => fn(r) })));
   }
   function groupMenu(anchor, d, fn) {
     popMenu(anchor, [...d.groups.map(g => ({ label: g, fn: () => fn(g) })), { sep: true },
@@ -280,7 +286,7 @@ export async function renderParticipants(main, { layout, route }) {
     } else if (act === 'toggle' && g != null) {
       if (state.collapsed.has(g)) state.collapsed.delete(g); else state.collapsed.add(g);
       rerender(`[data-group="${CSS.escape(g)}"] [data-act=toggle]`);
-    } else if (act === 'g-weight') groupWeightDialog(g);
+    } else if (act === 'g-weight' && weightsUI(evt).edit) groupWeightDialog(g);
     else if (act === 'g-exclude') {
       const ids = evt.participants.filter(p => (p.group || '') === g).map(p => p.id);
       reasonMenu(el, (r) => setExcluded(ids, true, r, nameOf(g)));
@@ -306,6 +312,7 @@ export async function renderParticipants(main, { layout, route }) {
     if (old) old.replaceWith(batchBar(ev(), derive(ev())));
   });
   on(root, 'change', '[data-weight]', (e, el) => {
+    if (!weightsUI(ev()).edit) return;
     const id = el.closest('[data-id]').dataset.id;
     const w = clampWeight(el.value);
     el.value = w;
@@ -386,15 +393,16 @@ export function personDialog(p, after) {
     ? [{ label: T.cancel, value: null, kind: 'ghost' }, { label: T.addAndNext, value: 'next', kind: 'ghost' }, { label: T.addPerson, value: 'add', kind: 'primary' }]
     : [...(hasDraw ? [] : [{ label: T.del, value: 'delete', kind: 'danger' }]), { label: T.cancel, value: null, kind: 'ghost' }, { label: T.save, value: 'save', kind: 'primary' }];
   const listId = 'grp-list-' + Math.random().toString(36).slice(2);
+  const wOn = weightsUI(e).edit;   // 未解鎖：不出現籤數欄，存檔時保留原籤數
   dialog({
     title: isNew ? T.personTitleAdd : T.personTitleEdit,
     body: html`<form class="wh-form" data-pf onsubmit="return false">
       <label class="field"><span>${T.fPersonName} <b class="req" aria-hidden="true">*</b></span><input class="input" name="name" maxlength="40" autocomplete="off" value="${p ? p.name : ''}"></label>
       <p class="field-error" data-err hidden>請輸入姓名</p>
-      <div class="wh-form-row">
+      <div class="wh-form-row${wOn ? '' : ' wh-form-row-2'}">
         <label class="field"><span>${T.fGroup}</span><input class="input" name="group" list="${listId}" autocomplete="off" value="${p ? p.group || '' : ''}"></label>
         <label class="field"><span>${T.fCode}</span><input class="input" name="code" autocomplete="off" value="${p ? p.code || '' : ''}"></label>
-        <label class="field wh-field-narrow"><span>${T.weight}</span><input class="input" type="number" name="weight" min="1" max="1000" step="1" value="${p ? p.weight : 1}"></label>
+        ${wOn ? html`<label class="field wh-field-narrow"><span>${T.weight}</span><input class="input" type="number" name="weight" min="1" max="1000" step="1" value="${p ? p.weight : 1}"></label>` : ''}
       </div>
       <label class="field"><span>${T.fTags}</span><input class="input" name="tags" autocomplete="off" value="${p ? (p.tags || []).join('、') : ''}"></label>
       <label class="field"><span>${T.fNote}</span><input class="input" name="note" autocomplete="off" value="${p ? p.note || '' : ''}"></label>
@@ -409,7 +417,7 @@ export function personDialog(p, after) {
       setTimeout(() => name.focus(), 0);
       const read = () => ({
         name: name.value.trim(), group: f.elements.group.value.trim(), code: f.elements.code.value.trim(),
-        weight: clampWeight(f.elements.weight.value), note: f.elements.note.value.trim(),
+        weight: wOn ? clampWeight(f.elements.weight.value) : (p ? p.weight : 1), note: f.elements.note.value.trim(),
         tags: f.elements.tags.value.split(/[、,，]+/).map(s => s.trim()).filter(Boolean),
       });
       const btns = box.querySelectorAll('.dlg-actions .btn');
@@ -448,6 +456,7 @@ export function personDialog(p, after) {
 export function openWeightByGroup(after) {
   const e = ev();
   const groups = [...groupOrder(e).keys()];
+  if (!weightsUI(e).edit) return;
   if (!groups.length) { toast('名單還沒有群組。'); return; }
   const gmap = groupOrder(e);
   dialog({

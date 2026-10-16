@@ -12,8 +12,11 @@ import { gridToRows, autoMap, applyImport } from '../io/mapping.js';
 import { classifyAgainst } from '../core/dedupe.js';
 import { createParticipant, addLog, PALETTE, groupOrder, deepClone } from '../core/model.js';
 import { download } from '../io/export.js';
+import { canEditWeights } from './unlock.js';
 
-const FIELDS = ['name', 'group', 'code', 'weight', 'excluded', 'tags', 'note', ''];
+const ALL_FIELDS = ['name', 'group', 'code', 'weight', 'excluded', 'tags', 'note', ''];
+/** 未解鎖時不提供「籤數」對應，匯入也不讀籤數欄（不能靠匯入取得籤數） */
+const fields = () => (canEditWeights() ? ALL_FIELDS : ALL_FIELDS.filter(f => f !== 'weight'));
 const PREVIEW_LIMIT = 300;
 
 /**
@@ -41,7 +44,7 @@ export function openImportDialog({ file = null, text = null, onDone = null } = {
     S.shape = S.detect.shape;
     S.wideHeader = true;
     const am = autoMap(S.grid);
-    S.mapping = am.mapping.map(f => f || '');
+    S.mapping = am.mapping.map(f => (f === 'weight' && !canEditWeights() ? '' : f || ''));
     S.hasHeader = am.hasHeader;
     S.renames = {};
   }
@@ -99,7 +102,8 @@ export function openImportDialog({ file = null, text = null, onDone = null } = {
       for (const r of res.rows) if (S.renames[r.group]) r.group = S.renames[r.group];
       res.groups = res.groups.map(x => ({ ...x, display: S.renames[x.name] || x.name }));
     } else {
-      res = gridToRows(S.grid, 'long', { ...opts, mapping: S.mapping.map(f => f || null), hasHeader: S.hasHeader });
+      const wOn = canEditWeights();
+      res = gridToRows(S.grid, 'long', { ...opts, mapping: S.mapping.map(f => (f === 'weight' && !wOn ? null : f || null)), hasHeader: S.hasHeader });
     }
     const live = res.rows.filter(r => !r.skip && r.name);
     const cls = classifyAgainst(ctx.store.official.participants, live);
@@ -142,7 +146,9 @@ export function openImportDialog({ file = null, text = null, onDone = null } = {
     } else {
       panel = h('div', { class: 'wh-templates' },
         h('p', { class: 'wh-hint' }, T.templateNote),
-        btn(T.templateLong, 'ghost', () => download('名單範本-一列一人.csv', toCSV([['姓名', '群組', '編號', '籤數'], ['王小明', '業務', 'A001', '1'], ['李小華', '業務', 'A002', '1'], ['陳美玲', '行政', 'B001', '2'], ['張大同', '行政', 'B002', '1']]))),
+        btn(T.templateLong, 'ghost', () => download('名單範本-一列一人.csv', toCSV(canEditWeights()
+          ? [['姓名', '群組', '編號', '籤數'], ['王小明', '業務', 'A001', '1'], ['李小華', '業務', 'A002', '1'], ['陳美玲', '行政', 'B001', '2'], ['張大同', '行政', 'B002', '1']]
+          : [['姓名', '群組', '編號'], ['王小明', '業務', 'A001'], ['李小華', '業務', 'A002'], ['陳美玲', '行政', 'B001'], ['張大同', '行政', 'B002']]))),
         btn(T.templateWide, 'ghost', () => download('名單範本-一欄一群組.csv', toCSV([['業務', '行政', '北區'], ['王小明', '陳美玲', '林志明'], ['李小華', '張大同', ''], ['吳建宏', '', '']]))));
     }
     return [tabBar, S.busy ? h('p', { class: 'wh-callout', role: 'status' }, S.busy) : '', S.error ? h('p', { class: 'wh-callout wh-callout-warn', role: 'alert' }, S.error) : '', panel];
@@ -202,7 +208,7 @@ export function openImportDialog({ file = null, text = null, onDone = null } = {
     const body = S.hasHeader ? S.grid.slice(1) : S.grid;
     const rows = [];
     for (let j = 0; j < width; j++) {
-      const sel = h('select', { class: 'input wh-select', 'aria-label': `第 ${j + 1} 欄對應` }, ...FIELDS.map(f => h('option', { value: f, selected: (S.mapping[j] || '') === f }, (f === 'name' ? '姓名 *' : T.mapField[f]))));
+      const sel = h('select', { class: 'input wh-select', 'aria-label': `第 ${j + 1} 欄對應` }, ...fields().map(f => h('option', { value: f, selected: (S.mapping[j] || '') === f }, (f === 'name' ? '姓名 *' : T.mapField[f]))));
       sel.addEventListener('change', () => {
         const v = sel.value;
         if (v) S.mapping = S.mapping.map((x, k) => (k !== j && x === v ? '' : x));   // 同一欄位只對應一欄
@@ -253,10 +259,11 @@ export function openImportDialog({ file = null, text = null, onDone = null } = {
   }
 
   function longPreview(res) {
+    const wOn = canEditWeights();
     const rows = res.rows.slice(0, PREVIEW_LIMIT).map(r => h('tr', { class: cellClass(r), title: cellTitle(r) || null },
-      h('td', null, r.name || '（空白）'), h('td', null, r.group || '—'), h('td', null, r.code || '—'), h('td', null, String(r.weight || 1)), h('td', null, r.excluded ? '排除' : '')));
+      h('td', null, r.name || '（空白）'), h('td', null, r.group || '—'), h('td', null, r.code || '—'), wOn ? h('td', null, String(r.weight || 1)) : null, h('td', null, r.excluded ? '排除' : '')));
     const wrap = h('div', { class: 'wh-table-wrap wh-preview-scroll' }, h('table', { class: 'wh-table' },
-      h('thead', null, h('tr', null, h('th', null, '姓名'), h('th', null, '群組'), h('th', null, '編號'), h('th', null, T.weight), h('th', null, T.exclude))),
+      h('thead', null, h('tr', null, h('th', null, '姓名'), h('th', null, '群組'), h('th', null, '編號'), wOn ? h('th', null, T.weight) : null, h('th', null, T.exclude))),
       h('tbody', null, ...rows)));
     if (res.rows.length > PREVIEW_LIMIT) wrap.append(h('p', { class: 'wh-muted' }, T.moreRows(res.rows.length - PREVIEW_LIMIT)));
     return wrap;
@@ -288,7 +295,7 @@ export function openImportDialog({ file = null, text = null, onDone = null } = {
     const ev = ctx.store.official;
     const before = deepClone(ev.participants);
     const rows = res.rows.map(r => { const x = { ...r }; delete x._cls; return x; });
-    const opts = { conflict: S.conflict, sameName: S.sameName, source: S.srcKind, fileName: S.srcName, shape: S.shape };
+    const opts = { conflict: S.conflict, sameName: S.sameName, source: S.srcKind, fileName: S.srcName, shape: S.shape, keepWeight: !canEditWeights() };
     const { ok, value: out } = await tryEdit((e) => applyImport(e, rows, opts, classifyAgainst, createParticipant, addLog));
     if (!ok) return;
     if (closeFn) closeFn('done');
@@ -299,7 +306,7 @@ export function openImportDialog({ file = null, text = null, onDone = null } = {
         await tryEdit((e) => { e.participants = before; addLog(e, 'participant.remove', `復原匯入（移除 ${out.added} 人）`); }, { undoable: false });
         if (onDone) onDone();
       },
-      actions: groups ? [{ label: T.setWeightByGroup, fn: () => openWeightByGroup(onDone) }] : [],
+      actions: groups && canEditWeights() ? [{ label: T.setWeightByGroup, fn: () => openWeightByGroup(onDone) }] : [],
     });
     if (onDone) onDone();
   }

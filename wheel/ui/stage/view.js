@@ -238,10 +238,10 @@ export class StageView {
     });
   }
 
-  /** 揭曉卡片；decor = { select: {focus, picked:Set}, hostChrome } */
+  /** 揭曉卡片；decor = { select: {focus, picked:Set, selectable:Set}, hostChrome }。選卡模式中可選的卡片可點擊（交給 onCardClick） */
   renderReveal(r, decor) {
     const sel = decor && decor.select;
-    const key = JSON.stringify([r, sel ? [sel.focus, [...sel.picked]] : null, decor && decor.hostChrome]);
+    const key = JSON.stringify([r, sel ? [sel.focus, [...sel.picked], sel.selectable ? [...sel.selectable] : null] : null, decor && decor.hostChrome]);
     if (this.keys.reveal === key) return;
     this.keys.reveal = key;
     let cards = r.cards;
@@ -254,7 +254,10 @@ export class StageView {
       const cls = ['ws-card', 'is-' + c.state];
       if (sel && sel.focus === c.slot) cls.push('is-focus');
       if (sel && sel.picked.has(c.slot)) cls.push('is-picked');
+      const pickable = !!(sel && sel.selectable && sel.selectable.has(c.slot));
+      if (pickable) cls.push('is-selectable');
       const card = h('div', { class: cls.join(' '), dataset: { slot: c.slot } });
+      if (pickable) card.addEventListener('click', () => { if (this.onCardClick) this.onCardClick(c.slot); });
       if (c.state === 'shown') {
         card.append(h('div', { class: 'ws-name' }, c.name));
         if (c.group) card.append(h('div', { class: 'ws-group' }, c.group));

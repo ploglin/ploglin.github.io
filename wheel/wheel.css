@@ -258,6 +258,9 @@ input[type="checkbox"], input[type="radio"] { width: 20px; height: 20px; accent-
 }
 .wh-prow-list { grid-template-columns: 44px minmax(120px, 1.4fr) minmax(90px, 1fr) 128px minmax(150px, 1.2fr) minmax(70px, 1fr) 44px; }
 .wh-prows-list .wh-prow { grid-template-columns: 44px minmax(120px, 1.4fr) minmax(90px, 1fr) 128px minmax(150px, 1.2fr) minmax(70px, 1fr) 44px; }
+/* 不顯示籤數（.wh-noweight：未解鎖且名單全員 1 籤）：不輸出籤數欄，格線少一欄 */
+.wh-noweight .wh-prow { grid-template-columns: 44px minmax(120px, 1.4fr) minmax(150px, 1.2fr) minmax(70px, 1fr) 44px; }
+.wh-noweight .wh-prow-list, .wh-noweight .wh-prows-list .wh-prow { grid-template-columns: 44px minmax(120px, 1.4fr) minmax(90px, 1fr) minmax(150px, 1.2fr) minmax(70px, 1fr) 44px; }
 .wh-plist > .wh-prows-list, .wh-plist > .wh-prow-head { background: var(--card); border-left: 1px solid var(--line); border-right: 1px solid var(--line); }
 .wh-plist > .wh-prow-head { border-top: 1px solid var(--line); border-radius: var(--radius-sm) var(--radius-sm) 0 0; font-size: 13px; font-weight: 800; color: var(--muted); background: var(--card-2); }
 .wh-plist > .wh-prows-list { border-bottom: 1px solid var(--line); border-radius: 0 0 var(--radius-sm) var(--radius-sm); }
@@ -271,6 +274,8 @@ input[type="checkbox"], input[type="radio"] { width: 20px; height: 20px; accent-
 .wh-pgroup { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: var(--ink-soft); min-width: 0; }
 .wh-weight { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink-soft); font-weight: 700; }
 .wh-weight .input { width: 72px; min-height: 38px; text-align: center; font-variant-numeric: tabular-nums; }
+/* 未解鎖但資料有籤數：唯讀數字，寬度與輸入框相同以對齊 */
+.wh-weight-ro b { display: inline-block; min-width: 72px; text-align: center; font-variant-numeric: tabular-nums; color: var(--ink); font-weight: 800; }
 .wh-excl { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; min-width: 0; }
 .wh-check-inline { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer; font-size: 14.5px; }
 .wh-reason { width: auto; min-height: 36px; font-size: 13.5px; padding: 0 6px; }
@@ -289,6 +294,7 @@ input[type="checkbox"], input[type="radio"] { width: 20px; height: 20px; accent-
 .wh-dropzone.is-drop, .wh-participants.is-drop { border-color: var(--brand); background: var(--brand-soft); }
 .wh-paste { max-width: 560px; margin: 12px auto 4px; display: block; }
 .wh-form-row { display: grid; grid-template-columns: 1fr 1fr 110px; gap: 10px; }
+.wh-form-row-2 { grid-template-columns: 1fr 1fr; }
 .wh-wgrid { display: flex; flex-direction: column; gap: 4px; }
 .wh-wrow { display: grid; grid-template-columns: 14px 1fr 100px; gap: 10px; align-items: center; min-height: 44px; }
 .wh-dup { border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px 4px; margin: 0 0 10px; display: flex; flex-direction: column; }
@@ -457,6 +463,9 @@ input[type="checkbox"], input[type="radio"] { width: 20px; height: 20px; accent-
     .wh-prow > .wh-pname { grid-area: name; }
     .wh-prow > .icon-btn { grid-area: more; }
     .wh-prow > .wh-weight { grid-area: weight; }
+    .wh-noweight .wh-prow, .wh-noweight .wh-prow-list, .wh-noweight .wh-prows-list .wh-prow {
+        grid-template-columns: 44px minmax(0, 1fr) 44px; grid-template-areas: "chk name more" "chk excl excl";
+    }
     .wh-prow > .wh-excl { grid-area: excl; }
     .wh-prow > .wh-pgroup, .wh-prow > .wh-won:has(.wh-muted) { display: none; }
     .wh-prow > .wh-won { grid-column: 2 / 4; }

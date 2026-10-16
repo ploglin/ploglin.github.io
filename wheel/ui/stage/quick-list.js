@@ -32,7 +32,7 @@ export function quickListSpec(ctl) {
       for (const p of hits) {
         const tags = [];
         if (p.group) tags.push(p.group);
-        if (p.weight > 1) tags.push(t('quick.weight', { n: p.weight }));
+        // if (p.weight > 1) tags.push(t('quick.weight', { n: p.weight }));
         if (p.excluded) tags.push(t('quick.excludedTag'));
         if (winners.has(p.id)) tags.push(t('quick.wonTag'));
         rows.push(h('div', { class: 'ws-qrow' + (p.excluded ? ' is-excluded' : '') },

@@ -8,6 +8,7 @@ import { revealStyle, STOP_HOLD_MS, CHAIN_HOLD_MS, SHUFFLE_MS } from '../../core
 import { buildPool } from '../../core/pool.js';
 import { decideWheel, buildSectors } from '../../core/sectors.js';
 import * as ops from '../../core/stage-ops.js';
+import { COOLDOWN_MS } from '../../core/state.js';
 import S from '../i18n-stage.js';
 
 // ---------- 文案 ----------
@@ -47,7 +48,9 @@ export function voidBarModel({ mirror, confirmed, names, reason = 'absent', abse
       reasons: null,
       hint: reason === 'absent' ? t('void.mirrorDefault') : t('void.mirrorChosen'),
       mark: '·' + CIRCLED[idx],
-      tail: t('void.tailMirror'),
+      tail: null,                     // 投影畫面不出現鍵位文字：改成「確定」「取消」兩顆按鈕，鍵位只放 title
+      submit: t('void.confirmBtn'),
+      cancel: t('btn.cancel'),
       rule: null,
     };
   }
@@ -110,6 +113,57 @@ export function mainAction(ev, revealDone = ops.isRevealDone(ev)) {
     case 'all_done': return { kind: 'none', label: t('btn.allDone'), key: null, disabled: true };
     default: return { kind: 'none', label: '', key: null, disabled: true };
   }
+}
+
+// ---------- 主動作按鈕（隱藏主按鈕與投影操作列主鈕共用） ----------
+/** 主動作種類 → 舞台動作（直接呼叫，不再模擬 Space / Enter；選卡模式下 Enter 是作廢，不能拿來代表「全部確認」） */
+export const MAIN_KIND_ACTION = { spin: 'spin', arm: 'spin', redraw: 'spin', advance: 'advance', confirm: 'confirm', next: 'next' };
+/** 點完要立刻收起操作列的動作（揭曉下一張 / 下一頁要能連點，不收） */
+const COLLAPSE_ACTIONS = new Set(['spin', 'confirm', 'next', 'skip']);
+
+/** 浮層開著、選卡模式中、或正在寫入時，主動作不可用 */
+export function mainActionAvailable(s) { return !s.overlay && !s.cardSelect && !s.busy; }
+
+export function mainCooling(s) { return (s.now || 0) - (s.phaseAt || 0) < COOLDOWN_MS; }
+
+/**
+ * 點主按鈕要執行的動作；不可執行時回傳 null。
+ * ma：mainAction()；s：{ overlay, cardSelect: boolean, busy, now, phaseAt }
+ */
+export function mainPressAction(ma, s) {
+  if (!ma || ma.disabled || !mainActionAvailable(s) || mainCooling(s)) return null;
+  return MAIN_KIND_ACTION[ma.kind] || null;
+}
+
+function keyTitle(label, key) { return key ? `${label}（${key}）` : label; }
+
+/**
+ * 投影操作列中段主鈕：{ label, title, keys, action, disabled, tone: 'main'|'confirm'|'secondary'|'void', collapse }
+ * s：{ phase, overlay, busy, now, phaseAt, rehearsal, clickerMode, cardSelect: null | { picked: number } }
+ * 文字一律對應實際動作；按鈕上不放鍵位（只在 title / aria-keyshortcuts）。
+ */
+export function barMainModel(ma, s) {
+  const space = s.clickerMode ? ['Space / PageDown', 'Space PageDown'] : ['Space', 'Space'];
+  if (s.cardSelect) {
+    const n = s.cardSelect.picked || 0;
+    const label = t('btn.voidPicked', { n });
+    return { label, title: keyTitle(label, 'Enter'), keys: 'Enter', action: 'card.void', disabled: n === 0 || !!s.overlay || !!s.busy, tone: 'void', collapse: false };
+  }
+  if (s.phase === 'prize_intro') {
+    const label = t('btn.wait');
+    return { label, title: label, keys: null, action: null, disabled: true, tone: 'main', collapse: false };
+  }
+  if (s.phase === 'spinning' && s.rehearsal) {
+    const label = t('btn.skip');
+    return { label, title: keyTitle(label, 'S'), keys: 'S', action: 'skip', disabled: !!s.overlay, tone: 'secondary', collapse: true };
+  }
+  const action = mainPressAction(ma, { ...s, cardSelect: false });
+  const k = ma && ma.key === 'Space' ? space : ma && ma.key ? [ma.key, ma.key] : [null, null];
+  const label = ma ? ma.label : '';
+  return {
+    label, title: keyTitle(label, k[0]), keys: k[1], action, disabled: !action,
+    tone: ma && ma.kind === 'confirm' ? 'confirm' : 'main', collapse: COLLAPSE_ACTIONS.has(action),
+  };
 }
 
 // ---------- 轉動時間軸 ----------

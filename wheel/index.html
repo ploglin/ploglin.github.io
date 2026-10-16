@@ -48,7 +48,7 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/shell.css?v=9">
-    <link rel="stylesheet" href="wheel.css?v=2">
+    <link rel="stylesheet" href="wheel.css?v=3">
 </head>
 <body class="wh-body-root">
     <!-- 設定模式極簡頂列：品牌（回活動列表）＋主題切換；不黏頂，舞台模式隱藏 -->
@@ -66,14 +66,14 @@
         <ol>
             <li><strong>建立活動</strong>：選情境（尾牙、直播、課堂點名、抽主持人），預設值一次帶好。</li>
             <li><strong>匯入名單</strong>：拖進 Excel 或 CSV，或直接從 Excel 複製貼上。「一列一人」與「一欄一個群組」兩種排法都會自動辨識。</li>
-            <li><strong>設定獎項</strong>：名額、每次抽幾名、參加資格（例如只限某些部門）；資深同仁可以多給幾支籤（籤數）。</li>
+            <li><strong>設定獎項</strong>：名額、每次抽幾名、參加資格（例如只限某些部門）。</li>
             <li><strong>先彩排</strong>：彩排的結果不會留下紀錄，可以放心試按每個鍵。</li>
             <li><strong>正式開始</strong>：接上投影機，按 <kbd class="kbd">Space</kbd> 開轉、<kbd class="kbd">Enter</kbd> 確認；不在場就按 <kbd class="kbd">V</kbd> 作廢再補抽。老闆臨時加碼按 <kbd class="kbd">Shift+B</kbd>。</li>
             <li><strong>匯出</strong>：活動結束後在紀錄頁匯出中獎名單 CSV 或列印。</li>
         </ol>
 
         <h2>公平性說明</h2>
-        <p>每一次開轉前，系統先用瀏覽器內建的密碼學安全亂數決定得獎者，並把結果寫進資料庫，之後轉盤才開始轉、停在對應的位置——轉盤動畫只是呈現，不影響結果。每一筆紀錄都附上當時的亂數、候選人數、籤數總和與候選名單雜湊，事後可匯出稽核資料核對。籤數 2 的人中獎機會就是籤數 1 的兩倍。</p>
+        <p>每一次開轉前，系統先用瀏覽器內建的密碼學安全亂數決定得獎者，並把結果寫進資料庫，之後轉盤才開始轉、停在對應的位置——轉盤動畫只是呈現，不影響結果。每一筆紀錄都附上當時的亂數、候選人數與候選名單雜湊，事後可匯出稽核資料核對。</p>
 
         <h2>常見問題</h2>
         <h3>名單資料會上傳到網路嗎？</h3>
@@ -88,6 +88,6 @@
         <p class="wh-intro-foot">本頁使用 Google Analytics 統計瀏覽次數，不含名單資料。<a href="../privacy/">隱私權政策</a></p>
     </section>
 
-    <script type="module" src="app.js?v=2"></script>
+    <script type="module" src="app.js?v=3"></script>
 </body>
 </html>

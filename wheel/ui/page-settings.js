@@ -9,6 +9,7 @@ import { exportBackup, carryDialog, closeEvent, reopenEvent, deleteEvent } from 
 import { SCENARIOS, VOID_REASONS, addLog, hasOfficialDraws, clamp } from '../core/model.js';
 import { newSeed } from '../core/rng.js';
 import { decideWheel, wheelDiameter } from '../core/sectors.js';
+import { weightsUI } from './unlock.js';
 import { relTime } from '../store/backup.js';
 import { migrateEvent } from '../core/migrations.js';
 
@@ -132,7 +133,8 @@ export async function renderSettings(main) {
     modeSel.querySelector('.wh-set-ctl').appendChild(wheelNoteEl);
     const secWheel = section(T.secWheel,
       modeSel,
-      radios(T.sSectorBy, 'sector', [['weight', T.sectorWeight], ['equal', T.sectorEqual]], s.sectorBy, (st, v) => { st.sectorBy = v; }),
+      // 扇區大小：名單沒有籤數 > 1 且未解鎖時不顯示（全員 1 籤時兩種選項結果相同）
+      weightsUI(ev()).show ? radios(T.sSectorBy, 'sector', [['weight', T.sectorWeight], ['equal', T.sectorEqual]], s.sectorBy, (st, v) => { st.sectorBy = v; }) : null,
       row(T.sSpin, h('div', { class: 'wh-row-gap wh-align-center' }, spin, spinOut)),
       row('', h('button', { type: 'button', class: 'btn btn-ghost', onclick: () => openWheelPreview() }, icon('eye', 18), T.previewWheel)),
       adv);

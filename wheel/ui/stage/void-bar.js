@@ -1,4 +1,5 @@
-// 底部作廢條（D.7）：取代對話框。鏡像版不列原因（只在條尾顯示圈數字小代號），延伸版列出 1–6 原因。
+// 底部作廢條（D.7）：取代對話框。鏡像版不列原因（只在條尾顯示圈數字小代號）、條尾是「確定」「取消」兩顆按鈕（不寫鍵位）；
+// 延伸版列出 1–6 原因，條尾保留鍵位文字。
 import { h } from '../dom.js';
 import { voidBarModel, t } from './logic.js';
 import { fill } from './util.js';
@@ -29,6 +30,14 @@ export function renderVoidBar(bar, d, opts) {
     inp.addEventListener('input', () => opts.onNoteInput(inp.value));
     inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); opts.onSubmit(); } });
     parts.push(inp);
+  }
+  if (!m.tail) {
+    // 鏡像（投影）版：兩顆按鈕，鍵位只放 title
+    parts.push(h('span', { class: 'ws-vb-tail ws-vb-btns' },
+      h('button', { type: 'button', class: 'ws-vb-act ws-vb-btn is-primary', title: `${m.submit}（Enter）`, 'aria-keyshortcuts': 'Enter', onclick: () => opts.onSubmit() }, m.submit),
+      h('button', { type: 'button', class: 'ws-vb-act ws-vb-btn', title: `${m.cancel}（Esc）`, 'aria-keyshortcuts': 'Escape', onclick: () => opts.onCancel() }, m.cancel)));
+    fill(bar, ...parts);
+    return;
   }
   const [enterTxt, escTxt] = splitTail(m.tail);
   parts.push(h('span', { class: 'ws-vb-tail' },

@@ -8,6 +8,7 @@ import { T, VOID_REASON_LABEL, DRAW_STATUS_LABEL } from './i18n.js';
 import { sortedPrizes, prizeCounts, participantById, VOID_REASONS, displayName, sameNameSet, PALETTE, groupOrder, recomputePrizeStatuses } from '../core/model.js';
 import { voidDraws, editVoid, canRestore, restoreVoid, canRevertBonus, revertBonus } from '../core/draw.js';
 import { eligible } from '../core/pool.js';
+import { weightsUI } from './unlock.js';
 import { winnersCSV, auditCSV, fileName, download } from '../io/export.js';
 
 const view = { byPrize: true, showVoided: true };
@@ -117,7 +118,7 @@ export async function renderRecords(main, { route }) {
       h('details', { class: 'wh-rec-prize' }, h('summary', null, `${T.logTitle}（${logs.length}）`),
         logs.length ? h('ul', { class: 'wh-log' }, ...logs.map(l => h('li', null, h('time', { class: 'wh-muted' }, new Date(l.at).toLocaleString('zh-TW', { hour12: false })), ' ', l.summary, l.inStage ? h('small', { class: 'wh-tag' }, '舞台') : ''))) : h('p', { class: 'wh-muted' }, '沒有紀錄。')),
       h('details', { class: 'wh-rec-prize' }, h('summary', null, `${T.auditTitle} · ${rng}`),
-        h('p', { class: 'wh-hint' }, '每一抽都記下當時的亂數、候選人數、籤數總和與候選名單雜湊，可在匯出的稽核 CSV 核對。'),
+        h('p', { class: 'wh-hint' }, weightsUI(e).show ? '每一抽都記下當時的亂數、候選人數、籤數總和與候選名單雜湊，可在匯出的稽核 CSV 核對。' : '每一抽都記下當時的亂數、候選人數與候選名單雜湊，可在匯出的稽核 CSV 核對。'),
         h('button', { type: 'button', class: 'btn btn-ghost btn-sm', disabled: !e.draws.length, onclick: () => download(fileName(e, '稽核', 'csv'), auditCSV(e)) }, T.exportAudit)));
   }
 
@@ -165,7 +166,8 @@ export async function renderRecords(main, { route }) {
   }
   function showAudit(d) {
     const a = d.audit || {};
-    const rows = [['抽獎序號', d.seq], ['批次', d.batchId], ['卡位', d.slot], ['隨機來源', a.rngMode], ['亂數（hex）', a.randomHex], ['對應 [0,1)', a.randomUnit], ['候選人數', a.candidateCount], ['候選籤數總和', a.totalWeight], ['候選名單雜湊', a.poolHash], ['種子', a.seed || '—'], ['抽中第幾支籤', a.pickIndex], ['轉盤呈現', a.wheelMode], ['抽出時間', new Date(d.drawnAt).toLocaleString('zh-TW', { hour12: false })]];
+    const wOn = weightsUI(ctx.store.official).show;
+    const rows = [['抽獎序號', d.seq], ['批次', d.batchId], ['卡位', d.slot], ['隨機來源', a.rngMode], ['亂數（hex）', a.randomHex], ['對應 [0,1)', a.randomUnit], ['候選人數', a.candidateCount], ...(wOn ? [['候選籤數總和', a.totalWeight]] : []), ['候選名單雜湊', a.poolHash], ['種子', a.seed || '—'], [wOn ? '抽中第幾支籤' : '抽中第幾位候選人', a.pickIndex], ['轉盤呈現', a.wheelMode], ['抽出時間', new Date(d.drawnAt).toLocaleString('zh-TW', { hour12: false })]];
     dialog({ title: `${T.auditAction} · 第 ${d.seq} 抽`, body: html`<table class="wh-table wh-kv">${rows.map(([k, v]) => html`<tr><th>${k}</th><td><code>${v == null ? '—' : String(v)}</code></td></tr>`)}</table>`, actions: [{ label: T.close, value: null, kind: 'primary', focus: true }] });
   }
 

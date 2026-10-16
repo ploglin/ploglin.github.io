@@ -70,6 +70,17 @@ test('加碼鍵位提示含 Shift+B（i18n 檔存在時）', (t) => {
   assert.ok(all.includes('Shift+B'), '找不到 Shift+B 加碼提示');
 });
 
+// 籤數為贊助功能：未啟用時不得出現任何相關字樣；介面文案一律不寫這些字（啟用提示只說「已啟用籤數」）
+const SPONSOR_WORDS = ['贊助', '解鎖', '啟用碼', '序號解'];
+test('UI 文案不出現「贊助」「解鎖」等字樣', () => {
+  const hits = [];
+  for (const f of files) {
+    const t = stripComments(f.rel, f.text);
+    for (const w of SPONSOR_WORDS) if (t.includes(w)) hits.push(`${f.rel}: ${w}`);
+  }
+  assert.deepEqual(hits, []);
+});
+
 test('用詞：對外文案使用「作廢」「補抽」「籤數」', (t) => {
   const ui = files.filter(f => f.rel.startsWith('ui/') || f.rel.endsWith('.html'));
   if (!files.some(f => /^ui\/i18n[^/]*\.js$/.test(f.rel))) { t.skip('UI 文案檔（ui/i18n*.js）尚未建立'); return; }

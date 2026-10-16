@@ -105,7 +105,8 @@ export function gridToRows(grid, shape, opts = {}) {
 
 /**
  * 把待匯入列寫進 event（直接修改）。
- * opts: { conflict: 'skip'|'overwrite'|'both', sameName: 'separate'|'merge', source, fileName, shape }
+ * opts: { conflict: 'skip'|'overwrite'|'both', sameName: 'separate'|'merge', source, fileName, shape, keepWeight }
+ * keepWeight：覆蓋時保留原籤數（未解鎖的分頁匯入不得改動籤數）
  * 回傳 { added, skipped, overwritten, ids }
  */
 export function applyImport(event, rows, opts, classify, createParticipant, addLog) {
@@ -123,7 +124,7 @@ export function applyImport(event, rows, opts, classify, createParticipant, addL
         const p = event.participants.find(x => x.id === c.matchId);
         if (p) {
           p.name = r.name; if (r.group) p.group = r.group; if (r.code) p.code = r.code;
-          p.weight = r.weight || 1;
+          if (!opts.keepWeight) p.weight = r.weight || 1;
           if (r.excluded) { p.excluded = true; p.excludeReason = r.excludeReason || 'other'; }
           overwritten++; return;
         }

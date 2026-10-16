@@ -103,7 +103,7 @@ export class WheelCanvas {
       const mid = (s.startDeg + s.endDeg) / 2;
       c.save();
       c.rotate((mid - 90) * RAD);
-      const txt = equalMark && s.weight > 1 ? `${s.label} ×${s.weight}` : s.label;
+      const txt = s.label;
       c.fillText(truncate(c, txt, maxW), Rs - 10, 0);
       c.restore();
     }
