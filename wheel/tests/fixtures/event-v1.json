@@ -1,0 +1,308 @@
+{
+  "format": "ploglin-wheel-event",
+  "formatVersion": 1,
+  "exportedAt": "2026-10-16T03:57:57.633Z",
+  "app": "https://ploglin.cc/wheel/",
+  "event": {
+    "schemaVersion": 1,
+    "id": "1040c928-be5f-45fd-833b-af2a37fc0767",
+    "name": "範例尾牙",
+    "scenario": "banquet",
+    "createdAt": "2026-10-16T03:57:57.609Z",
+    "updatedAt": "2026-10-16T03:57:57.609Z",
+    "status": "live",
+    "participants": [
+      {
+        "id": "a6e50b4f-2709-4860-adc2-85b6c467b04d",
+        "name": "卓苡檸",
+        "weight": 1,
+        "excluded": false,
+        "createdAt": "2026-10-16T03:57:57.626Z",
+        "source": "xlsx",
+        "group": "一部"
+      },
+      {
+        "id": "0729dfd4-3aff-4935-98a8-ad815af62539",
+        "name": "符澄蔚",
+        "weight": 1,
+        "excluded": false,
+        "createdAt": "2026-10-16T03:57:57.626Z",
+        "source": "xlsx",
+        "group": "二部"
+      },
+      {
+        "id": "74bebdc1-6449-4012-bf03-fedabc38a460",
+        "name": "殷霽霏",
+        "weight": 1,
+        "excluded": false,
+        "createdAt": "2026-10-16T03:57:57.626Z",
+        "source": "xlsx",
+        "group": "三部"
+      },
+      {
+        "id": "b0c258c3-05e6-4f2f-bec7-f7577155cdc2",
+        "name": "言苡棠",
+        "weight": 1,
+        "excluded": false,
+        "createdAt": "2026-10-16T03:57:57.626Z",
+        "source": "xlsx",
+        "group": "一部"
+      },
+      {
+        "id": "0894aa7d-3583-4cce-a3f3-08302d6c5ae8",
+        "name": "卓芷璟",
+        "weight": 1,
+        "excluded": false,
+        "createdAt": "2026-10-16T03:57:57.626Z",
+        "source": "xlsx",
+        "group": "二部"
+      },
+      {
+        "id": "47db50fb-8543-4ddc-bea1-2074e09c71cc",
+        "name": "祁筠瑜",
+        "weight": 1,
+        "excluded": false,
+        "createdAt": "2026-10-16T03:57:57.626Z",
+        "source": "xlsx",
+        "group": "三部"
+      },
+      {
+        "id": "ae6fe943-836f-4e93-95e9-60295273be0b",
+        "name": "殷翊瑜",
+        "weight": 1,
+        "excluded": false,
+        "createdAt": "2026-10-16T03:57:57.627Z",
+        "source": "xlsx",
+        "group": "一部"
+      },
+      {
+        "id": "e4af6a07-07a1-45a8-ac83-13427b55a036",
+        "name": "甄苡檸",
+        "weight": 1,
+        "excluded": false,
+        "createdAt": "2026-10-16T03:57:57.627Z",
+        "source": "xlsx",
+        "group": "二部"
+      },
+      {
+        "id": "e2cc8896-f833-4805-95c5-addec78c3428",
+        "name": "言澄璟",
+        "weight": 1,
+        "excluded": false,
+        "createdAt": "2026-10-16T03:57:57.627Z",
+        "source": "xlsx",
+        "group": "三部"
+      },
+      {
+        "id": "776724ee-1afe-41f9-bf5e-3ba3c41585ae",
+        "name": "湛昕禾",
+        "weight": 1,
+        "excluded": false,
+        "createdAt": "2026-10-16T03:57:57.627Z",
+        "source": "xlsx",
+        "group": "一部"
+      },
+      {
+        "id": "061abc4a-ffb4-4b3e-bfbe-8ee40ae85171",
+        "name": "牛岑嵐",
+        "weight": 1,
+        "excluded": false,
+        "createdAt": "2026-10-16T03:57:57.627Z",
+        "source": "xlsx",
+        "group": "二部"
+      },
+      {
+        "id": "489e1c59-eddf-461c-b08d-9ab9cff87023",
+        "name": "湛岑嵐",
+        "weight": 1,
+        "excluded": false,
+        "createdAt": "2026-10-16T03:57:57.627Z",
+        "source": "xlsx",
+        "group": "三部"
+      }
+    ],
+    "prizes": [
+      {
+        "id": "7dea60bf-1557-4303-b666-b060978cf462",
+        "name": "普獎",
+        "quantity": 2,
+        "perDraw": 2,
+        "order": 1,
+        "eligibility": {
+          "mode": "all"
+        },
+        "allowRepeatWinners": null,
+        "isBonus": false,
+        "bonusLog": [],
+        "status": "done",
+        "createdAt": "2026-10-16T03:57:57.627Z"
+      },
+      {
+        "id": "6e8fee73-82ef-487a-8b06-9bae04fb05d1",
+        "name": "頭獎",
+        "quantity": 1,
+        "perDraw": 1,
+        "order": 2,
+        "eligibility": {
+          "mode": "all"
+        },
+        "allowRepeatWinners": null,
+        "isBonus": false,
+        "bonusLog": [],
+        "status": "pending",
+        "createdAt": "2026-10-16T03:57:57.627Z"
+      }
+    ],
+    "draws": [
+      {
+        "id": "f8ac0d97-921e-4171-ae55-027b0294867b",
+        "seq": 1,
+        "batchId": "5fe591c1-5a52-4d77-b8b5-1c3f37726038",
+        "slot": 0,
+        "prizeId": "7dea60bf-1557-4303-b666-b060978cf462",
+        "participantId": "0894aa7d-3583-4cce-a3f3-08302d6c5ae8",
+        "snapshot": {
+          "name": "卓芷璟",
+          "weight": 1,
+          "group": "二部"
+        },
+        "status": "voided",
+        "drawnAt": "2026-10-16T03:57:57.632Z",
+        "audit": {
+          "rngMode": "csprng",
+          "randomHex": "2dec3ac7c5d48ac4",
+          "randomUnit": 0.17938583174924838,
+          "candidateCount": 12,
+          "totalWeight": 12,
+          "poolHash": "478b97ee0d298f8f",
+          "pickIndex": 2,
+          "wheelMode": "none"
+        },
+        "void": {
+          "reason": "absent",
+          "voidedAt": "2026-10-16T03:57:57.632Z",
+          "wasConfirmed": false,
+          "redrawnBy": "90a686a0-c2e1-4da2-8486-258d082909b6"
+        }
+      },
+      {
+        "id": "2645013e-d975-4307-8240-82e50633448e",
+        "seq": 2,
+        "batchId": "5fe591c1-5a52-4d77-b8b5-1c3f37726038",
+        "slot": 1,
+        "prizeId": "7dea60bf-1557-4303-b666-b060978cf462",
+        "participantId": "a6e50b4f-2709-4860-adc2-85b6c467b04d",
+        "snapshot": {
+          "name": "卓苡檸",
+          "weight": 1,
+          "group": "一部"
+        },
+        "status": "confirmed",
+        "drawnAt": "2026-10-16T03:57:57.632Z",
+        "audit": {
+          "rngMode": "csprng",
+          "randomHex": "8e69d8a6c82fd319",
+          "randomUnit": 0.55630259053394,
+          "candidateCount": 11,
+          "totalWeight": 11,
+          "poolHash": "e9a10ffa575f81c6",
+          "pickIndex": 6,
+          "wheelMode": "none"
+        },
+        "confirmedAt": "2026-10-16T03:57:57.632Z"
+      },
+      {
+        "id": "90a686a0-c2e1-4da2-8486-258d082909b6",
+        "seq": 3,
+        "batchId": "e41082e7-44bf-41ff-861d-07a585218fd8",
+        "slot": 0,
+        "prizeId": "7dea60bf-1557-4303-b666-b060978cf462",
+        "participantId": "0729dfd4-3aff-4935-98a8-ad815af62539",
+        "snapshot": {
+          "name": "符澄蔚",
+          "weight": 1,
+          "group": "二部"
+        },
+        "status": "confirmed",
+        "drawnAt": "2026-10-16T03:57:57.633Z",
+        "audit": {
+          "rngMode": "csprng",
+          "randomHex": "2ce6a8f2c116ecb5",
+          "randomUnit": 0.17539459283840686,
+          "candidateCount": 10,
+          "totalWeight": 10,
+          "poolHash": "63c024750a963ba5",
+          "pickIndex": 1,
+          "wheelMode": "none"
+        },
+        "redrawOf": "f8ac0d97-921e-4171-ae55-027b0294867b",
+        "confirmedAt": "2026-10-16T03:57:57.633Z"
+      }
+    ],
+    "log": [
+      {
+        "at": "2026-10-16T03:57:57.632Z",
+        "type": "event.live",
+        "inStage": true,
+        "rehearsal": false,
+        "summary": "第一次正式開轉"
+      }
+    ],
+    "settings": {
+      "rules": {
+        "allowRepeatWinners": false,
+        "absentKeepsEligibility": true
+      },
+      "wheelMode": "auto",
+      "wheelThresholds": {
+        "full": 48,
+        "compact": 120,
+        "sampled": 400
+      },
+      "sectorBy": "weight",
+      "sampledSectors": 36,
+      "spinDurationMs": 6000,
+      "revealFlip": "byCount",
+      "revealShowGroup": true,
+      "revealShowCode": false,
+      "disambiguateSameName": true,
+      "autoConfirmSeconds": null,
+      "waitCountdownSec": null,
+      "projectionMode": true,
+      "clickerMode": false,
+      "armBigPrizes": 2,
+      "hotkeys": true,
+      "sound": {
+        "enabled": true,
+        "tick": 0.6,
+        "fanfare": 0.8,
+        "drumroll": 0.7
+      },
+      "confetti": true,
+      "motion": "system",
+      "stageTheme": "midnight",
+      "stageTitle": "",
+      "theme": "system",
+      "rngMode": "csprng"
+    },
+    "stage": {
+      "rehearsal": false,
+      "phase": "prize_intro",
+      "overlay": null,
+      "currentPrizeId": "7dea60bf-1557-4303-b666-b060978cf462",
+      "currentBatchId": null,
+      "controlsVisible": false,
+      "lastConfirmed": {
+        "batchId": "e41082e7-44bf-41ff-861d-07a585218fd8",
+        "prizeId": "7dea60bf-1557-4303-b666-b060978cf462",
+        "at": 1792123077633
+      }
+    },
+    "counters": {
+      "drawSeq": 3,
+      "batchSeq": 2
+    },
+    "date": "2026-01-20"
+  },
+  "assets": []
+}

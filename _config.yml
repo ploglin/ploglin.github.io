@@ -12,4 +12,8 @@ exclude:
   - kairosoft/school2/scripts             # 檢查器、佈局產生器、BASELINE.md
   - kairosoft/school2/sim/presets/README.md
   - scripts                               # 全站產生器（gen-*.js、link-check.js）
+  - wheel/DESIGN.md                       # 轉盤抽獎設計規格書
+  - wheel/core/API.md                     # 轉盤抽獎 core/store/io API 清單
+  - wheel/tests                           # 轉盤抽獎 Node 測試與 fixtures
+  - wheel/package.json                    # 只供 Node 測試用（type: module）
   - _config.yml

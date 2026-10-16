@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <!-- 深色模式防閃白：先把記住的主題套上（key 與站台共用；切換鈕在 app.js） -->
+    <script>try{var t=localStorage.getItem('kairo_theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+    <title>線上轉盤抽獎｜尾牙春酒抽獎工具</title>
+    <meta name="description" content="免費線上轉盤抽獎工具：匯入 Excel 名單（一列一人或一欄一群組都可以）、設定多個獎項、先彩排再正式抽，投影到大螢幕用鍵盤就能抽完全場。作廢、補抽、加碼全程留紀錄，可匯出中獎名單。資料只存在你的瀏覽器，不需帳號。">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://ploglin.cc/wheel/">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='11' fill='%230b1020'/%3E%3Cpath d='M12 12V2a10 10 0 0 1 8.7 5z' fill='%23F9DC5C'/%3E%3Cpath d='M12 12l8.7-5a10 10 0 0 1 0 10z' fill='%235ED3D1'/%3E%3Cpath d='M12 12l8.7 5A10 10 0 0 1 12 22z' fill='%23F4A0C8'/%3E%3Cpath d='M12 12v10a10 10 0 0 1-8.7-5z' fill='%237FB3F5'/%3E%3Cpath d='M12 12l-8.7 5a10 10 0 0 1 0-10z' fill='%237BD389'/%3E%3Cpath d='M12 12L3.3 7A10 10 0 0 1 12 2z' fill='%23F6A821'/%3E%3C/svg%3E">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="線上轉盤抽獎｜尾牙春酒抽獎工具">
+    <meta property="og:description" content="匯入 Excel 名單、設獎項、彩排、投影抽獎；作廢與補抽全程留紀錄。免帳號、資料只存在你的瀏覽器。">
+    <meta property="og:locale" content="zh_TW">
+    <meta property="og:url" content="https://ploglin.cc/wheel/">
+    <meta property="og:image" content="https://ploglin.cc/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebApplication",
+          "name": "轉盤抽獎",
+          "alternateName": "線上轉盤抽獎",
+          "url": "https://ploglin.cc/wheel/",
+          "applicationCategory": "UtilitiesApplication",
+          "operatingSystem": "Any（瀏覽器）",
+          "inLanguage": "zh-Hant-TW",
+          "isAccessibleForFree": true,
+          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "TWD" },
+          "description": "在瀏覽器裡跑完一場尾牙抽獎：匯入名單、設獎項、彩排、投影抽獎、作廢與補抽留紀錄、匯出中獎名單。"
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            { "@type": "Question", "name": "名單資料會上傳到網路嗎？", "acceptedAnswer": { "@type": "Answer", "text": "不會。名單、獎項與中獎紀錄都只存在你這台電腦的瀏覽器裡（IndexedDB），不需要帳號，也沒有伺服器保存你的資料。換電腦前請先匯出備份。" } },
+            { "@type": "Question", "name": "抽獎結果公平嗎？", "acceptedAnswer": { "@type": "Answer", "text": "每一抽都用瀏覽器的密碼學安全亂數（crypto.getRandomValues）先決定得獎者，再讓轉盤停到對應位置；同時記下亂數、候選人數與候選名單雜湊，可匯出稽核 CSV 核對。" } },
+            { "@type": "Question", "name": "Excel 名單要怎麼排？", "acceptedAnswer": { "@type": "Answer", "text": "兩種排法都可以：一列一人（第一列是姓名、部門等欄位名稱），或一欄一個群組（第一列是部門名稱，往下列名字）。匯入時會自動判斷，也可以手動切換。" } },
+            { "@type": "Question", "name": "抽到的人不在場怎麼辦？", "acceptedAnswer": { "@type": "Answer", "text": "按 V 把這一筆作廢（預設原因是不在場），再按 Space 補抽一名，結果會填回同一個位置。作廢的紀錄會保留，事後也能在紀錄頁修改原因。" } }
+          ]
+        }
+      ]
+    }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/shell.css?v=9">
+    <link rel="stylesheet" href="wheel.css?v=2">
+</head>
+<body class="wh-body-root">
+    <!-- 設定模式極簡頂列：品牌（回活動列表）＋主題切換；不黏頂，舞台模式隱藏 -->
+    <div class="wh-topbar">
+        <a class="wh-brand" href="#/"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="11" fill="#0b1020"/><path d="M12 12V2a10 10 0 0 1 8.7 5z" fill="#F9DC5C"/><path d="M12 12l8.7-5a10 10 0 0 1 0 10z" fill="#5ED3D1"/><path d="M12 12l8.7 5A10 10 0 0 1 12 22z" fill="#F4A0C8"/><path d="M12 12v10a10 10 0 0 1-8.7-5z" fill="#7FB3F5"/><path d="M12 12l-8.7 5a10 10 0 0 1 0-10z" fill="#7BD389"/><path d="M12 12L3.3 7A10 10 0 0 1 12 2z" fill="#F6A821"/></svg><span>轉盤抽獎</span></a>
+        <button type="button" class="wh-theme-btn" id="wh-theme-btn" aria-label="切換深淺色"></button>
+    </div>
+    <div id="app" class="wh-app" aria-live="off">
+        <noscript><p class="wh-callout wh-callout-warn">轉盤抽獎需要啟用 JavaScript 才能使用。</p></noscript>
+    </div>
+
+    <!-- 靜態介紹：不需 JS 即可閱讀（SEO）；只在活動列表顯示 -->
+    <section id="wh-intro" class="wh-intro container-narrow" aria-labelledby="intro-h">
+        <h2 id="intro-h">怎麼用</h2>
+        <ol>
+            <li><strong>建立活動</strong>：選情境（尾牙、直播、課堂點名、抽主持人），預設值一次帶好。</li>
+            <li><strong>匯入名單</strong>：拖進 Excel 或 CSV，或直接從 Excel 複製貼上。「一列一人」與「一欄一個群組」兩種排法都會自動辨識。</li>
+            <li><strong>設定獎項</strong>：名額、每次抽幾名、參加資格（例如只限某些部門）；資深同仁可以多給幾支籤（籤數）。</li>
+            <li><strong>先彩排</strong>：彩排的結果不會留下紀錄，可以放心試按每個鍵。</li>
+            <li><strong>正式開始</strong>：接上投影機，按 <kbd class="kbd">Space</kbd> 開轉、<kbd class="kbd">Enter</kbd> 確認；不在場就按 <kbd class="kbd">V</kbd> 作廢再補抽。老闆臨時加碼按 <kbd class="kbd">Shift+B</kbd>。</li>
+            <li><strong>匯出</strong>：活動結束後在紀錄頁匯出中獎名單 CSV 或列印。</li>
+        </ol>
+
+        <h2>公平性說明</h2>
+        <p>每一次開轉前，系統先用瀏覽器內建的密碼學安全亂數決定得獎者，並把結果寫進資料庫，之後轉盤才開始轉、停在對應的位置——轉盤動畫只是呈現，不影響結果。每一筆紀錄都附上當時的亂數、候選人數、籤數總和與候選名單雜湊，事後可匯出稽核資料核對。籤數 2 的人中獎機會就是籤數 1 的兩倍。</p>
+
+        <h2>常見問題</h2>
+        <h3>名單資料會上傳到網路嗎？</h3>
+        <p>不會。所有資料只存在你這台電腦的瀏覽器裡，不需要帳號。換電腦或清除瀏覽紀錄前，請先在活動列表匯出備份。</p>
+        <h3>抽到的人不在場怎麼辦？</h3>
+        <p>把這一筆作廢再補抽一名，結果會填回原本的位置；作廢紀錄會保留，事後可以在紀錄頁修改原因或恢復。</p>
+        <h3>可以投影到大螢幕嗎？</h3>
+        <p>可以。舞台預設是投影模式：操作按鈕自動隱藏，只用鍵盤或簡報筆操作，觀眾只會看到轉盤與得獎者。</p>
+        <h3>不小心重新整理頁面怎麼辦？</h3>
+        <p>結果在轉盤開始轉之前就已經存好，重新整理後會回到同一個得獎者，不會變成另一個人。</p>
+
+        <p class="wh-intro-foot">本頁使用 Google Analytics 統計瀏覽次數，不含名單資料。<a href="../privacy/">隱私權政策</a></p>
+    </section>
+
+    <script type="module" src="app.js?v=2"></script>
+</body>
+</html>

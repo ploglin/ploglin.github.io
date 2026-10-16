@@ -1,0 +1,8 @@
+{
+  "private": true,
+  "description": "轉盤抽獎（開發用設定：讓 Node 以 ES modules 跑 tests/；不對外發佈）",
+  "type": "module",
+  "scripts": {
+    "test": "node --test \"tests/*.test.js\""
+  }
+}

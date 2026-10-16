@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-Hant-TW" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="color-scheme" content="dark">
+<title>抽獎舞台｜轉盤抽獎</title>
+<link rel="stylesheet" href="stage.css" data-wstage="1">
+</head>
+<!-- 舞台與觀眾視窗的獨立入口：不掛站台 shell、不放廣告（D.1、G-13）。
+     stage.html#/e/<活動 id>/stage[?mode=rehearsal|live]   舞台（主持人）
+     stage.html#/e/<活動 id>/screen                        觀眾視窗
+     設定模式的 index.html 也可在 #/e/:id/stage、#/e/:id/screen 路由直接呼叫 mountStage / mountScreen。 -->
+<body class="wstage-body">
+<div id="stage-root"></div>
+<noscript><p class="ws-noscript">抽獎舞台需要啟用 JavaScript。</p></noscript>
+<script type="module">
+import { parseHash } from './ui/router.js';
+import { mountStage } from './ui/stage/page-stage.js';
+import { mountScreen } from './ui/stage/page-screen.js';
+
+const root = document.getElementById('stage-root');
+let destroy = null;
+let current = '';
+function route() {
+  const r = parseHash();
+  const key = r.name + ':' + (r.id || '');
+  if (key === current) return;
+  current = key;
+  if (destroy) { destroy(); destroy = null; }
+  if (r.name === 'stage') destroy = mountStage(root, { eventId: r.id, mode: r.query.mode || null });
+  else if (r.name === 'screen') destroy = mountScreen(root, { eventId: r.id });
+  else location.replace('./#/');
+}
+window.addEventListener('hashchange', route);
+route();
+</script>
+</body>
+</html>
