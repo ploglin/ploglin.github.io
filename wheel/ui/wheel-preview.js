@@ -98,7 +98,6 @@ export function openWheelPreview() {
     for (const s of sectors) {
       const mid = rad((s.startDeg + s.endDeg) / 2);
       let label = s.label || '';
-      if (d.sectorBy === 'equal' && s.weight > 1 && d.mode !== 'sampled') label += ` ×${s.weight}`;
       while (label.length > 1 && g.measureText(label).width > avail) label = label.slice(0, -2) + '…';
       g.save(); g.translate(cx, cy); g.rotate(mid); g.fillText(label, outer, 0); g.restore();
     }
