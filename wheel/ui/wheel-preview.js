@@ -82,10 +82,11 @@ export function openWheelPreview() {
         let j = i; while (j + 1 < sectors.length && sectors[j + 1].groupLabel === sectors[i].groupLabel) j++;
         const a0 = rad(sectors[i].startDeg), a1 = rad(sectors[j].endDeg);
         g.beginPath(); g.arc(cx, cy, R - band / 2, a0, a1); g.lineWidth = band; g.strokeStyle = PALETTE[sectors[i].colorIndex % 8]; g.stroke();
-        if (sectors[i].groupLabel) {
+        g.font = `700 20px "Noto Sans TC", system-ui, sans-serif`;
+        if (sectors[i].groupLabel && g.measureText(sectors[i].groupLabel).width <= (a1 - a0) * (R + 12) - 6) {
           const mid = (a0 + a1) / 2;
           g.save(); g.translate(cx + Math.cos(mid) * (R + 12), cy + Math.sin(mid) * (R + 12));
-          g.fillStyle = '#ffffff'; g.font = `700 20px "Noto Sans TC", system-ui, sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle';
+          g.fillStyle = '#ffffff'; g.textAlign = 'center'; g.textBaseline = 'middle';
           g.fillText(sectors[i].groupLabel, 0, 0); g.restore();
         }
         i = j + 1;

@@ -40,10 +40,18 @@ test('74 人 1080p 投影 → compact、字 14 px、落點距分隔線 ≥ 9 px'
     const distDeg = Math.min(land - s.startDeg, s.endDeg - land);
     assert.ok(distDeg * Math.PI / 180 * R >= 9, `dist ${distDeg}`);
   }
-  // 依群組排序上色：同群組相鄰，顏色 = 群組序 % 8
-  const firstGroup = b.sectors.slice(0, 11).map(s => s.groupLabel);
-  assert.ok(firstGroup.every(g => g === '一部'));
-  assert.equal(b.sectors[0].colorIndex, 0);
+  // 群組打散：顏色 = 群組序 % 8，相鄰（含首尾）不同組，且每次排列不同
+  for (const s of b.sectors) assert.equal(s.colorIndex, GROUPS8.indexOf(s.groupLabel) % PALETTE.length);
+  for (let r = 0; r < 50; r++) {
+    const bb = buildSectors(pool, pool[5].id, ev, d);
+    const gs = bb.sectors.map(s => s.groupLabel);
+    gs.forEach((g, i) => assert.notEqual(g, gs[(i + 1) % gs.length], `相鄰同組 @${i}`));
+    // 最大組（17 人）在每個 1/4 圈都有人，代表平均散開
+    const pos = gs.map((g, i) => (g === '二部' ? Math.floor(i / gs.length * 4) : -1)).filter(q => q >= 0);
+    assert.equal(new Set(pos).size, 4);
+  }
+  const order = (x) => x.sectors.map(s => s.participantId).join();
+  assert.notEqual(order(buildSectors(pool, pool[5].id, ev, d)), order(buildSectors(pool, pool[5].id, ev, d)));
 });
 
 test('北區籤數 ×2（總籤 87）→ 最小格字 12 px；某群組 ×3（總籤 100）→ 自動 equal', () => {

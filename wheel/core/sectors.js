@@ -72,6 +72,45 @@ function sampleWeighted(cands, k, rnd) {
 }
 
 /**
+ * 群組打散：每組成員依人數比例均勻散佈整圈（分層抖動），組內順序每次洗牌；
+ * 再修補相鄰（含首尾）同組，讓顏色不會成塊。
+ */
+function spreadByGroup(pool, groupOf, rnd) {
+  const byGroup = new Map();
+  for (const c of pool) {
+    const g = groupOf(c.id);
+    if (!byGroup.has(g)) byGroup.set(g, []);
+    byGroup.get(g).push(c);
+  }
+  const keyed = [];
+  for (const members of byGroup.values()) {
+    for (let i = members.length - 1; i > 0; i--) {
+      const j = Math.floor(rnd() * (i + 1)); [members[i], members[j]] = [members[j], members[i]];
+    }
+    const off = rnd();
+    members.forEach((c, k) => keyed.push({ c, key: ((k + 0.25 + 0.5 * rnd()) / members.length + off) % 1 }));
+  }
+  keyed.sort((a, b) => a.key - b.key);
+  const items = keyed.map(x => x.c);
+  const n = items.length;
+  const g = (i) => groupOf(items[(i + n) % n].id);
+  for (let i = 0; i < n; i++) {
+    if (g(i) !== g(i - 1)) continue;
+    // 找一個換過來後兩邊都不衝突的位置
+    for (let d = 1; d < n; d++) {
+      const j = (i + d) % n;
+      if (j === i || (j + 1) % n === i) continue;
+      const gi = g(i), gj = g(j);
+      if (gj === g(i - 1) || gj === g(i + 1)) continue;
+      if (gi === g(j - 1) || gi === g(j + 1)) continue;
+      [items[i], items[j]] = [items[j], items[i]];
+      break;
+    }
+  }
+  return items;
+}
+
+/**
  * 建立扇區。people：Map(id → participant)。回傳 { sectors, targetIndex, skip }
  * skip = 只有 1 名候選 → 跳過轉盤直接揭曉。
  */
@@ -97,14 +136,7 @@ export function buildSectors(pool, resultId, event, decision, rnd = randomUnit) 
     const others = sampleWeighted(pool.filter(c => c.id !== resultId), n - 1, rnd);
     items = [...others, pool.find(c => c.id === resultId)];
   } else {
-    items = pool.slice();
-    if (hasGroups) {
-      items.sort((a, b) => {
-        const ga = gmap.has(groupOf(a.id)) ? gmap.get(groupOf(a.id)) : 1e9;
-        const gb = gmap.has(groupOf(b.id)) ? gmap.get(groupOf(b.id)) : 1e9;
-        return ga - gb || label(a.id).localeCompare(label(b.id), 'zh-Hant');
-      });
-    }
+    items = hasGroups ? spreadByGroup(pool, groupOf, rnd) : pool.slice();
     if (items.length < 8) {
       const rep = Math.ceil(8 / items.length);
       const base = items; items = [];
